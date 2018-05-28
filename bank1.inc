@@ -3,72 +3,59 @@
 
 		BANK_START $01
 
+; =============== S C R I P T ===============================================
 _scr1_lvl1_handler:
-		.BYTE	$07		; NJSR		  _nsub_sub_rom_idx_calc
-		.WORD	_nsub_sub_rom_idx_calc
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$12,$04		; SJSR_SW	  $04
-		.WORD	_sjsr_case_142CD	; CASE	  _sjsr_case_142CD
-		.WORD	_sjsr_case_142CD	; CASE	  _sjsr_case_142CD
-		.WORD	_sjsr_case_142CD	; CASE	  _sjsr_case_142CD
-		.WORD	_sjsr_case_142E2	; CASE	  _sjsr_case_142E2
-		.BYTE	$07		; NJSR		  _nsub_room_register,$04
-		.WORD	_nsub_room_register
-		.BYTE	$04
-		.BYTE	$4E,$71,$00	; DATA	  $4E,$71,$00
-		.BYTE	$79,$46,$03	; DATA	  $79,$46,$03
-		.BYTE	$39,$6E,$03	; DATA	  $39,$6E,$03
-		.BYTE	$6E,$34,$00	; DATA	  $6E,$34,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$04		; SJMP_SW	  $04
-		.WORD	_sjmp_case_14031	; CASE	  _sjmp_case_14031
-		.WORD	_sjmp_case_14155	; CASE	  _sjmp_case_14155
-		.WORD	_sjmp_case_1409B	; CASE	  _sjmp_case_1409B
-		.WORD	_sjmp_case_1426B	; CASE	  _sjmp_case_1426B
+		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJSR_SW	$04
+		SCASE			_sjsr_case_142CD
+		SCASE			_sjsr_case_142CD
+		SCASE			_sjsr_case_142CD
+		SCASE			_sjsr_case_142E2
+		NJSR			_nsub_room_register
+			NARGB		$04
+			NARGB		$4E,$71,$00
+			NARGB		$79,$46,$03
+			NARGB		$39,$6E,$03
+			NARGB		$6E,$34,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$04
+		SCASE			_sjmp_case_14031
+		SCASE			_sjmp_case_14155
+		SCASE			_sjmp_case_1409B
+		SCASE			_sjmp_case_1426B
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14031:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$00
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$03
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data00
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data00
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data00
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data00
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$00
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data00
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data00
+		SJSR			_ssub_62DB1
 _sloc_14048:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$03
-		.WORD	_nsub_6294B
-		.BYTE	$03
-		.BYTE	$F8,$01,$88,$03	; DATA	  $F8,$01,$88,$03
-		.BYTE	$00,$04,$B0,$03	; DATA	  $00,$04,$B0,$03
-		.BYTE	$80,$02,$08,$03	; DATA	  $80,$02,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_14048
-		.WORD	_sloc_14048
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$03
-		.WORD	_nsub_room_register
-		.BYTE	$03
-		.BYTE	$3C,$6E,$03	; DATA	  $3C,$6E,$03
-		.BYTE	$82,$74,$01	; DATA	  $82,$74,$01
-		.BYTE	$4E,$5A,$00	; DATA	  $4E,$5A,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_1409B	; CASE	  _sjmp_case_1409B
-		.WORD	_sjmp_case_140E9	; CASE	  _sjmp_case_140E9
-		.WORD	_sjmp_case_14155	; CASE	  _sjmp_case_14155
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$03
+			NARGB		$F8,$01,$88,$03
+			NARGB		$00,$04,$B0,$03
+			NARGB		$80,$02,$08,$03
+		SBCC			_sloc_14048
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$03
+			NARGB		$3C,$6E,$03
+			NARGB		$82,$74,$01
+			NARGB		$4E,$5A,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$03
+		SCASE			_sjmp_case_1409B
+		SCASE			_sjmp_case_140E9
+		SCASE			_sjmp_case_14155
 _lvl_doors_data00:
 		.BYTE	$02,$80,$03,$D0,$00
 		.WORD	_room_door_always_closed
@@ -81,40 +68,30 @@ _lvl_doors_data00:
 		.BYTE	$FF
 _prize_sequence_data00:
 		.BYTE	$17,$13,$13,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1409B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$01
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$03
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data01
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data01
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data01
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data01
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$01
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data01
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data01
+		SJSR			_ssub_62DB1
 _sloc_140B2:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$00,$02,$88,$03	; DATA	  $00,$02,$88,$03
-		.BYTE	$0C		; SBCC		  _sloc_140B2
-		.WORD	_sloc_140B2
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$42,$6E,$01	; DATA	  $42,$6E,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_14031	; CASE	  _sjmp_case_14031
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$00,$02,$88,$03
+		SBCC			_sloc_140B2
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$42,$6E,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_14031
 _lvl_doors_data01:
 		.BYTE	$01,$E0,$03,$80,$01
 		.WORD	_room_door_enemy_clear_open
@@ -123,53 +100,40 @@ _lvl_doors_data01:
 		.BYTE	$FF
 _prize_sequence_data01:
 		.BYTE	$15,$16,$14,$14,$14,$16,$16,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_140E9:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$02
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$04,$02
-		.WORD	_nsub_628FA
-		.BYTE	$01,$04,$02
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0D
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0D
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data02
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data02
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data02
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data02
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$02
+		NJSR			_nsub_628FA
+			NARGB		$01,$04,$02
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0D
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data02
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data02
+		SJSR			_ssub_62DB1
 _sloc_14104:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$03,$B0,$03	; DATA	  $F8,$03,$B0,$03
-		.BYTE	$F8,$03,$40,$02	; DATA	  $F8,$03,$40,$02
-		.BYTE	$0C		; SBCC		  _sloc_14104
-		.WORD	_sloc_14104
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_626B7,$06,byte_14354
-		.WORD	_nsub_626B7
-		.BYTE	$06
-		.WORD	byte_14354
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$04
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$7C,$74,$03	; DATA	  $7C,$74,$03
-		.BYTE	$7C,$46,$03	; DATA	  $7C,$46,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14031	; CASE	  _sjmp_case_14031
-		.WORD	_sjmp_case_14155	; CASE	  _sjmp_case_14155
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$03,$B0,$03
+			NARGB		$F8,$03,$40,$02
+		SBCC			_sloc_14104
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_626B7
+			NARGB		$06
+			NARGW		byte_14354
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$04
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$7C,$74,$03
+			NARGB		$7C,$46,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14031
+		SCASE			_sjmp_case_14155
 _lvl_doors_data02:
 		.BYTE	$04,$10,$03,$B0,$01
 		.WORD	_room_door_enemy_clear_open
@@ -182,61 +146,46 @@ _lvl_doors_data02:
 		.BYTE	$FF
 _prize_sequence_data02:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14155:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$03
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data03
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data03
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data03
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$04
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$02
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_1433C
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_1433C
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr0
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr0
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$03
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data03
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$04
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$02
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_1433C
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_00
+		SJSR			_ssub_62DB1
 _sloc_1417E:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$04
-		.WORD	_nsub_6294B
-		.BYTE	$04
-		.BYTE	$80,$02,$F8,$02	; DATA	  $80,$02,$F8,$02
-		.BYTE	$00,$04,$40,$02	; DATA	  $00,$04,$40,$02
-		.BYTE	$F8,$01,$C0,$02	; DATA	  $F8,$01,$C0,$02
-		.BYTE	$80,$02,$08,$02	; DATA	  $80,$02,$08,$02
-		.BYTE	$0C		; SBCC		  _sloc_1417E
-		.WORD	_sloc_1417E
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$04
-		.WORD	_nsub_room_register
-		.BYTE	$04
-		.BYTE	$4E,$62,$02	; DATA	  $4E,$62,$02
-		.BYTE	$82,$46,$01	; DATA	  $82,$46,$01
-		.BYTE	$3C,$56,$03	; DATA	  $3C,$56,$03
-		.BYTE	$6E,$38,$00	; DATA	  $6E,$38,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$04		; SJMP_SW	  $04
-		.WORD	_sjmp_case_14031	; CASE	  _sjmp_case_14031
-		.WORD	_sjmp_case_140E9	; CASE	  _sjmp_case_140E9
-		.WORD	_sjmp_case_141E4	; CASE	  _sjmp_case_141E4
-		.WORD	_sjmp_case_1426B	; CASE	  _sjmp_case_1426B
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$04
+			NARGB		$80,$02,$F8,$02
+			NARGB		$00,$04,$40,$02
+			NARGB		$F8,$01,$C0,$02
+			NARGB		$80,$02,$08,$02
+		SBCC			_sloc_1417E
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$04
+			NARGB		$4E,$62,$02
+			NARGB		$82,$46,$01
+			NARGB		$3C,$56,$03
+			NARGB		$6E,$38,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$04
+		SCASE			_sjmp_case_14031
+		SCASE			_sjmp_case_140E9
+		SCASE			_sjmp_case_141E4
+		SCASE			_sjmp_case_1426B
 _lvl_doors_data03:
 		.BYTE	$03,$E0,$02,$40,$01
 		.WORD	_room_door_enemy_clear_open
@@ -251,40 +200,30 @@ _lvl_doors_data03:
 		.BYTE	$FF
 _prize_sequence_data03:
 		.BYTE	$17,$18,$18,$18,$14,$13,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_141E4:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$04
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$01,$02
-		.WORD	_nsub_628FA
-		.BYTE	$02,$01,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data04
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data04
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data04
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data04
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$04
+		NJSR			_nsub_628FA
+			NARGB		$02,$01,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data04
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data04
+		SJSR			_ssub_62DB1
 _sloc_141FB:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$00,$02,$C0,$02	; DATA	  $00,$02,$C0,$02
-		.BYTE	$0C		; SBCC		  _sloc_141FB
-		.WORD	_sloc_141FB
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$42,$56,$01	; DATA	  $42,$56,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_14155	; CASE	  _sjmp_case_14155
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$00,$02,$C0,$02
+		SBCC			_sloc_141FB
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$42,$56,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_14155
 _lvl_doors_data04:
 		.BYTE	$01,$E0,$02,$C0,$01
 		.WORD	_room_door_enemy_clear_open
@@ -293,95 +232,70 @@ _lvl_doors_data04:
 		.BYTE	$FF
 _prize_sequence_data04:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1422B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$05
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$02,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$02,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data05
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data05
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data05
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data05
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$05
+		NJSR			_nsub_628FA
+			NARGB		$01,$02,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data05
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data05
+		SJSR			_ssub_62DB1
 _sloc_14242:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$02,$B8,$01	; DATA	  $80,$02,$B8,$01
-		.BYTE	$0C		; SBCC		  _sloc_14242
-		.WORD	_sloc_14242
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$6E,$22,$02	; DATA	  $6E,$22,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1426B	; CASE	  _sjmp_case_1426B
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$02,$B8,$01
+		SBCC			_sloc_14242
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$6E,$22,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1426B
 _lvl_doors_data05:
 		.BYTE	$02,$80,$01,$A0,$00
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data05:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1426B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$06
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$06
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$07
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$03
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_1435C
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_1435C
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr1
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$03,$01
-		.WORD	_nsub_628FA
-		.BYTE	$02,$03,$01
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data06
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data06
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data06
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data06
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$06
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$07
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$03
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_1435C
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_01
+		NJSR			_nsub_628FA
+			NARGB		$02,$03,$01
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data06
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data06
+		SJSR			_ssub_62DB1
 _sloc_14294:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$03,$18,$01	; DATA	  $80,$03,$18,$01
-		.BYTE	$80,$03,$E8,$01	; DATA	  $80,$03,$E8,$01
-		.BYTE	$0C		; SBCC		  _sloc_14294
-		.WORD	_sloc_14294
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$4E,$32,$00	; DATA	  $4E,$32,$00
-		.BYTE	$4E,$42,$02	; DATA	  $4E,$42,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_1422B	; CASE	  _sjmp_case_1422B
-		.WORD	_sjmp_case_14155	; CASE	  _sjmp_case_14155
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$03,$18,$01
+			NARGB		$80,$03,$E8,$01
+		SBCC			_sloc_14294
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$4E,$32,$00
+			NARGB		$4E,$42,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_1422B
+		SCASE			_sjmp_case_14155
 _lvl_doors_data06:
 		.BYTE	$03,$80,$01,$30,$00
 		.WORD	_room_door_enemy_clear_open
@@ -390,82 +304,57 @@ _lvl_doors_data06:
 		.BYTE	$FF
 _prize_sequence_data06:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_142CD:
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$04
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$02
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_1433C
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_1433C
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr0
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr0
-		.BYTE	$03		; SJMP		  _sloc_142F4
-		.WORD	_sloc_142F4
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$04
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$02
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_1433C
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_00
+		SJMP			_sloc_142F4
+; =============== S C R I P T  S U B R O U T I N E ==========================
+
 _sjsr_case_142E2:
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$07
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$03
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_1435C
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_1435C
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr1
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr1
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$07
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$03
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_1435C
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_01
 _sloc_142F4:
-		.BYTE	$13		; STORE8	  _lvl_data_prg_bank,$01
-		.WORD	_lvl_data_prg_bank
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_lvl_data_ptrs_load
-		.WORD	_nsub_lvl_data_ptrs_load
-		.WORD	_lvl0_macroA_tbl	; DATA	  _lvl0_macroA_tbl
-		.WORD	_lvl0_macroB_tbl	; DATA	  _lvl0_macroB_tbl
-		.WORD	_lvl0_macroC_tbl	; DATA	  _lvl0_macroC_tbl
-		.WORD	_lvl0_macroD_tbl	; DATA	  _lvl0_macroD_tbl
-		.WORD	_lvl0_attrs_tbl	; DATA	  _lvl0_attrs_tbl
-		.BYTE	$16		; STORE16	  _lvl_room_lib_ptr,_lvl_room_lib00
-		.WORD	_lvl_room_lib_ptr
-		.WORD	_lvl_room_lib00
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$00
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_ingame_collision_watch_start
-		.WORD	_nsub_ingame_collision_watch_start
-		.BYTE	$07		; NJSR		  _nsub_ingame_player_control_start
-		.WORD	_nsub_ingame_player_control_start
-		.BYTE	$09		; NBG_HNDL_SET	  _j_nbgsub_1437C
-		.WORD	_j_nbgsub_1437C
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14324
-		.WORD	_scr_14324
-		.BYTE	$16		; STORE16	  _lvl_objects_ptr,_lvl0_objects_list
-		.WORD	_lvl_objects_ptr
-		.WORD	_lvl0_objects_list
-		.BYTE	$07		; NJSR		  _nsub_lvl_room_objects_init
-		.WORD	_nsub_lvl_room_objects_init
-		.BYTE	$05		; SRET
+		STORE8			_lvl_data_prg_bank,$01
+		NJSR			_nsub_lvl_data_ptrs_load
+			NARGW		_lvl0_macroA_tbl
+			NARGW		_lvl0_macroB_tbl
+			NARGW		_lvl0_macroC_tbl
+			NARGW		_lvl0_macroD_tbl
+			NARGW		_lvl0_attrs_tbl
+		STORE16			_lvl_room_lib_ptr,_lvl_room_lib00
+		NJSR			_nsub_apu_mus_load
+			NARGB		$00
+		NJSR			_nsub_ingame_collision_watch_start
+		NJSR			_nsub_ingame_player_control_start
+		NBG_HNDL_SET	_j_nbgsub_1437C
+		SRUN			$01,_scr_14324
+		STORE16			_lvl_objects_ptr,_lvl0_objects_list
+		NJSR			_nsub_lvl_room_objects_init
+		SRET
+
+; =============== S C R I P T ===============================================
 _scr_14324:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_15E4A
-		.WORD	_nsub_15E4A
-		.BYTE	$0C		; SBCC		  _scr_14324
-		.WORD	_scr_14324
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$03
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$03
-		.BYTE	$04		; SJSR		  _ssub_62DC9
-		.WORD	_ssub_62DC9
-		.BYTE	$07		; NJSR		  _nsub_pause_menu_handler
-		.WORD	_nsub_pause_menu_handler
-		.BYTE	$04		; SJSR		  _ssub_62DB5
-		.WORD	_ssub_62DB5
-		.BYTE	$03		; SJMP		  _scr_14324
-		.WORD	_scr_14324
+		SDELAY			$01
+		NJSR			_nsub_15E4A
+		SBCC			_scr_14324
+		NJSR			_nsub_apu_snd_load
+			NARGB		$03
+		SJSR			_ssub_62DC9
+		NJSR			_nsub_pause_menu_handler
+		SJSR			_ssub_62DB5
+		SJMP			_scr_14324
 byte_1433C:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$1A,$17,$0F,$37,$27,$17,$0F,$30,$05,$17
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
@@ -475,152 +364,120 @@ byte_1435C:
 		.BYTE	$0F,$30,$17,$07,$0F,$30,$05,$07,$0F,$10,$17,$07,$0F,$30,$10,$00
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$31,$25,$0F,$0F,$10,$17,$07
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _j_nbgsub_1437C:
 		JMP		_lvl_room_objects_handler
+
+; =============== S C R I P T ===============================================
 _scr2_lvl2_handler:
-		.BYTE	$07		; NJSR		  _nsub_sub_rom_idx_calc
-		.WORD	_nsub_sub_rom_idx_calc
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$12,$05		; SJSR_SW	  $05
-		.WORD	_sjsr_case_14753	; CASE	  _sjsr_case_14753
-		.WORD	_sjsr_case_14753	; CASE	  _sjsr_case_14753
-		.WORD	_sjsr_case_14753	; CASE	  _sjsr_case_14753
-		.WORD	_sjsr_case_14753	; CASE	  _sjsr_case_14753
-		.WORD	_sjsr_case_14763	; CASE	  _sjsr_case_14763
-		.BYTE	$07		; NJSR		  _nsub_room_register,$05
-		.WORD	_nsub_room_register
-		.BYTE	$05
-		.BYTE	$06,$D1,$01	; DATA	  $06,$D1,$01
-		.BYTE	$2E,$D9,$00	; DATA	  $2E,$D9,$00
-		.BYTE	$2E,$79,$00	; DATA	  $2E,$79,$00
-		.BYTE	$83,$46,$01	; DATA	  $83,$46,$01
-		.BYTE	$A3,$06,$01	; DATA	  $A3,$06,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$05		; SJMP_SW	  $05
-		.WORD	_sjmp_case_143B7	; CASE	  _sjmp_case_143B7
-		.WORD	_sjmp_case_1447E	; CASE	  _sjmp_case_1447E
-		.WORD	_sjmp_case_14514	; CASE	  _sjmp_case_14514
-		.WORD	_sjmp_case_145A4	; CASE	  _sjmp_case_145A4
-		.WORD	_sjmp_case_1462C	; CASE	  _sjmp_case_1462C
+		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJSR_SW	$05
+		SCASE			_sjsr_case_14753
+		SCASE			_sjsr_case_14753
+		SCASE			_sjsr_case_14753
+		SCASE			_sjsr_case_14753
+		SCASE			_sjsr_case_14763
+		NJSR			_nsub_room_register
+			NARGB		$05
+			NARGB		$06,$D1,$01
+			NARGB		$2E,$D9,$00
+			NARGB		$2E,$79,$00
+			NARGB		$83,$46,$01
+			NARGB		$A3,$06,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$05
+		SCASE			_sjmp_case_143B7
+		SCASE			_sjmp_case_1447E
+		SCASE			_sjmp_case_14514
+		SCASE			_sjmp_case_145A4
+		SCASE			_sjmp_case_1462C
+
+; =============== S C R I P T ===============================================
 _sjmp_case_143B7:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$00
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$00,$06
-		.WORD	_nsub_628FA
-		.BYTE	$02,$00,$06
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data07
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data07
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data07
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data07
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$00
+		NJSR			_nsub_628FA
+			NARGB		$02,$00,$06
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data07
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data07
+		SJSR			_ssub_62DB1
 _sloc_143CE:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$00,$08,$06	; DATA	  $80,$00,$08,$06
-		.BYTE	$0C		; SBCC		  _sloc_143CE
-		.WORD	_sloc_143CE
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$0E,$B9,$00	; DATA	  $0E,$B9,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_143F7	; CASE	  _sjmp_case_143F7
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$00,$08,$06
+		SBCC			_sloc_143CE
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$0E,$B9,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_143F7
 _lvl_doors_data07:
 		.BYTE	$00,$80,$06,$10,$02
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data07:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_143F7:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$01
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$00,$04
-		.WORD	_nsub_628FA
-		.BYTE	$01,$00,$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data08
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data08
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data08
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data08
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$01
+		NJSR			_nsub_628FA
+			NARGB		$01,$00,$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data08
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data08
+		SJSR			_ssub_62DB1
 _sloc_1440E:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$78,$00,$08,$04	; DATA	  $78,$00,$08,$04
-		.BYTE	$0C		; SBCC		  _sloc_1440E
-		.WORD	_sloc_1440E
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$0E,$73,$00	; DATA	  $0E,$73,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_14437	; CASE	  _sjmp_case_14437
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$78,$00,$08,$04
+		SBCC			_sloc_1440E
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$0E,$73,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_14437
 _lvl_doors_data08:
 		.BYTE	$00,$80,$04,$20,$02
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data08:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14437:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$02
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$00,$03
-		.WORD	_nsub_628FA
-		.BYTE	$02,$00,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data09
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data09
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data09
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data09
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$02
+		NJSR			_nsub_628FA
+			NARGB		$02,$00,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data09
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data09
+		SJSR			_ssub_62DB1
 _sloc_1444E:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$78,$00,$08,$03	; DATA	  $78,$00,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_1444E
-		.WORD	_sloc_1444E
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$2E,$D9,$00	; DATA	  $2E,$D9,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1447E	; CASE	  _sjmp_case_1447E
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$78,$00,$08,$03
+		SBCC			_sloc_1444E
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$2E,$D9,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1447E
 _lvl_doors_data09:
 		.BYTE	$00,$80,$03,$10,$02
 		.WORD	_room_door_enemy_clear_open
@@ -629,83 +486,63 @@ _lvl_doors_data09:
 		.BYTE	$FF
 _prize_sequence_data09:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1447E:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$03
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$01,$06
-		.WORD	_nsub_628FA
-		.BYTE	$02,$01,$06
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data0A
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data0A
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data0A
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data0A
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$03
+		NJSR			_nsub_628FA
+			NARGB		$02,$01,$06
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data0A
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0A
+		SJSR			_ssub_62DB1
 _sloc_14495:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$01,$08,$06	; DATA	  $80,$01,$08,$06
-		.BYTE	$0C		; SBCC		  _sloc_14495
-		.WORD	_sloc_14495
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$2E,$B9,$00	; DATA	  $2E,$B9,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_144BE	; CASE	  _sjmp_case_144BE
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$01,$08,$06
+		SBCC			_sloc_14495
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$2E,$B9,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_144BE
 _lvl_doors_data0A:
 		.BYTE	$01,$80,$06,$20,$02
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data0A:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_144BE:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$04
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$01,$04
-		.WORD	_nsub_628FA
-		.BYTE	$01,$01,$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data0B
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data0B
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data0B
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data0B
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$04
+		NJSR			_nsub_628FA
+			NARGB		$01,$01,$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data0B
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0B
+		SJSR			_ssub_62DB1
 _sloc_144D5:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$B0,$01,$08,$04	; DATA	  $B0,$01,$08,$04
-		.BYTE	$50,$01,$08,$04	; DATA	  $50,$01,$08,$04
-		.BYTE	$0C		; SBCC		  _sloc_144D5
-		.WORD	_sloc_144D5
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$2E,$79,$00	; DATA	  $2E,$79,$00
-		.BYTE	$2E,$B9,$00	; DATA	  $2E,$B9,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14514	; CASE	  _sjmp_case_14514
-		.WORD	_sjmp_case_144BE	; CASE	  _sjmp_case_144BE
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$B0,$01,$08,$04
+			NARGB		$50,$01,$08,$04
+		SBCC			_sloc_144D5
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$2E,$79,$00
+			NARGB		$2E,$B9,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14514
+		SCASE			_sjmp_case_144BE
 _lvl_doors_data0B:
 		.BYTE	$01,$B0,$04,$20,$02
 		.WORD	_room_door_enemy_clear_open
@@ -714,80 +551,60 @@ _lvl_doors_data0B:
 		.BYTE	$FF
 _prize_sequence_data0B:
 		.BYTE	$1D,$1D,$20,$1D,$1D,$1E,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14514:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$05
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$01,$02
-		.WORD	_nsub_628FA
-		.BYTE	$01,$01,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data0C
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data0C
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data0C
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data0C
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$05
+		NJSR			_nsub_628FA
+			NARGB		$01,$01,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data0C
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0C
+		SJSR			_ssub_62DB1
 _sloc_1452B:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$F8,$01,$40,$02	; DATA	  $F8,$01,$40,$02
-		.BYTE	$0C		; SBCC		  _sloc_1452B
-		.WORD	_sloc_1452B
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$45,$46,$01	; DATA	  $45,$46,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1455A	; CASE	  _sjmp_case_1455A
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$F8,$01,$40,$02
+		SBCC			_sloc_1452B
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$45,$46,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1455A
 _lvl_doors_data0C:
 		.BYTE	$01,$E0,$02,$40,$03
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data0C:
 		.BYTE	$20,$1D,$1E,$20,$1D,$1E,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1455A:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$06
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$06
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data0D
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data0D
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data0D
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data0D
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$06
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data0D
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0D
+		SJSR			_ssub_62DB1
 _sloc_14571:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$F8,$03,$40,$02	; DATA	  $F8,$03,$40,$02
-		.BYTE	$0C		; SBCC		  _sloc_14571
-		.WORD	_sloc_14571
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$83,$46,$01	; DATA	  $83,$46,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_145A4	; CASE	  _sjmp_case_145A4
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$F8,$03,$40,$02
+		SBCC			_sloc_14571
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$83,$46,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_145A4
 _lvl_doors_data0D:
 		.BYTE	$03,$E0,$02,$40,$03
 		.WORD	_room_door_enemy_clear_open
@@ -796,173 +613,127 @@ _lvl_doors_data0D:
 		.BYTE	$FF
 _prize_sequence_data0D:
 		.BYTE	$20,$20,$1F,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_145A4:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$07
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$04,$02
-		.WORD	_nsub_628FA
-		.BYTE	$02,$04,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data0E
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data0E
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data0E
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data0E
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$07
+		NJSR			_nsub_628FA
+			NARGB		$02,$04,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data0E
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0E
+		SJSR			_ssub_62DB1
 _sloc_145BB:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$04,$08,$02	; DATA	  $80,$04,$08,$02
-		.BYTE	$0C		; SBCC		  _sloc_145BB
-		.WORD	_sloc_145BB
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$8E,$39,$00	; DATA	  $8E,$39,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_145E8	; CASE	  _sjmp_case_145E8
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$04,$08,$02
+		SBCC			_sloc_145BB
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$8E,$39,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_145E8
 _lvl_doors_data0E:
 		.BYTE	$04,$80,$02,$20,$02
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data0E:
 		.BYTE	$1E,$1F,$1E,$20,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_145E8:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$08
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$08
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$04,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$04,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data0F
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data0F
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data0F
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data0F
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$08
+		NJSR			_nsub_628FA
+			NARGB		$01,$04,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data0F
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0F
+		SJSR			_ssub_62DB1
 _sloc_145FF:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$00,$05,$48,$00	; DATA	  $00,$05,$48,$00
-		.BYTE	$0C		; SBCC		  _sloc_145FF
-		.WORD	_sloc_145FF
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$A3,$06,$01	; DATA	  $A3,$06,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1462C	; CASE	  _sjmp_case_1462C
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$00,$05,$48,$00
+		SBCC			_sloc_145FF
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$A3,$06,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1462C
 _lvl_doors_data0F:
 		.BYTE	$04,$E0,$00,$40,$03
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data0F:
 		.BYTE	$1E,$1F,$1D,$20,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1462C:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$09
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$09
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$0B
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$0B
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr2
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr2
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$05,$00
-		.WORD	_nsub_628FA
-		.BYTE	$02,$05,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data10
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data10
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data10
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data10
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$09
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$0B
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_02
+		NJSR			_nsub_628FA
+			NARGB		$02,$05,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data10
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data10
+		SJSR			_ssub_62DB1
 _sloc_1464C:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$05,$D8,$00	; DATA	  $80,$05,$D8,$00
-		.BYTE	$0C		; SBCC		  _sloc_1464C
-		.WORD	_sloc_1464C
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$AE,$26,$02	; DATA	  $AE,$26,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_14675	; CASE	  _sjmp_case_14675
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$05,$D8,$00
+		SBCC			_sloc_1464C
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$AE,$26,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_14675
 _lvl_doors_data10:
 		.BYTE	$05,$80,$00,$D0,$04
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data10:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14675:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0A
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0A
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$05,$01
-		.WORD	_nsub_628FA
-		.BYTE	$01,$05,$01
-		.BYTE	$07		; NJSR		  _nsub_bg_pal_load,byte_147C5
-		.WORD	_nsub_bg_pal_load
-		.WORD	byte_147C5
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_147F1
-		.WORD	_nbgsub_147F1
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14734
-		.WORD	_scr_14734
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data11
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data11
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data11
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data11
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0A
+		NJSR			_nsub_628FA
+			NARGB		$01,$05,$01
+		NJSR			_nsub_bg_pal_load
+			NARGW		byte_147C5
+		NBG_HNDL_SET	_nbgsub_147F1
+		SRUN			$01,_scr_14734
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data11
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data11
+		SJSR			_ssub_62DB1
 _sloc_14698:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$05,$E8,$02	; DATA	  $80,$05,$E8,$02
-		.BYTE	$0C		; SBCC		  _sloc_14698
-		.WORD	_sloc_14698
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$AE,$66,$02	; DATA	  $AE,$66,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_146C8	; CASE	  _sjmp_case_146C8
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$05,$E8,$02
+		SBCC			_sloc_14698
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$AE,$66,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_146C8
 _lvl_doors_data11:
 		.BYTE	$05,$80,$01,$20,$04
 		.WORD	_room_door_always_closed
@@ -971,40 +742,30 @@ _lvl_doors_data11:
 		.BYTE	$FF
 _prize_sequence_data11:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_146C8:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0B
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0B
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$05,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$05,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data12
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data12
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data12
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data12
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0B
+		NJSR			_nsub_628FA
+			NARGB		$01,$05,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data12
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data12
+		SJSR			_ssub_62DB1
 _sloc_146DF:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$78,$05,$E8,$04	; DATA	  $78,$05,$E8,$04
-		.BYTE	$0C		; SBCC		  _sloc_146DF
-		.WORD	_sloc_146DF
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$AE,$A6,$02	; DATA	  $AE,$A6,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1470F	; CASE	  _sjmp_case_1470F
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$78,$05,$E8,$04
+		SBCC			_sloc_146DF
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$AE,$A6,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1470F
 _lvl_doors_data12:
 		.BYTE	$05,$80,$03,$20,$04
 		.WORD	_room_door_always_closed
@@ -1013,109 +774,77 @@ _lvl_doors_data12:
 		.BYTE	$FF
 _prize_sequence_data12:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1470F:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0C
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$05,$05
-		.WORD	_nsub_628FA
-		.BYTE	$01,$05,$05
-		.BYTE	$13		; STORE8	  _cur_room_x_pageB,$05
-		.WORD	_cur_room_x_pageB
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data13
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data13
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data13
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data13
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
-		.BYTE	$0A		; SUSPEND
+		STORE8			_cur_room_sequence_idx,$0C
+		NJSR			_nsub_628FA
+			NARGB		$01,$05,$05
+		STORE8			_cur_room_x_pageB,$05
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data13
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data13
+		SJSR			_ssub_62DB1
+		SUSPEND
 _lvl_doors_data13:
 		.BYTE	$05,$80,$05,$20,$04
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
 _prize_sequence_data13:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _scr_14734:
-		.BYTE	$01,$80		; SLOOP_BEGIN	  $80
-		.BYTE	$0E		; SMEM_ALU	  _apu_var402,ADC,$02X
-		.WORD	_apu_var402
-		.BYTE	$02,$FF
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$FF
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$FF
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$13
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$13
-		.BYTE	$06,$A0		; SDELAY	  $A0
-		.BYTE	$13		; STORE8	  _apu_var402,$FF
-		.WORD	_apu_var402
-		.BYTE	$FF
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$03		; SJMP		  _scr_14324
-		.WORD	_scr_14324
+		SLOOP_BEGIN		$80
+		SMEM_ALU	_apu_var402,_ADC,$FF
+		SDELAY			$01
+		SLOOP_END
+		NJSR			_nsub_apu_mus_load
+			NARGB		$FF
+		NJSR			_nsub_apu_snd_load
+			NARGB		$13
+		SDELAY			$A0
+		STORE8			_apu_var402,$FF
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		SJMP			_scr_14324
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_14753:
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0C
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$0A
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$0A
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr3
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr3
-		.BYTE	$03		; SJMP		  _sloc_14770
-		.WORD	_sloc_14770
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0C
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$0A
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_03
+		SJMP			_sloc_14770
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_14763:
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0C
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$0B
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$0B
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr2
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr2
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0C
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$0B
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_02
 _sloc_14770:
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_147A5
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_147A5
-		.BYTE	$13		; STORE8	  _lvl_data_prg_bank,$02
-		.WORD	_lvl_data_prg_bank
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_lvl_data_ptrs_load
-		.WORD	_nsub_lvl_data_ptrs_load
-		.WORD	_lvl1_macroA_tbl	; DATA	  _lvl1_macroA_tbl
-		.WORD	_lvl1_macroB_tbl	; DATA	  _lvl1_macroB_tbl
-		.WORD	_lvl1_macroC_tbl	; DATA	  _lvl1_macroC_tbl
-		.WORD	_lvl1_macroD_tbl	; DATA	  _lvl1_macroD_tbl
-		.WORD	_lvl1_attrs_tbl	; DATA	  _lvl1_attrs_tbl
-		.BYTE	$16		; STORE16	  _lvl_room_lib_ptr,_lvl_room_lib01
-		.WORD	_lvl_room_lib_ptr
-		.WORD	_lvl_room_lib01
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$06
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$06
-		.BYTE	$07		; NJSR		  _nsub_ingame_collision_watch_start
-		.WORD	_nsub_ingame_collision_watch_start
-		.BYTE	$07		; NJSR		  _nsub_ingame_player_control_start
-		.WORD	_nsub_ingame_player_control_start
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14324
-		.WORD	_scr_14324
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_1480E
-		.WORD	_nbgsub_1480E
-		.BYTE	$16		; STORE16	  _lvl_objects_ptr,_lvl1_objects_list
-		.WORD	_lvl_objects_ptr
-		.WORD	_lvl1_objects_list
-		.BYTE	$07		; NJSR		  _nsub_lvl_room_objects_init
-		.WORD	_nsub_lvl_room_objects_init
-		.BYTE	$05		; SRET
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_147A5
+		STORE8			_lvl_data_prg_bank,$02
+		NJSR			_nsub_lvl_data_ptrs_load
+			NARGW		_lvl1_macroA_tbl
+			NARGW		_lvl1_macroB_tbl
+			NARGW		_lvl1_macroC_tbl
+			NARGW		_lvl1_macroD_tbl
+			NARGW		_lvl1_attrs_tbl
+		STORE16			_lvl_room_lib_ptr,_lvl_room_lib01
+		NJSR			_nsub_apu_mus_load
+			NARGB		$06
+		NJSR			_nsub_ingame_collision_watch_start
+		NJSR			_nsub_ingame_player_control_start
+		SRUN			$01,_scr_14324
+		NBG_HNDL_SET	_nbgsub_1480E
+		STORE16			_lvl_objects_ptr,_lvl1_objects_list
+		NJSR			_nsub_lvl_room_objects_init
+		SRET
 byte_147A5:
 		.BYTE	$0F,$30,$10,$00,$0F,$10,$00,$07,$0F,$10,$00,$08,$0F,$10,$00,$17
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$10,$00,$0F,$0F,$36,$27,$0F
@@ -1126,7 +855,7 @@ _unused_2:
 byte_147E5:
 		.BYTE	$0F,$0F,$07,$0F,$0F,$07,$0F,$0F,$0F,$0F,$0F,$07
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_147F1:
 		LDA		_scr_trds_args0
 		CLC
@@ -1147,72 +876,59 @@ loc_147FC:
 		LDY		#$02
 		JSR		sub_62069
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_1480E:
 		JMP		_lvl_room_objects_handler
+
+; =============== S C R I P T ===============================================
 _scr3_lvl3_handler:
-		.BYTE	$07		; NJSR		  _nsub_sub_rom_idx_calc
-		.WORD	_nsub_sub_rom_idx_calc
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$04		; SJSR		  _ssub_15117
-		.WORD	_ssub_15117
-		.BYTE	$07		; NJSR		  _nsub_room_register,$07
-		.WORD	_nsub_room_register
-		.BYTE	$07
-		.BYTE	$0E,$34,$00	; DATA	  $0E,$34,$00
-		.BYTE	$4E,$06,$02	; DATA	  $4E,$06,$02
-		.BYTE	$AE,$06,$02	; DATA	  $AE,$06,$02
-		.BYTE	$CE,$06,$02	; DATA	  $CE,$06,$02
-		.BYTE	$2E,$66,$02	; DATA	  $2E,$66,$02
-		.BYTE	$4E,$66,$02	; DATA	  $4E,$66,$02
-		.BYTE	$AE,$66,$02	; DATA	  $AE,$66,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$07		; SJMP_SW	  $07
-		.WORD	_sjmp_case_1484A	; CASE	  _sjmp_case_1484A
-		.WORD	_sjmp_case_148E1	; CASE	  _sjmp_case_148E1
-		.WORD	_sjmp_case_14A2E	; CASE	  _sjmp_case_14A2E
-		.WORD	_sjmp_case_14B83	; CASE	  _sjmp_case_14B83
-		.WORD	_sjmp_case_14CD8	; CASE	  _sjmp_case_14CD8
-		.WORD	_sjmp_case_14E2F	; CASE	  _sjmp_case_14E2F
-		.WORD	_sjmp_case_14F89	; CASE	  _sjmp_case_14F89
+		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJSR			_ssub_15117
+		NJSR			_nsub_room_register
+			NARGB		$07
+			NARGB		$0E,$34,$00
+			NARGB		$4E,$06,$02
+			NARGB		$AE,$06,$02
+			NARGB		$CE,$06,$02
+			NARGB		$2E,$66,$02
+			NARGB		$4E,$66,$02
+			NARGB		$AE,$66,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$07
+		SCASE			_sjmp_case_1484A
+		SCASE			_sjmp_case_148E1
+		SCASE			_sjmp_case_14A2E
+		SCASE			_sjmp_case_14B83
+		SCASE			_sjmp_case_14CD8
+		SCASE			_sjmp_case_14E2F
+		SCASE			_sjmp_case_14F89
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1484A:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$00
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$01
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$01
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data14
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data14
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data14
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data14
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$00
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$01
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data14
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data14
+		SJSR			_ssub_62DB1
 _sloc_14861:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$80,$01,$08,$01	; DATA	  $80,$01,$08,$01
-		.BYTE	$0C		; SBCC		  _sloc_14861
-		.WORD	_sloc_14861
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$2E,$18,$00	; DATA	  $2E,$18,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_14891	; CASE	  _sjmp_case_14891
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$80,$01,$08,$01
+		SBCC			_sloc_14861
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$2E,$18,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_14891
 _lvl_doors_data14:
 		.BYTE	$01,$80,$01,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -1221,43 +937,33 @@ _lvl_doors_data14:
 		.BYTE	$FF
 _prize_sequence_data14:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14891:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$01
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$00
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data15
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data15
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data15
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data15
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$01
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data15
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data15
+		SJSR			_ssub_62DB1
 _sloc_148A8:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$00,$08,$00	; DATA	  $80,$00,$08,$00
-		.BYTE	$80,$01,$F8,$00	; DATA	  $80,$01,$F8,$00
-		.BYTE	$0C		; SBCC		  _sloc_148A8
-		.WORD	_sloc_148A8
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$4E,$02,$02	; DATA	  $4E,$02,$02
-		.BYTE	$2E,$22,$02	; DATA	  $2E,$22,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_148E1	; CASE	  _sjmp_case_148E1
-		.WORD	_sjmp_case_1484A	; CASE	  _sjmp_case_1484A
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$00,$08,$00
+			NARGB		$80,$01,$F8,$00
+		SBCC			_sloc_148A8
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$4E,$02,$02
+			NARGB		$2E,$22,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_148E1
+		SCASE			_sjmp_case_1484A
 _lvl_doors_data15:
 		.BYTE	$00,$80,$00,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1266,43 +972,33 @@ _lvl_doors_data15:
 		.BYTE	$FF
 _prize_sequence_data15:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_148E1:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$02
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$02,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$02,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data16
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data16
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data16
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data16
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$02
+		NJSR			_nsub_628FA
+			NARGB		$01,$02,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data16
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data16
+		SJSR			_ssub_62DB1
 _sloc_148F8:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$02,$F8,$01	; DATA	  $30,$02,$F8,$01
-		.BYTE	$80,$02,$08,$00	; DATA	  $80,$02,$08,$00
-		.BYTE	$0C		; SBCC		  _sloc_148F8
-		.WORD	_sloc_148F8
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$44,$42,$02	; DATA	  $44,$42,$02
-		.BYTE	$0E,$02,$02	; DATA	  $0E,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14952	; CASE	  _sjmp_case_14952
-		.WORD	_sjmp_case_14891	; CASE	  _sjmp_case_14891
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$02,$F8,$01
+			NARGB		$80,$02,$08,$00
+		SBCC			_sloc_148F8
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$44,$42,$02
+			NARGB		$0E,$02,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14952
+		SCASE			_sjmp_case_14891
 _lvl_doors_data16:
 		.BYTE	$02,$80,$00,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1319,43 +1015,33 @@ _lvl_doors_data16:
 		.BYTE	$FF
 _prize_sequence_data16:
 		.BYTE	$25,$25,$25,$28,$28,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14952:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$03
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data17
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data17
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data17
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data17
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$03
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data17
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data17
+		SJSR			_ssub_62DB1
 _sloc_14969:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$D0,$03,$08,$02	; DATA	  $D0,$03,$08,$02
-		.BYTE	$30,$02,$08,$02	; DATA	  $30,$02,$08,$02
-		.BYTE	$0C		; SBCC		  _sloc_14969
-		.WORD	_sloc_14969
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$78,$38,$00	; DATA	  $78,$38,$00
-		.BYTE	$44,$38,$00	; DATA	  $44,$38,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_149BE	; CASE	  _sjmp_case_149BE
-		.WORD	_sjmp_case_148E1	; CASE	  _sjmp_case_148E1
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$D0,$03,$08,$02
+			NARGB		$30,$02,$08,$02
+		SBCC			_sloc_14969
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$78,$38,$00
+			NARGB		$44,$38,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_149BE
+		SCASE			_sjmp_case_148E1
 _lvl_doors_data17:
 		.BYTE	$02,$30,$02,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -1372,56 +1058,42 @@ _lvl_doors_data17:
 		.BYTE	$FF
 _prize_sequence_data17:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_149BE:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$04
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$03,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$03,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data18
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data18
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data18
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data18
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$04
+		NJSR			_nsub_628FA
+			NARGB		$01,$03,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data18
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data18
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		SJSR			_ssub_62DB1
 _sloc_149E3:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$03,$08,$00	; DATA	  $80,$03,$08,$00
-		.BYTE	$D0,$03,$F8,$01	; DATA	  $D0,$03,$F8,$01
-		.BYTE	$0C		; SBCC		  _sloc_149E3
-		.WORD	_sloc_149E3
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$07
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$AE,$02,$02	; DATA	  $AE,$02,$02
-		.BYTE	$78,$42,$02	; DATA	  $78,$42,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14A2E	; CASE	  _sjmp_case_14A2E
-		.WORD	_sjmp_case_14952	; CASE	  _sjmp_case_14952
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$03,$08,$00
+			NARGB		$D0,$03,$F8,$01
+		SBCC			_sloc_149E3
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_apu_mus_load
+			NARGB		$07
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$AE,$02,$02
+			NARGB		$78,$42,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14A2E
+		SCASE			_sjmp_case_14952
 _lvl_doors_data18:
 		.BYTE	$03,$80,$01,$50,$05
 		.WORD	_room_door_always_open
@@ -1434,50 +1106,38 @@ _lvl_doors_data18:
 		.BYTE	$FF
 _prize_sequence_data18:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14A2E:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$05
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$05,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$05,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data19
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data19
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data19
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data19
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15175
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15175
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$05
+		NJSR			_nsub_628FA
+			NARGB		$01,$05,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data19
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data19
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15175
+		SJSR			_ssub_62DB1
 _sloc_14A4F:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$D0,$05,$F8,$01	; DATA	  $D0,$05,$F8,$01
-		.BYTE	$80,$05,$08,$00	; DATA	  $80,$05,$08,$00
-		.BYTE	$0C		; SBCC		  _sloc_14A4F
-		.WORD	_sloc_14A4F
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$B8,$42,$02	; DATA	  $B8,$42,$02
-		.BYTE	$6E,$02,$02	; DATA	  $6E,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14AA7	; CASE	  _sjmp_case_14AA7
-		.WORD	_sjmp_case_149BE	; CASE	  _sjmp_case_149BE
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$D0,$05,$F8,$01
+			NARGB		$80,$05,$08,$00
+		SBCC			_sloc_14A4F
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$B8,$42,$02
+			NARGB		$6E,$02,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14AA7
+		SCASE			_sjmp_case_149BE
 _lvl_doors_data19:
 		.BYTE	$05,$80,$00,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1494,43 +1154,33 @@ _lvl_doors_data19:
 		.BYTE	$FF
 _prize_sequence_data19:
 		.BYTE	$28,$26,$26,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14AA7:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$06
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$06
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$04,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$04,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data1A
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data1A
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data1A
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data1A
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$06
+		NJSR			_nsub_628FA
+			NARGB		$00,$04,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data1A
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1A
+		SJSR			_ssub_62DB1
 _sloc_14ABE:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$04,$08,$02	; DATA	  $30,$04,$08,$02
-		.BYTE	$D0,$05,$08,$02	; DATA	  $D0,$05,$08,$02
-		.BYTE	$0C		; SBCC		  _sloc_14ABE
-		.WORD	_sloc_14ABE
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$84,$38,$00	; DATA	  $84,$38,$00
-		.BYTE	$B8,$38,$00	; DATA	  $B8,$38,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14B13	; CASE	  _sjmp_case_14B13
-		.WORD	_sjmp_case_14A2E	; CASE	  _sjmp_case_14A2E
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$04,$08,$02
+			NARGB		$D0,$05,$08,$02
+		SBCC			_sloc_14ABE
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$84,$38,$00
+			NARGB		$B8,$38,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14B13
+		SCASE			_sjmp_case_14A2E
 _lvl_doors_data1A:
 		.BYTE	$04,$30,$02,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -1547,56 +1197,42 @@ _lvl_doors_data1A:
 		.BYTE	$FF
 _prize_sequence_data1A:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14B13:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$07
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$04,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$04,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data1B
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data1B
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data1B
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data1B
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$07
+		NJSR			_nsub_628FA
+			NARGB		$01,$04,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data1B
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1B
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		SJSR			_ssub_62DB1
 _sloc_14B38:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$04,$08,$00	; DATA	  $80,$04,$08,$00
-		.BYTE	$30,$04,$F8,$01	; DATA	  $30,$04,$F8,$01
-		.BYTE	$0C		; SBCC		  _sloc_14B38
-		.WORD	_sloc_14B38
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$07
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$CE,$02,$02	; DATA	  $CE,$02,$02
-		.BYTE	$84,$42,$02	; DATA	  $84,$42,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14B83	; CASE	  _sjmp_case_14B83
-		.WORD	_sjmp_case_14AA7	; CASE	  _sjmp_case_14AA7
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$04,$08,$00
+			NARGB		$30,$04,$F8,$01
+		SBCC			_sloc_14B38
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_apu_mus_load
+			NARGB		$07
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$CE,$02,$02
+			NARGB		$84,$42,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14B83
+		SCASE			_sjmp_case_14AA7
 _lvl_doors_data1B:
 		.BYTE	$04,$80,$00,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1609,50 +1245,38 @@ _lvl_doors_data1B:
 		.BYTE	$FF
 _prize_sequence_data1B:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14B83:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$08
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$08
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$06,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$06,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15175
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15175
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data1C
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data1C
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data1C
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data1C
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$08
+		NJSR			_nsub_628FA
+			NARGB		$01,$06,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15175
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data1C
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1C
+		SJSR			_ssub_62DB1
 _sloc_14BA4:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$06,$F8,$01	; DATA	  $30,$06,$F8,$01
-		.BYTE	$80,$06,$08,$00	; DATA	  $80,$06,$08,$00
-		.BYTE	$0C		; SBCC		  _sloc_14BA4
-		.WORD	_sloc_14BA4
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$C4,$42,$02	; DATA	  $C4,$42,$02
-		.BYTE	$8E,$02,$02	; DATA	  $8E,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14BFC	; CASE	  _sjmp_case_14BFC
-		.WORD	_sjmp_case_14B13	; CASE	  _sjmp_case_14B13
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$06,$F8,$01
+			NARGB		$80,$06,$08,$00
+		SBCC			_sloc_14BA4
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$C4,$42,$02
+			NARGB		$8E,$02,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14BFC
+		SCASE			_sjmp_case_14B13
 _lvl_doors_data1C:
 		.BYTE	$06,$80,$00,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1669,43 +1293,33 @@ _lvl_doors_data1C:
 		.BYTE	$FF
 _prize_sequence_data1C:
 		.BYTE	$27,$27,$28,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14BFC:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$09
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$09
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$06,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$06,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data1D
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data1D
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data1D
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data1D
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$09
+		NJSR			_nsub_628FA
+			NARGB		$00,$06,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data1D
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1D
+		SJSR			_ssub_62DB1
 _sloc_14C13:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$D0,$07,$08,$02	; DATA	  $D0,$07,$08,$02
-		.BYTE	$30,$06,$08,$02	; DATA	  $30,$06,$08,$02
-		.BYTE	$0C		; SBCC		  _sloc_14C13
-		.WORD	_sloc_14C13
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$F8,$38,$00	; DATA	  $F8,$38,$00
-		.BYTE	$C4,$38,$00	; DATA	  $C4,$38,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14C68	; CASE	  _sjmp_case_14C68
-		.WORD	_sjmp_case_14B83	; CASE	  _sjmp_case_14B83
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$D0,$07,$08,$02
+			NARGB		$30,$06,$08,$02
+		SBCC			_sloc_14C13
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$F8,$38,$00
+			NARGB		$C4,$38,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14C68
+		SCASE			_sjmp_case_14B83
 _lvl_doors_data1D:
 		.BYTE	$06,$30,$02,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -1722,56 +1336,42 @@ _lvl_doors_data1D:
 		.BYTE	$FF
 _prize_sequence_data1D:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14C68:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0A
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0A
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$07,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$07,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data1E
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data1E
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data1E
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data1E
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0A
+		NJSR			_nsub_628FA
+			NARGB		$01,$07,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data1E
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1E
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		SJSR			_ssub_62DB1
 _sloc_14C8D:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$07,$08,$00	; DATA	  $80,$07,$08,$00
-		.BYTE	$C0,$07,$F8,$01	; DATA	  $C0,$07,$F8,$01
-		.BYTE	$0C		; SBCC		  _sloc_14C8D
-		.WORD	_sloc_14C8D
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$07
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$2E,$62,$02	; DATA	  $2E,$62,$02
-		.BYTE	$F8,$42,$02	; DATA	  $F8,$42,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14CD8	; CASE	  _sjmp_case_14CD8
-		.WORD	_sjmp_case_14BFC	; CASE	  _sjmp_case_14BFC
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$07,$08,$00
+			NARGB		$C0,$07,$F8,$01
+		SBCC			_sloc_14C8D
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_apu_mus_load
+			NARGB		$07
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$2E,$62,$02
+			NARGB		$F8,$42,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14CD8
+		SCASE			_sjmp_case_14BFC
 _lvl_doors_data1E:
 		.BYTE	$07,$80,$00,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1784,50 +1384,38 @@ _lvl_doors_data1E:
 		.BYTE	$FF
 _prize_sequence_data1E:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14CD8:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0B
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0B
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$01,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$01,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15175
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15175
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data1F
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data1F
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data1F
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data1F
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0B
+		NJSR			_nsub_628FA
+			NARGB		$01,$01,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15175
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data1F
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1F
+		SJSR			_ssub_62DB1
 _sloc_14CF9:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$D0,$01,$F8,$04	; DATA	  $D0,$01,$F8,$04
-		.BYTE	$80,$01,$08,$03	; DATA	  $80,$01,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_14CF9
-		.WORD	_sloc_14CF9
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$38,$A2,$02	; DATA	  $38,$A2,$02
-		.BYTE	$EE,$02,$02	; DATA	  $EE,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14D4E	; CASE	  _sjmp_case_14D4E
-		.WORD	_sjmp_case_14C68	; CASE	  _sjmp_case_14C68
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$D0,$01,$F8,$04
+			NARGB		$80,$01,$08,$03
+		SBCC			_sloc_14CF9
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$38,$A2,$02
+			NARGB		$EE,$02,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14D4E
+		SCASE			_sjmp_case_14C68
 _lvl_doors_data1F:
 		.BYTE	$01,$80,$03,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1844,43 +1432,33 @@ _lvl_doors_data1F:
 		.BYTE	$FF
 _prize_sequence_data1F:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14D4E:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0C
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$05
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$05
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data20
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data20
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data20
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data20
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0C
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$05
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data20
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data20
+		SJSR			_ssub_62DB1
 _sloc_14D65:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$00,$08,$05	; DATA	  $30,$00,$08,$05
-		.BYTE	$D0,$01,$08,$05	; DATA	  $D0,$01,$08,$05
-		.BYTE	$0C		; SBCC		  _sloc_14D65
-		.WORD	_sloc_14D65
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$04,$98,$00	; DATA	  $04,$98,$00
-		.BYTE	$38,$98,$00	; DATA	  $38,$98,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14DBF	; CASE	  _sjmp_case_14DBF
-		.WORD	_sjmp_case_14CD8	; CASE	  _sjmp_case_14CD8
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$00,$08,$05
+			NARGB		$D0,$01,$08,$05
+		SBCC			_sloc_14D65
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$04,$98,$00
+			NARGB		$38,$98,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14DBF
+		SCASE			_sjmp_case_14CD8
 _lvl_doors_data20:
 		.BYTE	$00,$30,$05,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -1897,56 +1475,42 @@ _lvl_doors_data20:
 		.BYTE	$FF
 _prize_sequence_data20:
 		.BYTE	$28,$24,$24,$24,$28,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14DBF:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0D
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0D
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$00,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$00,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data21
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data21
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data21
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data21
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0D
+		NJSR			_nsub_628FA
+			NARGB		$01,$00,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data21
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data21
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		SJSR			_ssub_62DB1
 _sloc_14DE4:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$00,$08,$03	; DATA	  $80,$00,$08,$03
-		.BYTE	$30,$00,$F8,$04	; DATA	  $30,$00,$F8,$04
-		.BYTE	$0C		; SBCC		  _sloc_14DE4
-		.WORD	_sloc_14DE4
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$07
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$4E,$62,$02	; DATA	  $4E,$62,$02
-		.BYTE	$04,$A2,$02	; DATA	  $04,$A2,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14E2F	; CASE	  _sjmp_case_14E2F
-		.WORD	_sjmp_case_14D4E	; CASE	  _sjmp_case_14D4E
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$00,$08,$03
+			NARGB		$30,$00,$F8,$04
+		SBCC			_sloc_14DE4
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_apu_mus_load
+			NARGB		$07
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$4E,$62,$02
+			NARGB		$04,$A2,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14E2F
+		SCASE			_sjmp_case_14D4E
 _lvl_doors_data21:
 		.BYTE	$00,$80,$03,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -1959,50 +1523,38 @@ _lvl_doors_data21:
 		.BYTE	$FF
 _prize_sequence_data21:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14E2F:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0E
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$02,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$02,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15175
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15175
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data22
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data22
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data22
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data22
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0E
+		NJSR			_nsub_628FA
+			NARGB		$01,$02,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15175
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data22
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data22
+		SJSR			_ssub_62DB1
 _sloc_14E50:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$02,$F8,$04	; DATA	  $30,$02,$F8,$04
-		.BYTE	$80,$02,$08,$03	; DATA	  $80,$02,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_14E50
-		.WORD	_sloc_14E50
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$44,$A2,$02	; DATA	  $44,$A2,$02
-		.BYTE	$0E,$62,$02	; DATA	  $0E,$62,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14EAD	; CASE	  _sjmp_case_14EAD
-		.WORD	_sjmp_case_14DBF	; CASE	  _sjmp_case_14DBF
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$02,$F8,$04
+			NARGB		$80,$02,$08,$03
+		SBCC			_sloc_14E50
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$44,$A2,$02
+			NARGB		$0E,$62,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14EAD
+		SCASE			_sjmp_case_14DBF
 _lvl_doors_data22:
 		.BYTE	$02,$80,$03,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -2019,43 +1571,33 @@ _lvl_doors_data22:
 		.BYTE	$FF
 _prize_sequence_data22:
 		.BYTE	$28,$24,$24,$24,$24,$24,$24,$25,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14EAD:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0F
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$05
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$05
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data23
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data23
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data23
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data23
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0F
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$05
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data23
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data23
+		SJSR			_ssub_62DB1
 _sloc_14EC4:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$D0,$03,$08,$05	; DATA	  $D0,$03,$08,$05
-		.BYTE	$30,$02,$08,$05	; DATA	  $30,$02,$08,$05
-		.BYTE	$0C		; SBCC		  _sloc_14EC4
-		.WORD	_sloc_14EC4
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$78,$98,$00	; DATA	  $78,$98,$00
-		.BYTE	$44,$98,$00	; DATA	  $44,$98,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14F19	; CASE	  _sjmp_case_14F19
-		.WORD	_sjmp_case_14E2F	; CASE	  _sjmp_case_14E2F
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$D0,$03,$08,$05
+			NARGB		$30,$02,$08,$05
+		SBCC			_sloc_14EC4
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$78,$98,$00
+			NARGB		$44,$98,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14F19
+		SCASE			_sjmp_case_14E2F
 _lvl_doors_data23:
 		.BYTE	$02,$30,$05,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -2072,56 +1614,42 @@ _lvl_doors_data23:
 		.BYTE	$FF
 _prize_sequence_data23:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14F19:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$10
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$10
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$03,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$03,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data24
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data24
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data24
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data24
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$10
+		NJSR			_nsub_628FA
+			NARGB		$01,$03,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data24
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data24
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		SJSR			_ssub_62DB1
 _sloc_14F3E:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$80,$03,$08,$03	; DATA	  $80,$03,$08,$03
-		.BYTE	$C0,$03,$F8,$04	; DATA	  $C0,$03,$F8,$04
-		.BYTE	$0C		; SBCC		  _sloc_14F3E
-		.WORD	_sloc_14F3E
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$07
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$AE,$62,$02	; DATA	  $AE,$62,$02
-		.BYTE	$78,$A2,$02	; DATA	  $78,$A2,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14F89	; CASE	  _sjmp_case_14F89
-		.WORD	_sjmp_case_14EAD	; CASE	  _sjmp_case_14EAD
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$80,$03,$08,$03
+			NARGB		$C0,$03,$F8,$04
+		SBCC			_sloc_14F3E
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_apu_mus_load
+			NARGB		$07
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$AE,$62,$02
+			NARGB		$78,$A2,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14F89
+		SCASE			_sjmp_case_14EAD
 _lvl_doors_data24:
 		.BYTE	$03,$80,$03,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -2134,50 +1662,38 @@ _lvl_doors_data24:
 		.BYTE	$FF
 _prize_sequence_data24:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14F89:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$14
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$14
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$05,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$05,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data25
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data25
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data25
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data25
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$14
+		NJSR			_nsub_628FA
+			NARGB		$01,$05,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data25
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data25
+		SJSR			_ssub_62DB1
 _sloc_14FAA:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$D0,$05,$F8,$04	; DATA	  $D0,$05,$F8,$04
-		.BYTE	$80,$05,$08,$03	; DATA	  $80,$05,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_14FAA
-		.WORD	_sloc_14FAA
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$B8,$A2,$02	; DATA	  $B8,$A2,$02
-		.BYTE	$6E,$62,$02	; DATA	  $6E,$62,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_14FFF	; CASE	  _sjmp_case_14FFF
-		.WORD	_sjmp_case_14F19	; CASE	  _sjmp_case_14F19
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$D0,$05,$F8,$04
+			NARGB		$80,$05,$08,$03
+		SBCC			_sloc_14FAA
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$B8,$A2,$02
+			NARGB		$6E,$62,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_14FFF
+		SCASE			_sjmp_case_14F19
 _lvl_doors_data25:
 		.BYTE	$05,$80,$03,$20,$06
 		.WORD	_room_door_enemy_clear_open
@@ -2194,43 +1710,33 @@ _lvl_doors_data25:
 		.BYTE	$FF
 _prize_sequence_data25:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_14FFF:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$15
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$15
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$04,$05
-		.WORD	_nsub_628FA
-		.BYTE	$00,$04,$05
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data26
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data26
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data26
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data26
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$15
+		NJSR			_nsub_628FA
+			NARGB		$00,$04,$05
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data26
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data26
+		SJSR			_ssub_62DB1
 _sloc_15016:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$04,$08,$05	; DATA	  $30,$04,$08,$05
-		.BYTE	$D0,$05,$08,$05	; DATA	  $D0,$05,$08,$05
-		.BYTE	$0C		; SBCC		  _sloc_15016
-		.WORD	_sloc_15016
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$84,$98,$00	; DATA	  $84,$98,$00
-		.BYTE	$B8,$98,$00	; DATA	  $B8,$98,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_1506B	; CASE	  _sjmp_case_1506B
-		.WORD	_sjmp_case_14F89	; CASE	  _sjmp_case_14F89
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$04,$08,$05
+			NARGB		$D0,$05,$08,$05
+		SBCC			_sloc_15016
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$84,$98,$00
+			NARGB		$B8,$98,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_1506B
+		SCASE			_sjmp_case_14F89
 _lvl_doors_data26:
 		.BYTE	$04,$30,$05,$20,$05
 		.WORD	_room_door_enemy_clear_open
@@ -2247,46 +1753,35 @@ _lvl_doors_data26:
 		.BYTE	$FF
 _prize_sequence_data26:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1506B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$16
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$16
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$04,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$04,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data27
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data27
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data27
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data27
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$01
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$01
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$16
+		NJSR			_nsub_628FA
+			NARGB		$01,$04,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data27
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data27
+		NJSR			_nsub_apu_mus_load
+			NARGB		$01
+		SJSR			_ssub_62DB1
 _sloc_15086:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$30,$04,$08,$03	; DATA	  $30,$04,$08,$03
-		.BYTE	$30,$04,$F8,$04	; DATA	  $30,$04,$F8,$04
-		.BYTE	$0C		; SBCC		  _sloc_15086
-		.WORD	_sloc_15086
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$06,$56,$01	; DATA	  $06,$56,$01
-		.BYTE	$84,$A2,$02	; DATA	  $84,$A2,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_150CD	; CASE	  _sjmp_case_150CD
-		.WORD	_sjmp_case_14FFF	; CASE	  _sjmp_case_14FFF
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$30,$04,$08,$03
+			NARGB		$30,$04,$F8,$04
+		SBCC			_sloc_15086
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$06,$56,$01
+			NARGB		$84,$A2,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_150CD
+		SCASE			_sjmp_case_14FFF
 _lvl_doors_data27:
 		.BYTE	$04,$B0,$04,$70,$07
 		.WORD	_room_door_always_open
@@ -2299,96 +1794,68 @@ _lvl_doors_data27:
 		.BYTE	$FF
 _prize_sequence_data27:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T ===============================================
 _sjmp_case_150CD:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$17
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$17
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$00,$02
-		.WORD	_nsub_628FA
-		.BYTE	$02,$00,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data28
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data28
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data28
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data28
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15175
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15175
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$17
+		NJSR			_nsub_628FA
+			NARGB		$02,$00,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data28
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data28
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15175
+		SJSR			_ssub_62DB1
 _sloc_150EE:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$30,$00,$F8,$02	; DATA	  $30,$00,$F8,$02
-		.BYTE	$0C		; SBCC		  _sloc_150EE
-		.WORD	_sloc_150EE
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$84,$63,$02	; DATA	  $84,$63,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1506B	; CASE	  _sjmp_case_1506B
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$30,$00,$F8,$02
+		SBCC			_sloc_150EE
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$84,$63,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1506B
 _lvl_doors_data28:
 		.BYTE	$00,$30,$02,$E0,$05
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
 _prize_sequence_data28:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15117:
-		.BYTE	$13		; STORE8	  _lvl_data_prg_bank,$02
-		.WORD	_lvl_data_prg_bank
-		.BYTE	$02
-		.BYTE	$16		; STORE16	  _lvl_room_lib_ptr,_lvl2_room_lib
-		.WORD	_lvl_room_lib_ptr
-		.WORD	_lvl2_room_lib
-		.BYTE	$07		; NJSR		  _nsub_lvl_data_ptrs_load
-		.WORD	_nsub_lvl_data_ptrs_load
-		.WORD	_lvl2_macroA_tbl	; DATA	  _lvl2_macroA_tbl
-		.WORD	_lvl2_macroB_tbl	; DATA	  _lvl2_macroB_tbl
-		.WORD	_lvl2_macroC_tbl	; DATA	  _lvl2_macroC_tbl
-		.WORD	_lvl2_macroD_tbl	; DATA	  _lvl2_macroD_tbl
-		.WORD	_lvl2_attrs_tbl	; DATA	  _lvl2_attrs_tbl
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr4
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr4
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_15159
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_15159
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$10
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$10
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$07
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$07
-		.BYTE	$09		; NBG_HNDL_SET	  _j_nbgsub_1437C_0
-		.WORD	_j_nbgsub_1437C_0
-		.BYTE	$07		; NJSR		  _nsub_ingame_collision_watch_start
-		.WORD	_nsub_ingame_collision_watch_start
-		.BYTE	$07		; NJSR		  _nsub_ingame_player_control_start
-		.WORD	_nsub_ingame_player_control_start
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14324
-		.WORD	_scr_14324
-		.BYTE	$16		; STORE16	  _lvl_objects_ptr,_lvl2_objects_list
-		.WORD	_lvl_objects_ptr
-		.WORD	_lvl2_objects_list
-		.BYTE	$07		; NJSR		  _nsub_lvl_room_objects_init
-		.WORD	_nsub_lvl_room_objects_init
-		.BYTE	$05		; SRET
+		STORE8			_lvl_data_prg_bank,$02
+		STORE16			_lvl_room_lib_ptr,_lvl2_room_lib
+		NJSR			_nsub_lvl_data_ptrs_load
+			NARGW		_lvl2_macroA_tbl
+			NARGW		_lvl2_macroB_tbl
+			NARGW		_lvl2_macroC_tbl
+			NARGW		_lvl2_macroD_tbl
+			NARGW		_lvl2_attrs_tbl
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_04
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_15159
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$10
+		NJSR			_nsub_apu_mus_load
+			NARGB		$07
+		NBG_HNDL_SET	_j_nbgsub_1437C_0
+		NJSR			_nsub_ingame_collision_watch_start
+		NJSR			_nsub_ingame_player_control_start
+		SRUN			$01,_scr_14324
+		STORE16			_lvl_objects_ptr,_lvl2_objects_list
+		NJSR			_nsub_lvl_room_objects_init
+		SRET
 byte_15159:
 		.BYTE	$0F,$30,$10,$00,$0F,$19,$10,$17,$0F,$37,$27,$17,$0F,$30,$10,$1A
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$37,$27,$17
@@ -2397,113 +1864,90 @@ byte_15175:
 byte_15179:
 		.BYTE	$0F,$36,$2B,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _j_nbgsub_1437C_0:
 		JMP		_lvl_room_objects_handler
+
+; =============== S C R I P T ===============================================
 _scr4_lvl4_handler:
-		.BYTE	$07		; NJSR		  _nsub_sub_rom_idx_calc
-		.WORD	_nsub_sub_rom_idx_calc
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$04		; SJSR		  _ssub_154D2
-		.WORD	_ssub_154D2
-		.BYTE	$07		; NJSR		  _nsub_room_register,$06
-		.WORD	_nsub_room_register
-		.BYTE	$06
-		.BYTE	$26,$AE,$01	; DATA	  $26,$AE,$01
-		.BYTE	$3A,$90,$03	; DATA	  $3A,$90,$03
-		.BYTE	$03,$66,$02	; DATA	  $03,$66,$02
-		.BYTE	$08,$34,$01	; DATA	  $08,$34,$01
-		.BYTE	$51,$27,$02	; DATA	  $51,$27,$02
-		.BYTE	$79,$54,$00	; DATA	  $79,$54,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$06		; SJMP_SW	  $06
-		.WORD	_sjmp_case_151B4	; CASE	  _sjmp_case_151B4
-		.WORD	_sjmp_case_151F4	; CASE	  _sjmp_case_151F4
-		.WORD	_sjmp_case_152EB	; CASE	  _sjmp_case_152EB
-		.WORD	_sjmp_case_15331	; CASE	  _sjmp_case_15331
-		.WORD	_sjmp_case_15388	; CASE	  _sjmp_case_15388
-		.WORD	_sjmp_case_1543A	; CASE	  _sjmp_case_1543A
+		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJSR			_ssub_154D2
+		NJSR			_nsub_room_register
+			NARGB		$06
+			NARGB		$26,$AE,$01
+			NARGB		$3A,$90,$03
+			NARGB		$03,$66,$02
+			NARGB		$08,$34,$01
+			NARGB		$51,$27,$02
+			NARGB		$79,$54,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$06
+		SCASE			_sjmp_case_151B4
+		SCASE			_sjmp_case_151F4
+		SCASE			_sjmp_case_152EB
+		SCASE			_sjmp_case_15331
+		SCASE			_sjmp_case_15388
+		SCASE			_sjmp_case_1543A
+
+; =============== S C R I P T ===============================================
 _sjmp_case_151B4:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$00
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$01,$05
-		.WORD	_nsub_628FA
-		.BYTE	$02,$01,$05
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data29
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data29
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data29
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data29
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$00
+		NJSR			_nsub_628FA
+			NARGB		$02,$01,$05
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data29
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data29
+		SJSR			_ssub_62DB1
 _sloc_151CB:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$98,$01,$08,$05	; DATA	  $98,$01,$08,$05
-		.BYTE	$0C		; SBCC		  _sloc_151CB
-		.WORD	_sloc_151CB
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$32,$97,$00	; DATA	  $32,$97,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_151F4	; CASE	  _sjmp_case_151F4
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$98,$01,$08,$05
+		SBCC			_sloc_151CB
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$32,$97,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_151F4
 _lvl_doors_data29:
 		.BYTE	$01,$A0,$05,$20,$08
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data29:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_151F4:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$01
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$01,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$01,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data2A
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data2A
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data2A
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data2A
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$01
+		NJSR			_nsub_628FA
+			NARGB		$01,$01,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data2A
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2A
+		SJSR			_ssub_62DB1
 _sloc_1520B:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$01,$A8,$04	; DATA	  $F8,$01,$A8,$04
-		.BYTE	$B0,$01,$08,$03	; DATA	  $B0,$01,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_1520B
-		.WORD	_sloc_1520B
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$43,$92,$01	; DATA	  $43,$92,$01
-		.BYTE	$34,$57,$00	; DATA	  $34,$57,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_1524B	; CASE	  _sjmp_case_1524B
-		.WORD	_sjmp_case_1528B	; CASE	  _sjmp_case_1528B
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$01,$A8,$04
+			NARGB		$B0,$01,$08,$03
+		SBCC			_sloc_1520B
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$43,$92,$01
+			NARGB		$34,$57,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_1524B
+		SCASE			_sjmp_case_1528B
 _lvl_doors_data2A:
 		.BYTE	$01,$90,$04,$D0,$08
 		.WORD	_room_door_always_closed
@@ -2514,86 +1958,66 @@ _lvl_doors_data2A:
 		.BYTE	$FF
 _prize_sequence_data2A:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1524B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$02
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$04
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data2B
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data2B
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data2B
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data2B
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$02
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data2B
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2B
+		SJSR			_ssub_62DB1
 _sloc_15262:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$00,$02,$98,$04	; DATA	  $00,$02,$98,$04
-		.BYTE	$0C		; SBCC		  _sloc_15262
-		.WORD	_sloc_15262
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$3C,$92,$03	; DATA	  $3C,$92,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_151F4	; CASE	  _sjmp_case_151F4
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$00,$02,$98,$04
+		SBCC			_sloc_15262
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$3C,$92,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_151F4
 _lvl_doors_data2B:
 		.BYTE	$02,$10,$04,$A0,$0A
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data2B:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1528B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$03
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data2C
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data2C
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data2C
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data2C
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$03
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data2C
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2C
+		SJSR			_ssub_62DB1
 _sloc_152A2:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$03
-		.WORD	_nsub_6294B
-		.BYTE	$03
-		.BYTE	$B0,$01,$F0,$02	; DATA	  $B0,$01,$F0,$02
-		.BYTE	$48,$00,$F0,$02	; DATA	  $48,$00,$F0,$02
-		.BYTE	$50,$00,$08,$02	; DATA	  $50,$00,$08,$02
-		.BYTE	$0C		; SBCC		  _sloc_152A2
-		.WORD	_sloc_152A2
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$03
-		.WORD	_nsub_room_register
-		.BYTE	$03
-		.BYTE	$34,$63,$02	; DATA	  $34,$63,$02
-		.BYTE	$08,$63,$02	; DATA	  $08,$63,$02
-		.BYTE	$08,$37,$00	; DATA	  $08,$37,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_151F4	; CASE	  _sjmp_case_151F4
-		.WORD	_sjmp_case_152EB	; CASE	  _sjmp_case_152EB
-		.WORD	_sjmp_case_15331	; CASE	  _sjmp_case_15331
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$03
+			NARGB		$B0,$01,$F0,$02
+			NARGB		$48,$00,$F0,$02
+			NARGB		$50,$00,$08,$02
+		SBCC			_sloc_152A2
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$03
+			NARGB		$34,$63,$02
+			NARGB		$08,$63,$02
+			NARGB		$08,$37,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$03
+		SCASE			_sjmp_case_151F4
+		SCASE			_sjmp_case_152EB
+		SCASE			_sjmp_case_15331
 _lvl_doors_data2C:
 		.BYTE	$01,$B0,$02,$D0,$08
 		.WORD	_room_door_enemy_clear_open
@@ -2604,83 +2028,63 @@ _lvl_doors_data2C:
 		.BYTE	$FF
 _prize_sequence_data2C:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_152EB:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$04
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$00,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$00,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data2D
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data2D
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data2D
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data2D
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$04
+		NJSR			_nsub_628FA
+			NARGB		$01,$00,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data2D
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2D
+		SJSR			_ssub_62DB1
 _sloc_15302:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$50,$00,$08,$03	; DATA	  $50,$00,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_15302
-		.WORD	_sloc_15302
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$08,$57,$00	; DATA	  $08,$57,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1528B	; CASE	  _sjmp_case_1528B
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$50,$00,$08,$03
+		SBCC			_sloc_15302
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$08,$57,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1528B
 _lvl_doors_data2D:
 		.BYTE	$00,$50,$03,$20,$08
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data2D:
 		.BYTE	$2C,$2C,$2C,$29,$29,$2C,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15331:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$05
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$01
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$01
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data2E
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data2E
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data2E
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data2E
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$05
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$01
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data2E
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2E
+		SJSR			_ssub_62DB1
 _sloc_15348:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$50,$00,$F0,$01	; DATA	  $50,$00,$F0,$01
-		.BYTE	$F8,$01,$28,$01	; DATA	  $F8,$01,$28,$01
-		.BYTE	$0C		; SBCC		  _sloc_15348
-		.WORD	_sloc_15348
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$08,$43,$02	; DATA	  $08,$43,$02
-		.BYTE	$44,$24,$01	; DATA	  $44,$24,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_1528B	; CASE	  _sjmp_case_1528B
-		.WORD	_sjmp_case_15388	; CASE	  _sjmp_case_15388
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$50,$00,$F0,$01
+			NARGB		$F8,$01,$28,$01
+		SBCC			_sloc_15348
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$08,$43,$02
+			NARGB		$44,$24,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_1528B
+		SCASE			_sjmp_case_15388
 _lvl_doors_data2E:
 		.BYTE	$00,$50,$01,$D0,$08
 		.WORD	_room_door_enemy_clear_open
@@ -2691,43 +2095,33 @@ _lvl_doors_data2E:
 		.BYTE	$FF
 _prize_sequence_data2E:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15388:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$06
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$06
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$02,$01
-		.WORD	_nsub_628FA
-		.BYTE	$01,$02,$01
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data2F
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data2F
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data2F
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data2F
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$06
+		NJSR			_nsub_628FA
+			NARGB		$01,$02,$01
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data2F
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2F
+		SJSR			_ssub_62DB1
 _sloc_1539F:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$00,$02,$30,$01	; DATA	  $00,$02,$30,$01
-		.BYTE	$60,$02,$F0,$02	; DATA	  $60,$02,$F0,$02
-		.BYTE	$0C		; SBCC		  _sloc_1539F
-		.WORD	_sloc_1539F
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$3C,$24,$03	; DATA	  $3C,$24,$03
-		.BYTE	$4A,$63,$02	; DATA	  $4A,$63,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15331	; CASE	  _sjmp_case_15331
-		.WORD	_sjmp_case_153E1	; CASE	  _sjmp_case_153E1
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$00,$02,$30,$01
+			NARGB		$60,$02,$F0,$02
+		SBCC			_sloc_1539F
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$3C,$24,$03
+			NARGB		$4A,$63,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15331
+		SCASE			_sjmp_case_153E1
 _lvl_doors_data2F:
 		.BYTE	$02,$10,$01,$30,$0C
 		.WORD	_room_door_enemy_clear_open
@@ -2736,43 +2130,33 @@ _lvl_doors_data2F:
 		.BYTE	$FF
 _prize_sequence_data2F:
 		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$2C,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_153E1:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$07
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$03
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data30
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data30
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data30
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data30
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$07
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data30
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data30
+		SJSR			_ssub_62DB1
 _sloc_153F8:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$60,$02,$08,$03	; DATA	  $60,$02,$08,$03
-		.BYTE	$C0,$03,$08,$03	; DATA	  $C0,$03,$08,$03
-		.BYTE	$0C		; SBCC		  _sloc_153F8
-		.WORD	_sloc_153F8
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$4A,$57,$00	; DATA	  $4A,$57,$00
-		.BYTE	$76,$57,$00	; DATA	  $76,$57,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15388	; CASE	  _sjmp_case_15388
-		.WORD	_sjmp_case_1543A	; CASE	  _sjmp_case_1543A
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$60,$02,$08,$03
+			NARGB		$C0,$03,$08,$03
+		SBCC			_sloc_153F8
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$4A,$57,$00
+			NARGB		$76,$57,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15388
+		SCASE			_sjmp_case_1543A
 _lvl_doors_data30:
 		.BYTE	$02,$60,$03,$20,$08
 		.WORD	_room_door_enemy_clear_open
@@ -2781,43 +2165,33 @@ _lvl_doors_data30:
 		.BYTE	$FF
 _prize_sequence_data30:
 		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$2B,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1543A:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$08
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$08
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$03,$01
-		.WORD	_nsub_628FA
-		.BYTE	$01,$03,$01
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data31
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data31
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data31
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data31
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$08
+		NJSR			_nsub_628FA
+			NARGB		$01,$03,$01
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data31
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data31
+		SJSR			_ssub_62DB1
 _sloc_15451:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$C0,$03,$F0,$02	; DATA	  $C0,$03,$F0,$02
-		.BYTE	$28,$03,$08,$01	; DATA	  $28,$03,$08,$01
-		.BYTE	$0C		; SBCC		  _sloc_15451
-		.WORD	_sloc_15451
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$76,$64,$02	; DATA	  $76,$64,$02
-		.BYTE	$63,$17,$00	; DATA	  $63,$17,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_153E1	; CASE	  _sjmp_case_153E1
-		.WORD	_sjmp_case_15492	; CASE	  _sjmp_case_15492
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$C0,$03,$F0,$02
+			NARGB		$28,$03,$08,$01
+		SBCC			_sloc_15451
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$76,$64,$02
+			NARGB		$63,$17,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_153E1
+		SCASE			_sjmp_case_15492
 _lvl_doors_data31:
 		.BYTE	$03,$C0,$02,$D0,$08
 		.WORD	_room_door_enemy_clear_open
@@ -2826,94 +2200,68 @@ _lvl_doors_data31:
 		.BYTE	$FF
 _prize_sequence_data31:
 		.BYTE	$29,$2D,$2D,$2C,$29,$2D,$2C,$2D,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15492:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$09
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$09
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$03,$00
-		.WORD	_nsub_628FA
-		.BYTE	$02,$03,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data32
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data32
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data32
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data32
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$09
+		NJSR			_nsub_628FA
+			NARGB		$02,$03,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data32
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data32
+		SJSR			_ssub_62DB1
 _sloc_154A9:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$18,$03,$F0,$00	; DATA	  $18,$03,$F0,$00
-		.BYTE	$0C		; SBCC		  _sloc_154A9
-		.WORD	_sloc_154A9
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$63,$23,$02	; DATA	  $63,$23,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_1543A	; CASE	  _sjmp_case_1543A
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$18,$03,$F0,$00
+		SBCC			_sloc_154A9
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$63,$23,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_1543A
 _lvl_doors_data32:
 		.BYTE	$03,$20,$00,$D0,$0D
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data32:
 		.BYTE	$FF
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_154D2:
-		.BYTE	$13		; STORE8	  _lvl_data_prg_bank,$05
-		.WORD	_lvl_data_prg_bank
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_lvl_data_ptrs_load
-		.WORD	_nsub_lvl_data_ptrs_load
-		.WORD	_lvl3_macroA_tbl	; DATA	  _lvl3_macroA_tbl
-		.WORD	_lvl3_macroB_tbl	; DATA	  _lvl3_macroB_tbl
-		.WORD	_lvl3_macroC_tbl	; DATA	  _lvl3_macroC_tbl
-		.WORD	_lvl3_macroD_tbl	; DATA	  _lvl3_macroD_tbl
-		.WORD	_lvl3_attrs_tbl	; DATA	  _lvl3_attrs_tbl
-		.BYTE	$16		; STORE16	  _lvl_room_lib_ptr,_lvl3_room_lib
-		.WORD	_lvl_room_lib_ptr
-		.WORD	_lvl3_room_lib
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr5
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr5
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_15514
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_15514
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$12
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$12
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$11
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$11
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$08
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$08
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_15534
-		.WORD	_nbgsub_15534
-		.BYTE	$07		; NJSR		  _nsub_ingame_collision_watch_start
-		.WORD	_nsub_ingame_collision_watch_start
-		.BYTE	$07		; NJSR		  _nsub_ingame_player_control_start
-		.WORD	_nsub_ingame_player_control_start
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14324
-		.WORD	_scr_14324
-		.BYTE	$16		; STORE16	  _lvl_objects_ptr,_lvl3_objects_list
-		.WORD	_lvl_objects_ptr
-		.WORD	_lvl3_objects_list
-		.BYTE	$07		; NJSR		  _nsub_lvl_room_objects_init
-		.WORD	_nsub_lvl_room_objects_init
-		.BYTE	$05		; SRET
+		STORE8			_lvl_data_prg_bank,$05
+		NJSR			_nsub_lvl_data_ptrs_load
+			NARGW		_lvl3_macroA_tbl
+			NARGW		_lvl3_macroB_tbl
+			NARGW		_lvl3_macroC_tbl
+			NARGW		_lvl3_macroD_tbl
+			NARGW		_lvl3_attrs_tbl
+		STORE16			_lvl_room_lib_ptr,_lvl3_room_lib
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_05
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_15514
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$12
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$11
+		NJSR			_nsub_apu_mus_load
+			NARGB		$08
+		NBG_HNDL_SET	_nbgsub_15534
+		NJSR			_nsub_ingame_collision_watch_start
+		NJSR			_nsub_ingame_player_control_start
+		SRUN			$01,_scr_14324
+		STORE16			_lvl_objects_ptr,_lvl3_objects_list
+		NJSR			_nsub_lvl_room_objects_init
+		SRET
 byte_15514:
 		.BYTE	$0F,$30,$10,$00,$0F,$26,$17,$05,$0F,$37,$17,$08,$0F,$07,$15,$05
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$39,$2C,$0F,$0F,$15,$0F,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_15534:
 		LDA		_nmi_counter
 		AND		#$07
@@ -2940,65 +2288,52 @@ loc_15558:
 byte_1555B:
 		.BYTE	$0F,$07,$15,$05,$0F,$05,$07,$15,$0F,$15,$05,$07,$0F,$07,$16,$05
 		.BYTE	$0F,$05,$07,$16,$0F,$16,$05,$07
+
+; =============== S C R I P T ===============================================
 _scr5_lvl5_handler:
-		.BYTE	$07		; NJSR		  _nsub_sub_rom_idx_calc
-		.WORD	_nsub_sub_rom_idx_calc
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$04		; SJSR		  _ssub_15CDB
-		.WORD	_ssub_15CDB
-		.BYTE	$07		; NJSR		  _nsub_room_register,$05
-		.WORD	_nsub_room_register
-		.BYTE	$05
-		.BYTE	$4D,$D4,$00	; DATA	  $4D,$D4,$00
-		.BYTE	$98,$92,$02	; DATA	  $98,$92,$02
-		.BYTE	$08,$93,$01	; DATA	  $08,$93,$01
-		.BYTE	$23,$29,$02	; DATA	  $23,$29,$02
-		.BYTE	$94,$34,$00	; DATA	  $94,$34,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$05		; SJMP_SW	  $05
-		.WORD	_sjmp_case_155A2	; CASE	  _sjmp_case_155A2
-		.WORD	_sjmp_case_15691	; CASE	  _sjmp_case_15691
-		.WORD	_sjmp_case_158DB	; CASE	  _sjmp_case_158DB
-		.WORD	_sjmp_case_15A91	; CASE	  _sjmp_case_15A91
-		.WORD	_sjmp_case_15BE7	; CASE	  _sjmp_case_15BE7
+		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJSR			_ssub_15CDB
+		NJSR			_nsub_room_register
+			NARGB		$05
+			NARGB		$4D,$D4,$00
+			NARGB		$98,$92,$02
+			NARGB		$08,$93,$01
+			NARGB		$23,$29,$02
+			NARGB		$94,$34,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$05
+		SCASE			_sjmp_case_155A2
+		SCASE			_sjmp_case_15691
+		SCASE			_sjmp_case_158DB
+		SCASE			_sjmp_case_15A91
+		SCASE			_sjmp_case_15BE7
+
+; =============== S C R I P T ===============================================
 _sjmp_case_155A2:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$00
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$02,$06
-		.WORD	_nsub_628FA
-		.BYTE	$02,$02,$06
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data33
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data33
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data33
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data33
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$00
+		NJSR			_nsub_628FA
+			NARGB		$02,$02,$06
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data33
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data33
+		SJSR			_ssub_62DB1
 _sloc_155B9:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$40,$02,$08,$06	; DATA	  $40,$02,$08,$06
-		.BYTE	$0C		; SBCC		  _sloc_155B9
-		.WORD	_sloc_155B9
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$46,$B9,$00	; DATA	  $46,$B9,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_155E9	; CASE	  _sjmp_case_155E9
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$40,$02,$08,$06
+		SBCC			_sloc_155B9
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$46,$B9,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_155E9
 _lvl_doors_data33:
 		.BYTE	$02,$40,$06,$20,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3007,46 +2342,35 @@ _lvl_doors_data33:
 		.BYTE	$FF
 _prize_sequence_data33:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T ===============================================
 _sjmp_case_155E9:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$01
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$05
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$05
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data34
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data34
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data34
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data34
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$01
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$05
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data34
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data34
+		SJSR			_ssub_62DB1
 _sloc_15604:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$03,$50,$05	; DATA	  $F8,$03,$50,$05
-		.BYTE	$40,$02,$F8,$05	; DATA	  $40,$02,$F8,$05
-		.BYTE	$0C		; SBCC		  _sloc_15604
-		.WORD	_sloc_15604
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$83,$A7,$01	; DATA	  $83,$A7,$01
-		.BYTE	$46,$C3,$02	; DATA	  $46,$C3,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_1563D	; CASE	  _sjmp_case_1563D
-		.WORD	_sjmp_case_155A2	; CASE	  _sjmp_case_155A2
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$03,$50,$05
+			NARGB		$40,$02,$F8,$05
+		SBCC			_sloc_15604
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$83,$A7,$01
+			NARGB		$46,$C3,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_1563D
+		SCASE			_sjmp_case_155A2
 _lvl_doors_data34:
 		.BYTE	$02,$40,$05,$D0,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3055,46 +2379,35 @@ _lvl_doors_data34:
 		.BYTE	$FF
 _prize_sequence_data34:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1563D:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$02
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$04,$05
-		.WORD	_nsub_628FA
-		.BYTE	$02,$04,$05
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data35
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data35
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data35
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data35
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0D
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0D
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$02
+		NJSR			_nsub_628FA
+			NARGB		$02,$04,$05
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data35
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data35
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0D
+		SJSR			_ssub_62DB1
 _sloc_15658:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$A8,$04,$08,$05	; DATA	  $A8,$04,$08,$05
-		.BYTE	$00,$04,$48,$05	; DATA	  $00,$04,$48,$05
-		.BYTE	$0C		; SBCC		  _sloc_15658
-		.WORD	_sloc_15658
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$94,$99,$00	; DATA	  $94,$99,$00
-		.BYTE	$7C,$A7,$03	; DATA	  $7C,$A7,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15691	; CASE	  _sjmp_case_15691
-		.WORD	_sjmp_case_155E9	; CASE	  _sjmp_case_155E9
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$A8,$04,$08,$05
+			NARGB		$00,$04,$48,$05
+		SBCC			_sloc_15658
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$94,$99,$00
+			NARGB		$7C,$A7,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15691
+		SCASE			_sjmp_case_155E9
 _lvl_doors_data35:
 		.BYTE	$04,$10,$05,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3103,53 +2416,41 @@ _lvl_doors_data35:
 		.BYTE	$FF
 _prize_sequence_data35:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15691:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$03
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$04,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$04,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data36
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data36
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data36
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data36
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_626B7,$06,byte_15D35
-		.WORD	_nsub_626B7
-		.BYTE	$06
-		.WORD	byte_15D35
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$03
+		NJSR			_nsub_628FA
+			NARGB		$01,$04,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data36
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data36
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_626B7
+			NARGB		$06
+			NARGW		byte_15D35
+		SJSR			_ssub_62DB1
 _sloc_156B2:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$03
-		.WORD	_nsub_6294B
-		.BYTE	$03
-		.BYTE	$00,$04,$50,$03	; DATA	  $00,$04,$50,$03
-		.BYTE	$F8,$04,$50,$03	; DATA	  $F8,$04,$50,$03
-		.BYTE	$B0,$04,$F8,$04	; DATA	  $B0,$04,$F8,$04
-		.BYTE	$0C		; SBCC		  _sloc_156B2
-		.WORD	_sloc_156B2
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$03
-		.WORD	_nsub_room_register
-		.BYTE	$03
-		.BYTE	$7C,$67,$03	; DATA	  $7C,$67,$03
-		.BYTE	$A3,$67,$01	; DATA	  $A3,$67,$01
-		.BYTE	$94,$A3,$02	; DATA	  $94,$A3,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_1573F	; CASE	  _sjmp_case_1573F
-		.WORD	_sjmp_case_156FB	; CASE	  _sjmp_case_156FB
-		.WORD	_sjmp_case_1563D	; CASE	  _sjmp_case_1563D
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$03
+			NARGB		$00,$04,$50,$03
+			NARGB		$F8,$04,$50,$03
+			NARGB		$B0,$04,$F8,$04
+		SBCC			_sloc_156B2
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$03
+			NARGB		$7C,$67,$03
+			NARGB		$A3,$67,$01
+			NARGB		$94,$A3,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$03
+		SCASE			_sjmp_case_1573F
+		SCASE			_sjmp_case_156FB
+		SCASE			_sjmp_case_1563D
 _lvl_doors_data36:
 		.BYTE	$04,$B0,$04,$D0,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3160,92 +2461,71 @@ _lvl_doors_data36:
 		.BYTE	$FF
 _prize_sequence_data36:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_156FB:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$04
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$05,$03
-		.WORD	_nsub_628FA
-		.BYTE	$02,$05,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_room_doors_data37
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_room_doors_data37
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data37
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data37
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$04
+		NJSR			_nsub_628FA
+			NARGB		$02,$05,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_room_doors_data37
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data37
+		SJSR			_ssub_62DB1
 _sloc_15716:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$00,$05,$50,$03	; DATA	  $00,$05,$50,$03
-		.BYTE	$0C		; SBCC		  _sloc_15716
-		.WORD	_sloc_15716
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$9C,$67,$03	; DATA	  $9C,$67,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-; NOTE: SJMP_SW here has only single case entry, but number here is 2
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$00,$05,$50,$03
+		SBCC			_sloc_15716
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$9C,$67,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+; NOTE: SJMP_SW		 here has only single case entry, but counter here is $02
 ; this not cause any bugs, but incorrect.
-;
-		.BYTE	$11,$02		; SJMP_SW	  $01
-		.WORD	_sjmp_case_15691	; CASE	  _sjmp_case_15691
+; FIXME
+		SJMP_SW			$02
+; -
+		SCASE			_sjmp_case_15691
 _room_doors_data37:
 		.BYTE	$05,$10,$03,$50,$0F
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data37:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_1573F:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$05
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$03,$03
-		.WORD	_nsub_628FA
-		.BYTE	$02,$03,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$12
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$12
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data38
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data38
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data38
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data38
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$05
+		NJSR			_nsub_628FA
+			NARGB		$02,$03,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$12
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data38
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data38
+		SJSR			_ssub_62DB1
 _sloc_1575A:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$03,$50,$03	; DATA	  $F8,$03,$50,$03
-		.BYTE	$B0,$03,$F8,$03	; DATA	  $B0,$03,$F8,$03
-		.BYTE	$0C		; SBCC		  _sloc_1575A
-		.WORD	_sloc_1575A
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$83,$67,$01	; DATA	  $83,$67,$01
-		.BYTE	$74,$83,$02	; DATA	  $74,$83,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15691	; CASE	  _sjmp_case_15691
-		.WORD	_sjmp_case_15793	; CASE	  _sjmp_case_15793
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$03,$50,$03
+			NARGB		$B0,$03,$F8,$03
+		SBCC			_sloc_1575A
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$83,$67,$01
+			NARGB		$74,$83,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15691
+		SCASE			_sjmp_case_15793
 _lvl_doors_data38:
 		.BYTE	$03,$E0,$03,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3254,43 +2534,33 @@ _lvl_doors_data38:
 		.BYTE	$FF
 _prize_sequence_data38:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15793:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$06
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$06
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$02,$04
-		.WORD	_nsub_628FA
-		.BYTE	$00,$02,$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data39
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data39
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data39
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data39
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$06
+		NJSR			_nsub_628FA
+			NARGB		$00,$02,$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data39
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data39
+		SJSR			_ssub_62DB1
 _sloc_157AA:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$B0,$03,$08,$04	; DATA	  $B0,$03,$08,$04
-		.BYTE	$00,$02,$50,$04	; DATA	  $00,$02,$50,$04
-		.BYTE	$0C		; SBCC		  _sloc_157AA
-		.WORD	_sloc_157AA
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$74,$79,$00	; DATA	  $74,$79,$00
-		.BYTE	$3C,$87,$03	; DATA	  $3C,$87,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_1573F	; CASE	  _sjmp_case_1573F
-		.WORD	_sjmp_case_157E3	; CASE	  _sjmp_case_157E3
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$B0,$03,$08,$04
+			NARGB		$00,$02,$50,$04
+		SBCC			_sloc_157AA
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$74,$79,$00
+			NARGB		$3C,$87,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_1573F
+		SCASE			_sjmp_case_157E3
 _lvl_doors_data39:
 		.BYTE	$03,$B0,$04,$20,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3299,46 +2569,36 @@ _lvl_doors_data39:
 		.BYTE	$FF
 _prize_sequence_data39:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_157E3:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$07
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$01,$04
-		.WORD	_nsub_628FA
-		.BYTE	$01,$01,$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data3A
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data3A
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data3A
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data3A
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$07
+		NJSR			_nsub_628FA
+			NARGB		$01,$01,$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data3A
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3A
+		SJSR			_ssub_62DB1
 _sloc_157FA:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$03
-		.WORD	_nsub_6294B
-		.BYTE	$03
-		.BYTE	$F8,$01,$50,$04	; DATA	  $F8,$01,$50,$04
-		.BYTE	$B0,$01,$F8,$05	; DATA	  $B0,$01,$F8,$05
-		.BYTE	$00,$01,$A0,$05	; DATA	  $00,$01,$A0,$05
-		.BYTE	$0C		; SBCC		  _sloc_157FA
-		.WORD	_sloc_157FA
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$03
-		.WORD	_nsub_room_register
-		.BYTE	$03
-		.BYTE	$43,$87,$01	; DATA	  $43,$87,$01
-		.BYTE	$34,$C3,$02	; DATA	  $34,$C3,$02
-		.BYTE	$1C,$B1,$03	; DATA	  $1C,$B1,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_15793	; CASE	  _sjmp_case_15793
-		.WORD	_sjmp_case_15843	; CASE	  _sjmp_case_15843
-		.WORD	_sjmp_case_15887	; CASE	  _sjmp_case_15887
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$03
+			NARGB		$F8,$01,$50,$04
+			NARGB		$B0,$01,$F8,$05
+			NARGB		$00,$01,$A0,$05
+		SBCC			_sloc_157FA
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$03
+			NARGB		$43,$87,$01
+			NARGB		$34,$C3,$02
+			NARGB		$1C,$B1,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$03
+		SCASE			_sjmp_case_15793
+		SCASE			_sjmp_case_15843
+		SCASE			_sjmp_case_15887
 _lvl_doors_data3A:
 		.BYTE	$01,$E0,$04,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3349,89 +2609,67 @@ _lvl_doors_data3A:
 		.BYTE	$FF
 _prize_sequence_data3A:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15843:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$08
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$08
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$01,$06
-		.WORD	_nsub_628FA
-		.BYTE	$02,$01,$06
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$12
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$12
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data3B
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data3B
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data3B
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data3B
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$08
+		NJSR			_nsub_628FA
+			NARGB		$02,$01,$06
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$12
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data3B
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3B
+		SJSR			_ssub_62DB1
 _sloc_1585E:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$B0,$01,$08,$06	; DATA	  $B0,$01,$08,$06
-		.BYTE	$0C		; SBCC		  _sloc_1585E
-		.WORD	_sloc_1585E
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$34,$B9,$00	; DATA	  $34,$B9,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_157E3	; CASE	  _sjmp_case_157E3
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$B0,$01,$08,$06
+		SBCC			_sloc_1585E
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$34,$B9,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_157E3
 _lvl_doors_data3B:
 		.BYTE	$01,$B0,$06,$20,$0E
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data3B:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15887:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$09
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$09
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$00,$05
-		.WORD	_nsub_628FA
-		.BYTE	$02,$00,$05
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$07
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data3C
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data3C
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data3C
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data3C
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$09
+		NJSR			_nsub_628FA
+			NARGB		$02,$00,$05
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$07
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data3C
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3C
+		SJSR			_ssub_62DB1
 _sloc_158A2:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$00,$A0,$05	; DATA	  $F8,$00,$A0,$05
-		.BYTE	$40,$00,$08,$05	; DATA	  $40,$00,$08,$05
-		.BYTE	$0C		; SBCC		  _sloc_158A2
-		.WORD	_sloc_158A2
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$23,$B1,$01	; DATA	  $23,$B1,$01
-		.BYTE	$06,$99,$00	; DATA	  $06,$99,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_157E3	; CASE	  _sjmp_case_157E3
-		.WORD	_sjmp_case_158DB	; CASE	  _sjmp_case_158DB
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$00,$A0,$05
+			NARGB		$40,$00,$08,$05
+		SBCC			_sloc_158A2
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$23,$B1,$01
+			NARGB		$06,$99,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_157E3
+		SCASE			_sjmp_case_158DB
 _lvl_doors_data3C:
 		.BYTE	$00,$40,$05,$20,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3440,49 +2678,37 @@ _lvl_doors_data3C:
 		.BYTE	$FF
 _prize_sequence_data3C:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_158DB:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0A
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0A
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$00,$03
-		.WORD	_nsub_628FA
-		.BYTE	$01,$00,$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_15D1D
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_15D1D
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data3D
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data3D
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data3D
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data3D
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0A
+		NJSR			_nsub_628FA
+			NARGB		$01,$00,$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_15D1D
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data3D
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3D
+		SJSR			_ssub_62DB1
 _sloc_158FB:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$40,$00,$F8,$04	; DATA	  $40,$00,$F8,$04
-		.BYTE	$F8,$00,$50,$03	; DATA	  $F8,$00,$50,$03
-		.BYTE	$0C		; SBCC		  _sloc_158FB
-		.WORD	_sloc_158FB
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$06,$A3,$02	; DATA	  $06,$A3,$02
-		.BYTE	$23,$67,$01	; DATA	  $23,$67,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15887	; CASE	  _sjmp_case_15887
-		.WORD	_sjmp_case_15934	; CASE	  _sjmp_case_15934
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$40,$00,$F8,$04
+			NARGB		$F8,$00,$50,$03
+		SBCC			_sloc_158FB
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$06,$A3,$02
+			NARGB		$23,$67,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15887
+		SCASE			_sjmp_case_15934
 _lvl_doors_data3D:
 		.BYTE	$00,$40,$04,$D0,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3491,43 +2717,33 @@ _lvl_doors_data3D:
 		.BYTE	$FF
 _prize_sequence_data3D:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15934:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0B
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0B
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$01,$03
-		.WORD	_nsub_628FA
-		.BYTE	$02,$01,$03
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data3E
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data3E
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data3E
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data3E
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0B
+		NJSR			_nsub_628FA
+			NARGB		$02,$01,$03
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data3E
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3E
+		SJSR			_ssub_62DB1
 _sloc_1594B:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$01,$A0,$03	; DATA	  $F8,$01,$A0,$03
-		.BYTE	$00,$01,$50,$03	; DATA	  $00,$01,$50,$03
-		.BYTE	$0C		; SBCC		  _sloc_1594B
-		.WORD	_sloc_1594B
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$43,$71,$01	; DATA	  $43,$71,$01
-		.BYTE	$1C,$67,$03	; DATA	  $1C,$67,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15984	; CASE	  _sjmp_case_15984
-		.WORD	_sjmp_case_158DB	; CASE	  _sjmp_case_158DB
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$01,$A0,$03
+			NARGB		$00,$01,$50,$03
+		SBCC			_sloc_1594B
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$43,$71,$01
+			NARGB		$1C,$67,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15984
+		SCASE			_sjmp_case_158DB
 _lvl_doors_data3E:
 		.BYTE	$01,$10,$03,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3536,46 +2752,35 @@ _lvl_doors_data3E:
 		.BYTE	$FF
 _prize_sequence_data3E:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15984:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0C
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$02,$02
-		.WORD	_nsub_628FA
-		.BYTE	$01,$02,$02
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$04
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data3F
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data3F
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data3F
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data3F
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0C
+		NJSR			_nsub_628FA
+			NARGB		$01,$02,$02
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data3F
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3F
+		SJSR			_ssub_62DB1
 _sloc_1599F:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$00,$02,$50,$02	; DATA	  $00,$02,$50,$02
-		.BYTE	$00,$02,$A0,$03	; DATA	  $00,$02,$A0,$03
-		.BYTE	$0C		; SBCC		  _sloc_1599F
-		.WORD	_sloc_1599F
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$3C,$47,$03	; DATA	  $3C,$47,$03
-		.BYTE	$3C,$71,$03	; DATA	  $3C,$71,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_159DF	; CASE	  _sjmp_case_159DF
-		.WORD	_sjmp_case_15934	; CASE	  _sjmp_case_15934
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$00,$02,$50,$02
+			NARGB		$00,$02,$A0,$03
+		SBCC			_sloc_1599F
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$3C,$47,$03
+			NARGB		$3C,$71,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_159DF
+		SCASE			_sjmp_case_15934
 _lvl_doors_data3F:
 		.BYTE	$02,$10,$03,$A0,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3584,43 +2789,33 @@ _lvl_doors_data3F:
 		.BYTE	$FF
 _prize_sequence_data3F:
 		.BYTE	$19,$18,$19,$19,$19,$18,$18,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_159DF:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0D
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0D
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$00,$02
-		.WORD	_nsub_628FA
-		.BYTE	$00,$00,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data40
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data40
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data40
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data40
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0D
+		NJSR			_nsub_628FA
+			NARGB		$00,$00,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data40
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data40
+		SJSR			_ssub_62DB1
 _sloc_159F6:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$40,$00,$08,$02	; DATA	  $40,$00,$08,$02
-		.BYTE	$F8,$01,$50,$02	; DATA	  $F8,$01,$50,$02
-		.BYTE	$0C		; SBCC		  _sloc_159F6
-		.WORD	_sloc_159F6
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$06,$39,$00	; DATA	  $06,$39,$00
-		.BYTE	$42,$47,$01	; DATA	  $42,$47,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15A37	; CASE	  _sjmp_case_15A37
-		.WORD	_sjmp_case_15984	; CASE	  _sjmp_case_15984
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$40,$00,$08,$02
+			NARGB		$F8,$01,$50,$02
+		SBCC			_sloc_159F6
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$06,$39,$00
+			NARGB		$42,$47,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15A37
+		SCASE			_sjmp_case_15984
 _lvl_doors_data40:
 		.BYTE	$01,$E0,$02,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3629,50 +2824,38 @@ _lvl_doors_data40:
 		.BYTE	$FF
 _prize_sequence_data40:
 		.BYTE	$13,$13,$19,$19,$19,$19,$17,$17,$00
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15A37:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0E
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$00,$01
-		.WORD	_nsub_628FA
-		.BYTE	$02,$00,$01
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0F
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15179
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15179
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data41
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data41
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data41
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data41
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0E
+		NJSR			_nsub_628FA
+			NARGB		$02,$00,$01
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0F
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15179
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data41
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data41
+		SJSR			_ssub_62DB1
 _sloc_15A58:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$00,$50,$01	; DATA	  $F8,$00,$50,$01
-		.BYTE	$40,$00,$F8,$01	; DATA	  $40,$00,$F8,$01
-		.BYTE	$0C		; SBCC		  _sloc_15A58
-		.WORD	_sloc_15A58
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$23,$27,$01	; DATA	  $23,$27,$01
-		.BYTE	$06,$43,$02	; DATA	  $06,$43,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15A91	; CASE	  _sjmp_case_15A91
-		.WORD	_sjmp_case_159DF	; CASE	  _sjmp_case_159DF
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$00,$50,$01
+			NARGB		$40,$00,$F8,$01
+		SBCC			_sloc_15A58
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$23,$27,$01
+			NARGB		$06,$43,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15A91
+		SCASE			_sjmp_case_159DF
 _lvl_doors_data41:
 		.BYTE	$00,$E0,$01,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3681,53 +2864,41 @@ _lvl_doors_data41:
 		.BYTE	$FF
 _prize_sequence_data41:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15A91:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$0F
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$0F
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$01,$01
-		.WORD	_nsub_628FA
-		.BYTE	$00,$01,$01
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15D39
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15D39
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data42
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data42
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data42
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data42
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$0F
+		NJSR			_nsub_628FA
+			NARGB		$00,$01,$01
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15D39
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data42
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data42
+		SJSR			_ssub_62DB1
 _sloc_15AB2:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$03
-		.WORD	_nsub_6294B
-		.BYTE	$03
-		.BYTE	$F8,$02,$50,$01	; DATA	  $F8,$02,$50,$01
-		.BYTE	$00,$01,$50,$01	; DATA	  $00,$01,$50,$01
-		.BYTE	$70,$01,$08,$01	; DATA	  $70,$01,$08,$01
-		.BYTE	$0C		; SBCC		  _sloc_15AB2
-		.WORD	_sloc_15AB2
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$03
-		.WORD	_nsub_room_register
-		.BYTE	$03
-		.BYTE	$63,$27,$01	; DATA	  $63,$27,$01
-		.BYTE	$1C,$27,$03	; DATA	  $1C,$27,$03
-		.BYTE	$2C,$19,$00	; DATA	  $2C,$19,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_15B3F	; CASE	  _sjmp_case_15B3F
-		.WORD	_sjmp_case_15A37	; CASE	  _sjmp_case_15A37
-		.WORD	_sjmp_case_15AFB	; CASE	  _sjmp_case_15AFB
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$03
+			NARGB		$F8,$02,$50,$01
+			NARGB		$00,$01,$50,$01
+			NARGB		$70,$01,$08,$01
+		SBCC			_sloc_15AB2
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$03
+			NARGB		$63,$27,$01
+			NARGB		$1C,$27,$03
+			NARGB		$2C,$19,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$03
+		SCASE			_sjmp_case_15B3F
+		SCASE			_sjmp_case_15A37
+		SCASE			_sjmp_case_15AFB
 _lvl_doors_data42:
 		.BYTE	$01,$70,$01,$20,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3738,89 +2909,67 @@ _lvl_doors_data42:
 		.BYTE	$FF
 _prize_sequence_data42:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15AFB:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$10
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$10
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$01,$00
-		.WORD	_nsub_628FA
-		.BYTE	$02,$01,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data43
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data43
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data43
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data43
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$10
+		NJSR			_nsub_628FA
+			NARGB		$02,$01,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data43
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data43
+		SJSR			_ssub_62DB1
 _sloc_15B16:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$70,$01,$F8,$00	; DATA	  $70,$01,$F8,$00
-		.BYTE	$0C		; SBCC		  _sloc_15B16
-		.WORD	_sloc_15B16
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$2C,$23,$02	; DATA	  $2C,$23,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_15A91	; CASE	  _sjmp_case_15A91
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$70,$01,$F8,$00
+		SBCC			_sloc_15B16
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$2C,$23,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_15A91
 _lvl_doors_data43:
 		.BYTE	$01,$70,$00,$D0,$0E
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data43:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15B3F:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$11
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$11
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$03,$01
-		.WORD	_nsub_628FA
-		.BYTE	$01,$03,$01
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$04
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data44
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data44
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data44
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data44
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$11
+		NJSR			_nsub_628FA
+			NARGB		$01,$03,$01
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$04
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data44
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data44
+		SJSR			_ssub_62DB1
 _sloc_15B5A:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$F8,$03,$A0,$02	; DATA	  $F8,$03,$A0,$02
-		.BYTE	$00,$03,$50,$01	; DATA	  $00,$03,$50,$01
-		.BYTE	$0C		; SBCC		  _sloc_15B5A
-		.WORD	_sloc_15B5A
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$83,$51,$01	; DATA	  $83,$51,$01
-		.BYTE	$5C,$27,$03	; DATA	  $5C,$27,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15B93	; CASE	  _sjmp_case_15B93
-		.WORD	_sjmp_case_15A91	; CASE	  _sjmp_case_15A91
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$F8,$03,$A0,$02
+			NARGB		$00,$03,$50,$01
+		SBCC			_sloc_15B5A
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$83,$51,$01
+			NARGB		$5C,$27,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15B93
+		SCASE			_sjmp_case_15A91
 _lvl_doors_data44:
 		.BYTE	$03,$10,$01,$50,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3829,46 +2978,35 @@ _lvl_doors_data44:
 		.BYTE	$FF
 _prize_sequence_data44:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15B93:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$12
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$12
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$04,$02
-		.WORD	_nsub_628FA
-		.BYTE	$02,$04,$02
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data45
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data45
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data45
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data45
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$12
+		NJSR			_nsub_628FA
+			NARGB		$02,$04,$02
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data45
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data45
+		SJSR			_ssub_62DB1
 _sloc_15BAE:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$B0,$04,$08,$02	; DATA	  $B0,$04,$08,$02
-		.BYTE	$00,$04,$A0,$02	; DATA	  $00,$04,$A0,$02
-		.BYTE	$0C		; SBCC		  _sloc_15BAE
-		.WORD	_sloc_15BAE
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$94,$39,$00	; DATA	  $94,$39,$00
-		.BYTE	$7C,$51,$03	; DATA	  $7C,$51,$03
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15BE7	; CASE	  _sjmp_case_15BE7
-		.WORD	_sjmp_case_15B3F	; CASE	  _sjmp_case_15B3F
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$B0,$04,$08,$02
+			NARGB		$00,$04,$A0,$02
+		SBCC			_sloc_15BAE
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$94,$39,$00
+			NARGB		$7C,$51,$03
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15BE7
+		SCASE			_sjmp_case_15B3F
 _lvl_doors_data45:
 		.BYTE	$04,$10,$02,$A0,$0F
 		.WORD	_room_door_enemy_clear_open
@@ -3877,50 +3015,38 @@ _lvl_doors_data45:
 		.BYTE	$FF
 _prize_sequence_data45:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15BE7:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$13
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$13
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$04,$01
-		.WORD	_nsub_628FA
-		.BYTE	$02,$04,$01
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0C
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15D3D
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15D3D
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data46
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data46
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data46
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data46
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$13
+		NJSR			_nsub_628FA
+			NARGB		$02,$04,$01
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0C
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15D3D
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data46
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data46
+		SJSR			_ssub_62DB1
 _sloc_15C08:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$B0,$04,$08,$01	; DATA	  $B0,$04,$08,$01
-		.BYTE	$B4,$04,$F8,$01	; DATA	  $B4,$04,$F8,$01
-		.BYTE	$0C		; SBCC		  _sloc_15C08
-		.WORD	_sloc_15C08
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$94,$19,$00	; DATA	  $94,$19,$00
-		.BYTE	$94,$43,$02	; DATA	  $94,$43,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15C41	; CASE	  _sjmp_case_15C41
-		.WORD	_sjmp_case_15B93	; CASE	  _sjmp_case_15B93
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$B0,$04,$08,$01
+			NARGB		$B4,$04,$F8,$01
+		SBCC			_sloc_15C08
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$94,$19,$00
+			NARGB		$94,$43,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15C41
+		SCASE			_sjmp_case_15B93
 _lvl_doors_data46:
 		.BYTE	$04,$B0,$01,$20,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3929,50 +3055,38 @@ _lvl_doors_data46:
 		.BYTE	$FF
 _prize_sequence_data46:
 		.BYTE	$FF
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15C41:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$14
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$14
-		.BYTE	$07		; NJSR		  _nsub_628FA,$00,$03,$00
-		.WORD	_nsub_628FA
-		.BYTE	$00,$03,$00
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$18
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$18
-		.BYTE	$07		; NJSR		  _nsub_626B7,$07,byte_15D39
-		.WORD	_nsub_626B7
-		.BYTE	$07
-		.WORD	byte_15D39
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data47
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data47
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data47
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data47
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$14
+		NJSR			_nsub_628FA
+			NARGB		$00,$03,$00
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$18
+		NJSR			_nsub_626B7
+			NARGB		$07
+			NARGW		byte_15D39
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data47
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data47
+		SJSR			_ssub_62DB1
 _sloc_15C62:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$00,$03,$70,$00	; DATA	  $00,$03,$70,$00
-		.BYTE	$B0,$04,$F8,$00	; DATA	  $B0,$04,$F8,$00
-		.BYTE	$0C		; SBCC		  _sloc_15C62
-		.WORD	_sloc_15C62
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$5C,$0C,$03	; DATA	  $5C,$0C,$03
-		.BYTE	$94,$23,$02	; DATA	  $94,$23,$02
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15C9B	; CASE	  _sjmp_case_15C9B
-		.WORD	_sjmp_case_15BE7	; CASE	  _sjmp_case_15BE7
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$00,$03,$70,$00
+			NARGB		$B0,$04,$F8,$00
+		SBCC			_sloc_15C62
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$5C,$0C,$03
+			NARGB		$94,$23,$02
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15C9B
+		SCASE			_sjmp_case_15BE7
 _lvl_doors_data47:
 		.BYTE	$04,$B0,$00,$D0,$0E
 		.WORD	_room_door_enemy_clear_open
@@ -3981,89 +3095,63 @@ _lvl_doors_data47:
 		.BYTE	$FF
 _prize_sequence_data47:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15C9B:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$15
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$15
-		.BYTE	$07		; NJSR		  _nsub_628FA,$02,$02,$00
-		.WORD	_nsub_628FA
-		.BYTE	$02,$02,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data48
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data48
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data48
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data48
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$15
+		NJSR			_nsub_628FA
+			NARGB		$02,$02,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data48
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data48
+		SJSR			_ssub_62DB1
 _sloc_15CB2:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$01
-		.WORD	_nsub_6294B
-		.BYTE	$01
-		.BYTE	$F8,$02,$70,$00	; DATA	  $F8,$02,$70,$00
-		.BYTE	$0C		; SBCC		  _sloc_15CB2
-		.WORD	_sloc_15CB2
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$63,$0C,$01	; DATA	  $63,$0C,$01
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_15C41	; CASE	  _sjmp_case_15C41
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$01
+			NARGB		$F8,$02,$70,$00
+		SBCC			_sloc_15CB2
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$63,$0C,$01
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_15C41
 _lvl_doors_data48:
 		.BYTE	$02,$E0,$00,$70,$0F
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data48:
 		.BYTE	$FF
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15CDB:
-		.BYTE	$13		; STORE8	  _lvl_data_prg_bank,$05
-		.WORD	_lvl_data_prg_bank
-		.BYTE	$05
-		.BYTE	$16		; STORE16	  _lvl_room_lib_ptr,_lvl4_room_lib
-		.WORD	_lvl_room_lib_ptr
-		.WORD	_lvl4_room_lib
-		.BYTE	$07		; NJSR		  _nsub_lvl_data_ptrs_load
-		.WORD	_nsub_lvl_data_ptrs_load
-		.WORD	_lvl4_macroA_tbl	; DATA	  _lvl4_macroA_tbl
-		.WORD	_lvl4_macroB_tbl	; DATA	  _lvl4_macroB_tbl
-		.WORD	_lvl4_macroC_tbl	; DATA	  _lvl4_macroC_tbl
-		.WORD	_lvl4_macroD_tbl	; DATA	  _lvl4_macroD_tbl
-		.WORD	_lvl4_attrs_tbl	; DATA	  _lvl4_attrs_tbl
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl_data0_ptr6
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl_data0_ptr6
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_15D1D
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_15D1D
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$0E
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$0E
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$15
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$15
-		.BYTE	$09		; NBG_HNDL_SET	  _j_nbgsub_1437C_1
-		.WORD	_j_nbgsub_1437C_1
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$09
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$09
-		.BYTE	$07		; NJSR		  _nsub_ingame_collision_watch_start
-		.WORD	_nsub_ingame_collision_watch_start
-		.BYTE	$07		; NJSR		  _nsub_ingame_player_control_start
-		.WORD	_nsub_ingame_player_control_start
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14324
-		.WORD	_scr_14324
-		.BYTE	$16		; STORE16	  _lvl_objects_ptr,_lvl4_objects_list
-		.WORD	_lvl_objects_ptr
-		.WORD	_lvl4_objects_list
-		.BYTE	$07		; NJSR		  _nsub_lvl_room_objects_init
-		.WORD	_nsub_lvl_room_objects_init
-		.BYTE	$05		; SRET
+		STORE8			_lvl_data_prg_bank,$05
+		STORE16			_lvl_room_lib_ptr,_lvl4_room_lib
+		NJSR			_nsub_lvl_data_ptrs_load
+			NARGW		_lvl4_macroA_tbl
+			NARGW		_lvl4_macroB_tbl
+			NARGW		_lvl4_macroC_tbl
+			NARGW		_lvl4_macroD_tbl
+			NARGW		_lvl4_attrs_tbl
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_06
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_15D1D
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$0E
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$15
+		NBG_HNDL_SET	_j_nbgsub_1437C_1
+		NJSR			_nsub_apu_mus_load
+			NARGB		$09
+		NJSR			_nsub_ingame_collision_watch_start
+		NJSR			_nsub_ingame_player_control_start
+		SRUN			$01,_scr_14324
+		STORE16			_lvl_objects_ptr,_lvl4_objects_list
+		NJSR			_nsub_lvl_room_objects_init
+		SRET
 byte_15D1D:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$01,$0F,$30,$27,$01,$0F,$30,$15,$07
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
@@ -4074,156 +3162,117 @@ byte_15D39:
 byte_15D3D:
 		.BYTE	$0F,$36,$27,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _j_nbgsub_1437C_1:
 		JMP		_lvl_room_objects_handler
+
+; =============== S C R I P T ===============================================
 _scr6_lvl6_handler:
-		.BYTE	$07		; NJSR		  _nsub_sub_rom_idx_calc
-		.WORD	_nsub_sub_rom_idx_calc
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$04		; SJSR		  _ssub_15DD6
-		.WORD	_ssub_15DD6
-		.BYTE	$07		; NJSR		  _nsub_room_register,$01
-		.WORD	_nsub_room_register
-		.BYTE	$01
-		.BYTE	$0E,$73,$00	; DATA	  $0E,$73,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_15D5F	; CASE	  _sjmp_case_15D5F
+		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJSR			_ssub_15DD6
+		NJSR			_nsub_room_register
+			NARGB		$01
+			NARGB		$0E,$73,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$01
+		SCASE			_sjmp_case_15D5F
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15D5F:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$00
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$00,$02
-		.WORD	_nsub_628FA
-		.BYTE	$01,$00,$02
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data49
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data49
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data49
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data49
-		.BYTE	$04		; SJSR		  _ssub_62DB1
-		.WORD	_ssub_62DB1
+		STORE8			_cur_room_sequence_idx,$00
+		NJSR			_nsub_628FA
+			NARGB		$01,$00,$02
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data49
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data49
+		SJSR			_ssub_62DB1
 _sloc_15D76:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6294B,$02
-		.WORD	_nsub_6294B
-		.BYTE	$02
-		.BYTE	$70,$00,$10,$02	; DATA	  $70,$00,$10,$02
-		.BYTE	$90,$00,$10,$02	; DATA	  $90,$00,$10,$02
-		.BYTE	$0C		; SBCC		  _sloc_15D76
-		.WORD	_sloc_15D76
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_room_register,$02
-		.WORD	_nsub_room_register
-		.BYTE	$02
-		.BYTE	$0E,$36,$00	; DATA	  $0E,$36,$00
-		.BYTE	$0E,$36,$00	; DATA	  $0E,$36,$00
-		.BYTE	$07		; NJSR		  _nsub_read_mem,_sub_room_idx
-		.WORD	_nsub_read_mem
-		.WORD	_sub_room_idx
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_15DA1	; CASE	  _sjmp_case_15DA1
-		.WORD	_sjmp_case_15DA1	; CASE	  _sjmp_case_15DA1
+		SDELAY			$01
+		NJSR			_nsub_6294B
+			NARGB		$02
+			NARGB		$70,$00,$10,$02
+			NARGB		$90,$00,$10,$02
+		SBCC			_sloc_15D76
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_room_register
+			NARGB		$02
+			NARGB		$0E,$36,$00
+			NARGB		$0E,$36,$00
+		NJSR			_nsub_read_mem
+			NARGW		_sub_room_idx
+		SJMP_SW			$02
+		SCASE			_sjmp_case_15DA1
+		SCASE			_sjmp_case_15DA1
 _lvl_doors_data49:
 		.BYTE	$FF
 _prize_sequence_data49:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T ===============================================
 _sjmp_case_15DA1:
-		.BYTE	$13		; STORE8	  _cur_room_sequence_idx,$01
-		.WORD	_cur_room_sequence_idx
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_628FA,$01,$00,$00
-		.WORD	_nsub_628FA
-		.BYTE	$01,$00,$00
-		.BYTE	$07		; NJSR		  _nsub_room_doors_handler_and_data_init,_lvl_doors_data4A
-		.WORD	_nsub_room_doors_handler_and_data_init
-		.WORD	_lvl_doors_data4A
-		.BYTE	$16		; STORE16	  _room_prize_sequence_ptr,_prize_sequence_data4A
-		.WORD	_room_prize_sequence_ptr
-		.WORD	_prize_sequence_data4A
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_inc,$DD
-		.WORD	_nsub_counters_inc
-		.BYTE	$DD
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$13		; STORE8	  _scr_trds_priority_mode,$00
-		.WORD	_scr_trds_priority_mode
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_15E3B
-		.WORD	_nsub_15E3B
-		.BYTE	$80,$80,$FF	; SCRL_Y_MOVE_SET 0,$80,$FF
-		.BYTE	$06,$F0		; SDELAY	  $F0
-		.BYTE	$06,$F0		; SDELAY	  $F0
-		.BYTE	$C8		; SCRL_MOVE_STOP  0
-		.BYTE	$13		; STORE8	  _cur_room_x_pageB,$00
-		.WORD	_cur_room_x_pageB
-		.BYTE	$00
-		.BYTE	$0A		; SUSPEND
+		STORE8			_cur_room_sequence_idx,$01
+		NJSR			_nsub_628FA
+			NARGB		$01,$00,$00
+		NJSR			_nsub_room_doors_handler_and_data_init
+			NARGW		_lvl_doors_data4A
+		STORE16			_room_prize_sequence_ptr,_prize_sequence_data4A
+		SDELAY			$01
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_inc
+			NARGB		$DD
+		SDELAY			$03
+		SLOOP_END
+		STORE8			_scr_trds_priority_mode,$00
+		NJSR			_nsub_15E3B
+		SCRL_Y_MOVE_SET 0,$80,$FF
+		SDELAY			$F0
+		SDELAY			$F0
+		SCRL_MOVE_STOP  0
+		STORE8			_cur_room_x_pageB,$00
+		SUSPEND
 _lvl_doors_data4A:
 		.BYTE	$FF
 _prize_sequence_data4A:
 		.BYTE	$FF	; *--
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15DD6:
-		.BYTE	$13		; STORE8	  _lvl_data_prg_bank,$03
-		.WORD	_lvl_data_prg_bank
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_lvl_data_ptrs_load
-		.WORD	_nsub_lvl_data_ptrs_load
-		.WORD	_lvl5_macroA_tbl	; DATA	  _lvl5_macroA_tbl
-		.WORD	_lvl5_macroB_tbl	; DATA	  _lvl5_macroB_tbl
-		.WORD	_lvl5_macroC_tbl	; DATA	  _lvl5_macroC_tbl
-		.WORD	_lvl5_macroD_tbl	; DATA	  _lvl5_macroD_tbl
-		.WORD	_lvl5_macroE_tbl	; DATA	  _lvl5_macroE_tbl
-		.BYTE	$16		; STORE16	  _lvl_room_lib_ptr,_lvl5_room_lib
-		.WORD	_lvl_room_lib_ptr
-		.WORD	_lvl5_room_lib
-		.BYTE	$16		; STORE16	  _lvl_data0_ptr,_lvl5_data0_list
-		.WORD	_lvl_data0_ptr
-		.WORD	_lvl5_data0_list
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_15E18
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_15E18
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$17
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$17
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$16
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$16
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$0A
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$0A
-		.BYTE	$09		; NBG_HNDL_SET	  _j_nbgsub_1437C_2
-		.WORD	_j_nbgsub_1437C_2
-		.BYTE	$07		; NJSR		  _nsub_ingame_collision_watch_start
-		.WORD	_nsub_ingame_collision_watch_start
-		.BYTE	$07		; NJSR		  _nsub_ingame_player_control_start
-		.WORD	_nsub_ingame_player_control_start
-		.BYTE	$08,$01		; SRUN		  $01,_scr_14324
-		.WORD	_scr_14324
-		.BYTE	$16		; STORE16	  _lvl_objects_ptr,_lvl5_objects_list
-		.WORD	_lvl_objects_ptr
-		.WORD	_lvl5_objects_list
-		.BYTE	$07		; NJSR		  _nsub_lvl_room_objects_init
-		.WORD	_nsub_lvl_room_objects_init
-		.BYTE	$05		; SRET
+		STORE8			_lvl_data_prg_bank,$03
+		NJSR			_nsub_lvl_data_ptrs_load
+			NARGW		_lvl5_macroA_tbl
+			NARGW		_lvl5_macroB_tbl
+			NARGW		_lvl5_macroC_tbl
+			NARGW		_lvl5_macroD_tbl
+			NARGW		_lvl5_macroE_tbl
+		STORE16			_lvl_room_lib_ptr,_lvl5_room_lib
+		STORE16			_lvl_collisions_ptr,_lvl_collisions_07
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_15E18
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$17
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$16
+		NJSR			_nsub_apu_mus_load
+			NARGB		$0A
+		NBG_HNDL_SET	_j_nbgsub_1437C_2
+		NJSR			_nsub_ingame_collision_watch_start
+		NJSR			_nsub_ingame_player_control_start
+		SRUN			$01,_scr_14324
+		STORE16			_lvl_objects_ptr,_lvl5_objects_list
+		NJSR			_nsub_lvl_room_objects_init
+		SRET
 byte_15E18:
 		.BYTE	$0F,$30,$10,$1B,$0F,$10,$1B,$06,$0F,$26,$17,$07,$0F,$09,$10,$0B
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$17,$0F,$0F,$36,$25,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _j_nbgsub_1437C_2:
 		JMP		_lvl_room_objects_handler
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_15E3B:
 		LDX		#$02
 		JSR		_script_load_param_ex
@@ -4233,7 +3282,7 @@ _nsub_15E3B:
 		.WORD	_scr_60FDB
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_15E4A:
 		LDA		_scr_trds_priority_mode
 		BNE		loc_15E56
@@ -4246,7 +3295,7 @@ loc_15E56:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _unref_0:
 		LDA		_pad0_pressed	; *--
 		AND		#$20       ; *--
@@ -4260,7 +3309,7 @@ loc_15E65:
 		CLC
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_pause_menu_handler:
 		LDA		#$FF
 		JSR		_far_prg6_apu_mus_load_ex
@@ -4287,7 +3336,7 @@ _nsub_pause_menu_handler:
 		STA		_ppu_scroll_pos_y+1
 		LDA		_chr_bank1
 		PHA
-		LDA		#$01
+		LDA		#_tlm1_score_idx
 		JSR		_far_prg0_tlm_lib_unpack
 		JSR		_nsub_pause_info_display
 		JSR		_ppu_res_send_param
@@ -4339,7 +3388,7 @@ loc_15ED8:
 		LDA		_apu_req_idx
 		JMP		_far_prg6_apu_mus_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _pause_menu_anim:
 		LDA		#$00
 		STA		_tmpD8
@@ -4380,86 +3429,65 @@ _res_pause_pal:
 		.BYTE	$18,$01
 		.BYTE	$0F,$31,$11,$01,$0F,$00,$10,$20,$0F,$00,$10,$20,$0F,$00,$10,$20
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
+
+; =============== S C R I P T ===============================================
 _scr_15F56:
-		.BYTE	$07		; NJSR		  _nsub_62CF3
-		.WORD	_nsub_62CF3
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$FF
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$FF
-		.BYTE	$13		; STORE8	  _apu_var402,$FF
-		.WORD	_apu_var402
-		.BYTE	$FF
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$13		; STORE8	  _scr_trds_priority_mode,$01
-		.WORD	_scr_trds_priority_mode
-		.BYTE	$01
-		.BYTE	$06,$4B		; SDELAY	  $4B
-		.BYTE	$07		; NJSR		  _nsub_62B40
-		.WORD	_nsub_62B40
-		.BYTE	$06,$2D		; SDELAY	  $2D
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$03
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$05
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_62BB1,$80,$7C
-		.WORD	_nsub_62BB1
-		.BYTE	$80,$7C
-		.BYTE	$20,$17		; SPR_IDX_SET	  0,$17
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_15FD6
-		.WORD	_nbgsub_15FD6
-		.BYTE	$06,$78		; SDELAY	  $78
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_dec,$FE
-		.WORD	_nsub_counters_dec
-		.BYTE	$FE
-		.BYTE	$06,$06		; SDELAY	  $06
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_far_prg0_tlm_lib_unpack,$01
-		.WORD	_nsub_far_prg0_tlm_lib_unpack
-		.BYTE	$01
-		.BYTE	$07		; NJSR		  _nsub_pause_info_display
-		.WORD	_nsub_pause_info_display
-		.BYTE	$07		; NJSR		  _nsub_bg_pal_load,byte_15FC3
-		.WORD	_nsub_bg_pal_load
-		.WORD	byte_15FC3
-		.BYTE	$07		; NJSR		  _nsub_62775,$00
-		.WORD	_nsub_62775
-		.BYTE	$00
-		.BYTE	$28,$80,$00	; POS_X_SET	  0,$80,$00
-		.BYTE	$30,$7C,$00	; POS_Y_SET	  0,$7C,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_15FD3
-		.WORD	_nbgsub_15FD3
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$04
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$04
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$05
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$05
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_inc,$FE
-		.WORD	_nsub_counters_inc
-		.BYTE	$FE
-		.BYTE	$06,$06		; SDELAY	  $06
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$06,$F0		; SDELAY	  $F0
-		.BYTE	$04		; SJSR		  _ssub_62DA3
-		.WORD	_ssub_62DA3
-		.BYTE	$13		; STORE8	  _game_flags,$80
-		.WORD	_game_flags
-		.BYTE	$80
-		.BYTE	$00		; STOP
+		NJSR			_nsub_62CF3
+		NJSR			_nsub_apu_mus_load
+			NARGB		$FF
+		STORE8			_apu_var402,$FF
+		SDELAY			$10
+		STORE8			_scr_trds_priority_mode,$01
+		SDELAY			$4B
+		NJSR			_nsub_62B40
+		SDELAY			$2D
+		NJSR			_nsub_apu_mus_load
+			NARGB		$03
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$05
+		NJSR			_nsub_62BB1
+			NARGB		$80,$7C
+		SPR_IDX_SET		0,$17
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_15FD6
+		SDELAY			$78
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_dec
+			NARGB		$FE
+		SDELAY			$06
+		SLOOP_END
+		NJSR			_nsub_far_prg0_tlm_lib_unpack
+			NARGB		_tlm1_score_idx
+		NJSR			_nsub_pause_info_display
+		NJSR			_nsub_bg_pal_load
+			NARGW		byte_15FC3
+		NJSR			_nsub_62775
+			NARGB		$00
+		POS_X_SET		0,$80,$00
+		POS_Y_SET		0,$7C,$00
+		NBG_HNDL_SET	_nbgsub_15FD3
+		SPR_IDX_INC		0
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$04
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$05
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_inc
+			NARGB		$FE
+		SDELAY			$06
+		SLOOP_END
+		SDELAY			$F0
+		SJSR			_ssub_62DA3
+		STORE8			_game_flags,$80
+		SSTOP
 byte_15FC3:
 		.BYTE	$0F,$30,$0F,$0F,$0F,$30,$10,$00,$0F,$35,$25,$15,$0F,$30,$3B,$2B
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_15FD3:
 		JSR		_pause_menu_anim
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_15FD6:
 		LDA		_nmi_counter
 		AND		#$03
@@ -4501,7 +3529,7 @@ byte_15FFE:
 		.BYTE	$0F,$0F,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_pause_info_display:
 		LDA		#$05
 		JSR		_mmc1_chr1_set
@@ -4577,79 +3605,62 @@ _spr_raw_lib01_18:
 		.BYTE	$F0,$6D,$03,$F0
 		.BYTE	$F0,$6F,$03,$F8
 		.BYTE	$F0,$71,$03,$00
+
+; =============== S C R I P T ===============================================
 _scr_16111:
-		.BYTE	$04		; SJSR		  _ssub_62DC5
-		.WORD	_ssub_62DC5
-		.BYTE	$07		; NJSR		  _nsub_62B40
-		.WORD	_nsub_62B40
-		.BYTE	$07		; NJSR		  _nsub_far_prg0_tlm_lib_unpack,$03
-		.WORD	_nsub_far_prg0_tlm_lib_unpack
-		.BYTE	$03
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr1_set,$05
-		.WORD	_nsub_mmc1_chr1_set
-		.BYTE	$05
-		.BYTE	$07		; NJSR		  _nsub_full_pal_load,byte_16176
-		.WORD	_nsub_full_pal_load
-		.WORD	byte_16176
-		.BYTE	$07		; NJSR		  _nsub_62775,$00
-		.WORD	_nsub_62775
-		.BYTE	$00
-		.BYTE	$07		; NJSR		  _nsub_game_over_draw
-		.WORD	_nsub_game_over_draw
-		.BYTE	$04		; SJSR		  _ssub_62D93
-		.WORD	_ssub_62D93
-		.BYTE	$13		; STORE8	  _apu_var402,$FF
-		.WORD	_apu_var402
-		.BYTE	$FF
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$02
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_mcmp,_continues,$00
-		.WORD	_nsub_mcmp
-		.WORD	_continues
-		.BYTE	$00
-		.BYTE	$0B		; SBCS		  _sloc_16162
-		.WORD	_sloc_16162
-		.BYTE	$28,$58,$00	; POS_X_SET	  0,$58,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_1616A
-		.WORD	_scr_1616A
+		SJSR			_ssub_62DC5
+		NJSR			_nsub_62B40
+		NJSR			_nsub_far_prg0_tlm_lib_unpack
+			NARGB		_tlm3_game_over_idx
+		NJSR			_nsub_mmc1_chr1_set
+			NARGB		$05
+		NJSR			_nsub_full_pal_load
+			NARGW		byte_16176
+		NJSR			_nsub_62775
+			NARGB		$00
+		NJSR			_nsub_game_over_draw
+		SJSR			_ssub_62D93
+		STORE8			_apu_var402,$FF
+		NJSR			_nsub_apu_mus_load
+			NARGB		$02
+		NJSR			_nsub_mcmp
+			NARGW		_continues
+			NARGB		$00
+		SBCS			_sloc_16162
+		POS_X_SET		0,$58,$00
+		SRUN			$01,_scr_1616A
 _sloc_16146:
-		.BYTE	$48,$00,$01	; POS_X_DELTA_SET 0,$00,$01
-		.BYTE	$20,$15		; SPR_IDX_SET	  0,$15
-		.BYTE	$01,$50		; SLOOP_BEGIN	  $50
-		.BYTE	$07		; NJSR		  _nsub_161F3
-		.WORD	_nsub_161F3
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$48,$00,$FF	; POS_X_DELTA_SET 0,$00,$FF
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$01,$50		; SLOOP_BEGIN	  $50
-		.BYTE	$07		; NJSR		  _nsub_161F3
-		.WORD	_nsub_161F3
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_16146
-		.WORD	_sloc_16146
+		POS_X_DELTA_SET 0,$00,$01
+		SPR_IDX_SET		0,$15
+		SLOOP_BEGIN		$50
+		NJSR			_nsub_161F3
+		SDELAY			$01
+		SLOOP_END
+		POS_X_DELTA_SET 0,$00,$FF
+		SPR_IDX_INC		0
+		SLOOP_BEGIN		$50
+		NJSR			_nsub_161F3
+		SDELAY			$01
+		SLOOP_END
+		SJMP			_sloc_16146
 _sloc_16162:
-		.BYTE	$06,$F0		; SDELAY	  $F0
-		.BYTE	$06,$3C		; SDELAY	  $3C
-		.BYTE	$04		; SJSR		  _ssub_62DA3
-		.WORD	_ssub_62DA3
-		.BYTE	$00		; STOP
+		SDELAY			$F0
+		SDELAY			$3C
+		SJSR			_ssub_62DA3
+		SSTOP
+
+; =============== S C R I P T ===============================================
 _scr_1616A:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_16213
-		.WORD	_nsub_16213
-		.BYTE	$0C		; SBCC		  _scr_1616A
-		.WORD	_scr_1616A
-		.BYTE	$04		; SJSR		  _ssub_62DA3
-		.WORD	_ssub_62DA3
-		.BYTE	$00		; STOP
+		SDELAY			$01
+		NJSR			_nsub_16213
+		SBCC			_scr_1616A
+		SJSR			_ssub_62DA3
+		SSTOP
 byte_16176:
 		.BYTE	$0F,$30,$15,$03,$0F,$30,$10,$0F,$0F,$37,$27,$17,$0F,$0F,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$31,$12,$0F,$0F,$0F,$0F,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_game_over_draw:
 		LDA		_lvl_room_checkpoint_idx
 		STA		_lvl_room_cur_idx
@@ -4682,7 +3693,7 @@ _nsub_game_over_draw:
 		STA		_game_flags
 		RTS
 loc_161E3:
-		JSR		_ppu_res_send_param_repeat_no_ofs_0
+		JSR		_ppu_res_send_param_repeat
 		.WORD	word_161EE
 		LDA		#$00
 		STA		_game_flags
@@ -4692,7 +3703,7 @@ word_161EE:
 		.BYTE	$0A,$05
 		.BYTE	$20
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_161F3:
 		LDA		_pad0_pressed
 		AND		#$2C
@@ -4711,7 +3722,7 @@ loc_16201:
 byte_16211:
 		.BYTE	$AD,$8D
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16213:
 		LDA		_pad0_pressed
 		AND		#$10
@@ -4739,59 +3750,55 @@ _spr_raw_lib01_16:
 		.BYTE	$00,$0F,$62,$08
 		.BYTE	$F0,$0D,$62,$08
 		.BYTE	$F0,$1D,$62,$00
-_scrC_room_doors_handler:
-		.BYTE	$09	; NBG_HNDL_SET	  _nbgsub_room_doors_data_load
-		.WORD	_nbgsub_room_doors_data_load
-		.BYTE	$07		; NJSR		  _nsub_room_door_exit_allow_test
-		.WORD	_nsub_room_door_exit_allow_test
-		.BYTE	$0C		; SBCC		  _sloc_16284
-		.WORD	_sloc_16284
-		.BYTE	$12,$11		; SJSR_SW	  $11
-		.WORD	_sjsr_case_1641B	; CASE	  _sjsr_case_1641B
-		.WORD	_sjsr_case_164BE	; CASE	  _sjsr_case_164BE
-		.WORD	_sjsr_case_16536	; CASE	  _sjsr_case_16536
-		.WORD	_sjsr_case_165E0	; CASE	  _sjsr_case_165E0
-		.WORD	_sjsr_case_1661E	; CASE	  _sjsr_case_1661E
-		.WORD	_sjsr_case_1665D	; CASE	  _sjsr_case_1665D
-		.WORD	_sjsr_case_166A4	; CASE	  _sjsr_case_166A4
-		.WORD	_sjsr_case_166EB	; CASE	  _sjsr_case_166EB
-		.WORD	_sjsr_case_16716	; CASE	  _sjsr_case_16716
-		.WORD	_sjsr_case_1675D	; CASE	  _sjsr_case_1675D
-		.WORD	_sjsr_case_167CA	; CASE	  _sjsr_case_167CA
-		.WORD	_sjsr_case_167DA	; CASE	  _sjsr_case_167DA
-		.WORD	_sjsr_case_167EA	; CASE	  _sjsr_case_167EA
-		.WORD	_sjsr_case_167FA	; CASE	  _sjsr_case_167FA
-		.WORD	_sjsr_case_16870	; CASE	  _sjsr_case_16870
-		.WORD	_sjsr_case_168ED	; CASE	  _sjsr_case_168ED
-		.WORD	_sjsr_case_16835	; CASE	  _sjsr_case_16835
-_sloc_16284:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_room_door_exit_allow_test
-		.WORD	_nsub_room_door_exit_allow_test
-		.BYTE	$0C		; SBCC		  _sloc_16284
-		.WORD	_sloc_16284
-		.BYTE	$12,$11		; SJSR_SW	  $11
-		.WORD	_sjsr_case_16421	; CASE	  _sjsr_case_16421
-		.WORD	_sjsr_case_164C4	; CASE	  _sjsr_case_164C4
-		.WORD	_sjsr_case_1653C	; CASE	  _sjsr_case_1653C
-		.WORD	_sjsr_case_165E6	; CASE	  _sjsr_case_165E6
-		.WORD	_sjsr_case_16624	; CASE	  _sjsr_case_16624
-		.WORD	_sjsr_case_16663	; CASE	  _sjsr_case_16663
-		.WORD	_sjsr_case_166AA	; CASE	  _sjsr_case_166AA
-		.WORD	_sjsr_case_166F1	; CASE	  _sjsr_case_166F1
-		.WORD	_sjsr_case_1671C	; CASE	  _sjsr_case_1671C
-		.WORD	_sjsr_case_16766	; CASE	  _sjsr_case_16766
-		.WORD	_sjsr_case_167D0	; CASE	  _sjsr_case_167D0
-		.WORD	_sjsr_case_167E0	; CASE	  _sjsr_case_167E0
-		.WORD	_sjsr_case_167F0	; CASE	  _sjsr_case_167F0
-		.WORD	_sjsr_case_16800	; CASE	  _sjsr_case_16800
-		.WORD	_sjsr_case_16876	; CASE	  _sjsr_case_16876
-		.WORD	_sjsr_case_168F3	; CASE	  _sjsr_case_168F3
-		.WORD	_sjsr_case_1683B	; CASE	  _sjsr_case_1683B
-		.BYTE	$03		; SJMP		  _sloc_16284
-		.WORD	_sloc_16284
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scrC_room_doors_handler:
+		NBG_HNDL_SET	_nbgsub_room_doors_data_load
+		NJSR			_nsub_room_door_exit_allow_test
+		SBCC			_sloc_16284
+		SJSR_SW	$11
+		SCASE			_sjsr_case_1641B
+		SCASE			_sjsr_case_164BE
+		SCASE			_sjsr_case_16536
+		SCASE			_sjsr_case_165E0
+		SCASE			_sjsr_case_1661E
+		SCASE			_sjsr_case_1665D
+		SCASE			_sjsr_case_166A4
+		SCASE			_sjsr_case_166EB
+		SCASE			_sjsr_case_16716
+		SCASE			_sjsr_case_1675D
+		SCASE			_sjsr_case_167CA
+		SCASE			_sjsr_case_167DA
+		SCASE			_sjsr_case_167EA
+		SCASE			_sjsr_case_167FA
+		SCASE			_sjsr_case_16870
+		SCASE			_sjsr_case_168ED
+		SCASE			_sjsr_case_16835
+_sloc_16284:
+		SDELAY			$01
+		NJSR			_nsub_room_door_exit_allow_test
+		SBCC			_sloc_16284
+		SJSR_SW	$11
+		SCASE			_sjsr_case_16421
+		SCASE			_sjsr_case_164C4
+		SCASE			_sjsr_case_1653C
+		SCASE			_sjsr_case_165E6
+		SCASE			_sjsr_case_16624
+		SCASE			_sjsr_case_16663
+		SCASE			_sjsr_case_166AA
+		SCASE			_sjsr_case_166F1
+		SCASE			_sjsr_case_1671C
+		SCASE			_sjsr_case_16766
+		SCASE			_sjsr_case_167D0
+		SCASE			_sjsr_case_167E0
+		SCASE			_sjsr_case_167F0
+		SCASE			_sjsr_case_16800
+		SCASE			_sjsr_case_16876
+		SCASE			_sjsr_case_168F3
+		SCASE			_sjsr_case_1683B
+		SJMP			_sloc_16284
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_room_doors_data_load:
 		LDX		_cur_room_doors_cnt
 		LDY		#$00
@@ -4842,7 +3849,7 @@ _obj_doors_heights_list:
 		.BYTE	$0F,$10,$04,$10,$0F,$0F,$0F,$0F,$0F,$10,$10,$10,$10,$08,$0F,$10
 		.BYTE	$10
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_room_doors_handler_and_data_init:
 		JSR		_scr_getc
 		STA		_room_doors_data_ptr
@@ -4858,7 +3865,7 @@ _nsub_room_doors_handler_and_data_init:
 		LDA		#$0C
 		JMP		_script_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_room_door_exit_allow_test:
 		LDA		#$00
 		STA		_near_room_door_data_pos
@@ -4920,7 +3927,7 @@ loc_1636B:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_players_to_near_room_door_distance_test:
 		JSR		_near_room_door_screen_pos_calc
 		LDA		#$02
@@ -4931,7 +3938,7 @@ _nsub_players_to_near_room_door_distance_test:
 locret_163B3:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_to_room_door_distance_test:
 		STA		_tmp0
 		TXA
@@ -4964,12 +3971,12 @@ loc_163DE:
 locret_163E0:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _near_room_door_screen_pos_calc:
 		LDY		_near_room_door_data_pos
 		LDA		(_room_doors_data_ptr),Y
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_door_screen_pos_calc:
 		STA		_tmp_var0
 		INY
@@ -4983,17 +3990,17 @@ _room_door_screen_pos_calc:
 		TAY
 		JMP		_screen_pos_calc_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_door_always_open:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_door_always_closed:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_door_enemy_clear_open:
 		STX		_tmp1
 		LDX		#$06
@@ -5015,39 +4022,38 @@ loc_16409:
 loc_16419:
 		CLC
 		RTS
-_sjsr_case_1641B:
-		.BYTE	$07		; NJSR		  _nsub_16444
-		.WORD	_nsub_16444
-		.BYTE	$03		; SJMP		  _sloc_1642C
-		.WORD	_sloc_1642C
-_sjsr_case_16421:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16444
-		.WORD	_nsub_16444
-		.BYTE	$26,$00		; SPR_IDX_SET	  6,$00
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_1642C:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$00		; SPR_IDX_SET	  6,$00
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_1644F
-		.WORD	_nsub_1644F
-		.BYTE	$05		; SRET
-_ssub_1643B:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_players_to_near_room_door_distance_test
-		.WORD	_nsub_players_to_near_room_door_distance_test
-		.BYTE	$0C		; SBCC		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_1641B:
+		NJSR			_nsub_16444
+		SJMP			_sloc_1642C
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16421:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16444
+		SPR_IDX_SET		6,$00
+		SPR_IDX_SET		0,$FF
+_sloc_1642C:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$00
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_1644F
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_1643B:
+		SDELAY			$01
+		NJSR			_nsub_players_to_near_room_door_distance_test
+		SBCC			_ssub_1643B
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_16444:
 		LDA		#<[byte_1644B]
 		LDX		#>[byte_1644B]
@@ -5055,7 +4061,7 @@ _nsub_16444:
 byte_1644B:
 		.BYTE	$14,$14,$14,$14
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_1644F:
 		LDA		#<[byte_16456]
 		LDX		#>[byte_16456]
@@ -5063,7 +4069,7 @@ _nsub_1644F:
 byte_16456:
 		.BYTE	$0A,$1A,$0B,$1B
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_1645A:
 		STA		_ptr06
 		STX		_ptr06+1
@@ -5120,32 +4126,29 @@ _spr_raw_lib01_00:
 		.BYTE	$00,$33,$43,$08
 		.BYTE	$00,$33,$03,$F0
 		.BYTE	$F0,$31,$03,$F0
-_sjsr_case_164BE:
-		.BYTE	$07		; NJSR		  _nsub_164DE
-		.WORD	_nsub_164DE
-		.BYTE	$03		; SJMP		  _sloc_164CF
-		.WORD	_sloc_164CF
-_sjsr_case_164C4:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_164DE
-		.WORD	_nsub_164DE
-		.BYTE	$26,$01		; SPR_IDX_SET	  6,$01
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_164CF:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$01		; SPR_IDX_SET	  6,$01
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_164E7
-		.WORD	_nsub_164E7
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_164BE:
+		NJSR			_nsub_164DE
+		SJMP			_sloc_164CF
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_164C4:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_164DE
+		SPR_IDX_SET		6,$01
+		SPR_IDX_SET		0,$FF
+_sloc_164CF:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$01
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_164E7
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_164DE:
 		LDA		#<[byte_164E5]
 		LDX		#>[byte_164E5]
@@ -5153,7 +4156,7 @@ _nsub_164DE:
 byte_164E5:
 		.BYTE	$00,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_164E7:
 		LDA		#<[byte_164EE]
 		LDX		#>[byte_164EE]
@@ -5161,7 +4164,7 @@ _nsub_164E7:
 byte_164EE:
 		.BYTE	$29,$29
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_164F0:
 		STA		_ptr06
 		STX		_ptr06+1
@@ -5206,36 +4209,33 @@ _spr_raw_lib01_01:
 		.BYTE	$02
 		.BYTE	$F0,$EF,$83,$00
 		.BYTE	$00,$EF,$03,$00
-_sjsr_case_16536:
-		.BYTE	$07		; NJSR		  _nsub_1655A
-		.WORD	_nsub_1655A
-		.BYTE	$03		; SJMP		  _sloc_16549
-		.WORD	_sloc_16549
-_sjsr_case_1653C:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_1655A
-		.WORD	_nsub_1655A
-		.BYTE	$22,$02		; SPR_IDX_SET	  2,$02
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_16549:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$22,$04		; SPR_IDX_SET	  2,$04
-		.BYTE	$A2		; SPR_IDX_DEC	  2
-		.BYTE	$A2		; SPR_IDX_DEC	  2
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_16583
-		.WORD	_nsub_16583
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16536:
+		NJSR			_nsub_1655A
+		SJMP			_sloc_16549
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_1653C:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_1655A
+		SPR_IDX_SET		2,$02
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_SET		0,$FF
+_sloc_16549:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		2,$04
+		SPR_IDX_DEC		2
+		SPR_IDX_DEC		2
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_16583
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_1655A:
 		LDY		#$01
 loc_1655C:
@@ -5263,7 +4263,7 @@ byte_1657F:
 byte_16581:
 		.BYTE	$FF,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16583:
 		LDY		#$03
 loc_16585:
@@ -5308,34 +4308,31 @@ _spr_raw_lib01_04:
 		.BYTE	$02
 		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F4,$CB,$03,$F1
-_sjsr_case_165E0:
-		.BYTE	$07		; NJSR		  _nsub_16602
-		.WORD	_nsub_16602
-		.BYTE	$03		; SJMP		  _sloc_165F2
-		.WORD	_sloc_165F2
-_sjsr_case_165E6:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16602
-		.WORD	_nsub_16602
-		.BYTE	$23,$05		; SPR_IDX_SET	  3,$05
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_165F2:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$23,$06		; SPR_IDX_SET	  3,$06
-		.BYTE	$A3		; SPR_IDX_DEC	  3
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_1660B
-		.WORD	_nsub_1660B
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_165E0:
+		NJSR			_nsub_16602
+		SJMP			_sloc_165F2
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_165E6:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16602
+		SPR_IDX_SET		3,$05
+		SPR_IDX_INC		3
+		SPR_IDX_SET		0,$FF
+_sloc_165F2:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		3,$06
+		SPR_IDX_DEC		3
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_1660B
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_16602:
 		LDA		#<[byte_16609]
 		LDX		#>[byte_16609]
@@ -5343,7 +4340,7 @@ _nsub_16602:
 byte_16609:
 		.BYTE	$2C,$14
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_1660B:
 		LDA		#<[byte_16612] ; *--
 		LDX		#>[byte_16612] ; *--
@@ -5356,32 +4353,29 @@ _spr_raw_lib01_05:
 _spr_raw_lib01_06:
 		.BYTE	$01
 		.BYTE	$00,$E9,$03,$FF
-_sjsr_case_1661E:
-		.BYTE	$07		; NJSR		  _nsub_1663E
-		.WORD	_nsub_1663E
-		.BYTE	$03		; SJMP		  _sloc_1662F
-		.WORD	_sloc_1662F
-_sjsr_case_16624:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_1663E
-		.WORD	_nsub_1663E
-		.BYTE	$26,$07		; SPR_IDX_SET	  6,$07
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_1662F:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$07		; SPR_IDX_SET	  6,$07
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_16649
-		.WORD	_nsub_16649
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_1661E:
+		NJSR			_nsub_1663E
+		SJMP			_sloc_1662F
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16624:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_1663E
+		SPR_IDX_SET		6,$07
+		SPR_IDX_SET		0,$FF
+_sloc_1662F:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$07
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_16649
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_1663E:
 		LDA		#<[byte_16645]
 		LDX		#>[byte_16645]
@@ -5389,7 +4383,7 @@ _nsub_1663E:
 byte_16645:
 		.BYTE	$87,$97,$88,$98
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16649:
 		LDA		#<[byte_16650] ; *--
 		LDX		#>[byte_16650] ; *--
@@ -5400,32 +4394,29 @@ _spr_raw_lib01_07:
 		.BYTE	$02
 		.BYTE	$F0,$AF,$40,$F8
 		.BYTE	$00,$8B,$40,$F8
-_sjsr_case_1665D:
-		.BYTE	$07		; NJSR		  _nsub_1667D
-		.WORD	_nsub_1667D
-		.BYTE	$03		; SJMP		  _sloc_1666E
-		.WORD	_sloc_1666E
-_sjsr_case_16663:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_1667D
-		.WORD	_nsub_1667D
-		.BYTE	$26,$08		; SPR_IDX_SET	  6,$08
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_1666E:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$08		; SPR_IDX_SET	  6,$08
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_16688
-		.WORD	_nsub_16688
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_1665D:
+		NJSR			_nsub_1667D
+		SJMP			_sloc_1666E
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16663:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_1667D
+		SPR_IDX_SET		6,$08
+		SPR_IDX_SET		0,$FF
+_sloc_1666E:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$08
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_16688
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_1667D:
 		LDA		#<[byte_16684]
 		LDX		#>[byte_16684]
@@ -5433,7 +4424,7 @@ _nsub_1667D:
 byte_16684:
 		.BYTE	$01,$01,$01,$01
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16688:
 		LDA		#<[byte_1668F]
 		LDX		#>[byte_1668F]
@@ -5446,32 +4437,29 @@ _spr_raw_lib01_08:
 		.BYTE	$F0,$41,$02,$08
 		.BYTE	$F0,$41,$42,$F0
 		.BYTE	$00,$43,$42,$F0
-_sjsr_case_166A4:
-		.BYTE	$07		; NJSR		  _nsub_166C4
-		.WORD	_nsub_166C4
-		.BYTE	$03		; SJMP		  _sloc_166B5
-		.WORD	_sloc_166B5
-_sjsr_case_166AA:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_166C4
-		.WORD	_nsub_166C4
-		.BYTE	$26,$09		; SPR_IDX_SET	  6,$09
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_166B5:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$0A
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$0A
-		.BYTE	$26,$09		; SPR_IDX_SET	  6,$09
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_166CF
-		.WORD	_nsub_166CF
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_166A4:
+		NJSR			_nsub_166C4
+		SJMP			_sloc_166B5
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_166AA:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_166C4
+		SPR_IDX_SET		6,$09
+		SPR_IDX_SET		0,$FF
+_sloc_166B5:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$0A
+		SPR_IDX_SET		6,$09
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_166CF
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_166C4:
 		LDA		#<[byte_166CB]
 		LDX		#>[byte_166CB]
@@ -5479,7 +4467,7 @@ _nsub_166C4:
 byte_166CB:
 		.BYTE	$00,$00,$00,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_166CF:
 		LDA		#<[byte_166D6]
 		LDX		#>[byte_166D6]
@@ -5492,64 +4480,58 @@ _spr_raw_lib01_09:
 		.BYTE	$F0,$21,$02,$08
 		.BYTE	$00,$33,$02,$F0
 		.BYTE	$F0,$31,$02,$F0
-_sjsr_case_166EB:
-		.BYTE	$07		; NJSR		  _nsub_1670B
-		.WORD	_nsub_1670B
-		.BYTE	$03		; SJMP		  _sloc_166FC
-		.WORD	_sloc_166FC
-_sjsr_case_166F1:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_1670B
-		.WORD	_nsub_1670B
-		.BYTE	$26,$09		; SPR_IDX_SET	  6,$09
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_166FC:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$09		; SPR_IDX_SET	  6,$09
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_166CF
-		.WORD	_nsub_166CF
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_166EB:
+		NJSR			_nsub_1670B
+		SJMP			_sloc_166FC
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_166F1:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_1670B
+		SPR_IDX_SET		6,$09
+		SPR_IDX_SET		0,$FF
+_sloc_166FC:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$09
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_166CF
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_1670B:
 		LDA		#<[byte_16712]
 		LDX		#>[byte_16712]
 		JMP		sub_1645A
 byte_16712:
 		.BYTE	$26,$26,$26,$26
-_sjsr_case_16716:
-		.BYTE	$07		; NJSR		  _nsub_16736
-		.WORD	_nsub_16736
-		.BYTE	$03		; SJMP		  _sloc_16727
-		.WORD	_sloc_16727
-_sjsr_case_1671C:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16736
-		.WORD	_nsub_16736
-		.BYTE	$26,$0A		; SPR_IDX_SET	  6,$0A
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_16727:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$0A		; SPR_IDX_SET	  6,$0A
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_16741
-		.WORD	_nsub_16741
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16716:
+		NJSR			_nsub_16736
+		SJMP			_sloc_16727
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_1671C:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16736
+		SPR_IDX_SET		6,$0A
+		SPR_IDX_SET		0,$FF
+_sloc_16727:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$0A
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_16741
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_16736:
 		LDA		#<[byte_1673D]
 		LDX		#>[byte_1673D]
@@ -5557,7 +4539,7 @@ _nsub_16736:
 byte_1673D:
 		.BYTE	$20,$20,$96,$97
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16741:
 		LDA		#<[byte_16748]
 		LDX		#>[byte_16748]
@@ -5570,45 +4552,42 @@ _spr_raw_lib01_0A:
 		.BYTE	$00,$CF,$00,$00
 		.BYTE	$00,$CF,$00,$F0
 		.BYTE	$00,$CF,$00,$F8
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_1675D:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
+		SARG_SET		$00,$00
 _sloc_16760:
-		.BYTE	$07		; NJSR		  _nsub_16787
-		.WORD	_nsub_16787
-		.BYTE	$03		; SJMP		  _sloc_16774
-		.WORD	_sloc_16774
+		NJSR			_nsub_16787
+		SJMP			_sloc_16774
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16766:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
+		SARG_SET		$00,$00
 _sloc_16769:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16787
-		.WORD	_nsub_16787
-		.BYTE	$26,$0B		; SPR_IDX_SET	  6,$0B
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16787
+		SPR_IDX_SET		6,$0B
+		SPR_IDX_SET		0,$FF
 _sloc_16774:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$0B		; SPR_IDX_SET	  6,$0B
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_167AC
-		.WORD	_nsub_167AC
-		.BYTE	$05		; SRET
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$0B
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_167AC
+		SRET
 byte_16783:
 		.BYTE	$17,$98
 byte_16785:
 		.BYTE	$95,$91
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16787:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_args0,X
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_1678B:
 		LDA		off_16794,Y
 		LDX		off_16798,Y
@@ -5624,27 +4603,27 @@ off_16798:
 		.BYTE	>[byte_167E6]
 		.BYTE	>[byte_167F6]	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_1679C:
 		LDY		#$00		; *--
 		BEQ		sub_1678B	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_167A0:
 		LDY		#$01		; *--
 		BNE		sub_1678B	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_167A4:
 		LDY		#$02		; *--
 		BNE		sub_1678B	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_167A8:
 		LDY		#$03		; *--
 		BNE		sub_1678B	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_167AC:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_args0,X
@@ -5665,68 +4644,71 @@ _spr_raw_lib01_0B:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$00
 		.BYTE	$00,$DF,$00,$00
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167CA:
-		.BYTE	$0F,$00,$01	; SARG_SET	  $00,$01
-		.BYTE	$03		; SJMP		  _sloc_16760
-		.WORD	_sloc_16760
+		SARG_SET		$00,$01
+		SJMP			_sloc_16760
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167D0:
-		.BYTE	$0F,$00,$01	; SARG_SET	  $00,$01
-		.BYTE	$03		; SJMP		  _sloc_16769
-		.WORD	_sloc_16769
+		SARG_SET		$00,$01
+		SJMP			_sloc_16769
 byte_167D6:
 		.BYTE	$4E,$98
 byte_167D8:
 		.BYTE	$99,$91
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167DA:
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-		.BYTE	$03		; SJMP		  _sloc_16760
-		.WORD	_sloc_16760
+		SARG_SET		$00,$02
+		SJMP			_sloc_16760
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167E0:
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-		.BYTE	$03		; SJMP		  _sloc_16769
-		.WORD	_sloc_16769
+		SARG_SET		$00,$02
+		SJMP			_sloc_16769
 byte_167E6:
 		.BYTE	$51,$9B
 byte_167E8:
 		.BYTE	$8F,$9A
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167EA:
-		.BYTE	$0F,$00,$03	; SARG_SET	  $00,$03
-		.BYTE	$03		; SJMP		  _sloc_16760
-		.WORD	_sloc_16760
+		SARG_SET		$00,$03
+		SJMP			_sloc_16760
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167F0:
-		.BYTE	$0F,$00,$03	; SARG_SET	  $00,$03
-		.BYTE	$03		; SJMP		  _sloc_16769
-		.WORD	_sloc_16769
+		SARG_SET		$00,$03
+		SJMP			_sloc_16769
 byte_167F6:
 		.BYTE	$22,$98		; *--
 byte_167F8:
 		.BYTE	$90,$91		; *--
-_sjsr_case_167FA:
-		.BYTE	$07		; NJSR		  _nsub_1681A
-		.WORD	_nsub_1681A
-		.BYTE	$03		; SJMP		  _sloc_1680B
-		.WORD	_sloc_1680B
-_sjsr_case_16800:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_1681A
-		.WORD	_nsub_1681A
-		.BYTE	$26,$0C		; SPR_IDX_SET	  6,$0C
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_1680B:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$0C		; SPR_IDX_SET	  6,$0C
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_16823
-		.WORD	_nsub_16823
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_167FA:
+		NJSR			_nsub_1681A
+		SJMP			_sloc_1680B
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16800:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_1681A
+		SPR_IDX_SET		6,$0C
+		SPR_IDX_SET		0,$FF
+_sloc_1680B:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$0C
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_16823
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_1681A:
 		LDA		#<[byte_16821]
 		LDX		#>[byte_16821]
@@ -5734,7 +4716,7 @@ _nsub_1681A:
 byte_16821:
 		.BYTE	$20,$96
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_16823:
 		LDA		#<[byte_1682A]
 		LDX		#>[byte_1682A]
@@ -5745,32 +4727,29 @@ _spr_raw_lib01_0C:
 		.BYTE	$02
 		.BYTE	$00,$CF,$00,$08
 		.BYTE	$00,$CF,$00,$00
-_sjsr_case_16835:
-		.BYTE	$07		; NJSR		  _nsub_16855
-		.WORD	_nsub_16855
-		.BYTE	$03		; SJMP		  _sloc_16846
-		.WORD	_sloc_16846
-_sjsr_case_1683B:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16855
-		.WORD	_nsub_16855
-		.BYTE	$26,$0D		; SPR_IDX_SET	  6,$0D
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_16846:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$26,$0D		; SPR_IDX_SET	  6,$0D
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_1685E
-		.WORD	_nsub_1685E
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16835:
+		NJSR			_nsub_16855
+		SJMP			_sloc_16846
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_1683B:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16855
+		SPR_IDX_SET		6,$0D
+		SPR_IDX_SET		0,$FF
+_sloc_16846:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		6,$0D
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_1685E
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_16855:
 		LDA		#<[byte_1685C]
 		LDX		#>[byte_1685C]
@@ -5778,7 +4757,7 @@ _nsub_16855:
 byte_1685C:
 		.BYTE	$22,$9E
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_1685E:
 		LDA		#<[byte_16865] ; *--
 		LDX		#>[byte_16865] ; *--
@@ -5789,36 +4768,33 @@ _spr_raw_lib01_0D:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$08
 		.BYTE	$00,$DF,$00,$08
-_sjsr_case_16870:
-		.BYTE	$07		; NJSR		  _nsub_16894
-		.WORD	_nsub_16894
-		.BYTE	$03		; SJMP		  _sloc_16883
-		.WORD	_sloc_16883
-_sjsr_case_16876:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16894
-		.WORD	_nsub_16894
-		.BYTE	$21,$0E		; SPR_IDX_SET	  1,$0E
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_16883:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$21,$10		; SPR_IDX_SET	  1,$10
-		.BYTE	$A1		; SPR_IDX_DEC	  1
-		.BYTE	$A1		; SPR_IDX_DEC	  1
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_1689F
-		.WORD	_nsub_1689F
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16870:
+		NJSR			_nsub_16894
+		SJMP			_sloc_16883
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_16876:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16894
+		SPR_IDX_SET		1,$0E
+		SPR_IDX_INC		1
+		SPR_IDX_INC		1
+		SPR_IDX_SET		0,$FF
+_sloc_16883:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		1,$10
+		SPR_IDX_DEC		1
+		SPR_IDX_DEC		1
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_1689F
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_16894:
 		LDA		#<[byte_1689B]
 		LDX		#>[byte_1689B]
@@ -5826,7 +4802,7 @@ _nsub_16894:
 byte_1689B:
 		.BYTE	$14,$14,$55,$55
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_1689F:
 		LDA		#<[byte_168A6]
 		LDX		#>[byte_168A6]
@@ -5855,38 +4831,35 @@ _spr_raw_lib01_10:
 		.BYTE	$00,$7D,$00,$00
 		.BYTE	$00,$7D,$00,$F8
 		.BYTE	$00,$7D,$00,$F0
-_sjsr_case_168ED:
-		.BYTE	$07		; NJSR		  _nsub_16913
-		.WORD	_nsub_16913
-		.BYTE	$03		; SJMP		  _sloc_16901
-		.WORD	_sloc_16901
-_sjsr_case_168F3:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$07
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$07
-		.BYTE	$07		; NJSR		  _nsub_16913
-		.WORD	_nsub_16913
-		.BYTE	$22,$11		; SPR_IDX_SET	  2,$11
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-_sloc_16901:
-		.BYTE	$04		; SJSR		  _ssub_1643B
-		.WORD	_ssub_1643B
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$06
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$06
-		.BYTE	$22,$14		; SPR_IDX_SET	  2,$14
-		.BYTE	$A2		; SPR_IDX_DEC	  2
-		.BYTE	$A2		; SPR_IDX_DEC	  2
-		.BYTE	$A2		; SPR_IDX_DEC	  2
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$07		; NJSR		  _nsub_1691C
-		.WORD	_nsub_1691C
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_168ED:
+		NJSR			_nsub_16913
+		SJMP			_sloc_16901
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_sjsr_case_168F3:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$07
+		NJSR			_nsub_16913
+		SPR_IDX_SET		2,$11
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_SET		0,$FF
+_sloc_16901:
+		SJSR			_ssub_1643B
+		NJSR			_nsub_apu_snd_load
+			NARGB		$06
+		SPR_IDX_SET		2,$14
+		SPR_IDX_DEC		2
+		SPR_IDX_DEC		2
+		SPR_IDX_DEC		2
+		SPR_IDX_SET		0,$FF
+		NJSR			_nsub_1691C
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_16913:
 		LDA		#<[byte_1691A]
 		LDX		#>[byte_1691A]
@@ -5894,7 +4867,7 @@ _nsub_16913:
 byte_1691A:
 		.BYTE	$00,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_1691C:
 		LDA		#<[byte_16923]
 		LDX		#>[byte_16923]
@@ -5916,12 +4889,13 @@ _spr_raw_lib01_13:
 _spr_raw_lib01_14:
 		.BYTE	$01
 		.BYTE	$00,$6D,$00,$00
+
+; =============== S C R I P T ===============================================
 _scrD_money_bag:
-		.BYTE	$07		; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_16966	; CASE	  _sjmp_case_16966
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_16966
 _spr_unref:
 		.BYTE	$02		; *--
 		.BYTE	$F8,$BB,$00,$00	; *--
@@ -5935,30 +4909,28 @@ _spr_unref_1:
 _spr_unref_2:
 		.BYTE	$01		; *--
 		.BYTE	$F8,$BF,$40,$FC	; *--
-_sjmp_case_16966:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-_sloc_16969:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_prize_sequence_completed_test
-		.WORD	_nsub_prize_sequence_completed_test
-		.BYTE	$0C		; SBCC		  _sloc_16969
-		.WORD	_sloc_16969
-		.BYTE	$0F,$02,$1E	; SARG_SET	  $02,$1E
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_money_bag_collision_test
-		.WORD	_nbgsub_money_bag_collision_test
-_sloc_16977:
-		.BYTE	$22,$19		; SPR_IDX_SET	  2,$19
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$03		; SJMP		  _sloc_16977
-		.WORD	_sloc_16977
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_16966:
+		SARG_SET		$00,$00
+_sloc_16969:
+		SDELAY			$01
+		NJSR			_nsub_prize_sequence_completed_test
+		SBCC			_sloc_16969
+		SARG_SET		$02,$1E
+		NBG_HNDL_SET	_nbgsub_money_bag_collision_test
+_sloc_16977:
+		SPR_IDX_SET		2,$19
+		SPR_IDX_INC		2
+		SJMP			_sloc_16977
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_money_bag_collision_test:
 		LDX		#$0D
 		LDY		#$0E
 		JMP		_money_prize_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_prize_sequence_completed_test:
 		LDA		_room_prize_sequence_ptr
 		ORA		_room_prize_sequence_ptr+1
@@ -6070,10 +5042,10 @@ _lvl0_objects_list:
 		.BYTE	$1B,$68,$02,$38,$01,$03
 		.BYTE	$1A,$80,$02,$40,$00,$00
 		.BYTE	$FF,$00
-_lvl_data0_ptr0:
+_lvl_collisions_00:
 		.BYTE	$FF,$FC,$FB,$F3,$03,$DB,$03,$F7,$03,$F8,$0F,$FF,$7E,$FF,$7E,$7F
 		.BYTE	$01,$00,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl_data0_ptr1:
+_lvl_collisions_01:
 		.BYTE	$FC,$F7,$F8,$FB,$0C,$CE,$0F,$FF,$0B,$00,$07,$00,$F7,$00,$FB,$02
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _unused_11:

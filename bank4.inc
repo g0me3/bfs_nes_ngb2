@@ -3,117 +3,106 @@
 
 		BANK_START $04
 
+; =============== S C R I P T ===============================================
 _scr13_slow_moving_slime:
-		.BYTE	$07	; NJSR		  _nsub_380D2
-		.WORD	_nsub_380D2
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3800F:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_380A2
-		.WORD	_nbgsub_380A2
-_sloc_38012:
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$04		; SJSR		  _ssub_38029
-		.WORD	_ssub_38029
-		.BYTE	$15,$01,$02,$08	; SARG_ALU	  $01,ADC,$08
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$04		; SJSR		  _ssub_38029
-		.WORD	_ssub_38029
-		.BYTE	$15,$01,$02,$F8	; SARG_ALU	  $01,ADC,$F8
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_38012
-		.WORD	_sloc_38012
-_ssub_38029:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_62C49
-		.WORD	_nsub_62C49
-		.BYTE	$0C		; SBCC		  _sloc_38048
-		.WORD	_sloc_38048
-		.BYTE	$07		; NJSR		  _nsub_62CB0
-		.WORD	_nsub_62CB0
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-_sloc_38048:
-		.BYTE	$07		; NJSR		  _nsub_62C7A
-		.WORD	_nsub_62C7A
-		.BYTE	$0C		; SBCC		  _sloc_3805A
-		.WORD	_sloc_3805A
-		.BYTE	$07		; NJSR		  _nsub_62CBA
-		.WORD	_nsub_62CBA
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-_sloc_3805A:
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
-_scr_3805C:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-_sloc_38061:
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$AF,$FC		; SPR_IDX_ADD_IMM 7,$FC
-		.BYTE	$03		; SJMP		  _sloc_38061
-		.WORD	_sloc_38061
-_scr_38068:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_380B8
-		.WORD	_nbgsub_380B8
-		.BYTE	$04		; SJSR		  _ssub_38079
-		.WORD	_ssub_38079
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3800F	; CASE	  _sjmp_case_3800F
-		.WORD	_scr_38096	; CASE	  _scr_38096
-		.WORD	_scr_3809C	; CASE	  _scr_3809C
-_ssub_38079:
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3807C:
-		.BYTE	$04		; SJSR		  _ssub_3808C
-		.WORD	_ssub_3808C
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3807C
-		.WORD	_sloc_3807C
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_3808C
-		.WORD	_ssub_3808C
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
-_ssub_3808C:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$08		; SPR_IDX_ADD_IMM 1,$08
-		.BYTE	$05		; SRET
-_scr_38096:
-		.BYTE	$0F,$01,$10	; SARG_SET	  $01,$10
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3809C:
-		.BYTE	$0F,$01,$12	; SARG_SET	  $01,$12
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
+		NJSR			_nsub_380D2
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
 
-; =============== S U B	R O U T	I N E =======================================
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3800F:
+		NBG_HNDL_SET	_nbgsub_380A2
+_sloc_38012:
+		SLOOP_BEGIN		$0A
+		SJSR			_ssub_38029
+		SARG_ALU		$01,_ADC,$08
+		SLOOP_END
+		SLOOP_BEGIN		$0A
+		SJSR			_ssub_38029
+		SARG_ALU		$01,_ADC,$F8
+		SLOOP_END
+		SJMP			_sloc_38012
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_38029:
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+		SRUN			$01,_scr_3805C
+		SLOOP_BEGIN		$14
+		SDELAY			$01
+		NJSR			_nsub_62C49
+		SBCC			_sloc_38048
+		NJSR			_nsub_62CB0
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+		SRUN			$01,_scr_3805C
+_sloc_38048:
+		NJSR			_nsub_62C7A
+		SBCC			_sloc_3805A
+		NJSR			_nsub_62CBA
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+		SRUN			$01,_scr_3805C
+_sloc_3805A:
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3805C:
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+_sloc_38061:
+		SPR_IDX_ADD_IMM 7,$04
+		SPR_IDX_ADD_IMM 7,$FC
+		SJMP			_sloc_38061
+
+; =============== S C R I P T ===============================================
+_scr_38068:
+		NBG_HNDL_SET	_nbgsub_380B8
+		SJSR			_ssub_38079
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3800F
+		SCASE			_scr_38096
+		SCASE			_scr_3809C
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_38079:
+		SARG_SET		$00,$02
+_sloc_3807C:
+		SJSR			_ssub_3808C
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3807C
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_3808C
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3808C:
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$08
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_38096:
+		SARG_SET		$01,$10
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3809C:
+		SARG_SET		$01,$12
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_380A2:
 		LDX		#$08
 		LDY		#$0C
@@ -127,7 +116,7 @@ loc_380B1:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_380B8:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -145,7 +134,7 @@ loc_380CC:
 locret_380D1:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_380D2:
 		LDA		#$08
 		JSR		_rand
@@ -269,70 +258,58 @@ _spr_raw_lib0E_13:
 		.BYTE	$02
 		.BYTE	$F8,$A6,$42,$08
 		.BYTE	$F8,$B6,$42,$00
-_scr14_fast_moving_slime:
-		.BYTE	$07	; NJSR		  _nsub_62ABE
-		.WORD	_nsub_62ABE
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_38246:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38293
-		.WORD	_nbgsub_38293
-_sloc_38249:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_62C49
-		.WORD	_nsub_62C49
-		.BYTE	$0C		; SBCC		  _sloc_38268
-		.WORD	_sloc_38268
-		.BYTE	$07		; NJSR		  _nsub_62CB0
-		.WORD	_nsub_62CB0
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-_sloc_38268:
-		.BYTE	$07		; NJSR		  _nsub_62C7A
-		.WORD	_nsub_62C7A
-		.BYTE	$0C		; SBCC		  _sloc_3827A
-		.WORD	_sloc_3827A
-		.BYTE	$07		; NJSR		  _nsub_62CBA
-		.WORD	_nsub_62CBA
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-_sloc_3827A:
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62AEC,$08
-		.WORD	_nsub_62AEC
-		.BYTE	$08
-		.BYTE	$03		; SJMP		  _sloc_38249
-		.WORD	_sloc_38249
-_scr_38282:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_382A9
-		.WORD	_nbgsub_382A9
-		.BYTE	$04		; SJSR		  _ssub_38079
-		.WORD	_ssub_38079
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_38246	; CASE	  _sjmp_case_38246
-		.WORD	_scr_38096	; CASE	  _scr_38096
-		.WORD	_scr_3809C	; CASE	  _scr_3809C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr14_fast_moving_slime:
+		NJSR			_nsub_62ABE
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_38246:
+		NBG_HNDL_SET	_nbgsub_38293
+_sloc_38249:
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_3805C
+		SLOOP_BEGIN		$0A
+		SDELAY			$01
+		NJSR			_nsub_62C49
+		SBCC			_sloc_38268
+		NJSR			_nsub_62CB0
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_3805C
+_sloc_38268:
+		NJSR			_nsub_62C7A
+		SBCC			_sloc_3827A
+		NJSR			_nsub_62CBA
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_3805C
+_sloc_3827A:
+		SLOOP_END
+		NJSR			_nsub_62AEC
+			NARGB		$08
+		SJMP			_sloc_38249
+
+; =============== S C R I P T ===============================================
+_scr_38282:
+		NBG_HNDL_SET	_nbgsub_382A9
+		SJSR			_ssub_38079
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_38246
+		SCASE			_scr_38096
+		SCASE			_scr_3809C
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38293:
 		LDX		#$08
 		LDY		#$0C
@@ -346,7 +323,7 @@ loc_382A2:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_382A9:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -363,43 +340,44 @@ loc_382BD:
 		.WORD	_scr_3809C
 locret_382C2:
 		RTS
-_scr15_trolley_kick_slime:
-		.BYTE	$07	; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_3832C	; CASE	  _sjmp_case_3832C
-		.BYTE	$0F,$01,$40	; SARG_SET	  $01,$40
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$05		; SPR_IDX_SET	  1,$05
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_382D6:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_382FC
-		.WORD	_nbgsub_382FC
-_sloc_382D9:
-		.BYTE	$07		; NJSR		  _nsub_script_start,$15,$00,$08,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$15,$00,$08,$01,$00
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$27,$05		; SPR_IDX_SET	  7,$05
-		.BYTE	$27,$09		; SPR_IDX_SET	  7,$09
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_382D9
-		.WORD	_sloc_382D9
-_scr_382EB:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38312
-		.WORD	_nbgsub_38312
-		.BYTE	$04		; SJSR		  _ssub_38079
-		.WORD	_ssub_38079
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_382D6	; CASE	  _sjmp_case_382D6
-		.WORD	_scr_38096	; CASE	  _scr_38096
-		.WORD	_scr_3809C	; CASE	  _scr_3809C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr15_trolley_kick_slime:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_3832C
+		SARG_SET		$01,$40
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$05
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_382D6:
+		NBG_HNDL_SET	_nbgsub_382FC
+_sloc_382D9:
+		NJSR			_nsub_script_start
+			NARGB		$15,$00,$08,$01,$00
+		SLOOP_BEGIN		$0A
+		SPR_IDX_SET		7,$05
+		SPR_IDX_SET		7,$09
+		SLOOP_END
+		SJMP			_sloc_382D9
+
+; =============== S C R I P T ===============================================
+_scr_382EB:
+		NBG_HNDL_SET	_nbgsub_38312
+		SJSR			_ssub_38079
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_382D6
+		SCASE			_scr_38096
+		SCASE			_scr_3809C
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_382FC:
 		LDX		#$08
 		LDY		#$0C
@@ -413,7 +391,7 @@ loc_3830B:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38312:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -431,15 +409,16 @@ loc_38326:
 		.WORD	_scr_3809C	; *--
 locret_3832B:
 		RTS
-_sjmp_case_3832C:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38338
-		.WORD	_nbgsub_38338
-		.BYTE	$48,$00,$02	; POS_X_DELTA_SET 0,$00,$02
-		.BYTE	$20,$14		; SPR_IDX_SET	  0,$14
-		.BYTE	$0A		; SUSPEND
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_3832C:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_38338
+		POS_X_DELTA_SET 0,$00,$02
+		SPR_IDX_SET		0,$14
+		SUSPEND
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38338:
 		LDX		#$0D
 		LDY		#$0E
@@ -451,48 +430,44 @@ _spr_raw_lib0E_14:
 		.BYTE	$00,$F9,$00,$F7
 		.BYTE	$F0,$E9,$43,$00
 		.BYTE	$F0,$E9,$03,$F8
-_scr16_still_throw_forward_slime:
-		.BYTE	$07 ; NJSR	     _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_383C2	; CASE	  _sjmp_case_383C2
-_sjmp_case_3835C:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38392
-		.WORD	_nbgsub_38392
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$08
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$08
-_sloc_38363:
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$07		; NJSR		  _nsub_62ABE
-		.WORD	_nsub_62ABE
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-		.BYTE	$06,$07		; SDELAY	  $07
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$AF,$FC		; SPR_IDX_ADD_IMM 7,$FC
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_script_start,$16,$00,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$16,$00,$00,$01,$00
-		.BYTE	$03		; SJMP		  _sloc_38363
-		.WORD	_sloc_38363
-_scr_38381:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_383A8
-		.WORD	_nbgsub_383A8
-		.BYTE	$04		; SJSR		  _ssub_38079
-		.WORD	_ssub_38079
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3835C	; CASE	  _sjmp_case_3835C
-		.WORD	_scr_38096	; CASE	  _scr_38096
-		.WORD	_scr_3809C	; CASE	  _scr_3809C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr16_still_throw_forward_slime:
+		NJSR		_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_383C2
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3835C:
+		NBG_HNDL_SET	_nbgsub_38392
+		NJSR			_nsub_apu_snd_load
+			NARGB		$08
+_sloc_38363:
+		SLOOP_BEGIN		$03
+		NJSR			_nsub_62ABE
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+		SDELAY			$07
+		SPR_IDX_ADD_IMM 7,$04
+		SPR_IDX_ADD_IMM 7,$FC
+		SPR_IDX_ADD_IMM 7,$04
+		SLOOP_END
+		NJSR			_nsub_script_start
+			NARGB		$16,$00,$00,$01,$00
+		SJMP			_sloc_38363
+
+; =============== S C R I P T ===============================================
+_scr_38381:
+		NBG_HNDL_SET	_nbgsub_383A8
+		SJSR			_ssub_38079
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3835C
+		SCASE			_scr_38096
+		SCASE			_scr_3809C
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38392:
 		LDX		#$08
 		LDY		#$0C
@@ -506,7 +481,7 @@ loc_383A1:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_383A8:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -523,25 +498,23 @@ loc_383BC:
 		.WORD	_scr_3809C
 locret_383C1:
 		RTS
-_sjmp_case_383C2:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_383DA
-		.WORD	_nbgsub_383DA
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$01
-		.WORD	_nsub_628D1
-		.BYTE	$80,$01
-		.BYTE	$07		; NJSR		  _nsub_383E7
-		.WORD	_nsub_383E7
-_sloc_383D0:
-		.BYTE	$06,$07		; SDELAY	  $07
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$A8,$FD		; SPR_IDX_ADD_IMM 0,$FD
-		.BYTE	$03		; SJMP		  _sloc_383D0
-		.WORD	_sloc_383D0
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_383C2:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_383DA
+		NJSR			_nsub_628D1
+			NARGB		$80,$01
+		NJSR			_nsub_383E7
+_sloc_383D0:
+		SDELAY			$07
+		SPR_IDX_INC		7
+		SPR_IDX_INC		7
+		SPR_IDX_INC		7
+		SPR_IDX_ADD_IMM 0,$FD
+		SJMP			_sloc_383D0
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_383DA:
 		LDX		#$07
 		LDY		#$08
@@ -549,7 +522,7 @@ _nbgsub_383DA:
 		JSR		_cur_obj_out_of_screen_test
 		JMP		_obj_to_room_macro_collision_test_raw
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_383E7:
 		LDA		#$00
 		JSR		_rand
@@ -587,58 +560,56 @@ _spr_raw_lib0E_24:
 		.BYTE	$02
 		.BYTE	$F8,$DB,$83,$00
 		.BYTE	$F8,$CB,$83,$F8
-_scr1B_court_chair:
-		.BYTE	$01,$10	; SLOOP_BEGIN	  $10
-		.BYTE	$21,$25		; SPR_IDX_SET	  1,$25
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$0F,$02,$00	; SARG_SET	  $02,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38477
-		.WORD	_nbgsub_38477
-_sloc_38442:
-		.BYTE	$20,$25		; SPR_IDX_SET	  0,$25
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$12
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$12
-		.BYTE	$40,$FF		; POS_Y_MOVE	  0,$FF
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$40,$FE		; POS_Y_MOVE	  0,$FE
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$40,$FE		; POS_Y_MOVE	  0,$FE
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$40,$FD		; POS_Y_MOVE	  0,$FD
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$40,$FC		; POS_Y_MOVE	  0,$FC
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$40,$FA		; POS_Y_MOVE	  0,$FA
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$40,$FA		; POS_Y_MOVE	  0,$FA
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$07		; NJSR		  _nsub_38481
-		.WORD	_nsub_38481
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$40,$06		; POS_Y_MOVE	  0,$06
-		.BYTE	$A1		; SPR_IDX_DEC	  1
-		.BYTE	$40,$06		; POS_Y_MOVE	  0,$06
-		.BYTE	$A1		; SPR_IDX_DEC	  1
-		.BYTE	$40,$04		; POS_Y_MOVE	  0,$04
-		.BYTE	$A1		; SPR_IDX_DEC	  1
-		.BYTE	$40,$05		; POS_Y_MOVE	  0,$05
-		.BYTE	$A9,$FE		; SPR_IDX_ADD_IMM 1,$FE
-		.BYTE	$40,$03		; POS_Y_MOVE	  0,$03
-		.BYTE	$03		; SJMP		  _sloc_38442
-		.WORD	_sloc_38442
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr1B_court_chair:
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$25
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SARG_SET		$02,$00
+		NBG_HNDL_SET	_nbgsub_38477
+_sloc_38442:
+		SPR_IDX_SET		0,$25
+		SDELAY			$0A
+		NJSR			_nsub_apu_snd_load
+			NARGB		$12
+		POS_Y_MOVE		0,$FF
+		SPR_IDX_INC		3
+		POS_Y_MOVE		0,$FE
+		SPR_IDX_INC		3
+		POS_Y_MOVE		0,$FE
+		SPR_IDX_INC		3
+		POS_Y_MOVE		0,$FD
+		SPR_IDX_INC		3
+		POS_Y_MOVE		0,$FC
+		SPR_IDX_INC		3
+		POS_Y_MOVE		0,$FA
+		SPR_IDX_INC		3
+		POS_Y_MOVE		0,$FA
+		SPR_IDX_INC		3
+		NJSR			_nsub_38481
+		POS_MOVE_STOP	0
+		SDELAY			$10
+		POS_Y_MOVE		0,$06
+		SPR_IDX_DEC		1
+		POS_Y_MOVE		0,$06
+		SPR_IDX_DEC		1
+		POS_Y_MOVE		0,$04
+		SPR_IDX_DEC		1
+		POS_Y_MOVE		0,$05
+		SPR_IDX_ADD_IMM 1,$FE
+		POS_Y_MOVE		0,$03
+		SJMP			_sloc_38442
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38477:
 		LDX		#$0B
 		LDY		#$0C
 		JSR		_player_to_obj_collision_test
 		JMP		_cur_obj_out_of_screen_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_38481:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_args1,X
@@ -748,62 +719,64 @@ _spr_raw_lib0E_2C:
 		.BYTE	$F8,$5B,$03,$F8
 		.BYTE	$11,$4B,$40,$01
 		.BYTE	$11,$4B,$00,$F9
-_scr1D_air_hammer_miner:
-		.BYTE	$01,$10	; SLOOP_BEGIN	  $10
-		.BYTE	$21,$2F		; SPR_IDX_SET	  1,$2F
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_385B9:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38602
-		.WORD	_nbgsub_38602
-_sloc_385BC:
-		.BYTE	$07		; NJSR		  _nsub_62ABE
-		.WORD	_nsub_62ABE
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$01,$08		; SLOOP_BEGIN	  $08
-		.BYTE	$22,$2D		; SPR_IDX_SET	  2,$2D
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$01,$1E		; SLOOP_BEGIN	  $1E
-		.BYTE	$22,$2D		; SPR_IDX_SET	  2,$2D
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_385BC
-		.WORD	_sloc_385BC
-_scr_385D4:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38636
-		.WORD	_nbgsub_38636
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_385DA:
-		.BYTE	$21,$2D		; SPR_IDX_SET	  1,$2D
-		.BYTE	$21,$2F		; SPR_IDX_SET	  1,$2F
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_385DA
-		.WORD	_sloc_385DA
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$2D		; SPR_IDX_SET	  1,$2D
-		.BYTE	$21,$2F		; SPR_IDX_SET	  1,$2F
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_385B9	; CASE	  _sjmp_case_385B9
-		.WORD	_scr_385F6	; CASE	  _scr_385F6
-		.WORD	_scr_385FC	; CASE	  _scr_385FC
-_scr_385F6:
-		.BYTE	$0F,$01,$30	; SARG_SET	  $01,$30
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_385FC:
-		.BYTE	$0F,$01,$32	; SARG_SET	  $01,$32
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr1D_air_hammer_miner:
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$2F
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_385B9:
+		NBG_HNDL_SET	_nbgsub_38602
+_sloc_385BC:
+		NJSR			_nsub_62ABE
+		POS_MOVE_STOP	0
+		SLOOP_BEGIN		$08
+		SPR_IDX_SET		2,$2D
+		SPR_IDX_INC		2
+		SLOOP_END
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SLOOP_BEGIN		$1E
+		SPR_IDX_SET		2,$2D
+		SPR_IDX_INC		2
+		SLOOP_END
+		SJMP			_sloc_385BC
+
+; =============== S C R I P T ===============================================
+_scr_385D4:
+		NBG_HNDL_SET	_nbgsub_38636
+		SARG_SET		$00,$02
+_sloc_385DA:
+		SPR_IDX_SET		1,$2D
+		SPR_IDX_SET		1,$2F
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_385DA
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$2D
+		SPR_IDX_SET		1,$2F
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_385B9
+		SCASE			_scr_385F6
+		SCASE			_scr_385FC
+
+; =============== S C R I P T ===============================================
+_scr_385F6:
+		SARG_SET		$01,$30
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_385FC:
+		SARG_SET		$01,$32
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38602:
 		JSR		_nsub_62C49
 		BCC		loc_38611
@@ -831,7 +804,7 @@ loc_3862F:
 		LDY		#$10
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38636:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -896,94 +869,81 @@ _spr_raw_lib0E_33:
 		.BYTE	$02
 		.BYTE	$F8,$AE,$43,$08
 		.BYTE	$F8,$BE,$43,$00
-_scr1E_pick_axe_miner:
-		.BYTE	$01,$10	; SLOOP_BEGIN	  $10
-		.BYTE	$21,$36		; SPR_IDX_SET	  1,$36
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$0F,$01,$80	; SARG_SET	  $01,$80
-_sjmp_case_386E9:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38766
-		.WORD	_nbgsub_38766
-_sloc_386EC:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$34,$40
-		.WORD	_nsub_6273D
-		.BYTE	$34,$40
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3871B
-		.WORD	_sloc_3871B
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3871B
-		.WORD	_sloc_3871B
-		.BYTE	$15,$01,$02,$80	; SARG_ALU	  $01,ADC,$80
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3871B
-		.WORD	_sloc_3871B
-		.BYTE	$15,$01,$02,$C0	; SARG_ALU	  $01,ADC,$C0
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0B		; SBCS		  _sloc_386EC
-		.WORD	_sloc_386EC
-_sloc_3871B:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$34,$40
-		.WORD	_nsub_6273D
-		.BYTE	$34,$40
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$AE,$04		; SPR_IDX_ADD_IMM 6,$04
-		.BYTE	$AE,$FC		; SPR_IDX_ADD_IMM 6,$FC
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$A8,$08		; SPR_IDX_ADD_IMM 0,$08
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$01
-		.WORD	_nsub_628D1
-		.BYTE	$00,$01
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$17		; SBCS_BREAK	  _sloc_38739
-		.WORD	_sloc_38739
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$02		; SLOOP_END
-_sloc_38739:
-		.BYTE	$03		; SJMP		  _sloc_386EC
-		.WORD	_sloc_386EC
-_scr_3873C:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3877C
-		.WORD	_nbgsub_3877C
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_38742:
-		.BYTE	$04		; SJSR		  _ssub_3875C
-		.WORD	_ssub_3875C
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_38742
-		.WORD	_sloc_38742
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_3875C
-		.WORD	_ssub_3875C
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_386E9	; CASE	  _sjmp_case_386E9
-		.WORD	_scr_385F6	; CASE	  _scr_385F6
-		.WORD	_scr_385FC	; CASE	  _scr_385FC
-_ssub_3875C:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$34,$40
-		.WORD	_nsub_6273D
-		.BYTE	$34,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$0C		; SPR_IDX_ADD_IMM 1,$0C
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr1E_pick_axe_miner:
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$36
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SARG_SET		$01,$80
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_386E9:
+		NBG_HNDL_SET	_nbgsub_38766
+_sloc_386EC:
+		NJSR			_nsub_6273D
+			NARGB		$34,$40
+		POS_MOVE_STOP	0
+		SDELAY			$14
+		NJSR			_nsub_62CC4
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3871B
+		SARG_ALU		$01,_ADC,$40
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3871B
+		SARG_ALU		$01,_ADC,$80
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3871B
+		SARG_ALU		$01,_ADC,$C0
+		NJSR			_nsub_62CD3
+		SBCS			_sloc_386EC
+_sloc_3871B:
+		NJSR			_nsub_6273D
+			NARGB		$34,$40
+		SLOOP_BEGIN		$03
+		SPR_IDX_ADD_IMM 6,$04
+		SPR_IDX_ADD_IMM 6,$FC
+		SLOOP_END
+		SPR_IDX_ADD_IMM 0,$08
+		NJSR			_nsub_628D1
+			NARGB		$00,$01
+		SLOOP_BEGIN		$0A
+		NJSR			_nsub_62CD3
+		SBCS_BREAK	_sloc_38739
+		SDELAY			$08
+		SLOOP_END
+_sloc_38739:
+		SJMP			_sloc_386EC
+
+; =============== S C R I P T ===============================================
+_scr_3873C:
+		NBG_HNDL_SET	_nbgsub_3877C
+		SARG_SET		$00,$02
+_sloc_38742:
+		SJSR			_ssub_3875C
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_38742
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_3875C
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_386E9
+		SCASE			_scr_385F6
+		SCASE			_scr_385FC
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3875C:
+		NJSR			_nsub_6273D
+			NARGB		$34,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$0C
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38766:
 		LDX		#$08
 		LDY		#$0C
@@ -997,7 +957,7 @@ loc_38775:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3877C:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -1158,94 +1118,81 @@ _spr_raw_lib0E_43:
 		.BYTE	$02,$8A,$03,$FA
 		.BYTE	$F2,$98,$03,$02
 		.BYTE	$F2,$88,$03,$FA
-_scr1F_hammer_miner:
-		.BYTE	$01,$10	; SLOOP_BEGIN	  $10
-		.BYTE	$21,$46		; SPR_IDX_SET	  1,$46
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$0F,$01,$80	; SARG_SET	  $01,$80
-_sjmp_case_38970:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_389ED
-		.WORD	_nbgsub_389ED
-_sloc_38973:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$44,$40
-		.WORD	_nsub_6273D
-		.BYTE	$44,$40
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_389A2
-		.WORD	_sloc_389A2
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_389A2
-		.WORD	_sloc_389A2
-		.BYTE	$15,$01,$02,$80	; SARG_ALU	  $01,ADC,$80
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_389A2
-		.WORD	_sloc_389A2
-		.BYTE	$15,$01,$02,$C0	; SARG_ALU	  $01,ADC,$C0
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0B		; SBCS		  _sloc_38973
-		.WORD	_sloc_38973
-_sloc_389A2:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$44,$40
-		.WORD	_nsub_6273D
-		.BYTE	$44,$40
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$AE,$04		; SPR_IDX_ADD_IMM 6,$04
-		.BYTE	$AE,$FC		; SPR_IDX_ADD_IMM 6,$FC
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$A8,$08		; SPR_IDX_ADD_IMM 0,$08
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$01
-		.WORD	_nsub_628D1
-		.BYTE	$00,$01
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$17		; SBCS_BREAK	  _sloc_389C0
-		.WORD	_sloc_389C0
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$02		; SLOOP_END
-_sloc_389C0:
-		.BYTE	$03		; SJMP		  _sloc_38973
-		.WORD	_sloc_38973
-_scr_389C3:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38A03
-		.WORD	_nbgsub_38A03
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_389C9:
-		.BYTE	$04		; SJSR		  _ssub_389E3
-		.WORD	_ssub_389E3
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_389C9
-		.WORD	_sloc_389C9
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_389E3
-		.WORD	_ssub_389E3
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_38970	; CASE	  _sjmp_case_38970
-		.WORD	_scr_385F6	; CASE	  _scr_385F6
-		.WORD	_scr_385FC	; CASE	  _scr_385FC
-_ssub_389E3:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$44,$40
-		.WORD	_nsub_6273D
-		.BYTE	$44,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$0C		; SPR_IDX_ADD_IMM 1,$0C
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr1F_hammer_miner:
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$46
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SARG_SET		$01,$80
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_38970:
+		NBG_HNDL_SET	_nbgsub_389ED
+_sloc_38973:
+		NJSR			_nsub_6273D
+			NARGB		$44,$40
+		POS_MOVE_STOP	0
+		SDELAY			$14
+		NJSR			_nsub_62CC4
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_389A2
+		SARG_ALU		$01,_ADC,$40
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_389A2
+		SARG_ALU		$01,_ADC,$80
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_389A2
+		SARG_ALU		$01,_ADC,$C0
+		NJSR			_nsub_62CD3
+		SBCS			_sloc_38973
+_sloc_389A2:
+		NJSR			_nsub_6273D
+			NARGB		$44,$40
+		SLOOP_BEGIN		$03
+		SPR_IDX_ADD_IMM 6,$04
+		SPR_IDX_ADD_IMM 6,$FC
+		SLOOP_END
+		SPR_IDX_ADD_IMM 0,$08
+		NJSR			_nsub_628D1
+			NARGB		$00,$01
+		SLOOP_BEGIN		$0A
+		NJSR			_nsub_62CD3
+		SBCS_BREAK	_sloc_389C0
+		SDELAY			$08
+		SLOOP_END
+_sloc_389C0:
+		SJMP			_sloc_38973
+
+; =============== S C R I P T ===============================================
+_scr_389C3:
+		NBG_HNDL_SET	_nbgsub_38A03
+		SARG_SET		$00,$02
+_sloc_389C9:
+		SJSR			_ssub_389E3
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_389C9
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_389E3
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_38970
+		SCASE			_scr_385F6
+		SCASE			_scr_385FC
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_389E3:
+		NJSR			_nsub_6273D
+			NARGB		$44,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$0C
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_389ED:
 		LDX		#$08
 		LDY		#$0C
@@ -1259,7 +1206,7 @@ loc_389FC:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38A03:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -1436,42 +1383,37 @@ _spr_raw_lib0E_53:
 		.BYTE	$02,$8A,$03,$FA
 		.BYTE	$F2,$98,$03,$02
 		.BYTE	$F2,$88,$03,$FA
-_scrE_empty_mine_trolley:
-		.BYTE	$09	; NBG_HNDL_SET	  _nbgsub_38C54
-		.WORD	_nbgsub_38C54
-_sloc_38C30:
-		.BYTE	$07		; NJSR		  _nsub_38C5B
-		.WORD	_nsub_38C5B
-		.BYTE	$0B		; SBCS		  _sloc_38C46
-		.WORD	_sloc_38C46
-		.BYTE	$07		; NJSR		  _nsub_6273D,$54,$40
-		.WORD	_nsub_6273D
-		.BYTE	$54,$40
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$02
-		.WORD	_nsub_628D1
-		.BYTE	$00,$02
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$03		; SJMP		  _sloc_38C30
-		.WORD	_sloc_38C30
-_sloc_38C46:
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$54,$40
-		.WORD	_nsub_6273D
-		.BYTE	$54,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scrE_empty_mine_trolley:
+		NBG_HNDL_SET	_nbgsub_38C54
+_sloc_38C30:
+		NJSR			_nsub_38C5B
+		SBCS			_sloc_38C46
+		NJSR			_nsub_6273D
+			NARGB		$54,$40
+		NJSR			_nsub_628D1
+			NARGB		$00,$02
+		SDELAY			$08
+		POS_MOVE_STOP	0
+		SJMP			_sloc_38C30
+_sloc_38C46:
+		NBG_HNDL_RESET
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$54,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38C54:
 		LDX		#$0D
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_38C5B:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_y_pos_lo,X
@@ -1556,78 +1498,70 @@ _spr_raw_lib0E_57:
 		.BYTE	$F8,$90,$02,$F0
 		.BYTE	$F8,$92,$42,$00
 		.BYTE	$F8,$92,$02,$F8
-_scr20_trolley_miner:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38D7D
-		.WORD	_nbgsub_38D7D
-_sloc_38D16:
-		.BYTE	$07		; NJSR		  _nsub_38C5B
-		.WORD	_nsub_38C5B
-		.BYTE	$0B		; SBCS		  _sloc_38D2C
-		.WORD	_sloc_38D2C
-		.BYTE	$07		; NJSR		  _nsub_6273D,$58,$40
-		.WORD	_nsub_6273D
-		.BYTE	$58,$40
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$02
-		.WORD	_nsub_628D1
-		.BYTE	$00,$02
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$03		; SJMP		  _sloc_38D16
-		.WORD	_sloc_38D16
-_sloc_38D2C:
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$0F,$00,$80	; SARG_SET	  $00,$80
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$58,$40
-		.WORD	_nsub_6273D
-		.BYTE	$58,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_sjmp_case_38D3D:
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$5C,$40
-		.WORD	_nsub_6273D
-		.BYTE	$5C,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_scr_38D4B:
-		.BYTE	$07		; NJSR		  _nsub_script_start,$0E,$00,$00,$00,$00
-		.WORD	_nsub_script_start
-		.BYTE	$0E,$00,$00,$00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38D93
-		.WORD	_nbgsub_38D93
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_38D59:
-		.BYTE	$04		; SJSR		  _ssub_38D73
-		.WORD	_ssub_38D73
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_38D59
-		.WORD	_sloc_38D59
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_38D73
-		.WORD	_ssub_38D73
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_38D3D	; CASE	  _sjmp_case_38D3D
-		.WORD	_scr_385F6	; CASE	  _scr_385F6
-		.WORD	_scr_385FC	; CASE	  _scr_385FC
-_ssub_38D73:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$5C,$40
-		.WORD	_nsub_6273D
-		.BYTE	$5C,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$04		; SPR_IDX_ADD_IMM 1,$04
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr20_trolley_miner:
+		NBG_HNDL_SET	_nbgsub_38D7D
+_sloc_38D16:
+		NJSR			_nsub_38C5B
+		SBCS			_sloc_38D2C
+		NJSR			_nsub_6273D
+			NARGB		$58,$40
+		NJSR			_nsub_628D1
+			NARGB		$00,$02
+		SDELAY			$08
+		POS_MOVE_STOP	0
+		SJMP			_sloc_38D16
+_sloc_38D2C:
+		NBG_HNDL_RESET
+		SARG_SET		$00,$80
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$58,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_sjmp_case_38D3D:
+		NBG_HNDL_RESET
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$5C,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_scr_38D4B:
+		NJSR			_nsub_script_start
+			NARGB		$0E,$00,$00,$00,$00
+		NBG_HNDL_SET	_nbgsub_38D93
+		SARG_SET		$00,$02
+_sloc_38D59:
+		SJSR			_ssub_38D73
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_38D59
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_38D73
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_38D3D
+		SCASE			_scr_385F6
+		SCASE			_scr_385FC
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_38D73:
+		NJSR			_nsub_6273D
+			NARGB		$5C,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$04
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38D7D:
 		LDX		#$08
 		LDY		#$08
@@ -1641,7 +1575,7 @@ loc_38D8C:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38D93:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -1754,122 +1688,110 @@ _spr_raw_lib0E_63:
 		.BYTE	$00,$8A,$03,$FA
 		.BYTE	$F0,$98,$03,$02
 		.BYTE	$F0,$88,$03,$FA
-_scr21_train_ghost:
-		.BYTE	$07		; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FA
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FA
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_390BD	; CASE	  _sjmp_case_390BD
-		.BYTE	$07		; NJSR		  _nsub_38FB5
-		.WORD	_nsub_38FB5
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$07		; NJSR		  _nsub_380D2
-		.WORD	_nsub_380D2
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$02
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$02
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_38EF6:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38F85
-		.WORD	_nbgsub_38F85
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$02
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$02
-_sloc_38EFD:
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$04		; SJSR		  _ssub_38F2A
-		.WORD	_ssub_38F2A
-		.BYTE	$15,$01,$02,$08	; SARG_ALU	  $01,ADC,$08
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$04		; SJSR		  _ssub_38F1A
-		.WORD	_ssub_38F1A
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$04		; SJSR		  _ssub_38F2A
-		.WORD	_ssub_38F2A
-		.BYTE	$15,$01,$02,$F8	; SARG_ALU	  $01,ADC,$F8
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$04		; SJSR		  _ssub_38F1A
-		.WORD	_ssub_38F1A
-		.BYTE	$03		; SJMP		  _sloc_38EFD
-		.WORD	_sloc_38EFD
-_ssub_38F1A:
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$A8,$02		; SPR_IDX_ADD_IMM 0,$02
-		.BYTE	$07		; NJSR		  _nsub_script_start,$21,$00,$00,$06,$00
-		.WORD	_nsub_script_start
-		.BYTE	$21,$00,$00,$06,$00
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$A8,$FE		; SPR_IDX_ADD_IMM 0,$FE
-		.BYTE	$05		; SRET
-_ssub_38F2A:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_62C49
-		.WORD	_nsub_62C49
-		.BYTE	$0C		; SBCC		  _sloc_38F41
-		.WORD	_sloc_38F41
-		.BYTE	$07		; NJSR		  _nsub_62CB0
-		.WORD	_nsub_62CB0
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-_sloc_38F41:
-		.BYTE	$07		; NJSR		  _nsub_62C7A
-		.WORD	_nsub_62C7A
-		.BYTE	$0C		; SBCC		  _sloc_38F4F
-		.WORD	_sloc_38F4F
-		.BYTE	$07		; NJSR		  _nsub_62CBA
-		.WORD	_nsub_62CBA
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-_sloc_38F4F:
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
-_scr_38F51:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_38F9B
-		.WORD	_nbgsub_38F9B
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_38F57:
-		.BYTE	$04		; SJSR		  _ssub_38F71
-		.WORD	_ssub_38F71
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_38F57
-		.WORD	_sloc_38F57
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_38F71
-		.WORD	_ssub_38F71
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_38EF6	; CASE	  _sjmp_case_38EF6
-		.WORD	_scr_38F79	; CASE	  _scr_38F79
-		.WORD	_scr_38F7F	; CASE	  _scr_38F7F
-_ssub_38F71:
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$02
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$02
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$05		; SRET
-_scr_38F79:
-		.BYTE	$0F,$01,$76	; SARG_SET	  $01,$76
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_38F7F:
-		.BYTE	$0F,$01,$78	; SARG_SET	  $01,$78
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr21_train_ghost:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FA
+		SJMP_SW			$01
+		SCASE			_sjmp_case_390BD
+		NJSR			_nsub_38FB5
+		SARG_SET		$00,$00
+		NJSR			_nsub_380D2
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$02
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_38EF6:
+		NBG_HNDL_SET	_nbgsub_38F85
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$02
+_sloc_38EFD:
+		SLOOP_BEGIN		$0A
+		SJSR			_ssub_38F2A
+		SARG_ALU		$01,_ADC,$08
+		SLOOP_END
+		SJSR			_ssub_38F1A
+		SLOOP_BEGIN		$0A
+		SJSR			_ssub_38F2A
+		SARG_ALU		$01,_ADC,$F8
+		SLOOP_END
+		SJSR			_ssub_38F1A
+		SJMP			_sloc_38EFD
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_38F1A:
+		POS_MOVE_STOP	0
+		SPR_IDX_ADD_IMM 0,$02
+		NJSR			_nsub_script_start
+			NARGB		$21,$00,$00,$06,$00
+		SDELAY			$14
+		SPR_IDX_ADD_IMM 0,$FE
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_38F2A:
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+		SLOOP_BEGIN		$14
+		SDELAY			$01
+		NJSR			_nsub_62C49
+		SBCC			_sloc_38F41
+		NJSR			_nsub_62CB0
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+_sloc_38F41:
+		NJSR			_nsub_62C7A
+		SBCC			_sloc_38F4F
+		NJSR			_nsub_62CBA
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+_sloc_38F4F:
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_38F51:
+		NBG_HNDL_SET	_nbgsub_38F9B
+		SARG_SET		$00,$02
+_sloc_38F57:
+		SJSR			_ssub_38F71
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_38F57
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_38F71
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_38EF6
+		SCASE			_scr_38F79
+		SCASE			_scr_38F7F
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_38F71:
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$02
+		SDELAY			$01
+		SPR_IDX_INC		1
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_38F79:
+		SARG_SET		$01,$76
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_38F7F:
+		SARG_SET		$01,$78
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38F85:
 		LDX		#$08
 		LDY		#$08
@@ -1883,7 +1805,7 @@ loc_38F94:
 		LDY		#$08
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_38F9B:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -1901,7 +1823,7 @@ loc_38FAF:
 locret_38FB4:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_38FB5:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -2008,27 +1930,26 @@ _spr_raw_lib0E_79:
 		.BYTE	$02
 		.BYTE	$F4,$FE,$43,$00
 		.BYTE	$F4,$DA,$43,$08
-_sjmp_case_390BD:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_390D9
-		.WORD	_nbgsub_390D9
-		.BYTE	$07		; NJSR		  _nsub_390E6
-		.WORD	_nsub_390E6
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$01
-		.WORD	_nsub_628D1
-		.BYTE	$00,$01
-		.BYTE	$01,$08		; SLOOP_BEGIN	  $08
-		.BYTE	$24,$7A		; SPR_IDX_SET	  4,$7A
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$22,$7A		; SPR_IDX_SET	  2,$7A
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_390BD:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_390D9
+		NJSR			_nsub_390E6
+		NJSR			_nsub_628D1
+			NARGB		$00,$01
+		SLOOP_BEGIN		$08
+		SPR_IDX_SET		4,$7A
+		SPR_IDX_INC		4
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SLOOP_BEGIN		$04
+		SPR_IDX_SET		2,$7A
+		SPR_IDX_INC		2
+		SLOOP_END
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_390D9:
 		LDX		#$06
 		LDY		#$07
@@ -2036,7 +1957,7 @@ _nbgsub_390D9:
 		JSR		_obj_to_room_macro_collision_test_raw
 		JMP		_cur_obj_out_of_screen_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_390E6:
 		LDA		#$21
 		JSR		_rand
@@ -2051,52 +1972,50 @@ _spr_raw_lib0E_7A:
 _spr_raw_lib0E_7B:
 		.BYTE	$01
 		.BYTE	$F8,$D8,$C3,$FC
-_scr2B_still_throw_ballistic_slime:
-		.BYTE	$07 ; NJSR	       _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_39173	; CASE	  _sjmp_case_39173
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$05		; SPR_IDX_SET	  1,$05
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3910D:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$08
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$08
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39143
-		.WORD	_nbgsub_39143
-_sloc_39114:
-		.BYTE	$07		; NJSR		  _nsub_62ABE
-		.WORD	_nsub_62ABE
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-		.BYTE	$06,$07		; SDELAY	  $07
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$07		; NJSR		  _nsub_script_start,$2B,$00,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$2B,$00,$00,$01,$00
-		.BYTE	$01,$05		; SLOOP_BEGIN	  $05
-		.BYTE	$AF,$FC		; SPR_IDX_ADD_IMM 7,$FC
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_39114
-		.WORD	_sloc_39114
-_scr_39132:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39159
-		.WORD	_nbgsub_39159
-		.BYTE	$04		; SJSR		  _ssub_38079
-		.WORD	_ssub_38079
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3910D	; CASE	  _sjmp_case_3910D
-		.WORD	_scr_38096	; CASE	  _scr_38096
-		.WORD	_scr_3809C	; CASE	  _scr_3809C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr2B_still_throw_ballistic_slime:
+		NJSR		_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_39173
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$05
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3910D:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$08
+		NBG_HNDL_SET	_nbgsub_39143
+_sloc_39114:
+		NJSR			_nsub_62ABE
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+		SDELAY			$07
+		SPR_IDX_ADD_IMM 7,$04
+		NJSR			_nsub_script_start
+			NARGB		$2B,$00,$00,$01,$00
+		SLOOP_BEGIN		$05
+		SPR_IDX_ADD_IMM 7,$FC
+		SPR_IDX_ADD_IMM 7,$04
+		SLOOP_END
+		SJMP			_sloc_39114
+
+; =============== S C R I P T ===============================================
+_scr_39132:
+		NBG_HNDL_SET	_nbgsub_39159
+		SJSR			_ssub_38079
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3910D
+		SCASE			_scr_38096
+		SCASE			_scr_3809C
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39143:
 		LDX		#$08
 		LDY		#$0C
@@ -2110,7 +2029,7 @@ loc_39152:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39159:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -2127,41 +2046,40 @@ loc_3916D:
 		.WORD	_scr_3809C
 locret_39172:
 		RTS
-_sjmp_case_39173:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3919C
-		.WORD	_nbgsub_3919C
-		.BYTE	$07		; NJSR		  _nsub_391A6
-		.WORD	_nsub_391A6
-		.BYTE	$08,$01		; SRUN		  $01,_scr_39194
-		.WORD	_scr_39194
-		.BYTE	$07		; NJSR		  _nsub_628D1,$40,$02
-		.WORD	_nsub_628D1
-		.BYTE	$40,$02
-		.BYTE	$60,$00,$FD	; POS_Y_DELTA_ADD 0,$00,$FD
-		.BYTE	$01,$48		; SLOOP_BEGIN	  $48
-		.BYTE	$61,$18,$00	; POS_Y_DELTA_ADD 1,$18,$00
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$14,$01		; SDISABLE	  $01
-		.BYTE	$06,$04		; SDELAY	  $04
-		.BYTE	$00		; STOP
-_scr_39194:
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$AC,$FD		; SPR_IDX_ADD_IMM 4,$FD
-		.BYTE	$03		; SJMP		  _scr_39194
-		.WORD	_scr_39194
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_39173:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_3919C
+		NJSR			_nsub_391A6
+		SRUN			$01,_scr_39194
+		NJSR			_nsub_628D1
+			NARGB		$40,$02
+		POS_Y_DELTA_ADD 0,$00,$FD
+		SLOOP_BEGIN		$48
+		POS_Y_DELTA_ADD 1,$18,$00
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SDISABLE		$01
+		SDELAY			$04
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_scr_39194:
+		SPR_IDX_INC		4
+		SPR_IDX_INC		4
+		SPR_IDX_INC		4
+		SPR_IDX_ADD_IMM 4,$FD
+		SJMP			_scr_39194
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3919C:
 		LDX		#$06
 		LDY		#$07
 		JSR		_player_to_obj_collision_test
 		JMP		_cur_obj_out_of_screen_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_391A6:
 		LDA		#$07
 		JSR		_rand
@@ -2247,80 +2165,66 @@ _spr_raw_lib0E_87:
 		.BYTE	$02
 		.BYTE	$F8,$9E,$80,$00
 		.BYTE	$F8,$8E,$80,$F8
-_scr2C_fast_moving_throw_forward_slime:
-		.BYTE	$07 ; NJSR		   _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_392FF	; CASE	  _sjmp_case_392FF
-		.BYTE	$07		; NJSR		  _nsub_62ABE
-		.WORD	_nsub_62ABE
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$40
-		.WORD	_nsub_6273D
-		.BYTE	$04,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_39277:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_392CF
-		.WORD	_nbgsub_392CF
-_sloc_3927A:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-		.BYTE	$01,$06		; SLOOP_BEGIN	  $06
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_62C49
-		.WORD	_nsub_62C49
-		.BYTE	$0C		; SBCC		  _sloc_3929B
-		.WORD	_sloc_3929B
-		.BYTE	$07		; NJSR		  _nsub_62CB0
-		.WORD	_nsub_62CB0
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-_sloc_3929B:
-		.BYTE	$07		; NJSR		  _nsub_62C7A
-		.WORD	_nsub_62C7A
-		.BYTE	$0C		; SBCC		  _sloc_392AD
-		.WORD	_sloc_392AD
-		.BYTE	$07		; NJSR		  _nsub_62CBA
-		.WORD	_nsub_62CBA
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3805C
-		.WORD	_scr_3805C
-_sloc_392AD:
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62AEC,$08
-		.WORD	_nsub_62AEC
-		.BYTE	$08
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_script_start,$2C,$00,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$2C,$00,$00,$01,$00
-		.BYTE	$03		; SJMP		  _sloc_3927A
-		.WORD	_sloc_3927A
-_scr_392BE:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_392E5
-		.WORD	_nbgsub_392E5
-		.BYTE	$04		; SJSR		  _ssub_38079
-		.WORD	_ssub_38079
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_39277	; CASE	  _sjmp_case_39277
-		.WORD	_scr_38096	; CASE	  _scr_38096
-		.WORD	_scr_3809C	; CASE	  _scr_3809C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr2C_fast_moving_throw_forward_slime:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_392FF
+		NJSR			_nsub_62ABE
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$04,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39277:
+		NBG_HNDL_SET	_nbgsub_392CF
+_sloc_3927A:
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_3805C
+		SLOOP_BEGIN		$06
+		SLOOP_BEGIN		$0A
+		SDELAY			$01
+		NJSR			_nsub_62C49
+		SBCC			_sloc_3929B
+		NJSR			_nsub_62CB0
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_3805C
+_sloc_3929B:
+		NJSR			_nsub_62C7A
+		SBCC			_sloc_392AD
+		NJSR			_nsub_62CBA
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_3805C
+_sloc_392AD:
+		SLOOP_END
+		NJSR			_nsub_62AEC
+			NARGB		$08
+		SLOOP_END
+		NJSR			_nsub_script_start
+			NARGB		$2C,$00,$00,$01,$00
+		SJMP			_sloc_3927A
+
+; =============== S C R I P T ===============================================
+_scr_392BE:
+		NBG_HNDL_SET	_nbgsub_392E5
+		SJSR			_ssub_38079
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_39277
+		SCASE			_scr_38096
+		SCASE			_scr_3809C
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_392CF:
 		LDX		#$08
 		LDY		#$0C
@@ -2334,7 +2238,7 @@ loc_392DE:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_392E5:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -2351,24 +2255,22 @@ loc_392F9:
 		.WORD	_scr_3809C
 locret_392FE:
 		RTS
-_sjmp_case_392FF:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39315
-		.WORD	_nbgsub_39315
-		.BYTE	$07		; NJSR		  _nsub_391A6
-		.WORD	_nsub_391A6
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$01
-		.WORD	_nsub_628D1
-		.BYTE	$80,$01
-_sloc_3930D:
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$AC,$FD		; SPR_IDX_ADD_IMM 4,$FD
-		.BYTE	$03		; SJMP		  _sloc_3930D
-		.WORD	_sloc_3930D
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_392FF:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_39315
+		NJSR			_nsub_391A6
+		NJSR			_nsub_628D1
+			NARGB		$80,$01
+_sloc_3930D:
+		SPR_IDX_INC		4
+		SPR_IDX_INC		4
+		SPR_IDX_INC		4
+		SPR_IDX_ADD_IMM 4,$FD
+		SJMP			_sloc_3930D
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39315:
 		LDX		#$06
 		LDY		#$07
@@ -2528,103 +2430,92 @@ _spr_raw_lib0E:
 		.WORD	_spr_raw_lib0E_97
 		.WORD	_spr_raw_lib0E_97
 		.WORD	_spr_raw_lib0E_97
-_scr23_halloween:
-		.BYTE	$07		; NJSR		  _nsub_62ABE
-		.WORD	_nsub_62ABE
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$C2		; SPR_IDX_SET	  1,$C2
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3945C:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_394DE
-		.WORD	_nbgsub_394DE
-_sloc_3945F:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_39498
-		.WORD	_scr_39498
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_62C49
-		.WORD	_nsub_62C49
-		.BYTE	$0C		; SBCC		  _sloc_3947E
-		.WORD	_sloc_3947E
-		.BYTE	$07		; NJSR		  _nsub_62CB0
-		.WORD	_nsub_62CB0
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_39498
-		.WORD	_scr_39498
-_sloc_3947E:
-		.BYTE	$07		; NJSR		  _nsub_62C7A
-		.WORD	_nsub_62C7A
-		.BYTE	$0C		; SBCC		  _sloc_39490
-		.WORD	_sloc_39490
-		.BYTE	$07		; NJSR		  _nsub_62CBA
-		.WORD	_nsub_62CBA
-		.BYTE	$07		; NJSR		  _nsub_628D1,$C0,$00
-		.WORD	_nsub_628D1
-		.BYTE	$C0,$00
-		.BYTE	$08,$01		; SRUN		  $01,_scr_39498
-		.WORD	_scr_39498
-_sloc_39490:
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62AEC,$10
-		.WORD	_nsub_62AEC
-		.BYTE	$10
-		.BYTE	$03		; SJMP		  _sloc_3945F
-		.WORD	_sloc_3945F
-_scr_39498:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$C0,$40
-		.WORD	_nsub_6273D
-		.BYTE	$C0,$40
-_sloc_3949D:
-		.BYTE	$A8,$04		; SPR_IDX_ADD_IMM 0,$04
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$A8,$FC		; SPR_IDX_ADD_IMM 0,$FC
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$03		; SJMP		  _sloc_3949D
-		.WORD	_sloc_3949D
-_scr_394A8:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_394F4
-		.WORD	_nbgsub_394F4
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_394AE:
-		.BYTE	$04		; SJSR		  _ssub_394C8
-		.WORD	_ssub_394C8
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_394AE
-		.WORD	_sloc_394AE
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_394C8
-		.WORD	_ssub_394C8
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3945C	; CASE	  _sjmp_case_3945C
-		.WORD	_sjmp_case_394D2	; CASE	  _sjmp_case_394D2
-		.WORD	_sjmp_case_394D8	; CASE	  _sjmp_case_394D8
-_ssub_394C8:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$C0,$40
-		.WORD	_nsub_6273D
-		.BYTE	$C0,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$08		; SPR_IDX_ADD_IMM 1,$08
-		.BYTE	$05		; SRET
-_sjmp_case_394D2:
-		.BYTE	$0F,$01,$04	; SARG_SET	  $01,$04
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_sjmp_case_394D8:
-		.BYTE	$0F,$01,$06	; SARG_SET	  $01,$06
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr23_halloween:
+		NJSR			_nsub_62ABE
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$C2
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3945C:
+		NBG_HNDL_SET	_nbgsub_394DE
+_sloc_3945F:
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_39498
+		SLOOP_BEGIN		$14
+		SDELAY			$01
+		NJSR			_nsub_62C49
+		SBCC			_sloc_3947E
+		NJSR			_nsub_62CB0
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_39498
+_sloc_3947E:
+		NJSR			_nsub_62C7A
+		SBCC			_sloc_39490
+		NJSR			_nsub_62CBA
+		NJSR			_nsub_628D1
+			NARGB		$C0,$00
+		SRUN			$01,_scr_39498
+_sloc_39490:
+		SLOOP_END
+		NJSR			_nsub_62AEC
+			NARGB		$10
+		SJMP			_sloc_3945F
+
+; =============== S C R I P T ===============================================
+_scr_39498:
+		NJSR			_nsub_6273D
+			NARGB		$C0,$40
+_sloc_3949D:
+		SPR_IDX_ADD_IMM 0,$04
+		SDELAY			$0A
+		SPR_IDX_ADD_IMM 0,$FC
+		SDELAY			$0A
+		SJMP			_sloc_3949D
+
+; =============== S C R I P T ===============================================
+_scr_394A8:
+		NBG_HNDL_SET	_nbgsub_394F4
+		SARG_SET		$00,$02
+_sloc_394AE:
+		SJSR			_ssub_394C8
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_394AE
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_394C8
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3945C
+		SCASE			_sjmp_case_394D2
+		SCASE			_sjmp_case_394D8
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_394C8:
+		NJSR			_nsub_6273D
+			NARGB		$C0,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$08
+		SRET
+
+; =============== S C R I P T ===============================================
+_sjmp_case_394D2:
+		SARG_SET		$01,$04
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_sjmp_case_394D8:
+		SARG_SET		$01,$06
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_394DE:
 		LDX		#$08
 		LDY		#$0C
@@ -2638,7 +2529,7 @@ loc_394ED:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_394F4:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -2655,43 +2546,44 @@ loc_39508:
 		.WORD	_sjmp_case_394D8
 locret_3950D:
 		RTS
-_scr_lib0F_00:
+
+_spr_res_lib0F_00:
 		.BYTE	$01
-		.WORD	_scr_lib0F_00_A
-_scr_lib0F_01:
+		.WORD	_spr_res_lib0F_00_A
+_spr_res_lib0F_01:
 		.BYTE	$01
-		.WORD	_scr_lib0F_01_A
-_scr_lib0F_02:
+		.WORD	_spr_res_lib0F_01_A
+_spr_res_lib0F_02:
 		.BYTE	$01
-		.WORD	_scr_lib0F_02_A
-_scr_lib0F_03:
+		.WORD	_spr_res_lib0F_02_A
+_spr_res_lib0F_03:
 		.BYTE	$01
-		.WORD	_scr_lib0F_03_A
-_scr_lib0F_04:
+		.WORD	_spr_res_lib0F_03_A
+_spr_res_lib0F_04:
 		.BYTE	$01
-		.WORD	_scr_lib0F_04_A
-_scr_lib0F_05:
+		.WORD	_spr_res_lib0F_04_A
+_spr_res_lib0F_05:
 		.BYTE	$01
-		.WORD	_scr_lib0F_05_A
-_scr_lib0F_06:
+		.WORD	_spr_res_lib0F_05_A
+_spr_res_lib0F_06:
 		.BYTE	$01
-		.WORD	_scr_lib0F_06_A
-_scr_lib0F_07:
+		.WORD	_spr_res_lib0F_06_A
+_spr_res_lib0F_07:
 		.BYTE	$01
-		.WORD	_scr_lib0F_07_A
-_scr_lib0F_08:
+		.WORD	_spr_res_lib0F_07_A
+_spr_res_lib0F_08:
 		.BYTE	$01
-		.WORD	_scr_lib0F_08_A
-_scr_lib0F_09:
+		.WORD	_spr_res_lib0F_08_A
+_spr_res_lib0F_09:
 		.BYTE	$01
-		.WORD	_scr_lib0F_09_A
-_scr_lib0F_0A:
+		.WORD	_spr_res_lib0F_09_A
+_spr_res_lib0F_0A:
 		.BYTE	$01
-		.WORD	_scr_lib0F_0A_A
-_scr_lib0F_0B:
+		.WORD	_spr_res_lib0F_0A_A
+_spr_res_lib0F_0B:
 		.BYTE	$01
-		.WORD	_scr_lib0F_0B_A
-_scr_lib0F_00_A:
+		.WORD	_spr_res_lib0F_0B_A
+_spr_res_lib0F_00_A:
 		.BYTE	$07
 		.BYTE	$0A,$3E,$40,$F8
 		.BYTE	$0A,$3E,$00,$00
@@ -2700,7 +2592,7 @@ _scr_lib0F_00_A:
 		.BYTE	$EC,$88,$03,$F8
 		.BYTE	$FC,$9A,$03,$00
 		.BYTE	$EC,$98,$03,$00
-_scr_lib0F_04_A:
+_spr_res_lib0F_04_A:
 		.BYTE	$06
 		.BYTE	$0A,$3E,$00,$00
 		.BYTE	$0A,$3E,$40,$F8
@@ -2708,7 +2600,7 @@ _scr_lib0F_04_A:
 		.BYTE	$FC,$8A,$43,$00
 		.BYTE	$FC,$AA,$03,$F8
 		.BYTE	$EC,$A8,$03,$F8
-_scr_lib0F_01_A:
+_spr_res_lib0F_01_A:
 		.BYTE	$08
 		.BYTE	$0A,$3E,$40,$F8
 		.BYTE	$0A,$3E,$00,$00
@@ -2718,7 +2610,7 @@ _scr_lib0F_01_A:
 		.BYTE	$FC,$96,$43,$F8
 		.BYTE	$EC,$94,$43,$F8
 		.BYTE	$EC,$84,$43,$00
-_scr_lib0F_05_A:
+_spr_res_lib0F_05_A:
 		.BYTE	$07
 		.BYTE	$0A,$3E,$00,$00
 		.BYTE	$0A,$3E,$40,$F8
@@ -2727,7 +2619,7 @@ _scr_lib0F_05_A:
 		.BYTE	$FC,$A6,$43,$00
 		.BYTE	$FC,$B6,$43,$F8
 		.BYTE	$EC,$B4,$43,$F8
-_scr_lib0F_02_A:
+_spr_res_lib0F_02_A:
 		.BYTE	$08
 		.BYTE	$0A,$3E,$00,$00
 		.BYTE	$0A,$3E,$40,$F8
@@ -2737,7 +2629,7 @@ _scr_lib0F_02_A:
 		.BYTE	$FC,$9E,$03,$F0
 		.BYTE	$FC,$82,$03,$F8
 		.BYTE	$FC,$92,$03,$00
-_scr_lib0F_06_A:
+_spr_res_lib0F_06_A:
 		.BYTE	$06
 		.BYTE	$0A,$3E,$00,$00
 		.BYTE	$0A,$3E,$40,$F8
@@ -2745,7 +2637,7 @@ _scr_lib0F_06_A:
 		.BYTE	$EC,$B0,$03,$00
 		.BYTE	$FC,$A2,$03,$F8
 		.BYTE	$FC,$B2,$03,$00
-_scr_lib0F_03_A:
+_spr_res_lib0F_03_A:
 		.BYTE	$08
 		.BYTE	$0A,$3E,$00,$00
 		.BYTE	$0A,$3E,$40,$F8
@@ -2755,7 +2647,7 @@ _scr_lib0F_03_A:
 		.BYTE	$FC,$96,$03,$00
 		.BYTE	$EC,$94,$03,$00
 		.BYTE	$EC,$84,$03,$F8
-_scr_lib0F_07_A:
+_spr_res_lib0F_07_A:
 		.BYTE	$07
 		.BYTE	$0A,$3E,$40,$F8
 		.BYTE	$0A,$3E,$00,$00
@@ -2764,7 +2656,7 @@ _scr_lib0F_07_A:
 		.BYTE	$FC,$A6,$03,$F8
 		.BYTE	$FC,$B6,$03,$00
 		.BYTE	$EC,$B4,$03,$00
-_scr_lib0F_08_A:
+_spr_res_lib0F_08_A:
 		.BYTE	$07
 		.BYTE	$0A,$3E,$40,$FA
 		.BYTE	$0A,$3E,$00,$02
@@ -2773,7 +2665,7 @@ _scr_lib0F_08_A:
 		.BYTE	$EC,$88,$03,$FA
 		.BYTE	$FC,$9A,$03,$02
 		.BYTE	$EC,$98,$03,$02
-_scr_lib0F_09_A:
+_spr_res_lib0F_09_A:
 		.BYTE	$08
 		.BYTE	$0A,$3E,$40,$FA
 		.BYTE	$0A,$3E,$00,$02
@@ -2783,7 +2675,7 @@ _scr_lib0F_09_A:
 		.BYTE	$FC,$96,$43,$FA
 		.BYTE	$EC,$94,$43,$FA
 		.BYTE	$EC,$84,$43,$02
-_scr_lib0F_0A_A:
+_spr_res_lib0F_0A_A:
 		.BYTE	$08
 		.BYTE	$0A,$3E,$00,$02
 		.BYTE	$0A,$3E,$40,$FA
@@ -2793,7 +2685,7 @@ _scr_lib0F_0A_A:
 		.BYTE	$FC,$9E,$03,$F2
 		.BYTE	$FC,$82,$03,$FA
 		.BYTE	$FC,$92,$03,$02
-_scr_lib0F_0B_A:
+_spr_res_lib0F_0B_A:
 		.BYTE	$08
 		.BYTE	$0A,$3E,$00,$02
 		.BYTE	$0A,$3E,$40,$FA
@@ -2827,121 +2719,112 @@ _spr_raw_lib0F_07:
 		.BYTE	$F6,$84,$43,$08
 		.BYTE	$FE,$6E,$43,$08
 		.BYTE	$FE,$7E,$43,$00
-_scr24_flying_wing_elephant:
-		.BYTE	$01,$10 ; SLOOP_BEGIN	    $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$CC,$40
-		.WORD	_nsub_6273D
-		.BYTE	$CC,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_396EE:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39785
-		.WORD	_nbgsub_39785
-_sloc_396F1:
-		.BYTE	$07		; NJSR		  _nsub_604CD
-		.WORD	_nsub_604CD
-		.BYTE	$12,$04		; SJSR_SW	  $04
-		.WORD	_sjsr_case_39706	; CASE	  _sjsr_case_39706
-		.WORD	_sjsr_case_39716	; CASE	  _sjsr_case_39716
-		.WORD	_sjsr_case_39726	; CASE	  _sjsr_case_39726
-		.WORD	_sjsr_case_39736	; CASE	  _sjsr_case_39736
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$03		; SJMP		  _sloc_396F1
-		.WORD	_sloc_396F1
-_sjsr_case_39706:
-		.BYTE	$50,$80,$FE	; POS_Y_DELTA_SET 0,$80,$FE
-_sloc_39709:
-		.BYTE	$20,$CC		; SPR_IDX_SET	  0,$CC
-		.BYTE	$04		; SJSR		  _ssub_39746
-		.WORD	_ssub_39746
-		.BYTE	$07		; NJSR		  _nsub_62B68,$50
-		.WORD	_nsub_62B68
-		.BYTE	$50
-		.BYTE	$0C		; SBCC		  _sloc_39709
-		.WORD	_sloc_39709
-		.BYTE	$05		; SRET
-_sjsr_case_39716:
-		.BYTE	$48,$80,$01	; POS_X_DELTA_SET 0,$80,$01
-_sloc_39719:
-		.BYTE	$20,$CD		; SPR_IDX_SET	  0,$CD
-		.BYTE	$04		; SJSR		  _ssub_39746
-		.WORD	_ssub_39746
-		.BYTE	$07		; NJSR		  _nsub_62B60,$B0
-		.WORD	_nsub_62B60
-		.BYTE	$B0
-		.BYTE	$0B		; SBCS		  _sloc_39719
-		.WORD	_sloc_39719
-		.BYTE	$05		; SRET
-_sjsr_case_39726:
-		.BYTE	$50,$80,$01	; POS_Y_DELTA_SET 0,$80,$01
-_sloc_39729:
-		.BYTE	$20,$CE		; SPR_IDX_SET	  0,$CE
-		.BYTE	$04		; SJSR		  _ssub_39746
-		.WORD	_ssub_39746
-		.BYTE	$07		; NJSR		  _nsub_62B68,$A0
-		.WORD	_nsub_62B68
-		.BYTE	$A0
-		.BYTE	$0B		; SBCS		  _sloc_39729
-		.WORD	_sloc_39729
-		.BYTE	$05		; SRET
-_sjsr_case_39736:
-		.BYTE	$48,$80,$FE	; POS_X_DELTA_SET 0,$80,$FE
-_sloc_39739:
-		.BYTE	$20,$CF		; SPR_IDX_SET	  0,$CF
-		.BYTE	$04		; SJSR		  _ssub_39746
-		.WORD	_ssub_39746
-		.BYTE	$07		; NJSR		  _nsub_62B60,$50
-		.WORD	_nsub_62B60
-		.BYTE	$50
-		.BYTE	$0C		; SBCC		  _sloc_39739
-		.WORD	_sloc_39739
-		.BYTE	$05		; SRET
-_ssub_39746:
-		.BYTE	$06,$04		; SDELAY	  $04
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$AC,$FC		; SPR_IDX_ADD_IMM 4,$FC
-		.BYTE	$05		; SRET
-_scr_3974F:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3979B
-		.WORD	_nbgsub_3979B
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_39755:
-		.BYTE	$04		; SJSR		  _ssub_3976F
-		.WORD	_ssub_3976F
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_39755
-		.WORD	_sloc_39755
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_3976F
-		.WORD	_ssub_3976F
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_396EE	; CASE	  _sjmp_case_396EE
-		.WORD	_sjmp_case_39779	; CASE	  _sjmp_case_39779
-		.WORD	_sjmp_case_3977F	; CASE	  _sjmp_case_3977F
-_ssub_3976F:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$CC,$40
-		.WORD	_nsub_6273D
-		.BYTE	$CC,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$18		; SPR_IDX_ADD_IMM 1,$18
-		.BYTE	$05		; SRET
-_sjmp_case_39779:
-		.BYTE	$0F,$01,$08	; SARG_SET	  $01,$08
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_sjmp_case_3977F:
-		.BYTE	$0F,$01,$0A	; SARG_SET	  $01,$0A
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr24_flying_wing_elephant:
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$CC,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_396EE:
+		NBG_HNDL_SET	_nbgsub_39785
+_sloc_396F1:
+		NJSR			_nsub_604CD
+		SJSR_SW	$04
+		SCASE			_sjsr_case_39706
+		SCASE			_sjsr_case_39716
+		SCASE			_sjsr_case_39726
+		SCASE			_sjsr_case_39736
+		POS_MOVE_STOP	0
+		SARG_ALU		$01,_ADC,$40
+		SJMP			_sloc_396F1
+_sjsr_case_39706:
+		POS_Y_DELTA_SET 0,$80,$FE
+_sloc_39709:
+		SPR_IDX_SET		0,$CC
+		SJSR			_ssub_39746
+		NJSR			_nsub_62B68
+			NARGB		$50
+		SBCC			_sloc_39709
+		SRET
+_sjsr_case_39716:
+		POS_X_DELTA_SET 0,$80,$01
+_sloc_39719:
+		SPR_IDX_SET		0,$CD
+		SJSR			_ssub_39746
+		NJSR			_nsub_62B60
+			NARGB		$B0
+		SBCS			_sloc_39719
+		SRET
+_sjsr_case_39726:
+		POS_Y_DELTA_SET 0,$80,$01
+_sloc_39729:
+		SPR_IDX_SET		0,$CE
+		SJSR			_ssub_39746
+		NJSR			_nsub_62B68
+			NARGB		$A0
+		SBCS			_sloc_39729
+		SRET
+_sjsr_case_39736:
+		POS_X_DELTA_SET 0,$80,$FE
+_sloc_39739:
+		SPR_IDX_SET		0,$CF
+		SJSR			_ssub_39746
+		NJSR			_nsub_62B60
+			NARGB		$50
+		SBCC			_sloc_39739
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_39746:
+		SDELAY			$04
+		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 4,$FC
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3974F:
+		NBG_HNDL_SET	_nbgsub_3979B
+		SARG_SET		$00,$02
+_sloc_39755:
+		SJSR			_ssub_3976F
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_39755
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_3976F
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_396EE
+		SCASE			_sjmp_case_39779
+		SCASE			_sjmp_case_3977F
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3976F:
+		NJSR			_nsub_6273D
+			NARGB		$CC,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$18
+		SRET
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39779:
+		SARG_SET		$01,$08
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3977F:
+		SARG_SET		$01,$0A
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39785:
 		LDX		#$08
 		LDY		#$08
@@ -2955,7 +2838,7 @@ loc_39794:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3979B:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -2972,55 +2855,55 @@ loc_397AF:
 		.WORD	_sjmp_case_3977F
 locret_397B4:
 		RTS
-_scr_lib0F_0C:
+_spr_res_lib0F_0C:
 		.BYTE	$01
-		.WORD	_scr_lib0F_0C_A
-_scr_lib0F_10:
+		.WORD	_spr_res_lib0F_0C_A
+_spr_res_lib0F_10:
 		.BYTE	$01
-		.WORD	_scr_lib0F_10_A
-_scr_lib0F_14:
+		.WORD	_spr_res_lib0F_10_A
+_spr_res_lib0F_14:
 		.BYTE	$01
-		.WORD	_scr_lib0F_14_A
-_scr_lib0F_0D:
+		.WORD	_spr_res_lib0F_14_A
+_spr_res_lib0F_0D:
 		.BYTE	$01
-		.WORD	_scr_lib0F_0D_A
-_scr_lib0F_11:
+		.WORD	_spr_res_lib0F_0D_A
+_spr_res_lib0F_11:
 		.BYTE	$01
-		.WORD	_scr_lib0F_11_A
-_scr_lib0F_15:
+		.WORD	_spr_res_lib0F_11_A
+_spr_res_lib0F_15:
 		.BYTE	$01
-		.WORD	_scr_lib0F_15_A
-_scr_lib0F_0E:
+		.WORD	_spr_res_lib0F_15_A
+_spr_res_lib0F_0E:
 		.BYTE	$01
-		.WORD	_scr_lib0F_0E_A
-_scr_lib0F_12:
+		.WORD	_spr_res_lib0F_0E_A
+_spr_res_lib0F_12:
 		.BYTE	$01
-		.WORD	_scr_lib0F_12_A
-_scr_lib0F_16:
+		.WORD	_spr_res_lib0F_12_A
+_spr_res_lib0F_16:
 		.BYTE	$01
-		.WORD	_scr_lib0F_16_A
-_scr_lib0F_0F:
+		.WORD	_spr_res_lib0F_16_A
+_spr_res_lib0F_0F:
 		.BYTE	$01
-		.WORD	_scr_lib0F_0F_A
-_scr_lib0F_13:
+		.WORD	_spr_res_lib0F_0F_A
+_spr_res_lib0F_13:
 		.BYTE	$01
-		.WORD	_scr_lib0F_13_A
-_scr_lib0F_17:
+		.WORD	_spr_res_lib0F_13_A
+_spr_res_lib0F_17:
 		.BYTE	$01
-		.WORD	_scr_lib0F_17_A
-_scr_lib0F_24:
+		.WORD	_spr_res_lib0F_17_A
+_spr_res_lib0F_24:
 		.BYTE	$01
-		.WORD	_scr_lib0F_24_A
-_scr_lib0F_25:
+		.WORD	_spr_res_lib0F_24_A
+_spr_res_lib0F_25:
 		.BYTE	$01
-		.WORD	_scr_lib0F_25_A
-_scr_lib0F_26:
+		.WORD	_spr_res_lib0F_25_A
+_spr_res_lib0F_26:
 		.BYTE	$01
-		.WORD	_scr_lib0F_26_A
-_scr_lib0F_27:
+		.WORD	_spr_res_lib0F_26_A
+_spr_res_lib0F_27:
 		.BYTE	$01
-		.WORD	_scr_lib0F_27_A
-_scr_lib0F_0C_A:
+		.WORD	_spr_res_lib0F_27_A
+_spr_res_lib0F_0C_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3028,7 +2911,7 @@ _scr_lib0F_0C_A:
 		.BYTE	$E4,$8C,$43,$00
 		.BYTE	$F4,$AC,$43,$00
 		.BYTE	$F4,$AC,$03,$F8
-_scr_lib0F_10_A:
+_spr_res_lib0F_10_A:
 		.BYTE	$07
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
@@ -3037,7 +2920,7 @@ _scr_lib0F_10_A:
 		.BYTE	$F3,$AA,$43,$00
 		.BYTE	$EB,$BA,$C3,$00
 		.BYTE	$F3,$AA,$03,$F8
-_scr_lib0F_14_A:
+_spr_res_lib0F_14_A:
 		.BYTE	$07
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3046,7 +2929,7 @@ _scr_lib0F_14_A:
 		.BYTE	$F2,$A8,$43,$00
 		.BYTE	$EA,$B8,$C3,$00
 		.BYTE	$F2,$A8,$03,$F8
-_scr_lib0F_0D_A:
+_spr_res_lib0F_0D_A:
 		.BYTE	$07
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
@@ -3055,7 +2938,7 @@ _scr_lib0F_0D_A:
 		.BYTE	$E4,$B4,$43,$F8
 		.BYTE	$F4,$B6,$43,$F8
 		.BYTE	$F4,$A6,$43,$00
-_scr_lib0F_11_A:
+_spr_res_lib0F_11_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
@@ -3063,7 +2946,7 @@ _scr_lib0F_11_A:
 		.BYTE	$F3,$92,$43,$08
 		.BYTE	$F3,$A6,$43,$00
 		.BYTE	$F3,$96,$43,$F8
-_scr_lib0F_15_A:
+_spr_res_lib0F_15_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
@@ -3071,7 +2954,7 @@ _scr_lib0F_15_A:
 		.BYTE	$F2,$94,$43,$08
 		.BYTE	$F2,$A6,$43,$00
 		.BYTE	$F2,$86,$43,$F8
-_scr_lib0F_0E_A:
+_spr_res_lib0F_0E_A:
 		.BYTE	$07
 		.BYTE	$04,$BC,$03,$F8
 		.BYTE	$06,$3E,$40,$F8
@@ -3080,7 +2963,7 @@ _scr_lib0F_0E_A:
 		.BYTE	$E4,$8C,$03,$F8
 		.BYTE	$F4,$9C,$03,$F8
 		.BYTE	$F4,$9C,$43,$00
-_scr_lib0F_12_A:
+_spr_res_lib0F_12_A:
 		.BYTE	$07
 		.BYTE	$03,$BA,$43,$F8
 		.BYTE	$06,$3E,$40,$F8
@@ -3089,7 +2972,7 @@ _scr_lib0F_12_A:
 		.BYTE	$F3,$8A,$43,$08
 		.BYTE	$F3,$9A,$43,$00
 		.BYTE	$F3,$9A,$03,$F8
-_scr_lib0F_16_A:
+_spr_res_lib0F_16_A:
 		.BYTE	$07
 		.BYTE	$02,$B8,$43,$F8
 		.BYTE	$06,$3E,$40,$F8
@@ -3098,7 +2981,7 @@ _scr_lib0F_16_A:
 		.BYTE	$F2,$88,$43,$08
 		.BYTE	$F2,$98,$43,$00
 		.BYTE	$F2,$98,$03,$F8
-_scr_lib0F_0F_A:
+_spr_res_lib0F_0F_A:
 		.BYTE	$07
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3107,7 +2990,7 @@ _scr_lib0F_0F_A:
 		.BYTE	$E4,$B4,$03,$00
 		.BYTE	$F4,$B6,$03,$00
 		.BYTE	$F4,$A6,$03,$F8
-_scr_lib0F_13_A:
+_spr_res_lib0F_13_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3115,7 +2998,7 @@ _scr_lib0F_13_A:
 		.BYTE	$F3,$92,$03,$F0
 		.BYTE	$F3,$A6,$03,$F8
 		.BYTE	$F3,$96,$03,$00
-_scr_lib0F_17_A:
+_spr_res_lib0F_17_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3123,7 +3006,7 @@ _scr_lib0F_17_A:
 		.BYTE	$F2,$94,$03,$F0
 		.BYTE	$F2,$A6,$03,$F8
 		.BYTE	$F2,$86,$03,$00
-_scr_lib0F_24_A:
+_spr_res_lib0F_24_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$FA
 		.BYTE	$06,$3E,$00,$02
@@ -3131,7 +3014,7 @@ _scr_lib0F_24_A:
 		.BYTE	$E4,$8C,$43,$02
 		.BYTE	$F4,$AC,$43,$02
 		.BYTE	$F4,$AC,$03,$FA
-_scr_lib0F_25_A:
+_spr_res_lib0F_25_A:
 		.BYTE	$07
 		.BYTE	$06,$3E,$00,$02
 		.BYTE	$06,$3E,$40,$FA
@@ -3140,7 +3023,7 @@ _scr_lib0F_25_A:
 		.BYTE	$E4,$B4,$43,$FA
 		.BYTE	$F4,$B6,$43,$FA
 		.BYTE	$F4,$A6,$43,$02
-_scr_lib0F_26_A:
+_spr_res_lib0F_26_A:
 		.BYTE	$07
 		.BYTE	$04,$BC,$03,$FA
 		.BYTE	$06,$3E,$40,$FA
@@ -3149,7 +3032,7 @@ _scr_lib0F_26_A:
 		.BYTE	$E4,$8C,$03,$FA
 		.BYTE	$F4,$9C,$03,$FA
 		.BYTE	$F4,$9C,$43,$02
-_scr_lib0F_27_A:
+_spr_res_lib0F_27_A:
 		.BYTE	$07
 		.BYTE	$06,$3E,$40,$FA
 		.BYTE	$06,$3E,$00,$02
@@ -3178,67 +3061,64 @@ _spr_raw_lib0F_09:
 		.BYTE	$02
 		.BYTE	$FD,$90,$03,$FA
 		.BYTE	$FD,$80,$03,$F2
-_scr25_stinging_wing_elephant:
-		.BYTE	$07	; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_39B86	; CASE	  _sjmp_case_39B86
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$D8,$40
-		.WORD	_nsub_6273D
-		.BYTE	$D8,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_399E6:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39A2E
-		.WORD	_nbgsub_39A2E
-_sloc_399E9:
-		.BYTE	$01,$06		; SLOOP_BEGIN	  $06
-		.BYTE	$07		; NJSR		  _nsub_6273D,$D8,$40
-		.WORD	_nsub_6273D
-		.BYTE	$D8,$40
-		.BYTE	$06,$04		; SDELAY	  $04
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$AC,$FC		; SPR_IDX_ADD_IMM 4,$FC
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_script_start,$25,$00,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$25,$00,$00,$01,$00
-		.BYTE	$03		; SJMP		  _sloc_399E9
-		.WORD	_sloc_399E9
-_scr_39A04:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39A44
-		.WORD	_nbgsub_39A44
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_39A0A:
-		.BYTE	$04		; SJSR		  _ssub_39A24
-		.WORD	_ssub_39A24
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_39A0A
-		.WORD	_sloc_39A0A
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_39A24
-		.WORD	_ssub_39A24
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_399E6	; CASE	  _sjmp_case_399E6
-		.WORD	_sjmp_case_39779	; CASE	  _sjmp_case_39779
-		.WORD	_sjmp_case_3977F	; CASE	  _sjmp_case_3977F
-_ssub_39A24:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$D8,$40
-		.WORD	_nsub_6273D
-		.BYTE	$D8,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$0C		; SPR_IDX_ADD_IMM 1,$0C
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr25_stinging_wing_elephant:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_39B86
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$D8,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_399E6:
+		NBG_HNDL_SET	_nbgsub_39A2E
+_sloc_399E9:
+		SLOOP_BEGIN		$06
+		NJSR			_nsub_6273D
+			NARGB		$D8,$40
+		SDELAY			$04
+		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 4,$FC
+		SLOOP_END
+		NJSR			_nsub_script_start
+			NARGB		$25,$00,$00,$01,$00
+		SJMP			_sloc_399E9
+
+; =============== S C R I P T ===============================================
+_scr_39A04:
+		NBG_HNDL_SET	_nbgsub_39A44
+		SARG_SET		$00,$02
+_sloc_39A0A:
+		SJSR			_ssub_39A24
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_39A0A
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_39A24
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_399E6
+		SCASE			_sjmp_case_39779
+		SCASE			_sjmp_case_3977F
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_39A24:
+		NJSR			_nsub_6273D
+			NARGB		$D8,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$0C
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39A2E:
 		LDX		#$08
 		LDY		#$08
@@ -3252,7 +3132,7 @@ loc_39A3D:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39A44:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -3269,43 +3149,43 @@ loc_39A58:
 		.WORD	_sjmp_case_3977F
 locret_39A5D:
 		RTS
-_scr_lib0F_18:
+_spr_res_lib0F_18:
 		.BYTE	$01
-		.WORD	_scr_lib0F_18_A
-_scr_lib0F_1C:
+		.WORD	_spr_res_lib0F_18_A
+_spr_res_lib0F_1C:
 		.BYTE	$01
-		.WORD	_scr_lib0F_1C_A
-_scr_lib0F_20:
+		.WORD	_spr_res_lib0F_1C_A
+_spr_res_lib0F_20:
 		.BYTE	$01
-		.WORD	_scr_lib0F_20_A
-_scr_lib0F_19:
+		.WORD	_spr_res_lib0F_20_A
+_spr_res_lib0F_19:
 		.BYTE	$01
-		.WORD	_scr_lib0F_19_A
-_scr_lib0F_1D:
+		.WORD	_spr_res_lib0F_19_A
+_spr_res_lib0F_1D:
 		.BYTE	$01
-		.WORD	_scr_lib0F_1D_A
-_scr_lib0F_21:
+		.WORD	_spr_res_lib0F_1D_A
+_spr_res_lib0F_21:
 		.BYTE	$01
-		.WORD	_scr_lib0F_21_A
-_scr_lib0F_1A:
+		.WORD	_spr_res_lib0F_21_A
+_spr_res_lib0F_1A:
 		.BYTE	$01		; *--
-		.WORD	_scr_lib0F_1A_A	; *--
-_scr_lib0F_1E:
+		.WORD	_spr_res_lib0F_1A_A	; *--
+_spr_res_lib0F_1E:
 		.BYTE	$01		; *--
-		.WORD	_scr_lib0F_1E_A	; *--
-_scr_lib0F_22:
+		.WORD	_spr_res_lib0F_1E_A	; *--
+_spr_res_lib0F_22:
 		.BYTE	$01		; *--
-		.WORD	_scr_lib0F_22_A	; *--
-_scr_lib0F_1B:
+		.WORD	_spr_res_lib0F_22_A	; *--
+_spr_res_lib0F_1B:
 		.BYTE	$01
-		.WORD	_scr_lib0F_1B_A
-_scr_lib0F_1F:
+		.WORD	_spr_res_lib0F_1B_A
+_spr_res_lib0F_1F:
 		.BYTE	$01
-		.WORD	_scr_lib0F_1F_A
-_scr_lib0F_23:
+		.WORD	_spr_res_lib0F_1F_A
+_spr_res_lib0F_23:
 		.BYTE	$01
-		.WORD	_scr_lib0F_23_A
-_scr_lib0F_18_A:
+		.WORD	_spr_res_lib0F_23_A
+_spr_res_lib0F_18_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3313,7 +3193,7 @@ _scr_lib0F_18_A:
 		.BYTE	$E4,$8C,$43,$00
 		.BYTE	$F4,$AC,$43,$00
 		.BYTE	$F4,$AC,$03,$F8
-_scr_lib0F_1C_A:
+_spr_res_lib0F_1C_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
@@ -3321,7 +3201,7 @@ _scr_lib0F_1C_A:
 		.BYTE	$F3,$8A,$43,$08
 		.BYTE	$F3,$AA,$43,$00
 		.BYTE	$F3,$AA,$03,$F8
-_scr_lib0F_20_A:
+_spr_res_lib0F_20_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
@@ -3329,26 +3209,26 @@ _scr_lib0F_20_A:
 		.BYTE	$F2,$88,$43,$08
 		.BYTE	$F2,$A8,$43,$00
 		.BYTE	$F2,$A8,$03,$F8
-_scr_lib0F_19_A:
+_spr_res_lib0F_19_A:
 		.BYTE	$05
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$E4,$B4,$43,$F8
 		.BYTE	$F4,$B6,$43,$F8
 		.BYTE	$F4,$A6,$43,$00
-_scr_lib0F_1D_A:
+_spr_res_lib0F_1D_A:
 		.BYTE	$04
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$F3,$A6,$43,$00
 		.BYTE	$F3,$96,$43,$F8
-_scr_lib0F_21_A:
+_spr_res_lib0F_21_A:
 		.BYTE	$04
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$F2,$A6,$43,$00
 		.BYTE	$F2,$86,$43,$F8
-_scr_lib0F_1A_A:
+_spr_res_lib0F_1A_A:
 		.BYTE	$06		; *--
 		.BYTE	$06,$3E,$40,$F8	; *--
 		.BYTE	$06,$3E,$00,$00	; *--
@@ -3356,7 +3236,7 @@ _scr_lib0F_1A_A:
 		.BYTE	$E4,$8C,$03,$F8	; *--
 		.BYTE	$F4,$9C,$03,$F8	; *--
 		.BYTE	$F4,$9C,$43,$00	; *--
-_scr_lib0F_1E_A:
+_spr_res_lib0F_1E_A:
 		.BYTE	$06		; *--
 		.BYTE	$06,$3E,$40,$F8	; *--
 		.BYTE	$06,$3E,$00,$00	; *--
@@ -3364,7 +3244,7 @@ _scr_lib0F_1E_A:
 		.BYTE	$F3,$8A,$43,$08	; *--
 		.BYTE	$F3,$9A,$43,$00	; *--
 		.BYTE	$F3,$9A,$03,$F8	; *--
-_scr_lib0F_22_A:
+_spr_res_lib0F_22_A:
 		.BYTE	$06		; *--
 		.BYTE	$06,$3E,$40,$F8	; *--
 		.BYTE	$06,$3E,$00,$00	; *--
@@ -3372,94 +3252,102 @@ _scr_lib0F_22_A:
 		.BYTE	$F2,$88,$43,$08	; *--
 		.BYTE	$F2,$98,$43,$00	; *--
 		.BYTE	$F2,$98,$03,$F8	; *--
-_scr_lib0F_1B_A:
+_spr_res_lib0F_1B_A:
 		.BYTE	$05
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$E4,$B4,$03,$00
 		.BYTE	$F4,$B6,$03,$00
 		.BYTE	$F4,$A6,$03,$F8
-_scr_lib0F_1F_A:
+_spr_res_lib0F_1F_A:
 		.BYTE	$04
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$F3,$A6,$03,$F8
 		.BYTE	$F3,$96,$03,$00
-_scr_lib0F_23_A:
+_spr_res_lib0F_23_A:
 		.BYTE	$04
 		.BYTE	$06,$3E,$40,$F8
 		.BYTE	$06,$3E,$00,$00
 		.BYTE	$F2,$A6,$03,$F8
 		.BYTE	$F2,$86,$03,$00
-_sjmp_case_39B86:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39BED
-		.WORD	_nbgsub_39BED
-		.BYTE	$07		; NJSR		  _nsub_604CD
-		.WORD	_nsub_604CD
-		.BYTE	$11,$04		; SJMP_SW	  $04
-		.WORD	_sjmp_case_39B99	; CASE	  _sjmp_case_39B99
-		.WORD	_sjmp_case_39BAE	; CASE	  _sjmp_case_39BAE
-		.WORD	_sjmp_case_39BC3	; CASE	  _sjmp_case_39BC3
-		.WORD	_sjmp_case_39BD8	; CASE	  _sjmp_case_39BD8
-_sjmp_case_39B99:
-		.BYTE	$38,$02		; POS_X_MOVE	  0,$02
-		.BYTE	$40,$EC		; POS_Y_MOVE	  0,$EC
-		.BYTE	$22,$0C		; SPR_IDX_SET	  2,$0C
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$40,$F8		; POS_Y_MOVE	  0,$F8
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$40,$08		; POS_Y_MOVE	  0,$08
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_sjmp_case_39BAE:
-		.BYTE	$38,$08		; POS_X_MOVE	  0,$08
-		.BYTE	$40,$FE		; POS_Y_MOVE	  0,$FE
-		.BYTE	$22,$11		; SPR_IDX_SET	  2,$11
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$38,$08		; POS_X_MOVE	  0,$08
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$38,$F8		; POS_X_MOVE	  0,$F8
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_sjmp_case_39BC3:
-		.BYTE	$38,$FB		; POS_X_MOVE	  0,$FB
-		.BYTE	$40,$0B		; POS_Y_MOVE	  0,$0B
-		.BYTE	$22,$15		; SPR_IDX_SET	  2,$15
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$40,$08		; POS_Y_MOVE	  0,$08
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$40,$F8		; POS_Y_MOVE	  0,$F8
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_sjmp_case_39BD8:
-		.BYTE	$38,$F2		; POS_X_MOVE	  0,$F2
-		.BYTE	$40,$FE		; POS_Y_MOVE	  0,$FE
-		.BYTE	$22,$1A		; SPR_IDX_SET	  2,$1A
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$38,$F8		; POS_X_MOVE	  0,$F8
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$38,$08		; POS_X_MOVE	  0,$08
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_39B86:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_39BED
+		NJSR			_nsub_604CD
+		SJMP_SW			$04
+		SCASE			_sjmp_case_39B99
+		SCASE			_sjmp_case_39BAE
+		SCASE			_sjmp_case_39BC3
+		SCASE			_sjmp_case_39BD8
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39B99:
+		POS_X_MOVE	0,$02
+		POS_Y_MOVE		0,$EC
+		SPR_IDX_SET		2,$0C
+		SLOOP_BEGIN		$04
+		POS_Y_MOVE		0,$F8
+		SPR_IDX_INC		2
+		SLOOP_END
+		SDELAY			$14
+		SLOOP_BEGIN		$04
+		POS_Y_MOVE		0,$08
+		SPR_IDX_DEC		4
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39BAE:
+		POS_X_MOVE	0,$08
+		POS_Y_MOVE		0,$FE
+		SPR_IDX_SET		2,$11
+		SLOOP_BEGIN		$03
+		POS_X_MOVE	0,$08
+		SPR_IDX_INC		2
+		SLOOP_END
+		SDELAY			$14
+		SLOOP_BEGIN		$03
+		POS_X_MOVE	0,$F8
+		SPR_IDX_DEC		4
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39BC3:
+		POS_X_MOVE	0,$FB
+		POS_Y_MOVE		0,$0B
+		SPR_IDX_SET		2,$15
+		SLOOP_BEGIN		$04
+		POS_Y_MOVE		0,$08
+		SPR_IDX_INC		2
+		SLOOP_END
+		SDELAY			$14
+		SLOOP_BEGIN		$04
+		POS_Y_MOVE		0,$F8
+		SPR_IDX_DEC		4
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39BD8:
+		POS_X_MOVE	0,$F2
+		POS_Y_MOVE		0,$FE
+		SPR_IDX_SET		2,$1A
+		SLOOP_BEGIN		$03
+		POS_X_MOVE	0,$F8
+		SPR_IDX_INC		2
+		SLOOP_END
+		SDELAY			$14
+		SLOOP_BEGIN		$03
+		POS_X_MOVE	0,$08
+		SPR_IDX_DEC		4
+		SLOOP_END
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39BED:
 		LDX		#$06
 		LDY		#$07
@@ -3550,119 +3438,106 @@ _spr_raw_lib0F_1D:
 		.BYTE	$F5,$A4,$03,$08
 		.BYTE	$F5,$94,$03,$00
 		.BYTE	$F5,$84,$03,$F8
-_scr26_sword_ninja:
-		.BYTE	$06,$01	; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_39DA9
-		.WORD	_nsub_39DA9
-		.BYTE	$0B		; SBCS		  _scr26_sword_ninja
-		.WORD	_scr26_sword_ninja
-		.BYTE	$0F,$01,$80	; SARG_SET	  $01,$80
-		.BYTE	$04		; SJSR		  _ssub_39D36
-		.WORD	_ssub_39D36
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39D79
-		.WORD	_nbgsub_39D79
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_39D06
-		.WORD	_sloc_39D06
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_39D06
-		.WORD	_sloc_39D06
-		.BYTE	$15,$01,$02,$80	; SARG_ALU	  $01,ADC,$80
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_39D06
-		.WORD	_sloc_39D06
-		.BYTE	$15,$01,$02,$C0	; SARG_ALU	  $01,ADC,$C0
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0B		; SBCS		  _sloc_39D1A
-		.WORD	_sloc_39D1A
-_sloc_39D06:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$02
-		.WORD	_nsub_628D1
-		.BYTE	$00,$02
-		.BYTE	$08,$01		; SRUN		  $01,_scr_39D26
-		.WORD	_scr_39D26
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$06,$04		; SDELAY	  $04
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$17		; SBCS_BREAK	  _sloc_39D1A
-		.WORD	_sloc_39D1A
-		.BYTE	$02		; SLOOP_END
-_sloc_39D1A:
-		.BYTE	$14,$01		; SDISABLE	  $01
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-_sjmp_case_39D1D:
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$04		; SJSR		  _ssub_39D36
-		.WORD	_ssub_39D36
-		.BYTE	$06,$3C		; SDELAY	  $3C
-		.BYTE	$03		; SJMP		  _scr26_sword_ninja
-		.WORD	_scr26_sword_ninja
-_scr_39D26:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$1E,$40
-		.WORD	_nsub_6273D
-		.BYTE	$1E,$40
-_sloc_39D2B:
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$AF,$04		; SPR_IDX_ADD_IMM 7,$04
-		.BYTE	$AF,$FC		; SPR_IDX_ADD_IMM 7,$FC
-		.BYTE	$AF,$FC		; SPR_IDX_ADD_IMM 7,$FC
-		.BYTE	$03		; SJMP		  _sloc_39D2B
-		.WORD	_sloc_39D2B
-_ssub_39D36:
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$1E,$40
-		.WORD	_nsub_6273D
-		.BYTE	$1E,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
-_scr_39D43:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39D8F
-		.WORD	_nbgsub_39D8F
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_39D49:
-		.BYTE	$04		; SJSR		  _ssub_39D63
-		.WORD	_ssub_39D63
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_39D49
-		.WORD	_sloc_39D49
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_39D63
-		.WORD	_ssub_39D63
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_39D1D	; CASE	  _sjmp_case_39D1D
-		.WORD	_sjmp_case_39D6D	; CASE	  _sjmp_case_39D6D
-		.WORD	_sjmp_case_39D73	; CASE	  _sjmp_case_39D73
-_ssub_39D63:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$2A,$40
-		.WORD	_nsub_6273D
-		.BYTE	$2A,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$04		; SPR_IDX_ADD_IMM 1,$04
-		.BYTE	$05		; SRET
-_sjmp_case_39D6D:
-		.BYTE	$0F,$01,$32	; SARG_SET	  $01,$32
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_sjmp_case_39D73:
-		.BYTE	$0F,$01,$34	; SARG_SET	  $01,$34
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr26_sword_ninja:
+		SDELAY			$01
+		NJSR			_nsub_39DA9
+		SBCS			_scr26_sword_ninja
+		SARG_SET		$01,$80
+		SJSR			_ssub_39D36
+		NBG_HNDL_SET	_nbgsub_39D79
+		NJSR			_nsub_62CC4
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_39D06
+		SARG_ALU		$01,_ADC,$40
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_39D06
+		SARG_ALU		$01,_ADC,$80
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_39D06
+		SARG_ALU		$01,_ADC,$C0
+		NJSR			_nsub_62CD3
+		SBCS			_sloc_39D1A
+_sloc_39D06:
+		NJSR			_nsub_628D1
+			NARGB		$00,$02
+		SRUN			$01,_scr_39D26
+		SLOOP_BEGIN		$0A
+		SDELAY			$04
+		NJSR			_nsub_62CD3
+		SBCS_BREAK	_sloc_39D1A
+		SLOOP_END
+_sloc_39D1A:
+		SDISABLE		$01
+		POS_MOVE_STOP	0
+
+; FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39D1D:
+		NBG_HNDL_RESET
+		SJSR			_ssub_39D36
+		SDELAY			$3C
+		SJMP			_scr26_sword_ninja
+
+; =============== S C R I P T ===============================================
+_scr_39D26:
+		NJSR			_nsub_6273D
+			NARGB		$1E,$40
+_sloc_39D2B:
+		SPR_IDX_ADD_IMM 7,$04
+		SPR_IDX_ADD_IMM 7,$04
+		SPR_IDX_ADD_IMM 7,$FC
+		SPR_IDX_ADD_IMM 7,$FC
+		SJMP			_sloc_39D2B
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_39D36:
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$1E,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_39D43:
+		NBG_HNDL_SET	_nbgsub_39D8F
+		SARG_SET		$00,$02
+_sloc_39D49:
+		SJSR			_ssub_39D63
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_39D49
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_39D63
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_39D1D
+		SCASE			_sjmp_case_39D6D
+		SCASE			_sjmp_case_39D73
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_39D63:
+		NJSR			_nsub_6273D
+			NARGB		$2A,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$04
+		SRET
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39D6D:
+		SARG_SET		$01,$32
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39D73:
+		SARG_SET		$01,$34
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39D79:
 		LDX		#$08
 		LDY		#$0C
@@ -3676,7 +3551,7 @@ loc_39D88:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_39D8F:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -3694,7 +3569,7 @@ loc_39DA3:
 locret_39DA8:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_39DA9:
 		LDA		#$06
 		JSR		_rand
@@ -3878,80 +3753,71 @@ _spr_raw_lib0F_33:
 		.BYTE	$02
 		.BYTE	$FF,$CC,$00,$F2
 		.BYTE	$FF,$DC,$00,$FA
-_scr27_shuriken_ninja:
-		.BYTE	$07		; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_3A120	; CASE	  _sjmp_case_3A120
-_sloc_39F9F:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_39DA9
-		.WORD	_nsub_39DA9
-		.BYTE	$0B		; SBCS		  _sloc_39F9F
-		.WORD	_sloc_39F9F
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$04		; SJSR		  _ssub_39FE1
-		.WORD	_ssub_39FE1
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A00E
-		.WORD	_nbgsub_3A00E
-		.BYTE	$07		; NJSR		  _nsub_6273D,$36,$40
-		.WORD	_nsub_6273D
-		.BYTE	$36,$40
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$15,$01,$02,$F0	; SARG_ALU	  $01,ADC,$F0
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$07		; NJSR		  _nsub_script_start,$27,$00,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$27,$00,$00,$01,$00
-		.BYTE	$AD,$04		; SPR_IDX_ADD_IMM 5,$04
-		.BYTE	$AD,$04		; SPR_IDX_ADD_IMM 5,$04
-		.BYTE	$AD,$FC		; SPR_IDX_ADD_IMM 5,$FC
-		.BYTE	$AD,$FC		; SPR_IDX_ADD_IMM 5,$FC
-		.BYTE	$15,$01,$02,$10	; SARG_ALU	  $01,ADC,$10
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$15,$01,$02,$F0	; SARG_ALU	  $01,ADC,$F0
-		.BYTE	$06,$10		; SDELAY	  $10
-_sjmp_case_39FD8:
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$04		; SJSR		  _ssub_39FE1
-		.WORD	_ssub_39FE1
-		.BYTE	$06,$3C		; SDELAY	  $3C
-		.BYTE	$03		; SJMP		  _sloc_39F9F
-		.WORD	_sloc_39F9F
-_ssub_39FE1:
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$07		; NJSR		  _nsub_6273D,$36,$40
-		.WORD	_nsub_6273D
-		.BYTE	$36,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
-_scr_39FEE:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_39D8F
-		.WORD	_nbgsub_39D8F
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_39FF4:
-		.BYTE	$04		; SJSR		  _ssub_39D63
-		.WORD	_ssub_39D63
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_39FF4
-		.WORD	_sloc_39FF4
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_39D63
-		.WORD	_ssub_39D63
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_39FD8	; CASE	  _sjmp_case_39FD8
-		.WORD	_sjmp_case_39D6D	; CASE	  _sjmp_case_39D6D
-		.WORD	_sjmp_case_39D73	; CASE	  _sjmp_case_39D73
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr27_shuriken_ninja:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_3A120
+_sloc_39F9F:
+		SDELAY			$01
+		NJSR			_nsub_39DA9
+		SBCS			_sloc_39F9F
+		NJSR			_nsub_62CC4
+		SJSR			_ssub_39FE1
+		NBG_HNDL_SET	_nbgsub_3A00E
+		NJSR			_nsub_6273D
+			NARGB		$36,$40
+		SDELAY			$10
+		SARG_ALU		$01,_ADC,$F0
+		SLOOP_BEGIN		$03
+		NJSR			_nsub_script_start
+			NARGB		$27,$00,$00,$01,$00
+		SPR_IDX_ADD_IMM 5,$04
+		SPR_IDX_ADD_IMM 5,$04
+		SPR_IDX_ADD_IMM 5,$FC
+		SPR_IDX_ADD_IMM 5,$FC
+		SARG_ALU		$01,_ADC,$10
+		SLOOP_END
+		SARG_ALU		$01,_ADC,$F0
+		SDELAY			$10
+
+; =============== S C R I P T ===============================================
+_sjmp_case_39FD8:
+		NBG_HNDL_RESET
+		SJSR			_ssub_39FE1
+		SDELAY			$3C
+		SJMP			_sloc_39F9F
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_39FE1:
+		SLOOP_BEGIN		$10
+		NJSR			_nsub_6273D
+			NARGB		$36,$40
+		SDELAY			$01
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_39FEE:
+		NBG_HNDL_SET	_nbgsub_39D8F
+		SARG_SET		$00,$02
+_sloc_39FF4:
+		SJSR			_ssub_39D63
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_39FF4
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_39D63
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_39FD8
+		SCASE			_sjmp_case_39D6D
+		SCASE			_sjmp_case_39D73
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A00E:
 		LDX		#$08
 		LDY		#$0C
@@ -4048,22 +3914,22 @@ _spr_raw_lib0F_41:
 		.BYTE	$00,$D2,$40,$F8
 		.BYTE	$F1,$F4,$00,$00
 		.BYTE	$F1,$E4,$00,$F8
-_sjmp_case_3A120:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A134
-		.WORD	_nbgsub_3A134
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$02
-		.WORD	_nsub_628D1
-		.BYTE	$00,$02
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$22,$42		; SPR_IDX_SET	  2,$42
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_3A120:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_3A134
+		NJSR			_nsub_628D1
+			NARGB		$00,$02
+		SLOOP_BEGIN		$04
+		SPR_IDX_SET		2,$42
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SLOOP_END
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A134:
 		LDX		#$06
 		LDY		#$07
@@ -4082,118 +3948,110 @@ _spr_raw_lib0F_44:
 _spr_raw_lib0F_45:
 		.BYTE	$01
 		.BYTE	$F5,$CA,$80,$FD
-_scr28_pink_goo:
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$E8		; SPR_IDX_SET	  1,$E8
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3A15C:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A212
-		.WORD	_nbgsub_3A212
-_sloc_3A15F:
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$20,$E8		; SPR_IDX_SET	  0,$E8
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$A5		; SPR_IDX_DEC	  5
-		.BYTE	$AC,$02		; SPR_IDX_ADD_IMM 4,$02
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$25,$E8		; SPR_IDX_SET	  5,$E8
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$A5		; SPR_IDX_DEC	  5
-		.BYTE	$AC,$02		; SPR_IDX_ADD_IMM 4,$02
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$07		; NJSR		  _nsub_3A242
-		.WORD	_nsub_3A242
-		.BYTE	$0C		; SBCC		  _sloc_3A197
-		.WORD	_sloc_3A197
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$07		; NJSR		  _nsub_3A242
-		.WORD	_nsub_3A242
-		.BYTE	$0C		; SBCC		  _sloc_3A197
-		.WORD	_sloc_3A197
-		.BYTE	$15,$01,$02,$80	; SARG_ALU	  $01,ADC,$80
-		.BYTE	$07		; NJSR		  _nsub_3A242
-		.WORD	_nsub_3A242
-		.BYTE	$0C		; SBCC		  _sloc_3A197
-		.WORD	_sloc_3A197
-		.BYTE	$15,$01,$02,$C0	; SARG_ALU	  $01,ADC,$C0
-		.BYTE	$07		; NJSR		  _nsub_3A242
-		.WORD	_nsub_3A242
-		.BYTE	$0B		; SBCS		  _sloc_3A15F
-		.WORD	_sloc_3A15F
-_sloc_3A197:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A221
-		.WORD	_nbgsub_3A221
-		.BYTE	$20,$EB		; SPR_IDX_SET	  0,$EB
-		.BYTE	$07		; NJSR		  _nsub_604CD
-		.WORD	_nsub_604CD
-		.BYTE	$12,$04		; SJSR_SW	  $04
-		.WORD	_sjsr_case_3A1B0	; CASE	  _sjsr_case_3A1B0
-		.WORD	_sjsr_case_3A1BD	; CASE	  _sjsr_case_3A1BD
-		.WORD	_sjsr_case_3A1CA	; CASE	  _sjsr_case_3A1CA
-		.WORD	_sjsr_case_3A1D7	; CASE	  _sjsr_case_3A1D7
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A212
-		.WORD	_nbgsub_3A212
-		.BYTE	$03		; SJMP		  _sloc_3A15F
-		.WORD	_sloc_3A15F
-_sjsr_case_3A1B0:
-		.BYTE	$60,$80,$FE	; POS_Y_DELTA_ADD 0,$80,$FE
-		.BYTE	$64,$00,$FE	; POS_Y_DELTA_ADD 4,$00,$FE
-		.BYTE	$62,$40,$00	; POS_Y_DELTA_ADD 2,$40,$00
-		.BYTE	$66,$00,$04	; POS_Y_DELTA_ADD 6,$00,$04
-		.BYTE	$05		; SRET
-_sjsr_case_3A1BD:
-		.BYTE	$58,$80,$01	; POS_X_DELTA_ADD 0,$80,$01
-		.BYTE	$64,$00,$FE	; POS_Y_DELTA_ADD 4,$00,$FE
-		.BYTE	$5A,$C0,$FF	; POS_X_DELTA_ADD 2,$C0,$FF
-		.BYTE	$66,$00,$04	; POS_Y_DELTA_ADD 6,$00,$04
-		.BYTE	$05		; SRET
-_sjsr_case_3A1CA:
-		.BYTE	$60,$80,$01	; POS_Y_DELTA_ADD 0,$80,$01
-		.BYTE	$64,$00,$FE	; POS_Y_DELTA_ADD 4,$00,$FE
-		.BYTE	$62,$C0,$FF	; POS_Y_DELTA_ADD 2,$C0,$FF
-		.BYTE	$66,$00,$04	; POS_Y_DELTA_ADD 6,$00,$04
-		.BYTE	$05		; SRET
-_sjsr_case_3A1D7:
-		.BYTE	$58,$80,$FE	; POS_X_DELTA_ADD 0,$80,$FE
-		.BYTE	$64,$00,$FE	; POS_Y_DELTA_ADD 4,$00,$FE
-		.BYTE	$5A,$40,$00	; POS_X_DELTA_ADD 2,$40,$00
-		.BYTE	$66,$00,$04	; POS_Y_DELTA_ADD 6,$00,$04
-		.BYTE	$05		; SRET
-_scr_3A1E4:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A228
-		.WORD	_nbgsub_3A228
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3A1EA:
-		.BYTE	$21,$E8		; SPR_IDX_SET	  1,$E8
-		.BYTE	$21,$46		; SPR_IDX_SET	  1,$46
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3A1EA
-		.WORD	_sloc_3A1EA
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$E8		; SPR_IDX_SET	  1,$E8
-		.BYTE	$21,$46		; SPR_IDX_SET	  1,$46
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3A15C	; CASE	  _sjmp_case_3A15C
-		.WORD	_sjmp_case_3A206	; CASE	  _sjmp_case_3A206
-		.WORD	_sjmp_case_3A20C	; CASE	  _sjmp_case_3A20C
-_sjmp_case_3A206:
-		.BYTE	$0F,$01,$47	; SARG_SET	  $01,$47
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_sjmp_case_3A20C:
-		.BYTE	$0F,$01,$49	; SARG_SET	  $01,$49
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr28_pink_goo:
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$E8
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A15C:
+		NBG_HNDL_SET	_nbgsub_3A212
+_sloc_3A15F:
+		SLOOP_BEGIN		$02
+		SPR_IDX_SET		0,$E8
+		SDELAY			$10
+		SPR_IDX_INC		4
+		SPR_IDX_DEC		5
+		SPR_IDX_ADD_IMM 4,$02
+		SLOOP_END
+		SPR_IDX_SET		5,$E8
+		SPR_IDX_INC		4
+		SPR_IDX_DEC		5
+		SPR_IDX_ADD_IMM 4,$02
+		NJSR			_nsub_62CC4
+		NJSR			_nsub_3A242
+		SBCC			_sloc_3A197
+		SARG_ALU		$01,_ADC,$40
+		NJSR			_nsub_3A242
+		SBCC			_sloc_3A197
+		SARG_ALU		$01,_ADC,$80
+		NJSR			_nsub_3A242
+		SBCC			_sloc_3A197
+		SARG_ALU		$01,_ADC,$C0
+		NJSR			_nsub_3A242
+		SBCS			_sloc_3A15F
+_sloc_3A197:
+		NBG_HNDL_SET	_nbgsub_3A221
+		SPR_IDX_SET		0,$EB
+		NJSR			_nsub_604CD
+		SJSR_SW	$04
+		SCASE			_sjsr_case_3A1B0
+		SCASE			_sjsr_case_3A1BD
+		SCASE			_sjsr_case_3A1CA
+		SCASE			_sjsr_case_3A1D7
+		POS_MOVE_STOP	0
+		NBG_HNDL_SET	_nbgsub_3A212
+		SJMP			_sloc_3A15F
+_sjsr_case_3A1B0:
+		POS_Y_DELTA_ADD 0,$80,$FE
+		POS_Y_DELTA_ADD 4,$00,$FE
+		POS_Y_DELTA_ADD 2,$40,$00
+		POS_Y_DELTA_ADD 6,$00,$04
+		SRET
+_sjsr_case_3A1BD:
+		POS_X_DELTA_ADD 0,$80,$01
+		POS_Y_DELTA_ADD 4,$00,$FE
+		POS_X_DELTA_ADD 2,$C0,$FF
+		POS_Y_DELTA_ADD 6,$00,$04
+		SRET
+_sjsr_case_3A1CA:
+		POS_Y_DELTA_ADD 0,$80,$01
+		POS_Y_DELTA_ADD 4,$00,$FE
+		POS_Y_DELTA_ADD 2,$C0,$FF
+		POS_Y_DELTA_ADD 6,$00,$04
+		SRET
+_sjsr_case_3A1D7:
+		POS_X_DELTA_ADD 0,$80,$FE
+		POS_Y_DELTA_ADD 4,$00,$FE
+		POS_X_DELTA_ADD 2,$40,$00
+		POS_Y_DELTA_ADD 6,$00,$04
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3A1E4:
+		NBG_HNDL_SET	_nbgsub_3A228
+		SARG_SET		$00,$02
+_sloc_3A1EA:
+		SPR_IDX_SET		1,$E8
+		SPR_IDX_SET		1,$46
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3A1EA
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$E8
+		SPR_IDX_SET		1,$46
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3A15C
+		SCASE			_sjmp_case_3A206
+		SCASE			_sjmp_case_3A20C
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A206:
+		SARG_SET		$01,$47
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A20C:
+		SARG_SET		$01,$49
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A212:
 		LDX		#$0A
 		LDY		#$0A
@@ -4203,13 +4061,13 @@ _nbgsub_3A212:
 		.WORD	_scr_3A1E4
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A221:
 		LDX		#$09
 		LDY		#$0A
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A228:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -4227,7 +4085,7 @@ loc_3A23C:
 locret_3A241:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3A242:
 		JSR		_nsub_604CD
 		TAX
@@ -4268,31 +4126,31 @@ byte_3A272:
 		.BYTE	$F0,$F8
 		.BYTE	$E8,$00
 		.BYTE	$F0,$00
-_scr_lib0F_28:
+_spr_res_lib0F_28:
 		.BYTE	$01
-		.WORD	_scr_lib0F_28_A
-_scr_lib0F_29:
+		.WORD	_spr_res_lib0F_28_A
+_spr_res_lib0F_29:
 		.BYTE	$01
-		.WORD	_scr_lib0F_29_A
-_scr_lib0F_2A:
+		.WORD	_spr_res_lib0F_29_A
+_spr_res_lib0F_2A:
 		.BYTE	$01
-		.WORD	_scr_lib0F_2A_A
-_scr_lib0F_2B:
+		.WORD	_spr_res_lib0F_2A_A
+_spr_res_lib0F_2B:
 		.BYTE	$01
-		.WORD	_scr_lib0F_2B_A
-_scr_lib0F_28_A:
+		.WORD	_spr_res_lib0F_2B_A
+_spr_res_lib0F_28_A:
 		.BYTE	$02
 		.BYTE	$F8,$CE,$03,$00
 		.BYTE	$F8,$BE,$03,$F8
-_scr_lib0F_29_A:
+_spr_res_lib0F_29_A:
 		.BYTE	$02
 		.BYTE	$F8,$EE,$03,$00
 		.BYTE	$F8,$DE,$03,$F8
-_scr_lib0F_2A_A:
+_spr_res_lib0F_2A_A:
 		.BYTE	$02
 		.BYTE	$F8,$EE,$43,$F8
 		.BYTE	$F8,$DE,$43,$00
-_scr_lib0F_2B_A:
+_spr_res_lib0F_2B_A:
 		.BYTE	$02
 		.BYTE	$F8,$9E,$03,$F8
 		.BYTE	$F8,$AE,$03,$00
@@ -4314,140 +4172,128 @@ _spr_raw_lib0F_47:
 _spr_raw_lib0F_48:
 		.BYTE	$01
 		.BYTE	$FF,$FE,$03,$F9
-_scr29_sewer_worm:
-		.BYTE	$07		; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_3A515	; CASE	  _sjmp_case_3A515
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$4B		; SPR_IDX_SET	  1,$4B
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sloc_3A2E0:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A39E
-		.WORD	_nbgsub_3A39E
-		.BYTE	$07		; NJSR		  _nsub_62CE8
-		.WORD	_nsub_62CE8
-_sloc_3A2E6:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_3A3FE
-		.WORD	_nsub_3A3FE
-		.BYTE	$0B		; SBCS		  _sloc_3A2E6
-		.WORD	_sloc_3A2E6
-		.BYTE	$07		; NJSR		  _nsub_628D1,$40,$00
-		.WORD	_nsub_628D1
-		.BYTE	$40,$00
-		.BYTE	$20,$4B		; SPR_IDX_SET	  0,$4B
-		.BYTE	$06,$22		; SDELAY	  $22
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$AD,$FE		; SPR_IDX_ADD_IMM 5,$FE
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$A5		; SPR_IDX_DEC	  5
-		.BYTE	$AD,$02		; SPR_IDX_ADD_IMM 5,$02
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$07		; NJSR		  _nsub_62879,$04
-		.WORD	_nsub_62879
-		.BYTE	$04
-		.BYTE	$0C		; SBCC		  _sloc_3A2E6
-		.WORD	_sloc_3A2E6
-		.BYTE	$20,$4B		; SPR_IDX_SET	  0,$4B
-		.BYTE	$06,$28		; SDELAY	  $28
-		.BYTE	$26,$53		; SPR_IDX_SET	  6,$53
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A3CE
-		.WORD	_nbgsub_3A3CE
-		.BYTE	$40,$F8		; POS_Y_MOVE	  0,$F8
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_script_start,$29,$00,$F8,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$29,$00,$F8,$01,$00
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$26,$54		; SPR_IDX_SET	  6,$54
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$40,$08		; POS_Y_MOVE	  0,$08
-		.BYTE	$20,$53		; SPR_IDX_SET	  0,$53
-		.BYTE	$03		; SJMP		  _sloc_3A2E0
-		.WORD	_sloc_3A2E0
-_sjmp_case_3A32B:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A39E
-		.WORD	_nbgsub_3A39E
-		.BYTE	$07		; NJSR		  _nsub_628D1,$40,$00
-		.WORD	_nsub_628D1
-		.BYTE	$40,$00
-		.BYTE	$20,$4B		; SPR_IDX_SET	  0,$4B
-_sloc_3A335:
-		.BYTE	$07		; NJSR		  _nsub_3A449
-		.WORD	_nsub_3A449
-		.BYTE	$0B		; SBCS		  _sloc_3A2E6
-		.WORD	_sloc_3A2E6
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$03		; SJMP		  _sloc_3A335
-		.WORD	_sloc_3A335
-_scr_3A340:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A3B4
-		.WORD	_nbgsub_3A3B4
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3A346:
-		.BYTE	$21,$4B		; SPR_IDX_SET	  1,$4B
-		.BYTE	$21,$4E		; SPR_IDX_SET	  1,$4E
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3A346
-		.WORD	_sloc_3A346
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$4B		; SPR_IDX_SET	  1,$4B
-		.BYTE	$21,$4E		; SPR_IDX_SET	  1,$4E
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3A32B	; CASE	  _sjmp_case_3A32B
-		.WORD	_scr_3A386	; CASE	  _scr_3A386
-		.WORD	_scr_3A38C	; CASE	  _scr_3A38C
-_scr_3A362:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A3E4
-		.WORD	_nbgsub_3A3E4
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3A368:
-		.BYTE	$21,$54		; SPR_IDX_SET	  1,$54
-		.BYTE	$21,$57		; SPR_IDX_SET	  1,$57
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3A368
-		.WORD	_sloc_3A368
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$54		; SPR_IDX_SET	  1,$54
-		.BYTE	$21,$57		; SPR_IDX_SET	  1,$57
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$40,$08		; POS_Y_MOVE	  0,$08
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3A32B	; CASE	  _sjmp_case_3A32B
-		.WORD	_scr_3A392	; CASE	  _scr_3A392
-		.WORD	_scr_3A398	; CASE	  _scr_3A398
-_scr_3A386:
-		.BYTE	$0F,$01,$4F	; SARG_SET	  $01,$4F
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3A38C:
-		.BYTE	$0F,$01,$51	; SARG_SET	  $01,$51
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
-_scr_3A392:
-		.BYTE	$0F,$01,$58	; SARG_SET	  $01,$58
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3A398:
-		.BYTE	$0F,$01,$5A	; SARG_SET	  $01,$5A
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr29_sewer_worm:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_3A515
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$4B
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+_sloc_3A2E0:
+		NBG_HNDL_SET	_nbgsub_3A39E
+		NJSR			_nsub_62CE8
+_sloc_3A2E6:
+		SDELAY			$01
+		NJSR			_nsub_3A3FE
+		SBCS			_sloc_3A2E6
+		NJSR			_nsub_628D1
+			NARGB		$40,$00
+		SPR_IDX_SET		0,$4B
+		SDELAY			$22
+		SPR_IDX_INC		5
+		SPR_IDX_INC		5
+		SPR_IDX_ADD_IMM 5,$FE
+		SPR_IDX_INC		5
+		SPR_IDX_DEC		5
+		SPR_IDX_ADD_IMM 5,$02
+		POS_MOVE_STOP	0
+		NJSR			_nsub_62879
+			NARGB		$04
+		SBCC			_sloc_3A2E6
+		SPR_IDX_SET		0,$4B
+		SDELAY			$28
+		SPR_IDX_SET		6,$53
+		NBG_HNDL_SET	_nbgsub_3A3CE
+		POS_Y_MOVE		0,$F8
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_script_start
+			NARGB		$29,$00,$F8,$01,$00
+		SLOOP_BEGIN		$02
+		SPR_IDX_SET		6,$54
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SLOOP_END
+		SLOOP_END
+		POS_Y_MOVE		0,$08
+		SPR_IDX_SET		0,$53
+		SJMP			_sloc_3A2E0
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A32B:
+		NBG_HNDL_SET	_nbgsub_3A39E
+		NJSR			_nsub_628D1
+			NARGB		$40,$00
+		SPR_IDX_SET		0,$4B
+_sloc_3A335:
+		NJSR			_nsub_3A449
+		SBCS			_sloc_3A2E6
+		SDELAY			$01
+		SJMP			_sloc_3A335
+
+; =============== S C R I P T ===============================================
+_scr_3A340:
+		NBG_HNDL_SET	_nbgsub_3A3B4
+		SARG_SET		$00,$02
+_sloc_3A346:
+		SPR_IDX_SET		1,$4B
+		SPR_IDX_SET		1,$4E
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3A346
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$4B
+		SPR_IDX_SET		1,$4E
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3A32B
+		SCASE			_scr_3A386
+		SCASE			_scr_3A38C
+
+; =============== S C R I P T ===============================================
+_scr_3A362:
+		NBG_HNDL_SET	_nbgsub_3A3E4
+		SARG_SET		$00,$02
+_sloc_3A368:
+		SPR_IDX_SET		1,$54
+		SPR_IDX_SET		1,$57
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3A368
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$54
+		SPR_IDX_SET		1,$57
+		SLOOP_END
+		POS_Y_MOVE		0,$08
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3A32B
+		SCASE			_scr_3A392
+		SCASE			_scr_3A398
+
+; =============== S C R I P T ===============================================
+_scr_3A386:
+		SARG_SET		$01,$4F
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3A38C:
+		SARG_SET		$01,$51
+		SJMP			_sloc_62E02
+
+; =============== S C R I P T ===============================================
+_scr_3A392:
+		SARG_SET		$01,$58
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3A398:
+		SARG_SET		$01,$5A
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A39E:
 		LDX		#$08
 		LDY		#$08
@@ -4461,7 +4307,7 @@ loc_3A3AD:
 		LDY		#$09
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A3B4:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -4479,7 +4325,7 @@ loc_3A3C8:
 locret_3A3CD:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A3CE:
 		LDX		#$08
 		LDY		#$0C
@@ -4493,7 +4339,7 @@ loc_3A3DD:
 		LDY		#$10
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A3E4:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -4511,7 +4357,7 @@ loc_3A3F8:
 locret_3A3FD:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3A3FE:
 		LDA		#$04
 		JSR		_rand
@@ -4556,7 +4402,7 @@ byte_3A441:
 byte_3A445:
 		.BYTE	$FF,$00,$00,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3A449:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo,X
@@ -4644,32 +4490,31 @@ _spr_raw_lib0F_50:
 _spr_raw_lib0F_52:
 		.BYTE	$01
 		.BYTE	$05,$CE,$43,$FF
-_sjmp_case_3A515:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A531
-		.WORD	_nbgsub_3A531
-		.BYTE	$07		; NJSR		  _nsub_3A53B
-		.WORD	_nsub_3A53B
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$01
-		.WORD	_nsub_628D1
-		.BYTE	$00,$01
-		.BYTE	$60,$00,$FE	; POS_Y_DELTA_ADD 0,$00,$FE
-		.BYTE	$20,$5C		; SPR_IDX_SET	  0,$5C
-		.BYTE	$01,$3C		; SLOOP_BEGIN	  $3C
-		.BYTE	$61,$10,$00	; POS_Y_DELTA_ADD 1,$10,$00
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_3A515:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_3A531
+		NJSR			_nsub_3A53B
+		NJSR			_nsub_628D1
+			NARGB		$00,$01
+		POS_Y_DELTA_ADD 0,$00,$FE
+		SPR_IDX_SET		0,$5C
+		SLOOP_BEGIN		$3C
+		POS_Y_DELTA_ADD 1,$10,$00
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SPR_IDX_INC		4
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A531:
 		LDX		#$06
 		LDY		#$07
 		JSR		_player_to_obj_collision_test
 		JMP		_cur_obj_out_of_screen_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3A53B:
 		LDA		#$00
 		JSR		_rand
@@ -4683,103 +4528,95 @@ _spr_raw_lib0F_5C:
 _spr_raw_lib0F_5D:
 		.BYTE	$01
 		.BYTE	$FC,$EE,$01,$FC
-_scr2D_rotator:
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$62		; SPR_IDX_SET	  1,$62
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3A558:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A5E3
-		.WORD	_nbgsub_3A5E3
-_sloc_3A55B:
-		.BYTE	$25,$5E		; SPR_IDX_SET	  5,$5E
-		.BYTE	$01,$07		; SLOOP_BEGIN	  $07
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$23,$5E		; SPR_IDX_SET	  3,$5E
-		.BYTE	$01,$07		; SLOOP_BEGIN	  $07
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$21,$5E		; SPR_IDX_SET	  1,$5E
-		.BYTE	$01,$07		; SLOOP_BEGIN	  $07
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3A597
-		.WORD	_sloc_3A597
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3A597
-		.WORD	_sloc_3A597
-		.BYTE	$15,$01,$02,$80	; SARG_ALU	  $01,ADC,$80
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3A597
-		.WORD	_sloc_3A597
-		.BYTE	$15,$01,$02,$C0	; SARG_ALU	  $01,ADC,$C0
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0B		; SBCS		  _sloc_3A5AB
-		.WORD	_sloc_3A5AB
-_sloc_3A597:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$01
-		.WORD	_nsub_628D1
-		.BYTE	$00,$01
-		.BYTE	$01,$0A		; SLOOP_BEGIN	  $0A
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$17		; SBCS_BREAK	  _sloc_3A5AB
-		.WORD	_sloc_3A5AB
-		.BYTE	$21,$5E		; SPR_IDX_SET	  1,$5E
-		.BYTE	$01,$07		; SLOOP_BEGIN	  $07
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$02		; SLOOP_END
-_sloc_3A5AB:
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$23,$5E		; SPR_IDX_SET	  3,$5E
-		.BYTE	$01,$07		; SLOOP_BEGIN	  $07
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_3A55B
-		.WORD	_sloc_3A55B
-_scr_3A5B5:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A5F9
-		.WORD	_nbgsub_3A5F9
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3A5BB:
-		.BYTE	$21,$66		; SPR_IDX_SET	  1,$66
-		.BYTE	$21,$62		; SPR_IDX_SET	  1,$62
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3A5BB
-		.WORD	_sloc_3A5BB
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$66		; SPR_IDX_SET	  1,$66
-		.BYTE	$21,$62		; SPR_IDX_SET	  1,$62
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3A558	; CASE	  _sjmp_case_3A558
-		.WORD	_scr_3A5D7	; CASE	  _scr_3A5D7
-		.WORD	_scr_3A5DD	; CASE	  _scr_3A5DD
-_scr_3A5D7:
-		.BYTE	$0F,$01,$67	; SARG_SET	  $01,$67
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3A5DD:
-		.BYTE	$0F,$01,$69	; SARG_SET	  $01,$69
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr2D_rotator:
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$62
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A558:
+		NBG_HNDL_SET	_nbgsub_3A5E3
+_sloc_3A55B:
+		SPR_IDX_SET		5,$5E
+		SLOOP_BEGIN		$07
+		SPR_IDX_INC		5
+		SLOOP_END
+		SPR_IDX_SET		3,$5E
+		SLOOP_BEGIN		$07
+		SPR_IDX_INC		3
+		SLOOP_END
+		SLOOP_BEGIN		$03
+		SPR_IDX_SET		1,$5E
+		SLOOP_BEGIN		$07
+		SPR_IDX_INC		1
+		SLOOP_END
+		SLOOP_END
+		NJSR			_nsub_62CC4
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3A597
+		SARG_ALU		$01,_ADC,$40
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3A597
+		SARG_ALU		$01,_ADC,$80
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3A597
+		SARG_ALU		$01,_ADC,$C0
+		NJSR			_nsub_62CD3
+		SBCS			_sloc_3A5AB
+_sloc_3A597:
+		NJSR			_nsub_628D1
+			NARGB		$00,$01
+		SLOOP_BEGIN		$0A
+		NJSR			_nsub_62CD3
+		SBCS_BREAK	_sloc_3A5AB
+		SPR_IDX_SET		1,$5E
+		SLOOP_BEGIN		$07
+		SPR_IDX_INC		1
+		SLOOP_END
+		SLOOP_END
+_sloc_3A5AB:
+		POS_MOVE_STOP	0
+		SPR_IDX_SET		3,$5E
+		SLOOP_BEGIN		$07
+		SPR_IDX_INC		3
+		SLOOP_END
+		SJMP			_sloc_3A55B
+
+; =============== S C R I P T ===============================================
+_scr_3A5B5:
+		NBG_HNDL_SET	_nbgsub_3A5F9
+		SARG_SET		$00,$02
+_sloc_3A5BB:
+		SPR_IDX_SET		1,$66
+		SPR_IDX_SET		1,$62
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3A5BB
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$66
+		SPR_IDX_SET		1,$62
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3A558
+		SCASE			_scr_3A5D7
+		SCASE			_scr_3A5DD
+
+; =============== S C R I P T ===============================================
+_scr_3A5D7:
+		SARG_SET		$01,$67
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3A5DD:
+		SARG_SET		$01,$69
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A5E3:
 		LDX		#$04
 		LDY		#$0C
@@ -4793,7 +4630,7 @@ loc_3A5F2:
 		LDY		#$10
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A5F9:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -4900,35 +4737,34 @@ _spr_raw_lib0F_67:
 _spr_raw_lib0F_68:
 		.BYTE	$01
 		.BYTE	$FE,$BE,$03,$FA
-_scrF_candle:
-		.BYTE	$07		; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_3A739	; CASE	  _sjmp_case_3A739
-		.BYTE	$07		; NJSR		  _nsub_script_start,$0F,$00,$B0,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$0F,$00,$B0,$01,$00
-		.BYTE	$07		; NJSR		  _nsub_script_start,$0F,$00,$50,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$0F,$00,$50,$01,$00
-_sjmp_case_3A739:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_3A74D
-		.WORD	_nsub_3A74D
-		.BYTE	$0C		; SBCC		  _sjmp_case_3A739
-		.WORD	_sjmp_case_3A739
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$23
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$23
-_sloc_3A745:
-		.BYTE	$23,$6B		; SPR_IDX_SET	  3,$6B
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$23,$FF		; SPR_IDX_SET	  3,$FF
-		.BYTE	$03		; SJMP		  _sloc_3A745
-		.WORD	_sloc_3A745
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scrF_candle:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_3A739
+		NJSR			_nsub_script_start
+			NARGB		$0F,$00,$B0,$01,$00
+		NJSR			_nsub_script_start
+			NARGB		$0F,$00,$50,$01,$00
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A739:
+		SDELAY			$01
+		NJSR			_nsub_3A74D
+		SBCC			_sjmp_case_3A739
+		NJSR			_nsub_apu_snd_load
+			NARGB		$23
+_sloc_3A745:
+		SPR_IDX_SET		3,$6B
+		SPR_IDX_INC		3
+		SPR_IDX_SET		3,$FF
+		SJMP			_sloc_3A745
+
+; =============== S U B R O U T I N E =======================================
 _nsub_3A74D:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_y_pos_hi+2
@@ -4953,29 +4789,27 @@ _spr_raw_lib0F_6C:
 		.BYTE	$02
 		.BYTE	$F8,$C7,$01,$D8
 		.BYTE	$F8,$C7,$01,$20
-_scr10_train_semaphores:
-		.BYTE	$20,$6D	; SPR_IDX_SET	  0,$6D
-		.BYTE	$28,$38,$05	; POS_X_SET	  0,$38,$05
-		.BYTE	$04		; SJSR		  _ssub_3A788
-		.WORD	_ssub_3A788
-		.BYTE	$28,$C8,$05	; POS_X_SET	  0,$C8,$05
-		.BYTE	$04		; SJSR		  _ssub_3A788
-		.WORD	_ssub_3A788
-		.BYTE	$03		; SJMP		  _scr10_train_semaphores
-		.WORD	_scr10_train_semaphores
-_ssub_3A788:
-		.BYTE	$07		; NJSR		  _nsub_3A797
-		.WORD	_nsub_3A797
-		.BYTE	$50,$75,$FD	; POS_Y_DELTA_SET 0,$75,$FD
-_sloc_3A78E:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_3A7A8
-		.WORD	_nsub_3A7A8
-		.BYTE	$0C		; SBCC		  _sloc_3A78E
-		.WORD	_sloc_3A78E
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr10_train_semaphores:
+		SPR_IDX_SET		0,$6D
+		POS_X_SET		0,$38,$05
+		SJSR			_ssub_3A788
+		POS_X_SET		0,$C8,$05
+		SJSR			_ssub_3A788
+		SJMP			_scr10_train_semaphores
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3A788:
+		NJSR			_nsub_3A797
+		POS_Y_DELTA_SET 0,$75,$FD
+_sloc_3A78E:
+		SDELAY			$01
+		NJSR			_nsub_3A7A8
+		SBCC			_sloc_3A78E
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_3A797:
 		LDX		_scr_cur_trd_idx
 		LDA		_ppu_scroll_pos_y
@@ -4987,7 +4821,7 @@ _nsub_3A797:
 		STA		_scr_trds_y_pos_hi,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3A7A8:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_y_pos_lo,X
@@ -5123,160 +4957,162 @@ off_3A82B:
 		.WORD	_spr_raw_lib0F_6B
 		.WORD	_spr_raw_lib0F_6C
 		.WORD	_spr_raw_lib0F_6D
-_spr_lib0F:
-		.WORD	_scr_lib0F_00
-		.WORD	_scr_lib0F_01
-		.WORD	_scr_lib0F_02
-		.WORD	_scr_lib0F_03
-		.WORD	_scr_lib0F_04
-		.WORD	_scr_lib0F_05
-		.WORD	_scr_lib0F_06
-		.WORD	_scr_lib0F_07
-		.WORD	_scr_lib0F_08
-		.WORD	_scr_lib0F_09
-		.WORD	_scr_lib0F_0A
-		.WORD	_scr_lib0F_0B
-		.WORD	_scr_lib0F_0C
-		.WORD	_scr_lib0F_0D
-		.WORD	_scr_lib0F_0E
-		.WORD	_scr_lib0F_0F
-		.WORD	_scr_lib0F_10
-		.WORD	_scr_lib0F_11
-		.WORD	_scr_lib0F_12
-		.WORD	_scr_lib0F_13
-		.WORD	_scr_lib0F_14
-		.WORD	_scr_lib0F_15
-		.WORD	_scr_lib0F_16
-		.WORD	_scr_lib0F_17
-		.WORD	_scr_lib0F_18
-		.WORD	_scr_lib0F_19
-		.WORD	_scr_lib0F_1A	; *--
-		.WORD	_scr_lib0F_1B
-		.WORD	_scr_lib0F_1C
-		.WORD	_scr_lib0F_1D
-		.WORD	_scr_lib0F_1E	; *--
-		.WORD	_scr_lib0F_1F
-		.WORD	_scr_lib0F_20
-		.WORD	_scr_lib0F_21
-		.WORD	_scr_lib0F_22	; *--
-		.WORD	_scr_lib0F_23
-		.WORD	_scr_lib0F_24
-		.WORD	_scr_lib0F_25
-		.WORD	_scr_lib0F_26
-		.WORD	_scr_lib0F_27
-		.WORD	_scr_lib0F_28
-		.WORD	_scr_lib0F_29
-		.WORD	_scr_lib0F_2A
-		.WORD	_scr_lib0F_2B
-_scr17_runner:
-		.BYTE	$0F,$01,$80	; SARG_SET	  $01,$80
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$0C		; SPR_IDX_SET	  1,$0C
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_scr_3A909:
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3A9B3
-		.WORD	_nbgsub_3A9B3
-		.BYTE	$07		; NJSR		  _nsub_604CD
-		.WORD	_nsub_604CD
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3A930	; CASE	  _sjmp_case_3A930
-		.WORD	_sjmp_case_3A948	; CASE	  _sjmp_case_3A948
-		.WORD	_sjmp_case_3A960	; CASE	  _sjmp_case_3A960
-_sloc_3A918:
-		.BYTE	$48,$80,$FE	; POS_X_DELTA_SET 0,$80,$FE
-		.BYTE	$20,$10		; SPR_IDX_SET	  0,$10
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$48,$00,$FF	; POS_X_DELTA_SET 0,$00,$FF
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$48,$80,$FE	; POS_X_DELTA_SET 0,$80,$FE
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$48,$00,$FF	; POS_X_DELTA_SET 0,$00,$FF
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$03		; SJMP		  _sloc_3A918
-		.WORD	_sloc_3A918
-_sjmp_case_3A930:
-		.BYTE	$50,$80,$FE	; POS_Y_DELTA_SET 0,$80,$FE
-		.BYTE	$20,$04		; SPR_IDX_SET	  0,$04
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$50,$00,$FF	; POS_Y_DELTA_SET 0,$00,$FF
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$50,$80,$FE	; POS_Y_DELTA_SET 0,$80,$FE
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$50,$00,$FF	; POS_Y_DELTA_SET 0,$00,$FF
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$03		; SJMP		  _sjmp_case_3A930
-		.WORD	_sjmp_case_3A930
-_sjmp_case_3A948:
-		.BYTE	$48,$80,$01	; POS_X_DELTA_SET 0,$80,$01
-		.BYTE	$20,$08		; SPR_IDX_SET	  0,$08
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$48,$00,$01	; POS_X_DELTA_SET 0,$00,$01
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$48,$80,$01	; POS_X_DELTA_SET 0,$80,$01
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$48,$00,$01	; POS_X_DELTA_SET 0,$00,$01
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$03		; SJMP		  _sjmp_case_3A948
-		.WORD	_sjmp_case_3A948
-_sjmp_case_3A960:
-		.BYTE	$50,$80,$01	; POS_Y_DELTA_SET 0,$80,$01
-		.BYTE	$20,$0C		; SPR_IDX_SET	  0,$0C
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$50,$00,$01	; POS_Y_DELTA_SET 0,$00,$01
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$50,$80,$01	; POS_Y_DELTA_SET 0,$80,$01
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$50,$00,$01	; POS_Y_DELTA_SET 0,$00,$01
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$03		; SJMP		  _sjmp_case_3A960
-		.WORD	_sjmp_case_3A960
-_scr_3A978:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3AA31
-		.WORD	_nbgsub_3AA31
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3A97E:
-		.BYTE	$04		; SJSR		  _ssub_3A998
-		.WORD	_ssub_3A998
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3A97E
-		.WORD	_sloc_3A97E
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_3A998
-		.WORD	_ssub_3A998
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_scr_3A909	; CASE	  _scr_3A909
-		.WORD	_scr_3A9A7	; CASE	  _scr_3A9A7
-		.WORD	_scr_3A9AD	; CASE	  _scr_3A9AD
-_ssub_3A998:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$04,$10
-		.WORD	_nsub_6273D
-		.BYTE	$04,$10
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_6273D,$14,$40
-		.WORD	_nsub_6273D
-		.BYTE	$14,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$05		; SRET
-_scr_3A9A7:
-		.BYTE	$0F,$01,$18	; SARG_SET	  $01,$18
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3A9AD:
-		.BYTE	$0F,$01,$1A	; SARG_SET	  $01,$1A
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
+_spr_res_lib0F:
+		.WORD	_spr_res_lib0F_00
+		.WORD	_spr_res_lib0F_01
+		.WORD	_spr_res_lib0F_02
+		.WORD	_spr_res_lib0F_03
+		.WORD	_spr_res_lib0F_04
+		.WORD	_spr_res_lib0F_05
+		.WORD	_spr_res_lib0F_06
+		.WORD	_spr_res_lib0F_07
+		.WORD	_spr_res_lib0F_08
+		.WORD	_spr_res_lib0F_09
+		.WORD	_spr_res_lib0F_0A
+		.WORD	_spr_res_lib0F_0B
+		.WORD	_spr_res_lib0F_0C
+		.WORD	_spr_res_lib0F_0D
+		.WORD	_spr_res_lib0F_0E
+		.WORD	_spr_res_lib0F_0F
+		.WORD	_spr_res_lib0F_10
+		.WORD	_spr_res_lib0F_11
+		.WORD	_spr_res_lib0F_12
+		.WORD	_spr_res_lib0F_13
+		.WORD	_spr_res_lib0F_14
+		.WORD	_spr_res_lib0F_15
+		.WORD	_spr_res_lib0F_16
+		.WORD	_spr_res_lib0F_17
+		.WORD	_spr_res_lib0F_18
+		.WORD	_spr_res_lib0F_19
+		.WORD	_spr_res_lib0F_1A	; *--
+		.WORD	_spr_res_lib0F_1B
+		.WORD	_spr_res_lib0F_1C
+		.WORD	_spr_res_lib0F_1D
+		.WORD	_spr_res_lib0F_1E	; *--
+		.WORD	_spr_res_lib0F_1F
+		.WORD	_spr_res_lib0F_20
+		.WORD	_spr_res_lib0F_21
+		.WORD	_spr_res_lib0F_22	; *--
+		.WORD	_spr_res_lib0F_23
+		.WORD	_spr_res_lib0F_24
+		.WORD	_spr_res_lib0F_25
+		.WORD	_spr_res_lib0F_26
+		.WORD	_spr_res_lib0F_27
+		.WORD	_spr_res_lib0F_28
+		.WORD	_spr_res_lib0F_29
+		.WORD	_spr_res_lib0F_2A
+		.WORD	_spr_res_lib0F_2B
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr17_runner:
+		SARG_SET		$01,$80
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$0C
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; =============== S C R I P T ===============================================
+_scr_3A909:
+		POS_MOVE_STOP	0
+		NBG_HNDL_SET	_nbgsub_3A9B3
+		NJSR			_nsub_604CD
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3A930
+		SCASE			_sjmp_case_3A948
+		SCASE			_sjmp_case_3A960
+_sloc_3A918:
+		POS_X_DELTA_SET 0,$80,$FE
+		SPR_IDX_SET		0,$10
+		SDELAY			$08
+		POS_X_DELTA_SET 0,$00,$FF
+		SPR_IDX_INC		6
+		POS_X_DELTA_SET 0,$80,$FE
+		SPR_IDX_INC		0
+		SDELAY			$08
+		POS_X_DELTA_SET 0,$00,$FF
+		SPR_IDX_INC		6
+		SJMP			_sloc_3A918
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A930:
+		POS_Y_DELTA_SET 0,$80,$FE
+		SPR_IDX_SET		0,$04
+		SDELAY			$08
+		POS_Y_DELTA_SET 0,$00,$FF
+		SPR_IDX_INC		6
+		POS_Y_DELTA_SET 0,$80,$FE
+		SPR_IDX_INC		0
+		SDELAY			$08
+		POS_Y_DELTA_SET 0,$00,$FF
+		SPR_IDX_INC		6
+		SJMP			_sjmp_case_3A930
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A948:
+		POS_X_DELTA_SET 0,$80,$01
+		SPR_IDX_SET		0,$08
+		SDELAY			$08
+		POS_X_DELTA_SET 0,$00,$01
+		SPR_IDX_INC		6
+		POS_X_DELTA_SET 0,$80,$01
+		SPR_IDX_INC		0
+		SDELAY			$08
+		POS_X_DELTA_SET 0,$00,$01
+		SPR_IDX_INC		6
+		SJMP			_sjmp_case_3A948
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3A960:
+		POS_Y_DELTA_SET 0,$80,$01
+		SPR_IDX_SET		0,$0C
+		SDELAY			$08
+		POS_Y_DELTA_SET 0,$00,$01
+		SPR_IDX_INC		6
+		POS_Y_DELTA_SET 0,$80,$01
+		SPR_IDX_INC		0
+		SDELAY			$08
+		POS_Y_DELTA_SET 0,$00,$01
+		SPR_IDX_INC		6
+		SJMP			_sjmp_case_3A960
+
+; =============== S C R I P T ===============================================
+_scr_3A978:
+		NBG_HNDL_SET	_nbgsub_3AA31
+		SARG_SET		$00,$02
+_sloc_3A97E:
+		SJSR			_ssub_3A998
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3A97E
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_3A998
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_scr_3A909
+		SCASE			_scr_3A9A7
+		SCASE			_scr_3A9AD
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3A998:
+		NJSR			_nsub_6273D
+			NARGB		$04,$10
+		SDELAY			$01
+		NJSR			_nsub_6273D
+			NARGB		$14,$40
+		SDELAY			$01
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3A9A7:
+		SARG_SET		$01,$18
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3A9AD:
+		SARG_SET		$01,$1A
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3A9B3:
 		LDX		#$08
 		LDY		#$0C
@@ -5353,7 +5189,7 @@ byte_3AA2C:
 		.BYTE	$F6,$F8
 		.BYTE	$F6,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3AA31:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -5532,125 +5368,110 @@ _spr_raw_lib11_1B:
 		.BYTE	$02
 		.BYTE	$F8,$BE,$42,$00
 		.BYTE	$F8,$AE,$42,$08
-_scr18_chain_saw:
-		.BYTE	$20,$34		; SPR_IDX_SET	  0,$34
-_sloc_3AC3B:
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3AC65
-		.WORD	_sloc_3AC65
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3AC65
-		.WORD	_sloc_3AC65
-		.BYTE	$15,$01,$02,$80	; SARG_ALU	  $01,ADC,$80
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0C		; SBCC		  _sloc_3AC65
-		.WORD	_sloc_3AC65
-		.BYTE	$15,$01,$02,$C0	; SARG_ALU	  $01,ADC,$C0
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$0B		; SBCS		  _sloc_3AC3B
-		.WORD	_sloc_3AC3B
-_sloc_3AC65:
-		.BYTE	$07		; NJSR		  _nsub_628D1,$80,$00
-		.WORD	_nsub_628D1
-		.BYTE	$80,$00
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$07		; NJSR		  _nsub_62B1E,$02,$40
-		.WORD	_nsub_62B1E
-		.BYTE	$02,$40
-		.BYTE	$0C		; SBCC		  _sloc_3AC3B
-		.WORD	_sloc_3AC3B
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3ACEA
-		.WORD	_nbgsub_3ACEA
-		.BYTE	$07		; NJSR		  _nsub_62CC4
-		.WORD	_nsub_62CC4
-		.BYTE	$04		; SJSR		  _ssub_3ACA6
-		.WORD	_ssub_3ACA6
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3AC9A
-		.WORD	_scr_3AC9A
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$01
-		.WORD	_nsub_628D1
-		.BYTE	$00,$01
-		.BYTE	$01,$06		; SLOOP_BEGIN	  $06
-		.BYTE	$07		; NJSR		  _nsub_62CD3
-		.WORD	_nsub_62CD3
-		.BYTE	$17		; SBCS_BREAK	  _sloc_3AC91
-		.WORD	_sloc_3AC91
-		.BYTE	$06,$08		; SDELAY	  $08
-		.BYTE	$02		; SLOOP_END
-_sloc_3AC91:
-		.BYTE	$14,$01		; SDISABLE	  $01
-_sjmp_case_3AC93:
-		.BYTE	$04		; SJSR		  _ssub_3ACA6
-		.WORD	_ssub_3ACA6
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$03		; SJMP		  _scr18_chain_saw
-		.WORD	_scr18_chain_saw
-_scr_3AC9A:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$28,$40
-		.WORD	_nsub_6273D
-		.BYTE	$28,$40
-_sloc_3AC9F:
-		.BYTE	$AC,$FC		; SPR_IDX_ADD_IMM 4,$FC
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$03		; SJMP		  _sloc_3AC9F
-		.WORD	_sloc_3AC9F
-_ssub_3ACA6:
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$07		; NJSR		  _nsub_6273D,$20,$40
-		.WORD	_nsub_6273D
-		.BYTE	$20,$40
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$AC,$FC		; SPR_IDX_ADD_IMM 4,$FC
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
-_scr_3ACB4:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3AD00
-		.WORD	_nbgsub_3AD00
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3ACBA:
-		.BYTE	$04		; SJSR		  _ssub_3ACD4
-		.WORD	_ssub_3ACD4
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3ACBA
-		.WORD	_sloc_3ACBA
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$04		; SJSR		  _ssub_3ACD4
-		.WORD	_ssub_3ACD4
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3AC93	; CASE	  _sjmp_case_3AC93
-		.WORD	_scr_3ACDE	; CASE	  _scr_3ACDE
-		.WORD	_scr_3ACE4	; CASE	  _scr_3ACE4
-_ssub_3ACD4:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$24,$40
-		.WORD	_nsub_6273D
-		.BYTE	$24,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$08		; SPR_IDX_ADD_IMM 1,$08
-		.BYTE	$05		; SRET
-_scr_3ACDE:
-		.BYTE	$0F,$01,$30	; SARG_SET	  $01,$30
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3ACE4:
-		.BYTE	$0F,$01,$32	; SARG_SET	  $01,$32
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr18_chain_saw:
+		SPR_IDX_SET		0,$34
+_sloc_3AC3B:
+		POS_MOVE_STOP	0
+		SDELAY			$14
+		NJSR			_nsub_62CC4
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3AC65
+		SARG_ALU		$01,_ADC,$40
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3AC65
+		SARG_ALU		$01,_ADC,$80
+		NJSR			_nsub_62CD3
+		SBCC			_sloc_3AC65
+		SARG_ALU		$01,_ADC,$C0
+		NJSR			_nsub_62CD3
+		SBCS			_sloc_3AC3B
+_sloc_3AC65:
+		NJSR			_nsub_628D1
+			NARGB		$80,$00
+		SDELAY			$10
+		NJSR			_nsub_62B1E
+			NARGB		$02,$40
+		SBCC			_sloc_3AC3B
+		NBG_HNDL_SET	_nbgsub_3ACEA
+		NJSR			_nsub_62CC4
+		SJSR			_ssub_3ACA6
+		SRUN			$01,_scr_3AC9A
+		NJSR			_nsub_628D1
+			NARGB		$00,$01
+		SLOOP_BEGIN		$06
+		NJSR			_nsub_62CD3
+		SBCS_BREAK	_sloc_3AC91
+		SDELAY			$08
+		SLOOP_END
+_sloc_3AC91:
+		SDISABLE		$01
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3AC93:
+		SJSR			_ssub_3ACA6
+		NBG_HNDL_RESET
+		SJMP			_scr18_chain_saw
+
+; =============== S C R I P T ===============================================
+_scr_3AC9A:
+		NJSR			_nsub_6273D
+			NARGB		$28,$40
+_sloc_3AC9F:
+		SPR_IDX_ADD_IMM 4,$FC
+		SPR_IDX_ADD_IMM 4,$04
+		SJMP			_sloc_3AC9F
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3ACA6:
+		POS_MOVE_STOP	0
+		NJSR			_nsub_6273D
+			NARGB		$20,$40
+		SLOOP_BEGIN		$04
+		SPR_IDX_ADD_IMM 4,$FC
+		SPR_IDX_ADD_IMM 4,$04
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3ACB4:
+		NBG_HNDL_SET	_nbgsub_3AD00
+		SARG_SET		$00,$02
+_sloc_3ACBA:
+		SJSR			_ssub_3ACD4
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3ACBA
+		SLOOP_BEGIN		$14
+		SJSR			_ssub_3ACD4
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3AC93
+		SCASE			_scr_3ACDE
+		SCASE			_scr_3ACE4
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3ACD4:
+		NJSR			_nsub_6273D
+			NARGB		$24,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$08
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3ACDE:
+		SARG_SET		$01,$30
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3ACE4:
+		SARG_SET		$01,$32
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3ACEA:
 		LDX		#$08
 		LDY		#$0C
@@ -5664,7 +5485,7 @@ loc_3ACF9:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3AD00:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -5901,82 +5722,82 @@ _spr_raw_lib11_34:
 		.BYTE	$02
 		.BYTE	$08,$3E,$40,$F8
 		.BYTE	$08,$3E,$00,$00
-_scr19_toilet_snake:
-		.BYTE	$20,$35	; SPR_IDX_SET	  0,$35
-		.BYTE	$06,$1E		; SDELAY	  $1E
-_sloc_3AFDF:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_62B1E,$02,$40
-		.WORD	_nsub_62B1E
-		.BYTE	$02,$40
-		.BYTE	$0C		; SBCC		  _sloc_3AFDF
-		.WORD	_sloc_3AFDF
-		.BYTE	$40,$04		; POS_Y_MOVE	  0,$04
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$40,$03		; POS_Y_MOVE	  0,$03
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$40,$03		; POS_Y_MOVE	  0,$03
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$40,$02		; POS_Y_MOVE	  0,$02
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$40,$03		; POS_Y_MOVE	  0,$03
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$40,$02		; POS_Y_MOVE	  0,$02
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B04B
-		.WORD	_nbgsub_3B04B
-		.BYTE	$40,$03		; POS_Y_MOVE	  0,$03
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$2D		; SDELAY	  $2D
-_sjmp_case_3B003:
-		.BYTE	$10		; NBG_HNDL_RESET
-		.BYTE	$40,$FD		; POS_Y_MOVE	  0,$FD
-		.BYTE	$20,$3B		; SPR_IDX_SET	  0,$3B
-		.BYTE	$40,$FE		; POS_Y_MOVE	  0,$FE
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$40,$FD		; POS_Y_MOVE	  0,$FD
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$40,$FE		; POS_Y_MOVE	  0,$FE
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$40,$FD		; POS_Y_MOVE	  0,$FD
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$40,$FD		; POS_Y_MOVE	  0,$FD
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$40,$FC		; POS_Y_MOVE	  0,$FC
-		.BYTE	$A4		; SPR_IDX_DEC	  4
-		.BYTE	$03		; SJMP		  _scr19_toilet_snake
-		.WORD	_scr19_toilet_snake
-_scr_3B01D:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B061
-		.WORD	_nbgsub_3B061
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3B023:
-		.BYTE	$21,$3D		; SPR_IDX_SET	  1,$3D
-		.BYTE	$21,$3C		; SPR_IDX_SET	  1,$3C
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3B023
-		.WORD	_sloc_3B023
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$3D		; SPR_IDX_SET	  1,$3D
-		.BYTE	$21,$3C		; SPR_IDX_SET	  1,$3C
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3B003	; CASE	  _sjmp_case_3B003
-		.WORD	_scr_3B03F	; CASE	  _scr_3B03F
-		.WORD	_scr_3B045	; CASE	  _scr_3B045
-_scr_3B03F:
-		.BYTE	$0F,$01,$3E	; SARG_SET	  $01,$3E
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3B045:
-		.BYTE	$0F,$01,$40	; SARG_SET	  $01,$40
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr19_toilet_snake:
+		SPR_IDX_SET		0,$35
+		SDELAY			$1E
+_sloc_3AFDF:
+		SDELAY			$01
+		NJSR			_nsub_62B1E
+			NARGB		$02,$40
+		SBCC			_sloc_3AFDF
+		POS_Y_MOVE		0,$04
+		SPR_IDX_INC		1
+		POS_Y_MOVE		0,$03
+		SPR_IDX_INC		1
+		POS_Y_MOVE		0,$03
+		SPR_IDX_INC		1
+		POS_Y_MOVE		0,$02
+		SPR_IDX_INC		2
+		POS_Y_MOVE		0,$03
+		SPR_IDX_INC		2
+		POS_Y_MOVE		0,$02
+		SPR_IDX_INC		3
+		NBG_HNDL_SET	_nbgsub_3B04B
+		POS_Y_MOVE		0,$03
+		SPR_IDX_INC		0
+		SDELAY			$2D
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3B003:
+		NBG_HNDL_RESET
+		POS_Y_MOVE		0,$FD
+		SPR_IDX_SET		0,$3B
+		POS_Y_MOVE		0,$FE
+		SPR_IDX_DEC		4
+		POS_Y_MOVE		0,$FD
+		SPR_IDX_DEC		4
+		POS_Y_MOVE		0,$FE
+		SPR_IDX_DEC		4
+		POS_Y_MOVE		0,$FD
+		SPR_IDX_DEC		4
+		POS_Y_MOVE		0,$FD
+		SPR_IDX_DEC		4
+		POS_Y_MOVE		0,$FC
+		SPR_IDX_DEC		4
+		SJMP			_scr19_toilet_snake
+
+; =============== S C R I P T ===============================================
+_scr_3B01D:
+		NBG_HNDL_SET	_nbgsub_3B061
+		SARG_SET		$00,$02
+_sloc_3B023:
+		SPR_IDX_SET		1,$3D
+		SPR_IDX_SET		1,$3C
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3B023
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$3D
+		SPR_IDX_SET		1,$3C
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3B003
+		SCASE			_scr_3B03F
+		SCASE			_scr_3B045
+
+; =============== S C R I P T ===============================================
+_scr_3B03F:
+		SARG_SET		$01,$3E
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3B045:
+		SARG_SET		$01,$40
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B04B:
 		LDX		#$04
 		LDY		#$16
@@ -5990,7 +5811,7 @@ loc_3B05A:
 		LDY		#$1C
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B061:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -6128,89 +5949,89 @@ _spr_raw_lib11_41:
 		.BYTE	$F8,$C0,$42,$08
 		.BYTE	$F8,$D0,$42,$00
 		.BYTE	$00,$B4,$42,$00
-_scr2A_morning_star_troll:
-		.BYTE	$07	; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$01		; SJMP_SW	  $01
-		.WORD	_sjmp_case_3B4E6	; CASE	  _sjmp_case_3B4E6
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$C0		; SPR_IDX_SET	  1,$C0
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3B214:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B281
-		.WORD	_nbgsub_3B281
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3B24C
-		.WORD	_scr_3B24C
-_sloc_3B21B:
-		.BYTE	$07		; NJSR		  _nsub_3B2B1
-		.WORD	_nsub_3B2B1
-		.BYTE	$12,$03		; SJSR_SW	  $03
-		.WORD	_sjsr_case_3B237	; CASE	  _sjsr_case_3B237
-		.WORD	_sjsr_case_3B229	; CASE	  _sjsr_case_3B229
-		.WORD	_sjsr_case_3B230	; CASE	  _sjsr_case_3B230
-		.BYTE	$03		; SJMP		  _sloc_3B21B
-		.WORD	_sloc_3B21B
-_sjsr_case_3B229:
-		.BYTE	$48,$80,$00	; POS_X_DELTA_SET 0,$80,$00
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$05		; SRET
-_sjsr_case_3B230:
-		.BYTE	$48,$80,$FF	; POS_X_DELTA_SET 0,$80,$FF
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$05		; SRET
-_sjsr_case_3B237:
-		.BYTE	$06,$18		; SDELAY	  $18
-		.BYTE	$14,$01		; SDISABLE	  $01
-		.BYTE	$20,$C8		; SPR_IDX_SET	  0,$C8
-		.BYTE	$07		; NJSR		  _nsub_script_start,$2A,$F7,$20,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$2A,$F7,$20,$01,$00
-		.BYTE	$06,$18		; SDELAY	  $18
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3B24C
-		.WORD	_scr_3B24C
-		.BYTE	$05		; SRET
-_scr_3B24C:
-		.BYTE	$23,$C0		; SPR_IDX_SET	  3,$C0
-		.BYTE	$01,$07		; SLOOP_BEGIN	  $07
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _scr_3B24C
-		.WORD	_scr_3B24C
-_scr_3B255:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B297
-		.WORD	_nbgsub_3B297
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3B25B:
-		.BYTE	$21,$C9		; SPR_IDX_SET	  1,$C9
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3B25B
-		.WORD	_sloc_3B25B
-		.BYTE	$01,$0F		; SLOOP_BEGIN	  $0F
-		.BYTE	$21,$C9		; SPR_IDX_SET	  1,$C9
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3B214	; CASE	  _sjmp_case_3B214
-		.WORD	_scr_3B275	; CASE	  _scr_3B275
-		.WORD	_scr_3B27B	; CASE	  _scr_3B27B
-_scr_3B275:
-		.BYTE	$0F,$01,$42	; SARG_SET	  $01,$42
-		.BYTE	$03		; SJMP		  _sloc_62E25
-		.WORD	_sloc_62E25
-_scr_3B27B:
-		.BYTE	$0F,$01,$42	; SARG_SET	  $01,$42
-		.BYTE	$03		; SJMP		  _sloc_62E2C
-		.WORD	_sloc_62E2C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr2A_morning_star_troll:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$01
+		SCASE			_sjmp_case_3B4E6
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$C0
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3B214:
+		NBG_HNDL_SET	_nbgsub_3B281
+		SRUN			$01,_scr_3B24C
+_sloc_3B21B:
+		NJSR			_nsub_3B2B1
+		SJSR_SW	$03
+		SCASE			_sjsr_case_3B237
+		SCASE			_sjsr_case_3B229
+		SCASE			_sjsr_case_3B230
+		SJMP			_sloc_3B21B
+_sjsr_case_3B229:
+		POS_X_DELTA_SET 0,$80,$00
+		SDELAY			$10
+		POS_MOVE_STOP	0
+		SRET
+_sjsr_case_3B230:
+		POS_X_DELTA_SET 0,$80,$FF
+		SDELAY			$10
+		POS_MOVE_STOP	0
+		SRET
+_sjsr_case_3B237:
+		SDELAY			$18
+		SDISABLE		$01
+		SPR_IDX_SET		0,$C8
+		NJSR			_nsub_script_start
+			NARGB		$2A,$F7,$20,$01,$00
+		SDELAY			$18
+		SRUN			$01,_scr_3B24C
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3B24C:
+		SPR_IDX_SET		3,$C0
+		SLOOP_BEGIN		$07
+		SPR_IDX_INC		3
+		SLOOP_END
+		SJMP			_scr_3B24C
+
+; =============== S C R I P T ===============================================
+_scr_3B255:
+		NBG_HNDL_SET	_nbgsub_3B297
+		SARG_SET		$00,$02
+_sloc_3B25B:
+		SPR_IDX_SET		1,$C9
+		SPR_IDX_INC		1
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3B25B
+		SLOOP_BEGIN		$0F
+		SPR_IDX_SET		1,$C9
+		SPR_IDX_INC		1
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3B214
+		SCASE			_scr_3B275
+		SCASE			_scr_3B27B
+
+; =============== S C R I P T ===============================================
+_scr_3B275:
+		SARG_SET		$01,$42
+		SJMP			_sloc_62E25
+
+; =============== S C R I P T ===============================================
+_scr_3B27B:
+		SARG_SET		$01,$42
+		SJMP			_sloc_62E2C
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B281:
 		LDX		#$08
 		LDY		#$0C
@@ -6224,7 +6045,7 @@ loc_3B290:
 		LDY		#$0E
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B297:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -6242,7 +6063,7 @@ loc_3B2AB:
 locret_3B2B0:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3B2B1:
 		LDA		#$13
 		JSR		_rand
@@ -6291,40 +6112,40 @@ byte_3B2EF:
 		.BYTE	$02
 		.BYTE	$08,$F8
 		.BYTE	$08,$00
-_spr_lib11_00:
+_spr_res_lib11_00:
 		.BYTE	$01
-		.WORD	_spr_lib11_00_A
-_spr_lib11_01:
+		.WORD	_spr_res_lib11_00_A
+_spr_res_lib11_01:
 		.BYTE	$01
-		.WORD	_spr_lib11_01_A
-_spr_lib11_02:
+		.WORD	_spr_res_lib11_01_A
+_spr_res_lib11_02:
 		.BYTE	$01
-		.WORD	_spr_lib11_02_A
-_spr_lib11_03:
+		.WORD	_spr_res_lib11_02_A
+_spr_res_lib11_03:
 		.BYTE	$01
-		.WORD	_spr_lib11_03_A
-_spr_lib11_04:
+		.WORD	_spr_res_lib11_03_A
+_spr_res_lib11_04:
 		.BYTE	$01
-		.WORD	_spr_lib11_04_A
-_spr_lib11_05:
+		.WORD	_spr_res_lib11_04_A
+_spr_res_lib11_05:
 		.BYTE	$01
-		.WORD	_spr_lib11_05_A
-_spr_lib11_06:
+		.WORD	_spr_res_lib11_05_A
+_spr_res_lib11_06:
 		.BYTE	$01
-		.WORD	_spr_lib11_06_A
-_spr_lib11_07:
+		.WORD	_spr_res_lib11_06_A
+_spr_res_lib11_07:
 		.BYTE	$01
-		.WORD	_spr_lib11_07_A
-_spr_lib11_08:
+		.WORD	_spr_res_lib11_07_A
+_spr_res_lib11_08:
 		.BYTE	$01
-		.WORD	_spr_lib11_08_A
-_spr_lib11_09:
+		.WORD	_spr_res_lib11_08_A
+_spr_res_lib11_09:
 		.BYTE	$01
-		.WORD	_spr_lib11_09_A
-_spr_lib11_0A:
+		.WORD	_spr_res_lib11_09_A
+_spr_res_lib11_0A:
 		.BYTE	$01
-		.WORD	_spr_lib11_0A_A
-_spr_lib11_00_A:
+		.WORD	_spr_res_lib11_0A_A
+_spr_res_lib11_00_A:
 		.BYTE	$09
 		.BYTE	$D6,$EC,$00,$F0
 		.BYTE	$D6,$FC,$00,$F8
@@ -6335,7 +6156,7 @@ _spr_lib11_00_A:
 		.BYTE	$FA,$D6,$03,$F4
 		.BYTE	$FA,$C6,$03,$04
 		.BYTE	$FA,$E6,$03,$FC
-_spr_lib11_01_A:
+_spr_res_lib11_01_A:
 		.BYTE	$09
 		.BYTE	$DA,$FC,$00,$02
 		.BYTE	$DA,$EC,$00,$FA
@@ -6346,7 +6167,7 @@ _spr_lib11_01_A:
 		.BYTE	$FA,$D6,$03,$F4
 		.BYTE	$FA,$C6,$03,$04
 		.BYTE	$FA,$E6,$03,$FC
-_spr_lib11_02_A:
+_spr_res_lib11_02_A:
 		.BYTE	$0A
 		.BYTE	$E8,$FC,$00,$0F
 		.BYTE	$E8,$EC,$00,$07
@@ -6358,7 +6179,7 @@ _spr_lib11_02_A:
 		.BYTE	$FA,$D2,$03,$F4
 		.BYTE	$FA,$E2,$03,$FC
 		.BYTE	$EA,$E0,$03,$FC
-_spr_lib11_03_A:
+_spr_res_lib11_03_A:
 		.BYTE	$0A
 		.BYTE	$FA,$FC,$00,$0B
 		.BYTE	$FA,$EC,$00,$03
@@ -6370,7 +6191,7 @@ _spr_lib11_03_A:
 		.BYTE	$FA,$D2,$03,$F4
 		.BYTE	$FA,$E2,$03,$FC
 		.BYTE	$EA,$E0,$03,$FC
-_spr_lib11_04_A:
+_spr_res_lib11_04_A:
 		.BYTE	$0A
 		.BYTE	$02,$FC,$00,$F7
 		.BYTE	$02,$EC,$00,$EF
@@ -6382,7 +6203,7 @@ _spr_lib11_04_A:
 		.BYTE	$FA,$C4,$03,$F4
 		.BYTE	$FA,$F6,$03,$04
 		.BYTE	$FA,$E6,$03,$FC
-_spr_lib11_05_A:
+_spr_res_lib11_05_A:
 		.BYTE	$0A
 		.BYTE	$FA,$EC,$00,$DE
 		.BYTE	$FA,$FC,$00,$E6
@@ -6394,7 +6215,7 @@ _spr_lib11_05_A:
 		.BYTE	$FA,$C4,$03,$F4
 		.BYTE	$FA,$F6,$03,$04
 		.BYTE	$FA,$E6,$03,$FC
-_spr_lib11_06_A:
+_spr_res_lib11_06_A:
 		.BYTE	$0A
 		.BYTE	$E8,$EC,$00,$D9
 		.BYTE	$E8,$FC,$00,$E1
@@ -6406,7 +6227,7 @@ _spr_lib11_06_A:
 		.BYTE	$FA,$C0,$03,$F4
 		.BYTE	$FA,$E2,$03,$FC
 		.BYTE	$EA,$E0,$03,$FC
-_spr_lib11_07_A:
+_spr_res_lib11_07_A:
 		.BYTE	$09
 		.BYTE	$DB,$EC,$00,$E2
 		.BYTE	$DB,$FC,$00,$EA
@@ -6417,7 +6238,7 @@ _spr_lib11_07_A:
 		.BYTE	$FA,$C0,$03,$F4
 		.BYTE	$FA,$E2,$03,$FC
 		.BYTE	$EA,$E0,$03,$FC
-_spr_lib11_08_A:
+_spr_res_lib11_08_A:
 		.BYTE	$06
 		.BYTE	$EA,$F8,$03,$04
 		.BYTE	$EA,$E8,$03,$FC
@@ -6425,7 +6246,7 @@ _spr_lib11_08_A:
 		.BYTE	$FA,$DA,$03,$F4
 		.BYTE	$FA,$FA,$03,$04
 		.BYTE	$FA,$EA,$03,$FC
-_spr_lib11_09_A:
+_spr_res_lib11_09_A:
 		.BYTE	$09
 		.BYTE	$02,$FC,$00,$F8
 		.BYTE	$02,$EC,$00,$F0
@@ -6436,7 +6257,7 @@ _spr_lib11_09_A:
 		.BYTE	$FA,$DA,$03,$F4
 		.BYTE	$FA,$FA,$03,$04
 		.BYTE	$FA,$EA,$03,$FC
-_spr_lib11_0A_A:
+_spr_res_lib11_0A_A:
 		.BYTE	$09
 		.BYTE	$02,$FC,$00,$FA
 		.BYTE	$02,$EC,$00,$F2
@@ -6463,24 +6284,25 @@ _spr_raw_lib11_43:
 		.BYTE	$F6,$F0,$03,$02
 		.BYTE	$06,$AE,$03,$FA
 		.BYTE	$F6,$E0,$03,$FA
-_sjmp_case_3B4E6:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B4FE
-		.WORD	_nbgsub_3B4FE
-		.BYTE	$22,$44		; SPR_IDX_SET	  2,$44
-		.BYTE	$01,$05		; SLOOP_BEGIN	  $05
-		.BYTE	$40,$10		; POS_Y_MOVE	  0,$10
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$06,$02		; SDELAY	  $02
-		.BYTE	$01,$05		; SLOOP_BEGIN	  $05
-		.BYTE	$40,$F0		; POS_Y_MOVE	  0,$F0
-		.BYTE	$A2		; SPR_IDX_DEC	  2
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_3B4E6:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_3B4FE
+		SPR_IDX_SET		2,$44
+		SLOOP_BEGIN		$05
+		POS_Y_MOVE		0,$10
+		SPR_IDX_INC		2
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SDELAY			$02
+		SLOOP_BEGIN		$05
+		POS_Y_MOVE		0,$F0
+		SPR_IDX_DEC		2
+		SLOOP_END
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B4FE:
 		LDX		#$0B
 		LDY		#$0C
@@ -6562,148 +6384,144 @@ _spr_raw_lib11_4B:
 		.BYTE	$8A,$C8,$00,$FC	; *--
 		.BYTE	$7A,$C8,$00,$FC	; *--
 		.BYTE	$6A,$C8,$00,$FC	; *--
+
+; =============== S C R I P T ===============================================
 _scr1C_girl_and_floaters:
-		.BYTE	$07	; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3B71F	; CASE	  _sjmp_case_3B71F
-		.WORD	_sjmp_case_3B9C4	; CASE	  _sjmp_case_3B9C4
-		.WORD	_sjmp_case_3BA43	; CASE	  _sjmp_case_3BA43
-		.BYTE	$07		; NJSR		  _nsub_626B7,$06,byte_3B6D6
-		.WORD	_nsub_626B7
-		.BYTE	$06
-		.WORD	byte_3B6D6
-		.BYTE	$0F,$01,$00	; SARG_SET	  $01,$00
-		.BYTE	$07		; NJSR		  _nsub_script_start,$1C,$E0,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$1C,$E0,$00,$01,$00
-		.BYTE	$07		; NJSR		  _nsub_obj_sarg_set_from_nsub_return_value,$02
-		.WORD	_nsub_obj_sarg_set_from_nsub_return_value
-		.BYTE	$02
-		.BYTE	$07		; NJSR		  _nsub_script_start,$1C,$F0,$00,$02,$00
-		.WORD	_nsub_script_start
-		.BYTE	$1C,$F0,$00,$02,$00
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$4C		; SPR_IDX_SET	  1,$4C
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3B71F
+		SCASE			_sjmp_case_3B9C4
+		SCASE			_sjmp_case_3BA43
+		NJSR			_nsub_626B7
+			NARGB		$06
+			NARGW		byte_3B6D6
+		SARG_SET		$01,$00
+		NJSR			_nsub_script_start
+			NARGB		$1C,$E0,$00,$01,$00
+		NJSR			_nsub_obj_sarg_set_from_nsub_return_value
+			NARGB		$02
+		NJSR			_nsub_script_start
+			NARGB		$1C,$F0,$00,$02,$00
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$4C
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
 _sjmp_case_3B631:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B6DA
-		.WORD	_nbgsub_3B6DA
+		NBG_HNDL_SET	_nbgsub_3B6DA
 _sloc_3B634:
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$07		; NJSR		  _nsub_6273D,$4C,$40
-		.WORD	_nsub_6273D
-		.BYTE	$4C,$40
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$03
-		.WORD	_nsub_628D1
-		.BYTE	$00,$03
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$15,$01,$02,$F8	; SARG_ALU	  $01,ADC,$F8
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$07		; NJSR		  _nsub_6273D,$50,$40
-		.WORD	_nsub_6273D
-		.BYTE	$50,$40
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$03
-		.WORD	_nsub_628D1
-		.BYTE	$00,$03
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$15,$01,$02,$F8	; SARG_ALU	  $01,ADC,$F8
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_3B634
-		.WORD	_sloc_3B634
+		SLOOP_BEGIN		$02
+		NJSR			_nsub_6273D
+			NARGB		$4C,$40
+		NJSR			_nsub_628D1
+			NARGB		$00,$03
+		SDELAY			$03
+		SARG_ALU		$01,_ADC,$F8
+		SLOOP_END
+		SLOOP_BEGIN		$02
+		NJSR			_nsub_6273D
+			NARGB		$50,$40
+		NJSR			_nsub_628D1
+			NARGB		$00,$03
+		SDELAY			$03
+		SARG_ALU		$01,_ADC,$F8
+		SLOOP_END
+		SJMP			_sloc_3B634
+
+; =============== S C R I P T ===============================================
 _scr_3B65D:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B6FC
-		.WORD	_nbgsub_3B6FC
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
+		NBG_HNDL_SET	_nbgsub_3B6FC
+		SARG_SET		$00,$02
 _sloc_3B663:
-		.BYTE	$04		; SJSR		  _ssub_3B67D
-		.WORD	_ssub_3B67D
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3B663
-		.WORD	_sloc_3B663
-		.BYTE	$01,$0F		; SLOOP_BEGIN	  $0F
-		.BYTE	$04		; SJSR		  _ssub_3B67D
-		.WORD	_ssub_3B67D
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3B631	; CASE	  _sjmp_case_3B631
-		.WORD	_scr_3B687	; CASE	  _scr_3B687
-		.WORD	_scr_3B68D	; CASE	  _scr_3B68D
+		SJSR			_ssub_3B67D
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3B663
+		SLOOP_BEGIN		$0F
+		SJSR			_ssub_3B67D
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3B631
+		SCASE			_scr_3B687
+		SCASE			_scr_3B68D
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_3B67D:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$50,$40
-		.WORD	_nsub_6273D
-		.BYTE	$50,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$04		; SPR_IDX_ADD_IMM 1,$04
-		.BYTE	$05		; SRET
+		NJSR			_nsub_6273D
+			NARGB		$50,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$04
+		SRET
+
+; =============== S C R I P T ===============================================
 _scr_3B687:
-		.BYTE	$0F,$01,$58	; SARG_SET	  $01,$58
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
+		SARG_SET		$01,$58
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
 _scr_3B68D:
-		.BYTE	$0F,$01,$5A	; SARG_SET	  $01,$5A
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
+		SARG_SET		$01,$5A
+		SJMP			_sloc_62E02
+
+; =============== S C R I P T ===============================================
 _scr_3B693:
-		.BYTE	$27,$4C		; SPR_IDX_SET	  7,$4C
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$26,$4C		; SPR_IDX_SET	  6,$4C
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$25,$4C		; SPR_IDX_SET	  5,$4C
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$9D		; SPR_IDX_INC	  5
-		.BYTE	$24,$50		; SPR_IDX_SET	  4,$50
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$23,$50		; SPR_IDX_SET	  3,$50
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$22,$50		; SPR_IDX_SET	  2,$50
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$08,$01		; SRUN		  $01,_scr_3B6C8
-		.WORD	_scr_3B6C8
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$5C		; SPR_IDX_SET	  1,$5C
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$21,$5F		; SPR_IDX_SET	  1,$5F
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$99		; SPR_IDX_INC	  1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$00		; STOP
+		SPR_IDX_SET		7,$4C
+		SPR_IDX_INC		7
+		SPR_IDX_INC		7
+		SPR_IDX_INC		7
+		SPR_IDX_SET		6,$4C
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SPR_IDX_SET		5,$4C
+		SPR_IDX_INC		5
+		SPR_IDX_INC		5
+		SPR_IDX_INC		5
+		SPR_IDX_SET		4,$50
+		SPR_IDX_INC		4
+		SPR_IDX_INC		4
+		SPR_IDX_INC		4
+		SPR_IDX_SET		3,$50
+		SPR_IDX_INC		3
+		SPR_IDX_INC		3
+		SPR_IDX_INC		3
+		SPR_IDX_SET		2,$50
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SRUN			$01,_scr_3B6C8
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$5C
+		SPR_IDX_INC		1
+		SPR_IDX_INC		1
+		SLOOP_END
+		SLOOP_BEGIN		$14
+		SPR_IDX_SET		1,$5F
+		SPR_IDX_INC		1
+		SPR_IDX_INC		1
+		SLOOP_END
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SPR_IDX_INC		2
+		SSTOP
+
+; =============== S C R I P T ===============================================
 _scr_3B6C8:
-		.BYTE	$01,$06		; SLOOP_BEGIN	  $06
-		.BYTE	$07		; NJSR		  _nsub_script_start,$1C,$00,$00,$03,$00
-		.WORD	_nsub_script_start
-		.BYTE	$1C,$00,$00,$03,$00
-		.BYTE	$06,$14		; SDELAY	  $14
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$0D		; SDISABLE_SELF
+		SLOOP_BEGIN		$06
+		NJSR			_nsub_script_start
+			NARGB		$1C,$00,$00,$03,$00
+		SDELAY			$14
+		SLOOP_END
+		SDISABLE_SELF
 byte_3B6D6:
 		.BYTE	$0F,$36,$25,$0F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B6DA:
 		LDX		#$06
 		LDY		#$06
@@ -6717,7 +6535,7 @@ loc_3B6E9:
 		LDY		#$0C
 		JSR		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_3B6F0:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args2,X
@@ -6727,7 +6545,7 @@ sub_3B6F0:
 locret_3B6FB:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B6FC:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -6749,61 +6567,57 @@ loc_3B719:
 		.WORD	_scr_3B68D
 locret_3B71E:
 		RTS
-_sjmp_case_3B71F:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$01,$10		; SLOOP_BEGIN	  $10
-		.BYTE	$21,$4C		; SPR_IDX_SET	  1,$4C
-		.BYTE	$21,$FF		; SPR_IDX_SET	  1,$FF
-		.BYTE	$02		; SLOOP_END
-_sjmp_case_3B729:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B775
-		.WORD	_nbgsub_3B775
-_sloc_3B72C:
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$07		; NJSR		  _nsub_6273D,$4C,$40
-		.WORD	_nsub_6273D
-		.BYTE	$4C,$40
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$03
-		.WORD	_nsub_628D1
-		.BYTE	$00,$03
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$15,$01,$02,$08	; SARG_ALU	  $01,ADC,$08
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$07		; NJSR		  _nsub_6273D,$50,$40
-		.WORD	_nsub_6273D
-		.BYTE	$50,$40
-		.BYTE	$07		; NJSR		  _nsub_628D1,$00,$03
-		.WORD	_nsub_628D1
-		.BYTE	$00,$03
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$15,$01,$02,$08	; SARG_ALU	  $01,ADC,$08
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$03		; SJMP		  _sloc_3B72C
-		.WORD	_sloc_3B72C
-_scr_3B755:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3B6FC
-		.WORD	_nbgsub_3B6FC
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3B75B:
-		.BYTE	$04		; SJSR		  _ssub_3B67D
-		.WORD	_ssub_3B67D
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3B75B
-		.WORD	_sloc_3B75B
-		.BYTE	$01,$0F		; SLOOP_BEGIN	  $0F
-		.BYTE	$04		; SJSR		  _ssub_3B67D
-		.WORD	_ssub_3B67D
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3B729	; CASE	  _sjmp_case_3B729
-		.WORD	_scr_3B687	; CASE	  _scr_3B687
-		.WORD	_scr_3B68D	; CASE	  _scr_3B68D
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_3B71F:
+		SARG_SET		$00,$00
+		SLOOP_BEGIN		$10
+		SPR_IDX_SET		1,$4C
+		SPR_IDX_SET		1,$FF
+		SLOOP_END
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sjmp_case_3B729:
+		NBG_HNDL_SET	_nbgsub_3B775
+_sloc_3B72C:
+		SLOOP_BEGIN		$02
+		NJSR			_nsub_6273D
+			NARGB		$4C,$40
+		NJSR			_nsub_628D1
+			NARGB		$00,$03
+		SDELAY			$03
+		SARG_ALU		$01,_ADC,$08
+		SLOOP_END
+		SLOOP_BEGIN		$02
+		NJSR			_nsub_6273D
+			NARGB		$50,$40
+		NJSR			_nsub_628D1
+			NARGB		$00,$03
+		SDELAY			$03
+		SARG_ALU		$01,_ADC,$08
+		SLOOP_END
+		SJMP			_sloc_3B72C
+
+; =============== S C R I P T ===============================================
+_scr_3B755:
+		NBG_HNDL_SET	_nbgsub_3B6FC
+		SARG_SET		$00,$02
+_sloc_3B75B:
+		SJSR			_ssub_3B67D
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3B75B
+		SLOOP_BEGIN		$0F
+		SJSR			_ssub_3B67D
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3B729
+		SCASE			_scr_3B687
+		SCASE			_scr_3B68D
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3B775:
 		LDX		#$06
 		LDY		#$06
@@ -7004,24 +6818,24 @@ _spr_raw_lib11_65:
 		.BYTE	$05,$48,$00,$FC
 		.BYTE	$F7,$48,$00,$EE
 		.BYTE	$E4,$48,$00,$F4
+
+; =============== S C R I P T ===============================================
 _sjmp_case_3B9C4:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
+		SARG_SET		$00,$00
 _sloc_3B9C7:
-		.BYTE	$26,$66		; SPR_IDX_SET	  6,$66
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$07		; NJSR		  _nsub_62BE5
-		.WORD	_nsub_62BE5
-		.BYTE	$0C		; SBCC		  _sloc_3B9C7
-		.WORD	_sloc_3B9C7
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$20,$6A		; SPR_IDX_SET	  0,$6A
-		.BYTE	$06,$0F		; SDELAY	  $0F
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$1E		; SDELAY	  $1E
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
+		SPR_IDX_SET		6,$66
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		NJSR			_nsub_62BE5
+		SBCC			_sloc_3B9C7
+		SLOOP_BEGIN		$03
+		SPR_IDX_SET		0,$6A
+		SDELAY			$0F
+		SPR_IDX_INC		0
+		SDELAY			$1E
+		SLOOP_END
+		SSTOP
 _spr_raw_lib11_66:
 		.BYTE	$04
 		.BYTE	$00,$BA,$00,$00
@@ -7058,90 +6872,85 @@ _spr_raw_lib11_6B:
 		.BYTE	$00,$AE,$00,$F8
 		.BYTE	$F0,$AC,$00,$F8
 		.BYTE	$F0,$AC,$40,$00
-_sjmp_case_3BA43:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3BAC9
-		.WORD	_nbgsub_3BAC9
-_sloc_3BA49:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_3BAF9
-		.WORD	_nsub_3BAF9
-		.BYTE	$0B		; SBCS		  _sloc_3BA49
-		.WORD	_sloc_3BA49
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3BAD8
-		.WORD	_nbgsub_3BAD8
-		.BYTE	$12,$04		; SJSR_SW	  $04
-		.WORD	_sjsr_case_3BA69	; CASE	  _sjsr_case_3BA69
-		.WORD	_sjsr_case_3BA72	; CASE	  _sjsr_case_3BA72
-		.WORD	_sjsr_case_3BA7E	; CASE	  _sjsr_case_3BA7E
-		.WORD	_sjsr_case_3BA87	; CASE	  _sjsr_case_3BA87
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3BAC9
-		.WORD	_nbgsub_3BAC9
-		.BYTE	$A8,$FC		; SPR_IDX_ADD_IMM 0,$FC
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$06,$1E		; SDELAY	  $1E
-		.BYTE	$03		; SJMP		  _sloc_3BA49
-		.WORD	_sloc_3BA49
-_sjsr_case_3BA69:
-		.BYTE	$20,$70		; SPR_IDX_SET	  0,$70
-		.BYTE	$54,$00,$FA	; POS_Y_DELTA_SET 4,$00,$FA
-		.BYTE	$54,$00,$02	; POS_Y_DELTA_SET 4,$00,$02
-		.BYTE	$05		; SRET
-_sjsr_case_3BA72:
-		.BYTE	$20,$71		; SPR_IDX_SET	  0,$71
-		.BYTE	$48,$00,$02	; POS_X_DELTA_SET 0,$00,$02
-		.BYTE	$54,$00,$FE	; POS_Y_DELTA_SET 4,$00,$FE
-		.BYTE	$54,$00,$02	; POS_Y_DELTA_SET 4,$00,$02
-		.BYTE	$05		; SRET
-_sjsr_case_3BA7E:
-		.BYTE	$20,$72		; SPR_IDX_SET	  0,$72
-		.BYTE	$54,$00,$FE	; POS_Y_DELTA_SET 4,$00,$FE
-		.BYTE	$54,$00,$06	; POS_Y_DELTA_SET 4,$00,$06
-		.BYTE	$05		; SRET
-_sjsr_case_3BA87:
-		.BYTE	$20,$73		; SPR_IDX_SET	  0,$73
-		.BYTE	$48,$00,$FE	; POS_X_DELTA_SET 0,$00,$FE
-		.BYTE	$54,$00,$FE	; POS_Y_DELTA_SET 4,$00,$FE
-		.BYTE	$54,$00,$02	; POS_Y_DELTA_SET 4,$00,$02
-		.BYTE	$05		; SRET
-_scr_3BA93:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_3BADF
-		.WORD	_nbgsub_3BADF
-		.BYTE	$0F,$00,$02	; SARG_SET	  $00,$02
-_sloc_3BA99:
-		.BYTE	$04		; SJSR		  _ssub_3BAB3
-		.WORD	_ssub_3BAB3
-		.BYTE	$07		; NJSR		  _nsub_62BFD
-		.WORD	_nsub_62BFD
-		.BYTE	$0C		; SBCC		  _sloc_3BA99
-		.WORD	_sloc_3BA99
-		.BYTE	$01,$0F		; SLOOP_BEGIN	  $0F
-		.BYTE	$04		; SJSR		  _ssub_3BAB3
-		.WORD	_ssub_3BAB3
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62C0B
-		.WORD	_nsub_62C0B
-		.BYTE	$11,$03		; SJMP_SW	  $03
-		.WORD	_sjmp_case_3BA43	; CASE	  _sjmp_case_3BA43
-		.WORD	_scr_3BABD	; CASE	  _scr_3BABD
-		.WORD	_scr_3BAC3	; CASE	  _scr_3BAC3
-_ssub_3BAB3:
-		.BYTE	$07		; NJSR		  _nsub_6273D,$70,$40
-		.WORD	_nsub_6273D
-		.BYTE	$70,$40
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$A9,$04		; SPR_IDX_ADD_IMM 1,$04
-		.BYTE	$05		; SRET
-_scr_3BABD:
-		.BYTE	$0F,$01,$78	; SARG_SET	  $01,$78
-		.BYTE	$03		; SJMP		  _sloc_62DD7
-		.WORD	_sloc_62DD7
-_scr_3BAC3:
-		.BYTE	$0F,$01,$7A	; SARG_SET	  $01,$7A
-		.BYTE	$03		; SJMP		  _sloc_62E02
-		.WORD	_sloc_62E02
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_sjmp_case_3BA43:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_3BAC9
+_sloc_3BA49:
+		SDELAY			$01
+		NJSR			_nsub_3BAF9
+		SBCS			_sloc_3BA49
+		NBG_HNDL_SET	_nbgsub_3BAD8
+		SJSR_SW	$04
+		SCASE			_sjsr_case_3BA69
+		SCASE			_sjsr_case_3BA72
+		SCASE			_sjsr_case_3BA7E
+		SCASE			_sjsr_case_3BA87
+		NBG_HNDL_SET	_nbgsub_3BAC9
+		SPR_IDX_ADD_IMM 0,$FC
+		POS_MOVE_STOP	0
+		SDELAY			$1E
+		SJMP			_sloc_3BA49
+_sjsr_case_3BA69:
+		SPR_IDX_SET		0,$70
+		POS_Y_DELTA_SET 4,$00,$FA
+		POS_Y_DELTA_SET 4,$00,$02
+		SRET
+_sjsr_case_3BA72:
+		SPR_IDX_SET		0,$71
+		POS_X_DELTA_SET 0,$00,$02
+		POS_Y_DELTA_SET 4,$00,$FE
+		POS_Y_DELTA_SET 4,$00,$02
+		SRET
+_sjsr_case_3BA7E:
+		SPR_IDX_SET		0,$72
+		POS_Y_DELTA_SET 4,$00,$FE
+		POS_Y_DELTA_SET 4,$00,$06
+		SRET
+_sjsr_case_3BA87:
+		SPR_IDX_SET		0,$73
+		POS_X_DELTA_SET 0,$00,$FE
+		POS_Y_DELTA_SET 4,$00,$FE
+		POS_Y_DELTA_SET 4,$00,$02
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3BA93:
+		NBG_HNDL_SET	_nbgsub_3BADF
+		SARG_SET		$00,$02
+_sloc_3BA99:
+		SJSR			_ssub_3BAB3
+		NJSR			_nsub_62BFD
+		SBCC			_sloc_3BA99
+		SLOOP_BEGIN		$0F
+		SJSR			_ssub_3BAB3
+		SLOOP_END
+		NJSR			_nsub_62C0B
+		SJMP_SW			$03
+		SCASE			_sjmp_case_3BA43
+		SCASE			_scr_3BABD
+		SCASE			_scr_3BAC3
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3BAB3:
+		NJSR			_nsub_6273D
+			NARGB		$70,$40
+		SDELAY			$01
+		SPR_IDX_ADD_IMM 1,$04
+		SRET
+
+; =============== S C R I P T ===============================================
+_scr_3BABD:
+		SARG_SET		$01,$78
+		SJMP			_sloc_62DD7
+
+; =============== S C R I P T ===============================================
+_scr_3BAC3:
+		SARG_SET		$01,$7A
+		SJMP			_sloc_62E02
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3BAC9:
 		LDX		#$08
 		LDY		#$08
@@ -7151,13 +6960,13 @@ _nbgsub_3BAC9:
 		.WORD	_scr_3BA93
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3BAD8:
 		LDX		#$08
 		LDY		#$09
 		JMP		_player_to_obj_collision_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_3BADF:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -7175,7 +6984,7 @@ loc_3BAF3:
 locret_3BAF8:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_3BAF9:
 		LDA		#$00
 		JSR		_rand
@@ -7269,73 +7078,66 @@ _spr_raw_lib11_78:
 _spr_raw_lib11_79:
 		.BYTE	$01
 		.BYTE	$02,$A4,$02,$FA
-_scr11_lvl2_ghost_nanny:
-		.BYTE	$07	; NJSR		  _nsub_obj_sarg_add_imm_test,$00,$FF
-		.WORD	_nsub_obj_sarg_add_imm_test
-		.BYTE	$00,$FF
-		.BYTE	$11,$02		; SJMP_SW	  $02
-		.WORD	_sjmp_case_3BC8A	; CASE	  _sjmp_case_3BC8A
-		.WORD	_sjmp_case_3BCAF	; CASE	  _sjmp_case_3BCAF
-		.BYTE	$07		; NJSR		  _nsub_3BBF3
-		.WORD	_nsub_3BBF3
-		.BYTE	$07		; NJSR		  _nsub_mmc1_chr0_set,$14
-		.WORD	_nsub_mmc1_chr0_set
-		.BYTE	$14
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$0C
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$0C
-		.BYTE	$07		; NJSR		  _nsub_script_start,$11,$00,$00,$01,$00
-		.WORD	_nsub_script_start
-		.BYTE	$11,$00,$00,$01,$00
-		.BYTE	$28,$90,$00	; POS_X_SET	  0,$90,$00
-		.BYTE	$30,$C0,$02	; POS_Y_SET	  0,$C0,$02
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$04		; SJSR		  _ssub_3BBE1
-		.WORD	_ssub_3BBE1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_script_start,$11,$00,$00,$02,$00
-		.WORD	_nsub_script_start
-		.BYTE	$11,$00,$00,$02,$00
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$04		; SJSR		  _ssub_3BBE1
-		.WORD	_ssub_3BBE1
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$20,$7E		; SPR_IDX_SET	  0,$7E
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$48,$80,$01	; POS_X_DELTA_SET 0,$80,$01
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$26,$7D		; SPR_IDX_SET	  6,$7D
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$01,$80		; SLOOP_BEGIN	  $80
-		.BYTE	$0E		; SMEM_ALU	  _apu_var402,ADC,$02X
-		.WORD	_apu_var402
-		.BYTE	$02,$FF
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_62BA9
-		.WORD	_nsub_62BA9
-		.BYTE	$00		; STOP
-_ssub_3BBE1:
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$26,$7C		; SPR_IDX_SET	  6,$7C
-		.BYTE	$48,$C0,$00	; POS_X_DELTA_SET 0,$C0,$00
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$48,$40,$FF	; POS_X_DELTA_SET 0,$40,$FF
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$9E		; SPR_IDX_INC	  6
-		.BYTE	$05		; SRET
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr11_lvl2_ghost_nanny:
+		NJSR			_nsub_obj_sarg_add_imm_test
+			NARGB		$00,$FF
+		SJMP_SW			$02
+		SCASE			_sjmp_case_3BC8A
+		SCASE			_sjmp_case_3BCAF
+		NJSR			_nsub_3BBF3
+		NJSR			_nsub_mmc1_chr0_set
+			NARGB		$14
+		NJSR			_nsub_apu_mus_load
+			NARGB		$0C
+		NJSR			_nsub_script_start
+			NARGB		$11,$00,$00,$01,$00
+		POS_X_SET		0,$90,$00
+		POS_Y_SET		0,$C0,$02
+		SLOOP_BEGIN		$02
+		SJSR			_ssub_3BBE1
+		SLOOP_END
+		NJSR			_nsub_script_start
+			NARGB		$11,$00,$00,$02,$00
+		SLOOP_BEGIN		$04
+		SJSR			_ssub_3BBE1
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SPR_IDX_SET		0,$7E
+		SDELAY			$10
+		POS_X_DELTA_SET 0,$80,$01
+		SLOOP_BEGIN		$03
+		SPR_IDX_SET		6,$7D
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SLOOP_END
+		SPR_IDX_SET		0,$FF
+		POS_MOVE_STOP	0
+		SLOOP_BEGIN		$80
+		SMEM_ALU	_apu_var402,_ADC,$FF
+		SDELAY			$01
+		SLOOP_END
+		NJSR			_nsub_62BA9
+		SSTOP
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_3BBE1:
+		POS_MOVE_STOP	0
+		SPR_IDX_SET		6,$7C
+		POS_X_DELTA_SET 0,$C0,$00
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		POS_MOVE_STOP	0
+		SPR_IDX_INC		6
+		POS_X_DELTA_SET 0,$40,$FF
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SPR_IDX_INC		6
+		SRET
+
+; =============== S U B R O U T I N E =======================================
 _nsub_3BBF3:
 		LDX		#$02
 		JSR		_script_load_param_ex
@@ -7392,17 +7194,19 @@ _spr_raw_lib11_83:
 		.BYTE	$08,$84,$00,$F8
 		.BYTE	$F9,$92,$00,$00
 		.BYTE	$F9,$82,$00,$F8
+
+; =============== S C R I P T ===============================================
 _sjmp_case_3BC8A:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$28,$80,$00	; POS_X_SET	  0,$80,$00
-		.BYTE	$30,$A0,$02	; POS_Y_SET	  0,$A0,$02
-		.BYTE	$01,$0F		; SLOOP_BEGIN	  $0F
-		.BYTE	$27,$84		; SPR_IDX_SET	  7,$84
-		.BYTE	$9F		; SPR_IDX_INC	  7
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$27,$84		; SPR_IDX_SET	  7,$84
-		.BYTE	$9B		; SPR_IDX_INC	  3
-		.BYTE	$00		; STOP
+		SARG_SET		$00,$00
+		POS_X_SET		0,$80,$00
+		POS_Y_SET		0,$A0,$02
+		SLOOP_BEGIN		$0F
+		SPR_IDX_SET		7,$84
+		SPR_IDX_INC		7
+		SLOOP_END
+		SPR_IDX_SET		7,$84
+		SPR_IDX_INC		3
+		SSTOP
 _spr_raw_lib11_84:
 		.BYTE	$02
 		.BYTE	$F8,$F0,$00,$00
@@ -7411,35 +7215,37 @@ _spr_raw_lib11_85:
 		.BYTE	$02
 		.BYTE	$F8,$B0,$00,$00
 		.BYTE	$F8,$A0,$00,$F8
+
+; =============== S C R I P T ===============================================
 _sjmp_case_3BCAF:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$28,$70,$00	; POS_X_SET	  0,$70,$00
-		.BYTE	$30,$00,$02	; POS_Y_SET	  0,$00,$02
-		.BYTE	$50,$40,$01	; POS_Y_DELTA_SET 0,$40,$01
-		.BYTE	$20,$86		; SPR_IDX_SET	  0,$86
-		.BYTE	$06,$3A		; SDELAY	  $3A
-		.BYTE	$48,$20,$00	; POS_X_DELTA_SET 0,$20,$00
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$48,$80,$00	; POS_X_DELTA_SET 0,$80,$00
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$9C		; SPR_IDX_INC	  4
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$10		; SDELAY	  $10
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$98		; SPR_IDX_INC	  0
-		.BYTE	$06,$0A		; SDELAY	  $0A
-		.BYTE	$48,$40,$01	; POS_X_DELTA_SET 0,$40,$01
-		.BYTE	$20,$87		; SPR_IDX_SET	  0,$87
-		.BYTE	$06,$50		; SDELAY	  $50
-		.BYTE	$00		; STOP
+		SARG_SET		$00,$00
+		POS_X_SET		0,$70,$00
+		POS_Y_SET		0,$00,$02
+		POS_Y_DELTA_SET 0,$40,$01
+		SPR_IDX_SET		0,$86
+		SDELAY			$3A
+		POS_X_DELTA_SET 0,$20,$00
+		SDELAY			$10
+		POS_X_DELTA_SET 0,$80,$00
+		SDELAY			$10
+		SPR_IDX_INC		0
+		SDELAY			$0A
+		POS_MOVE_STOP	0
+		SPR_IDX_INC		0
+		SDELAY			$0A
+		SPR_IDX_INC		0
+		SDELAY			$0A
+		SPR_IDX_INC		4
+		SPR_IDX_INC		0
+		SDELAY			$10
+		SPR_IDX_INC		0
+		SDELAY			$0A
+		SPR_IDX_INC		0
+		SDELAY			$0A
+		POS_X_DELTA_SET 0,$40,$01
+		SPR_IDX_SET		0,$87
+		SDELAY			$50
+		SSTOP
 _spr_raw_lib11_86:
 		.BYTE	$0C
 		.BYTE	$F0,$F8,$43,$F0
@@ -7714,17 +7520,17 @@ _spr_raw_lib11:
 		.WORD	_spr_raw_lib11_8B
 		.WORD	_spr_raw_lib11_8C
 		.WORD	_spr_raw_lib11_8D
-_spr_lib11:
-		.WORD	_spr_lib11_00
-		.WORD	_spr_lib11_01
-		.WORD	_spr_lib11_02
-		.WORD	_spr_lib11_03
-		.WORD	_spr_lib11_04
-		.WORD	_spr_lib11_05
-		.WORD	_spr_lib11_06
-		.WORD	_spr_lib11_07
-		.WORD	_spr_lib11_08
-		.WORD	_spr_lib11_09
-		.WORD	_spr_lib11_0A
+_spr_res_lib11:
+		.WORD	_spr_res_lib11_00
+		.WORD	_spr_res_lib11_01
+		.WORD	_spr_res_lib11_02
+		.WORD	_spr_res_lib11_03
+		.WORD	_spr_res_lib11_04
+		.WORD	_spr_res_lib11_05
+		.WORD	_spr_res_lib11_06
+		.WORD	_spr_res_lib11_07
+		.WORD	_spr_res_lib11_08
+		.WORD	_spr_res_lib11_09
+		.WORD	_spr_res_lib11_0A
 
 		BANK_END 4,$C000

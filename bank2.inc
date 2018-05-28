@@ -105,10 +105,10 @@ _lvl1_objects_list:
 		.BYTE	$10,$80,$05,$80,$05
 		.BYTE	$22,$80,$05,$90,$05
 		.BYTE	$FF,$00
-_lvl_data0_ptr3:
+_lvl_collisions_03:
 		.BYTE	$3C,$00,$00,$00,$C0,$03,$0C,$03,$03,$FB,$F3,$FB,$F0,$F0,$F0,$F1
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl_data0_ptr2:
+_lvl_collisions_02:
 		.BYTE	$3D,$E9,$FF,$F9,$EF,$FE,$FD,$FE,$FD,$FC,$FF,$FF,$0D,$FF,$0B,$FF
 		.BYTE	$00,$0F,$00,$0C,$00,$00,$00,$10,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl1_macroA_tbl:
@@ -656,7 +656,7 @@ _lvl2_objects_list:
 		.BYTE	$FF,$01,$17
 		.BYTE	$11,$80,$00,$80,$02
 		.BYTE	$FF,$00
-_lvl_data0_ptr4:
+_lvl_collisions_04:
 		.BYTE	$03,$BE,$EF,$8E,$0F,$8F,$0F,$BF,$0F,$B7,$0B,$B4,$FF,$B5,$FD,$34
 		.BYTE	$01,$C0,$03,$00,$00,$C0,$00,$80,$00,$3C,$00,$7C,$03,$FC,$01,$F5
 _lvl2_macroA_tbl:

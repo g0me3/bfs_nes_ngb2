@@ -171,7 +171,7 @@ _lvl4_objects_list:
 		.BYTE	$FF,$01,$15
 		.BYTE	$2F,$80,$02,$40,$00
 		.BYTE	$FF,$00
-_lvl_data0_ptr6:
+_lvl_collisions_06:
 		.BYTE	$F0,$FE,$FC,$76,$0C,$BE,$FF,$F8,$F3,$F8,$C7,$F0,$FC,$F0,$FC,$F0
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl4_macroA_tbl:
@@ -928,7 +928,7 @@ _lvl3_objects_list:
 		.BYTE	$FF,$01,$09
 		.BYTE	$2E,$88,$03,$88,$00
 		.BYTE	$FF,$00
-_lvl_data0_ptr5:
+_lvl_collisions_05:
 		.BYTE	$7F,$C0,$FF,$C0,$FF,$00,$FC,$00,$FC,$00,$FC,$00,$D4,$00,$DC,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl3_macroA_tbl:

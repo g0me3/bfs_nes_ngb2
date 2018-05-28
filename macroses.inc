@@ -46,9 +46,41 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 
 ;------------S-T-R-U-C-T-U-R-E-S----------------
 
-;---------------S-C-R-I-P-T-S-------------------
-
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
+
+
+	MAC	TLM_PAK
+{1}_idx	SET	[.-_tlm_pak_lib]>>2
+		.WORD	{1}
+		.WORD	{2}
+	ENDM
+
+	MAC	SCR_IDX_LO
+{1}_idx	SET	[.-_scr_lib_lo]
+		.BYTE	<[{1}]
+	ENDM
+
+	MAC	SCR_IDX_HI
+		.BYTE	>[{1}]
+	ENDM
+
+	MAC	CMD_IDX_LO
+{1}_idx	SET	[.-_scmd_lib_lo]+1
+		.BYTE	<[{1}]
+	ENDM
+
+	MAC	CMD_IDX_HI
+		.BYTE	>[{1}]
+	ENDM
+
+	MAC	DCMD_IDX_LO
+{1}_idx	SET	[.-_dcmd_lib_lo]
+		.BYTE	<[{1}]
+	ENDM
+
+	MAC	DCMD_IDX_HI
+		.BYTE	>[{1}]
+	ENDM
 
 	MAC	_ttrd
 {1}		SET	.
@@ -57,11 +89,268 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 {1}._flag1:		.BYTE 0
 	ENDM
 
+;---------------S-C-R-I-P-T-S-------------------
+
+	MAC	SSTOP
+		.BYTE	$00
+	ENDM
+
+	MAC	SLOOP_BEGIN
+		.BYTE	_scmd01_loop_begin_idx
+		.BYTE	{1}
+	ENDM
+
+	MAC	SLOOP_END
+		.BYTE	_scmd02_loop_end_idx
+	ENDM
+
+	MAC	SJMP
+		.BYTE	_scmd03_sjmp_idx
+		.WORD	{1}
+	ENDM
+
+	MAC	SJSR
+		.BYTE	_scmd04_sjsr_idx
+		.WORD	{1}
+	ENDM
+
+	MAC	SRET
+		.BYTE	_scmd05_ret_idx
+	ENDM
+
+	MAC	SDELAY
+		.BYTE	_scmd06_delay_idx
+		.BYTE	{1}
+	ENDM
+
+	MAC	NJSR
+		.BYTE	_scmd07_ejsr_idx
+		.WORD	{1}
+	ENDM
+
+	MAC	NARGB
+		.BYTE	{0}
+	ENDM
+
+	MAC NARGW
+		.WORD	{0}
+	ENDM
+
+	MAC	SRUN
+		.BYTE	_scmd08_erun_idx
+		.BYTE	{1}
+		.WORD	{2}
+	ENDM
+
+	MAC	NBG_HNDL_SET
+		.BYTE	_scmd09_nbg_hndl_set_idx
+		.WORD	{1}
+	ENDM
+
+	MAC	SUSPEND
+		.BYTE	_scmd0A_suspend_idx
+	ENDM
+
+	MAC	SBCS
+		.BYTE	_scmd0B_bcs_idx
+		.WORD	{1}
+	ENDM
+
+	MAC	SBCC
+		.BYTE	_scmd0C_bcc_idx
+		.WORD	{1}
+	ENDM
+
+	MAC	SDISABLE_SELF
+		.BYTE	_scmd0D_sdisable_this_idx
+	ENDM
+
+	MAC	SMEM_ALU
+		.BYTE	_scmd0E_smem_alu_idx
+		.WORD	{1}
+		.BYTE	{2},{3}
+	ENDM
+
+SARG0	EQU	0
+SARG1	EQU	1
+SARG2	EQU	2
+
+	MAC	SARG_SET
+		.BYTE	_scmd0F_sarg_set_idx
+		.BYTE	{1},{2}
+	ENDM
+
+	MAC	NBG_HNDL_RESET
+		.BYTE	_scmd10_nbg_hndl_reset_idx
+	ENDM
+
+	MAC	SJMP_SW
+		.BYTE	_scmd11_sjmp_sw_idx
+		.BYTE	{1}
+	ENDM
+
+	MAC	SJSR_SW
+		.BYTE	_scmd12_sjsr_sw_idx
+		.BYTE	{1}
+	ENDM
+
+	MAC	SCASE
+		.WORD	{1}
+	ENDM
+
+	MAC	STORE8
+		.BYTE	_scmd13_store8_idx
+		.WORD	{1}
+		.BYTE	{2}
+	ENDM
+
+	MAC	SDISABLE
+		.BYTE	_scmd14_sdisable_idx
+		.BYTE	{1}
+	ENDM
+
+_AND	EQU	$00
+_ORA	EQU	$01
+_ADC	EQU	$02
+
+	MAC	SARG_ALU
+		.BYTE	_scmd15_sarg_alu_idx
+		.BYTE	{1},{2},{3}
+	ENDM
+
+	MAC	STORE16
+		.BYTE	_scmd16_store16_idx
+		.WORD	{1}
+		.WORD	{2}
+	ENDM
+
+	MAC	SBCS_BREAK
+		.BYTE	_scmd17_sbcs_break_idx
+		.WORD	{1}
+	ENDM
+
+;	MAC	SBCC_BREAK
+;		.BYTE	_scmd18_sbcc_break_idx
+;		.WORD	{1}
+;	ENDM
+
+	MAC	NJSR	_SW
+		.BYTE	_scmd19_njsr_sw_idx
+	ENDM
+
+	MAC	SPR_IDX_SET
+		.BYTE	[[_dcmd00_spr_idx_set_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2}
+	ENDM
+
+	MAC	POS_X_SET
+		.BYTE	[[_dcmd01_pos_x_set_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+	MAC	POS_Y_SET
+		.BYTE	[[_dcmd02_pos_y_set_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+	MAC	POS_X_MOVE
+		.BYTE	[[_dcmd03_pos_x_move_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2}
+	ENDM
+
+	MAC	POS_Y_MOVE
+		.BYTE	[[_dcmd04_pos_y_move_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2}
+	ENDM
+
+	MAC	POS_X_DELTA_SET
+		.BYTE	[[_dcmd05_pos_x_delta_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+	MAC	POS_Y_DELTA_SET
+		.BYTE	[[_dcmd06_pos_y_delta_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+	MAC	POS_X_DELTA_ADD
+		.BYTE	[[_dcmd07_pos_x_delta_add_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+	MAC	POS_Y_DELTA_ADD
+		.BYTE	[[_dcmd08_pos_y_delta_add_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+;	MAC	SCRL_X_SET
+;		.BYTE	[[_dcmd09_scrl_x_set_idx<<3]+$20]|[{1}&7]
+;		.BYTE	{2},{3}
+;	ENDM
+
+	MAC	SCRL_Y_SET
+		.BYTE	[[_dcmd0A_scrl_y_sey_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+;	MAC	SCRL_X_MOVE_SET
+;		.BYTE	[[_dcmd0B_scrl_x_move_set_idx<<3]+$20]|[{1}&7]
+;		.BYTE	{2},{3}
+;	ENDM
+
+	MAC	SCRL_Y_MOVE_SET
+		.BYTE	[[_dcmd0C_scrl_move_y_set_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2},{3}
+	ENDM
+
+;	MAC	SCRL_X_MOVE_ADD
+;		.BYTE	[[_dcmd0D_scrl_x_move_add_idx<<3]+$20]|[{1}&7]
+;		.BYTE	{2},{3}
+;	ENDM
+
+;	MAC	SCRL_Y_MOVE_ADD
+;		.BYTE	[[_dcmd0E_scrl_y_move_add_idx<<3]+$20]|[{1}&7]
+;		.BYTE	{2},{3}
+;	ENDM
+
+	MAC	SPR_IDX_INC
+		.BYTE	[[_dcmd0F_spr_idx_inc_idx<<3]+$20]|[{1}&7]
+	ENDM
+
+	MAC	SPR_IDX_DEC
+		.BYTE	[[_dcmd10_spr_idx_dec_idx<<3]+$20]|[{1}&7]
+	ENDM
+
+	MAC	SPR_IDX_ADD_IMM
+		.BYTE	[[_dcmd11_spr_idx_add_imm_idx<<3]+$20]|[{1}&7]
+		.BYTE	{2}
+	ENDM
+
+;	MAC	BYTE_D5_ADD
+;		.BYTE	[[_dcmd12_byte_D5_add_idx<<3]+$20]|[{1}&7]
+;		.BYTE	{2}
+;	ENDM
+
+;	MAC	BYTE_D6_ADD
+;		.BYTE	[[_dcmd13_byte_D6_add_idx<<3]+$20]|[{1}&7]
+;		.BYTE	{2}
+;	ENDM
+
+	MAC	POS_MOVE_STOP
+		.BYTE	[[_dcmd14_pos_move_stop_idx<<3]+$20]|[{1}&7]
+	ENDM
+
+	MAC	SCRL_MOVE_STOP
+		.BYTE	[[_dcmd15_scrl_move_stop_idx<<3]+$20]|[{1}&7]
+	ENDM
+
+
 ;----------------C-O-M-M-O-N--------------------
 
 	MAC BANK_START
 CUR_PRG_BANK	SET {1}
 CUR_BANK_START	SET .
+CUR_SEC_START	SET $FFFFFFFF
 		ECHO "BANK",CUR_PRG_BANK," ORG ",[CUR_BANK_START>>12],"{"
 	ENDM
 
@@ -113,12 +402,21 @@ _total_free	SET [_total_free+_bank{1}_free]
 	ENDM
 
 	MAC SECTION_START
-_{1}_start	SET	.
+#if CUR_SEC_START == $FFFFFFFF
+CUR_SEC_START	SET	.
+#else
+		ECHO "WARNING! previous block isn't closed!"
+#endif
 	ENDM
 
 	MAC SECTION_END
-_{1}_end	SET .
-		ECHO " * block =",_{1}_end-_{1}_start,"[",{2},"]"
+#if CUR_SEC_START != $FFFFFFFF
+_CUR_SEC_END	SET .
+		ECHO " * block size =",_CUR_SEC_END-CUR_SEC_START,"[",{1},"]"
+CUR_SEC_START	SET $FFFFFFFF
+#else
+		ECHO "WARNING! there is no block start!"
+#endif
 	ENDM
 
 ;---------------A-R-I-T-H-M---------------------

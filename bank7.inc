@@ -6,7 +6,7 @@
 ;		INCBIN "..\copyrights.txt"
 
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 RESET:
 		INC		RESET
 		LDA		#$1E
@@ -163,7 +163,7 @@ loc_6015A:
 _lvl_scripts_list:
 		.BYTE	$01,$02,$03,$04,$05,$06,$07
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_60166:
 		LDX		#$06
 loc_60168:
@@ -204,7 +204,7 @@ _scores_to_next_live_step_list_lo:
 _scores_to_next_live_step_list_hi:
 		.BYTE	$00,$01,$01,$01
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_exit_arrow_activate_test:
 		LDA		#$FF
 		STA		_var0
@@ -252,19 +252,18 @@ loc_601ED:
 		STA		_scr_trds_y_pos_hi,X
 locret_601F6:
 		RTS
-_scr12_exit_arrow:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_60205
-		.WORD	_nbgsub_60205
-_sloc_601FA:
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$01
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$01
-		.BYTE	$06,$07		; SDELAY	  $07
-		.BYTE	$27,$FF		; SPR_IDX_SET	  7,$FF
-		.BYTE	$03		; SJMP		  _sloc_601FA
-		.WORD	_sloc_601FA
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr12_exit_arrow:
+		NBG_HNDL_SET	_nbgsub_60205
+_sloc_601FA:
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$01
+		SDELAY			$07
+		SPR_IDX_SET		7,$FF
+		SJMP			_sloc_601FA
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_60205:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args2,X
@@ -308,98 +307,89 @@ _spr_raw_lib08_AE:
 		.BYTE	$EE,$8F,$80,$FC
 		.BYTE	$F6,$8F,$80,$FC
 		.BYTE	$06,$8D,$80,$FC
-_scr8_beam_player_handler:
-		.BYTE	$13	; STORE8	  _collision_flag,$00
-		.WORD	_collision_flag
-		.BYTE	$00
-		.BYTE	$13		; STORE8	  _player_inv_timer,$00
-		.WORD	_player_inv_timer
-		.BYTE	$00
-		.BYTE	$16	; STORE16	  _tmp7B1,$180
-		.WORD	_tmp7B1
-		.WORD	$0180
-		.BYTE	$07		; NJSR		  _nsub_603A2
-		.WORD	_nsub_603A2
-_sloc_6028E:
-		.BYTE	$07		; NJSR		  _nsub_mcmp,_scr_trds_idx,$04
-		.WORD	_nsub_mcmp
-		.WORD	_scr_trds_idx
-		.BYTE	$04
-		.BYTE	$0C		; SBCC		  _sloc_6029B
-		.WORD	_sloc_6029B
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_60307
-		.WORD	_nbgsub_60307
-		.BYTE	$0A		; SUSPEND
-_sloc_6029B:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_collision_flag_test
-		.WORD	_nbgsub_collision_flag_test
-		.BYTE	$0A		; SUSPEND
-_scr_hit_anim:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$04
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$04
-		.BYTE	$01,$1E		; SLOOP_BEGIN	  $1E
-		.BYTE	$07		; NJSR		  _nsub_60623
-		.WORD	_nsub_60623
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$15,$01,$02,$40	; SARG_ALU	  $01,ADC,$40
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$07		; NJSR		  _nsub_6273D,$A0,$40
-		.WORD	_nsub_6273D
-		.BYTE	$A0,$40
-		.BYTE	$06,$02		; SDELAY	  $02
-		.BYTE	$AA,$04		; SPR_IDX_ADD_IMM 2,$04
-		.BYTE	$AC,$04		; SPR_IDX_ADD_IMM 4,$04
-		.BYTE	$AA,$FC		; SPR_IDX_ADD_IMM 2,$FC
-		.BYTE	$A8,$FC		; SPR_IDX_ADD_IMM 0,$FC
-		.BYTE	$06,$28		; SDELAY	  $28
-		.BYTE	$20,$FF		; SPR_IDX_SET	  0,$FF
-		.BYTE	$06,$3C		; SDELAY	  $3C
-		.BYTE	$07		; NJSR		  _nsub_player_hit_action
-		.WORD	_nsub_player_hit_action
-		.BYTE	$0C		; SBCC		  _sloc_6028E
-		.WORD	_sloc_6028E
-		.BYTE	$00		; STOP
-_scr_602CB:
-		.BYTE	$28,$40,$00	; POS_X_SET	  0,$40,$00
-		.BYTE	$30,$C8,$02	; POS_Y_SET	  0,$C8,$02
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$0F,$01,$40	; SARG_SET	  $01,$40
-		.BYTE	$07		; NJSR		  _nsub_605E8
-		.WORD	_nsub_605E8
-		.BYTE	$0A		; SUSPEND
-_scr_602DB:
-		.BYTE	$50,$80,$FF	; POS_Y_DELTA_SET 0,$80,$FF
-		.BYTE	$01,$F0		; SLOOP_BEGIN	  $F0
-		.BYTE	$15,$00,$02,$01	; SARG_ALU	  $00,ADC,$01
-		.BYTE	$07		; NJSR		  _nsub_605E8
-		.WORD	_nsub_605E8
-		.BYTE	$06,$02		; SDELAY	  $02
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$03		; SJMP		  _scr8_beam_player_handler
-		.WORD	_scr8_beam_player_handler
-_scr_602EE:
-		.BYTE	$07		; NJSR		  _nsub_605E8
-		.WORD	_nsub_605E8
-		.BYTE	$06,$78		; SDELAY	  $78
-		.BYTE	$0F,$01,$80	; SARG_SET	  $01,$80
-		.BYTE	$50,$00,$01	; POS_Y_DELTA_SET 0,$00,$01
-		.BYTE	$01,$F0		; SLOOP_BEGIN	  $F0
-		.BYTE	$15,$00,$02,$01	; SARG_ALU	  $00,ADC,$01
-		.BYTE	$07		; NJSR		  _nsub_605E8
-		.WORD	_nsub_605E8
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_scr_60306:
-		.BYTE	$0A		; SUSPEND
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr8_beam_player_handler:
+		STORE8			_collision_flag,$00
+		STORE8			_player_inv_timer,$00
+		STORE16	_tmp7B1,$180
+		NJSR			_nsub_603A2
+_sloc_6028E:
+		NJSR			_nsub_mcmp
+			NARGW		_scr_trds_idx
+			NARGB		$04
+		SBCC			_sloc_6029B
+		NBG_HNDL_SET	_nbgsub_60307
+		SUSPEND
+_sloc_6029B:
+		NBG_HNDL_SET	_nbgsub_collision_flag_test
+		SUSPEND
+
+; =============== S C R I P T ===============================================
+_scr_hit_anim:
+		NJSR			_nsub_apu_snd_load
+			NARGB		$04
+		SLOOP_BEGIN		$1E
+		NJSR			_nsub_60623
+		SDELAY			$03
+		SARG_ALU		$01,_ADC,$40
+		SLOOP_END
+		NJSR			_nsub_6273D
+			NARGB		$A0,$40
+		SDELAY			$02
+		SPR_IDX_ADD_IMM 2,$04
+		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 2,$FC
+		SPR_IDX_ADD_IMM 0,$FC
+		SDELAY			$28
+		SPR_IDX_SET		0,$FF
+		SDELAY			$3C
+		NJSR			_nsub_player_hit_action
+		SBCC			_sloc_6028E
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_scr_602CB:
+		POS_X_SET		0,$40,$00
+		POS_Y_SET		0,$C8,$02
+		SARG_SET		$00,$00
+		SARG_SET		$01,$40
+		NJSR			_nsub_605E8
+		SUSPEND
+
+; =============== S C R I P T ===============================================
+_scr_602DB:
+		POS_Y_DELTA_SET 0,$80,$FF
+		SLOOP_BEGIN		$F0
+		SARG_ALU		$00,_ADC,$01
+		NJSR			_nsub_605E8
+		SDELAY			$02
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SJMP			_scr8_beam_player_handler
+
+; =============== S C R I P T ===============================================
+_scr_602EE:
+		NJSR			_nsub_605E8
+		SDELAY			$78
+		SARG_SET		$01,$80
+		POS_Y_DELTA_SET 0,$00,$01
+		SLOOP_BEGIN		$F0
+		SARG_ALU		$00,_ADC,$01
+		NJSR			_nsub_605E8
+		SDELAY			$01
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_scr_60306:
+		SUSPEND
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_60307:
 		JSR		sub_60327
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_collision_flag_test:
 		LDA		_collision_flag
 		LSR
@@ -416,7 +406,7 @@ loc_6031E:
 		JSR		sub_605C7
 		JMP		_player_beam_obj_insert_test
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_60327:
 		JSR		sub_6034F
 		STA		_tmp7B1
@@ -428,7 +418,7 @@ loc_60337:
 		STA		_tmp7B9
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6033B:
 		JSR		sub_6034F
 		STA		_tmp7B3
@@ -440,7 +430,7 @@ loc_6034B:
 		STA		_tmp7BA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6034F:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_y_pos_lo,X
@@ -484,13 +474,13 @@ byte_6039A:
 byte_6039E:
 		.BYTE	$01,$01,$00,$01
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_603A2:
 		LDA		_tmp7B7
 		STA		_tmp7B9
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_player_hit_action:
 		DEC		_lives
 		BNE		loc_603B7
@@ -507,7 +497,7 @@ loc_603B7:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_603C3:
 		LDA		_scr_trds_x_pos_lo+2
 		ORA		_scr_trds_y_pos_lo+2
@@ -554,7 +544,7 @@ loc_60410:
 locret_6041C:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6041D:
 		PHA
 		TYA
@@ -597,7 +587,7 @@ loc_60455:
 		LDA		_tmp0
 		JMP		sub_604E0
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6045A:
 		TYA
 		PHA
@@ -669,7 +659,7 @@ loc_604CA:
 		TAY
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_604CD:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -678,7 +668,7 @@ _nsub_604CD:
 		ROL
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_604D5:
 		PHA
 		LDY		_scr_cur_trd_idx
@@ -689,7 +679,7 @@ sub_604D5:
 		PLA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_604E0:
 		PHA
 		TAX
@@ -729,7 +719,7 @@ byte_60508:
 		.BYTE	$F0,$F8
 		.BYTE	$F0,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6050D:
 		STX		_var0
 		STY		_var1
@@ -772,7 +762,7 @@ loc_60550:
 		LDA		_var1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_60553:
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
@@ -818,7 +808,7 @@ loc_60595:
 		STA		_scr_trds_x_pos_lo,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_60598:
 		LDA		_pad0_held
 		AND		#$08
@@ -851,7 +841,7 @@ loc_605BE:
 locret_605C6:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_605C7:
 		LDA		_scr_trds_idx+3
 		BMI		loc_605D5
@@ -874,7 +864,7 @@ loc_605DD:
 _nsub_605E8:
 		LDA		_tmp7B9
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_605EB:
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
@@ -896,7 +886,7 @@ sub_605EB:
 		STA		_scr_trds_spr_idx,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _player_beam_obj_insert_test:
 		LDA		_pad0_pressed
 		AND		_control_jump_button_code
@@ -912,7 +902,7 @@ _player_beam_obj_insert_test:
 locret_60622:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_60623:
 		LDA		_tmp7B9
 		STA		_tmp0
@@ -1526,32 +1516,30 @@ _spr_raw_lib08_AB:
 		.BYTE	$F8,$2E,$00,$06
 		.BYTE	$F8,$3C,$00,$FE
 		.BYTE	$F8,$2C,$00,$F6
-_scr9_player_beam:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_60CA3
-		.WORD	_nbgsub_60CA3
-		.BYTE	$0F,$00,$FF	; SARG_SET	  $00,$FF
-		.BYTE	$01,$14		; SLOOP_BEGIN	  $14
-		.BYTE	$07		; NJSR		  _nsub_60CE0
-		.WORD	_nsub_60CE0
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
-_scr_60C91:
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_60CA3
-		.WORD	_nbgsub_60CA3
-		.BYTE	$01,$F0		; SLOOP_BEGIN	  $F0
-		.BYTE	$07		; NJSR		  _nsub_60D27
-		.WORD	_nsub_60D27
-		.BYTE	$17		; SBCS_BREAK	  _sloc_60C9F
-		.WORD	_sloc_60C9F
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-_sloc_60C9F:
-		.BYTE	$07		; NJSR		  _nsub_60EF1
-		.WORD	_nsub_60EF1
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scr9_player_beam:
+		NBG_HNDL_SET	_nbgsub_60CA3
+		SARG_SET		$00,$FF
+		SLOOP_BEGIN		$14
+		NJSR			_nsub_60CE0
+		SDELAY			$01
+		SLOOP_END
+		SSTOP
+
+; =============== S C R I P T ===============================================
+_scr_60C91:
+		NBG_HNDL_SET	_nbgsub_60CA3
+		SLOOP_BEGIN		$F0
+		NJSR			_nsub_60D27
+		SBCS_BREAK	_sloc_60C9F
+		SDELAY			$01
+		SLOOP_END
+_sloc_60C9F:
+		NJSR			_nsub_60EF1
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_60CA3:
 		LDA		_pad0_held
 		AND		_control_jump_button_code
@@ -1586,7 +1574,7 @@ loc_60CD0:
 loc_60CDD:
 		JMP		_scr_cur_trd_off
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_60CE0:
 		LDX		#$02
 		JSR		_obj_screen_pos_calc
@@ -1629,7 +1617,7 @@ byte_60D1F:
 byte_60D23:
 		.BYTE	$DC,$FC,$18,$FC
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_60D27:
 		LDX		_scr_trds_args0+3
 		JSR		_obj_screen_pos_calc
@@ -1831,7 +1819,7 @@ byte_60E71:
 		.BYTE	$FC,$64,$41,$FC
 		.BYTE	$FC,$74,$41,$FC
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_60EF1:
 		LDX		_scr_trds_args0+3
 		LDA		_scr_trds_args0,X
@@ -1917,58 +1905,51 @@ _spr_raw_lib09_0F:
 		.BYTE	$02
 		.BYTE	$F4,$7C,$81,$04
 		.BYTE	$F4,$7C,$81,$F4
-_scrA_catch_player_handler:
-		.BYTE	$13	; STORE8	  _tmp7AF,$00
-		.WORD	_tmp7AF
-		.BYTE	$00
-		.BYTE	$13		; STORE8	  _tmp7BB,$02
-		.WORD	_tmp7BB
-		.BYTE	$02
-		.BYTE	$13		; STORE8	  _tmp7BC,$18
-		.WORD	_tmp7BC
-		.BYTE	$18
-		.BYTE	$16	; STORE16	  _tmp7B3,$180
-		.WORD	_tmp7B3
-		.WORD	$0180
-		.BYTE	$07		; NJSR		  _nsub_61347
-		.WORD	_nsub_61347
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_ingame_player_control
-		.WORD	_nbgsub_ingame_player_control
-		.BYTE	$0A		; SUSPEND
-_scr_60FCB:
-		.BYTE	$28,$30,$00	; POS_X_SET	  0,$30,$00
-		.BYTE	$30,$C8,$02	; POS_Y_SET	  0,$C8,$02
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$0F,$01,$40	; SARG_SET	  $01,$40
-		.BYTE	$07		; NJSR		  _nsub_610B9
-		.WORD	_nsub_610B9
-		.BYTE	$0A		; SUSPEND
-_scr_60FDB:
-		.BYTE	$50,$80,$FF	; POS_Y_DELTA_SET 0,$80,$FF
-		.BYTE	$01,$F0		; SLOOP_BEGIN	  $F0
-		.BYTE	$15,$00,$02,$01	; SARG_ALU	  $00,ADC,$01
-		.BYTE	$07		; NJSR		  _nsub_610B9
-		.WORD	_nsub_610B9
-		.BYTE	$06,$02		; SDELAY	  $02
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$C0		; POS_MOVE_STOP	  0
-		.BYTE	$03		; SJMP		  _scrA_catch_player_handler
-		.WORD	_scrA_catch_player_handler
-_scr_60FEE:
-		.BYTE	$07		; NJSR		  _nsub_610B9
-		.WORD	_nsub_610B9
-		.BYTE	$06,$78		; SDELAY	  $78
-		.BYTE	$0F,$01,$80	; SARG_SET	  $01,$80
-		.BYTE	$50,$00,$01	; POS_Y_DELTA_SET 0,$00,$01
-		.BYTE	$01,$F0		; SLOOP_BEGIN	  $F0
-		.BYTE	$15,$00,$02,$01	; SARG_ALU	  $00,ADC,$01
-		.BYTE	$07		; NJSR		  _nsub_610B9
-		.WORD	_nsub_610B9
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scrA_catch_player_handler:
+		STORE8			_tmp7AF,$00
+		STORE8			_tmp7BB,$02
+		STORE8			_tmp7BC,$18
+		STORE16	_tmp7B3,$180
+		NJSR			_nsub_61347
+		NBG_HNDL_SET	_nbgsub_ingame_player_control
+		SUSPEND
+
+; =============== S C R I P T ===============================================
+_scr_60FCB:
+		POS_X_SET		0,$30,$00
+		POS_Y_SET		0,$C8,$02
+		SARG_SET		$00,$00
+		SARG_SET		$01,$40
+		NJSR			_nsub_610B9
+		SUSPEND
+
+; =============== S C R I P T ===============================================
+_scr_60FDB:
+		POS_Y_DELTA_SET 0,$80,$FF
+		SLOOP_BEGIN		$F0
+		SARG_ALU		$00,_ADC,$01
+		NJSR			_nsub_610B9
+		SDELAY			$02
+		SLOOP_END
+		POS_MOVE_STOP	0
+		SJMP			_scrA_catch_player_handler
+
+; =============== S C R I P T ===============================================
+_scr_60FEE:
+		NJSR			_nsub_610B9
+		SDELAY			$78
+		SARG_SET		$01,$80
+		POS_Y_DELTA_SET 0,$00,$01
+		SLOOP_BEGIN		$F0
+		SARG_ALU		$00,_ADC,$01
+		NJSR			_nsub_610B9
+		SDELAY			$01
+		SLOOP_END
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_ingame_player_control:
 		LDA		_scr_trds_idx+5
 		BPL		locret_6101E
@@ -1983,7 +1964,7 @@ loc_61015:
 locret_6101E:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6101F:
 		LDA		_scr_trds_x_pos_lo+4
 		ORA		_scr_trds_y_pos_lo+4
@@ -2021,7 +2002,7 @@ loc_6105A:
 locret_61063:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _player_catch_obj_insert_test:
 		LDA		_pad0_pressed
 		AND		_control_fire_button_code
@@ -2065,18 +2046,18 @@ byte_610AA:
 byte_610AE:
 		.BYTE	$E8,$00,$0C,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_610B2:
 		LDA		_tmp7B6
 		BMI		_nsub_610B9
 		INC		_scr_trds_args0+4
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_610B9:
 		LDA		_tmp7BA
 		JMP		sub_605EB
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_610BF:
 		TYA
 		PHA
@@ -2184,7 +2165,7 @@ loc_61187:
 		TAY
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6118D:
 		LDX		#$06
 loc_6118F:
@@ -2206,7 +2187,7 @@ loc_611A3:
 locret_611A8:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_611A9:
 		LDX		#$00
 		STX		_tmp1
@@ -2274,7 +2255,7 @@ loc_61217:
 		LDA		_tmp1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6121E:
 		JSR		sub_61C5E
 		BCC		locret_61238
@@ -2297,7 +2278,7 @@ _unref_1:
 locret_61238:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61239:
 		PHA
 		STA		_tmp0
@@ -2331,7 +2312,7 @@ byte_6126A:
 byte_6126E:
 		.BYTE	$03,$0C,$30,$C0
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61272:
 		JSR		sub_61283
 		PHA
@@ -2342,7 +2323,7 @@ sub_61272:
 		PLA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61283:
 		LDX		_tmp7AF
 		DEX
@@ -2366,7 +2347,7 @@ loc_61299:
 locret_6129E:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6129F:
 		PHA
 		STA		_var1
@@ -2442,7 +2423,7 @@ loc_61317:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6131A:
 		LDA		_scr_trds_x_pos_lo+4
 		SEC
@@ -2452,7 +2433,7 @@ sub_6131A:
 		SBC		_ppu_scroll_pos_x+1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61326:
 		LDA		_scr_trds_y_pos_lo+4
 		SEC
@@ -2466,14 +2447,14 @@ loc_61330:
 		SBC		_ppu_scroll_pos_y+1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61337:
 		LDA		_scr_trds_x_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_x
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6133D:
 		LDA		_scr_trds_y_pos_lo,X
 		SEC
@@ -2483,45 +2464,38 @@ sub_6133D:
 locret_61346:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_61347:
 		LDA		_tmp7B8
 		STA		_tmp7BA
 		RTS
-_scrB_player_catch:
-		.BYTE	$0F,$00,$00	; SARG_SET	  $00,$00
-		.BYTE	$09		; NBG_HNDL_SET	  _nbgsub_61379
-		.WORD	_nbgsub_61379
-		.BYTE	$07		; NJSR		  _nsub_613C5
-		.WORD	_nsub_613C5
-_sloc_61357:
-		.BYTE	$07		; NJSR		  _nsub_613F1
-		.WORD	_nsub_613F1
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_613F7
-		.WORD	_nsub_613F7
-		.BYTE	$0C		; SBCC		  _sloc_61357
-		.WORD	_sloc_61357
-		.BYTE	$03		; SJMP		  _sloc_6136A
-		.WORD	_sloc_6136A
-_scr_61365:
-		.BYTE	$07		; NJSR		  _nsub_61429
-		.WORD	_nsub_61429
-		.BYTE	$06,$0E		; SDELAY	  $0E
-_sloc_6136A:
-		.BYTE	$07		; NJSR		  _nsub_613FC
-		.WORD	_nsub_613FC
-_sloc_6136D:
-		.BYTE	$07		; NJSR		  _nsub_6141A
-		.WORD	_nsub_6141A
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$07		; NJSR		  _nsub_61421
-		.WORD	_nsub_61421
-		.BYTE	$0C		; SBCC		  _sloc_6136D
-		.WORD	_sloc_6136D
-		.BYTE	$00		; STOP
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S C R I P T ===============================================
+_scrB_player_catch:
+		SARG_SET		$00,$00
+		NBG_HNDL_SET	_nbgsub_61379
+		NJSR			_nsub_613C5
+_sloc_61357:
+		NJSR			_nsub_613F1
+		SDELAY			$01
+		NJSR			_nsub_613F7
+		SBCC			_sloc_61357
+		SJMP			_sloc_6136A
+
+; =============== S C R I P T ===============================================
+_scr_61365:
+		NJSR			_nsub_61429
+		SDELAY			$0E
+_sloc_6136A:
+		NJSR			_nsub_613FC
+_sloc_6136D:
+		NJSR			_nsub_6141A
+		SDELAY			$01
+		NJSR			_nsub_61421
+		SBCC			_sloc_6136D
+		SSTOP
+
+; =============== S U B R O U T I N E =======================================
 _nbgsub_61379:
 		JSR		sub_61449
 		BCS		locret_613C4
@@ -2564,7 +2538,7 @@ loc_613B5:
 locret_613C4:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_613C5:
 		JSR		_nsub_604CD
 		ASL
@@ -2582,19 +2556,19 @@ byte_613E3:
 		.BYTE	$00,$04,$00,$00,$00,$FC,$00
 		.BYTE	$00,$00,$04,$00,$00,$00,$FC
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_613F1:
 		JSR		sub_61438
 		INC		_scr_trds_args0+5
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_613F7:
 		LDA		_scr_trds_args0+5
 		CMP		#$08
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_613FC:
 		JSR		_nsub_604CD
 		ASL
@@ -2609,13 +2583,13 @@ _nsub_613FC:
 		STA		_scr_trds_y_mov_delta+5
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_6141A:
 		LDX		_scr_cur_trd_idx
 		DEC		_scr_trds_args0+5
 		JMP		sub_61438
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_61421:
 		LDA		_scr_trds_args0+5
 		BNE		loc_61427
@@ -2625,7 +2599,7 @@ loc_61427:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_61429:
 		DEC		_scr_trds_args0+5
 		JSR		sub_61438
@@ -2636,7 +2610,7 @@ _nsub_61429:
 		INC		_scr_trds_args0+5
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61438:
 		JSR		_nsub_604CD
 		STA		_tmp0
@@ -2648,7 +2622,7 @@ sub_61438:
 		STA		_scr_trds_spr_idx+5
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61449:
 		JSR		_cur_obj_screen_pos_calc
 		STX		_tmp1
@@ -3059,7 +3033,7 @@ _spr_raw_lib09:
 		.WORD	_spr_raw_lib09_2E
 		.WORD	_spr_raw_lib09_2F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_to_room_bound_box_collision_test:
 		STA		_ptr08
 		STY		_ptr08+1
@@ -3104,7 +3078,7 @@ loc_61809:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_doors_collision_test:
 		STY		_tmp2
 		LDY		_cur_room_doors_cnt
@@ -3159,7 +3133,7 @@ loc_61861:
 		LDY		_tmp2
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_to_room_macro_collision_test_box:
 		LDA		#$00
 		STA		_tmp_var0
@@ -3200,7 +3174,7 @@ loc_61896:
 		PLA
 		TAX
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_macro_collision_test_ex:
 		JSR		_room_doors_collision_test
 		BCC		loc_618A6
@@ -3223,7 +3197,7 @@ loc_618A6:
 		LSR
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_macro_collision_read_unref:
 		STA		_tmp0		; *--
 		LDA		_prg_cur_bank	; *--
@@ -3243,7 +3217,7 @@ _far_macro_collision_read_unref:
 		LSR		; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _macro_collision_read:
 		STA		_tmp0
 		PHA
@@ -3264,7 +3238,7 @@ _macro_collision_read:
 		LDA		_lvl_data_prg_bank
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
-		LDA		(_lvl_data0_ptr),Y
+		LDA		(_lvl_collisions_ptr),Y
 		STA		_tmp0
 		PLA
 		STA		_prg_cur_bank
@@ -3284,7 +3258,7 @@ loc_61914:
 		PLA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_room_macro_read_unref:
 		LDA		_prg_cur_bank	; *--
 		PHA				; *--
@@ -3299,7 +3273,7 @@ _far_room_macro_read_unref:
 		LDA		_tmp0		; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _room_macro_read:
 		TYA
 		PHA
@@ -3330,7 +3304,7 @@ _room_macro_read:
 		LDA		_tmp0
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_lvl_room_ofs_calc:
 		LDA		_prg_cur_bank
 		PHA
@@ -3345,7 +3319,7 @@ _far_lvl_room_ofs_calc:
 		LDA		_tmp0
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _lvl_room_ofs_calc:
 		TYA
 		PHA
@@ -3379,7 +3353,7 @@ _lvl_room_ofs_calc:
 		LDA		_tmp0
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_macro_block_draw:
 		STA		_tmp0
 		LDA		_prg_cur_bank
@@ -3432,7 +3406,7 @@ _ppu_macro_block_draw:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_619F7:
 		LDY		#$00
 loc_619F9:
@@ -3453,11 +3427,11 @@ loc_619FB:
 		BCC		loc_619F9
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _cur_obj_screen_pos_calc:
 		LDX		_scr_cur_trd_idx
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_screen_pos_calc:
 		LDA		_scr_trds_x_pos_hi,X
 		STA		_tmp_var0
@@ -3467,7 +3441,7 @@ _obj_screen_pos_calc:
 		LDA		_scr_trds_x_pos_lo,X
 		TAX
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _screen_pos_calc_ex:
 		TXA
 		SEC
@@ -3492,7 +3466,7 @@ loc_61A3F:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61A41:
 		JSR		sub_61A59
 		TXA
@@ -3508,7 +3482,7 @@ sub_61A41:
 		STA		_scr_trds_y_pos_hi,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61A59:
 		TXA
 		CLC
@@ -3533,7 +3507,7 @@ loc_61A71:
 		STA		_tmp_var1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _unref_4:
 		TXA				; *--
 		CLC				; *--
@@ -3570,7 +3544,7 @@ loc_61A95:
 		TAY				; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61AA1:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo+2
@@ -3585,7 +3559,7 @@ sub_61AA1:
 		STA		_var3
 		JMP		sub_61BC2
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61AB9:
 		TAX
 		JSR		_obj_screen_pos_calc
@@ -3596,7 +3570,7 @@ sub_61AB9:
 		STY		_var3
 		JMP		sub_61BC2
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61ACB:
 		STA		_ptr0A
 		STX		_ptr0A+1
@@ -3714,7 +3688,7 @@ byte_61B82:
 		.BYTE	$B5,$B9,$BD,$C1,$C5,$C9,$CD,$D1,$D4,$D8,$DB,$DE,$E1,$E4,$E7,$EA
 		.BYTE	$EC,$EE,$F1,$F3,$F4,$F6,$F8,$F9,$FB,$FC,$FD,$FE,$FE,$FF,$FF,$FF
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61BC2:
 		LDA		_var0
 		SEC
@@ -3803,7 +3777,7 @@ byte_61C4D:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$01,$01,$01,$02,$02,$03,$06 ;	*--
 		.BYTE	$14
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61C5E:
 		STY		_tmp0
 		LDY		_scr_cur_trd_idx
@@ -3875,7 +3849,7 @@ loc_61CD4:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _lvl_room_objects_handler:
 		LDA		_prg_cur_bank
 		PHA
@@ -3976,7 +3950,7 @@ _ld1_exit:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_lvl_room_objects_init:
 		LDA		_prg_cur_bank
 		PHA
@@ -4038,7 +4012,7 @@ loc_61DC8:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61DD6:
 		LDA		_scr_trds_idx+3
 		BMI		loc_61E28
@@ -4095,7 +4069,7 @@ byte_61E2A:
 byte_61E2E:
 		.BYTE	$14,$01,$14,$01
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _player_to_obj_collision_test:
 		LDA		_player_inv_timer
 		BNE		locret_61E6B
@@ -4130,7 +4104,7 @@ loc_61E5F:
 locret_61E6B:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _money_prize_collision_test:
 		STX		_var0
 		STY		_var1
@@ -4167,7 +4141,7 @@ loc_61E94:
 locret_61EA9:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _bin2dec:
 		STA		_var4
 		STX		_var5
@@ -4204,7 +4178,7 @@ byte_61EDD:
 byte_61EE1:
 		.BYTE	$27,$03,$00,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _printfd:
 		JSR		_ppu_offset_calc
 		LDX		#$00
@@ -4234,7 +4208,7 @@ loc_61F00:
 		.WORD	_tmp_buf+2
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_offset_calc:
 		TXA
 		AND		#$1F
@@ -4273,7 +4247,7 @@ _ppu_offset_calc:
 byte_61F4E:
 		.BYTE	$20,$20,$24,$28,$24,$28,$20,$20
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_macro_attr_transfer:
 		JSR		_ppu_attr_ofs_calc
 		STA		_tmp0
@@ -4317,7 +4291,7 @@ loc_61F74:
 byte_61F98:
 		.BYTE	$FC,$F3,$CF,$3F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_attr_ofs_calc:
 		PHA
 		TXA
@@ -4380,7 +4354,7 @@ _attr_bufs_list_hi:
 		.BYTE	>[_attr_buf_pageB]
 		.BYTE	>[_attr_buf_pageA]
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_61FFC:
 		STA		_tmp_buf+4
 		LDA		byte_6201B,X
@@ -4391,7 +4365,7 @@ sub_61FFC:
 		STA		_tmp_buf+2
 		LDA		#$1E
 		STA		_tmp_buf+3
-		JSR		_ppu_res_send_param_repeat_no_ofs_0
+		JSR		_ppu_res_send_param_repeat
 		.WORD	_tmp_buf
 		RTS
 byte_6201B:
@@ -4399,7 +4373,7 @@ byte_6201B:
 byte_6201F:
 		.BYTE	$20,$24,$28,$2C
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_attr_fill_unref:
 		STA		_tmp_buf+4	; *--
 		LDA		_unused_unref,X	; *--
@@ -4410,7 +4384,7 @@ _ppu_attr_fill_unref:
 		STA		_tmp_buf+2	; *--
 		LDA		#$02		; *--
 		STA		_tmp_buf+3	; *--
-		JSR		_ppu_res_send_param_repeat_no_ofs_0 ; *--
+		JSR		_ppu_res_send_param_repeat ; *--
 		.WORD	_tmp_buf		; *--
 		RTS				; *--
 _unused_unref:
@@ -4418,7 +4392,7 @@ _unused_unref:
 _unused_unref_0:
 		.BYTE	$23,$27,$27,$23	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6204A:
 		PHA
 		AND		#$01
@@ -4431,14 +4405,14 @@ sub_6204A:
 		STA		_ppu_scroll_pos_y
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _unref_6:
 		JSR		_wait_for_nmi	; *--
 		DEX				; *--
 		BNE		_unref_6	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _unref_7:
 		LDX		#$07		; *--
 loc_62063:
@@ -4448,7 +4422,7 @@ loc_62063:
 		BPL		loc_62063	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_62069:
 		STA		_ptr06
 		STX		_ptr06+1
@@ -4553,7 +4527,7 @@ loc_620F0:
 		.WORD	_tmp_buf
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _spr_pal_load:
 		STA		_ptr06
 		STX		_ptr06+1
@@ -4565,16 +4539,16 @@ loc_62114:
 		BPL		loc_62114
 		JMP		_pal_def_color_set
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _bg_pal_load:
 		LDY		#$0F
 		BNE		_pal_load_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _full_pal_load:
 		LDY		#$1F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _pal_load_ex:
 		STA		_ptr06
 		STX		_ptr06+1
@@ -4584,7 +4558,7 @@ loc_62129:
 		DEY
 		BPL		loc_62129
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _pal_def_color_set:
 		LDY		#$00
 		LDA		(_ptr06),Y
@@ -4598,7 +4572,7 @@ loc_62137:
 		DEX
 		BPL		loc_62137
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_62141:
 		LDY		#$00
 loc_62143:
@@ -4675,7 +4649,7 @@ loc_6219E:
 byte_621B8:
 		.BYTE	$00,$10,$20,$30,$40
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_621BD:
 		CPY		#$02
 		BCC		locret_621EB
@@ -4724,7 +4698,7 @@ byte_621EC:
 		.BYTE	$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
 		.BYTE	$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _rand:
 		STA		_tmp0
 		TXA
@@ -4760,7 +4734,7 @@ loc_62314:
 		LDA		_tmp1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _div8:
 		STA		_tmp0
 		STX		_tmp1
@@ -4832,7 +4806,7 @@ _div_tbl0:
 		.BYTE	$62,$62,$63,$64,$65,$66,$67,$68,$69,$6A,$6A,$6B,$6C,$6D,$6E,$6F
 		.BYTE	$70,$71,$72,$73,$74,$75,$76,$77,$78,$79,$7A,$7B,$7C,$7D,$7E,$7F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_prize_sequence_test:
 		LDA		_prg_cur_bank
 		PHA
@@ -4857,11 +4831,11 @@ loc_62583:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_scores_add_obj_value:
 		LDA		_scores_obj_value
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scores_add:
 		CLC
 		ADC		_scores
@@ -4915,7 +4889,7 @@ loc_625F1:
 locret_625FD:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_scores_display_unref:
 		JSR		_scr_getc	; *--
 		PHA				; *--
@@ -4923,14 +4897,14 @@ _nsub_scores_display_unref:
 		PHA				; *--
 		JMP		_printf_scores_ex ; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _printf_scores:
 		TXA
 		PHA
 		TYA
 		PHA
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _printf_scores_ex:
 		LDA		_scores
 		LDX		_scores+1
@@ -4941,7 +4915,7 @@ _printf_scores_ex:
 		TAX
 		JMP		_printfd
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_hi_scores_display:
 		JSR		_scr_getc
 		PHA
@@ -4949,14 +4923,14 @@ _nsub_hi_scores_display:
 		PHA
 		JMP		_printf_hi_scores_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _printf_hi_scores:
 		TXA
 		PHA
 		TYA
 		PHA
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _printf_hi_scores_ex:
 		LDA		_hi_scores
 		LDX		_hi_scores+1
@@ -4967,15 +4941,15 @@ _printf_hi_scores_ex:
 		TAX
 		JMP		_printfd
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_apu_mus_load:
 		JSR		_scr_getc
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_prg6_apu_mus_load:
 		STA		_apu_req_idx
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_prg6_apu_mus_load_ex:
 		STA		_tmp0
 		LDA		_prg_cur_bank
@@ -4997,11 +4971,11 @@ _far_prg6_apu_mus_load_ex:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_apu_snd_load:
 		JSR		_scr_getc
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_prg6_apu_snd_load:
 		STA		_tmp0
 		LDA		_prg_cur_bank
@@ -5023,7 +4997,7 @@ _far_prg6_apu_snd_load:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_init_counters:
 		JSR		_scr_getc
 		LDY		#$07
@@ -5033,7 +5007,7 @@ loc_62688:
 		BPL		loc_62688
 		JMP		sub_62141
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_counters_inc:
 		JSR		_scr_getc
 		STA		_var0
@@ -5047,7 +5021,7 @@ loc_6269E:
 		BPL		loc_62698
 		JMP		sub_62141
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_counters_dec:
 		JSR		_scr_getc
 		STA		_var0
@@ -5061,7 +5035,7 @@ loc_626B1:
 		BPL		loc_626AB
 		JMP		sub_62141
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_626B7:
 		JSR		_scr_getc
 		PHA
@@ -5076,7 +5050,7 @@ _nsub_626B7:
 		LDA		_tmp0
 		JMP		sub_62069
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_bg_pal_load:
 		JSR		_scr_getc
 		PHA
@@ -5085,7 +5059,7 @@ _nsub_bg_pal_load:
 		PLA
 		JMP		_bg_pal_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_spr_pal_load:
 		JSR		_scr_getc
 		PHA
@@ -5094,7 +5068,7 @@ _nsub_spr_pal_load:
 		PLA
 		JMP		_spr_pal_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_full_pal_load:
 		JSR		_scr_getc
 		PHA
@@ -5103,7 +5077,7 @@ _nsub_full_pal_load:
 		PLA
 		JMP		_full_pal_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_626F1:
 		JSR		_scr_getc
 		TAX
@@ -5111,7 +5085,7 @@ _nsub_626F1:
 		STA		_scr_trds_idx,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 ; arg2
 _nsub_thread_disable_unref:
 		JSR		_scr_getc	; *--
@@ -5127,7 +5101,7 @@ _nsub_thread_disable_unref:
 		STA		_scr_trds_ptr._ptr+1,X ; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_obj_delay_set_from_sarg:
 		JSR		_scr_getc
 		TAX
@@ -5141,7 +5115,7 @@ _nsub_obj_delay_set_from_sarg:
 		STA		_scr_trds_delay,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_cur_obj_rand_delay_set:
 		JSR		_scr_getc	; *--
 		PHA				; *--
@@ -5154,7 +5128,7 @@ _nsub_cur_obj_rand_delay_set:
 		STA		_scr_trds_delay,X ; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_6273D:
 		JSR		_scr_getc
 		PHA
@@ -5174,11 +5148,11 @@ _nsub_6273D:
 		STA		_scr_trds_spr_idx,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_far_prg0_tlm_lib_unpack:
 		JSR		_scr_getc
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _far_prg0_tlm_lib_unpack:
 		STA		_tmp0
 		LDA		_prg_cur_bank
@@ -5192,43 +5166,43 @@ _far_prg0_tlm_lib_unpack:
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62775:
 		JSR		_scr_getc
 		JMP		sub_6204A
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_mmc1_mirror_horizontal:
 		LDA		#$1E
 		JMP		_mmc1_ctrl
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_mmc1_mirror_vertical:
 		LDA		#$1E
 		ORA		#$01
 		JMP		_mmc1_ctrl
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_mmc1_chr0_set:
 		JSR		_scr_getc
 		STA		_chr_bank0
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_mmc1_chr1_set:
 		JSR		_scr_getc
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _mmc1_chr1_set:
 		STA		_chr_bank1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_mmc1_prg_set_unused:
 		JSR		_scr_getc
 		JMP		_mmc1_prg_safe	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_script_start:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
@@ -5279,7 +5253,7 @@ loc_627B7:
 		TXA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_arg12_load_data_ofs:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
@@ -5288,7 +5262,7 @@ _nsub_arg12_load_data_ofs:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_script_chain_start:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -5347,7 +5321,7 @@ loc_62822:
 		PLA
 		JMP		_script_load_enemy_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_obj_sarg_add_imm_test:
 		JSR		_scr_getc
 		TAX
@@ -5366,7 +5340,7 @@ loc_62877:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62879:
 		JSR		_scr_getc
 		JSR		_rand
@@ -5377,7 +5351,7 @@ loc_62883:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_lvl_data_ptrs_load:
 		JSR		_scr_getc
 		STA		_lvl_macroA_ptr
@@ -5401,7 +5375,7 @@ _nsub_lvl_data_ptrs_load:
 		STA		_lvl_attrs_ptr+1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_room_page_set_unref:
 		JSR		_scr_getc	; *--
 		STA		_cur_room_x_pageA ; *--
@@ -5413,7 +5387,7 @@ _nsub_room_page_set_unref:
 		STA		_cur_room_y_pageA ; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_628D1:
 		JSR		_scr_getc
 		PHA
@@ -5436,7 +5410,7 @@ _nsub_628D1:
 		STA		_scr_trds_y_mov_delta,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_628FA:
 		JSR		_scr_getc
 		STA		_tmp7BE
@@ -5445,7 +5419,7 @@ _nsub_628FA:
 		JSR		_scr_getc
 		STA		_tmp7C0
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6290C:
 		JSR		_ppu_vblank_off
 		LDA		_tmp7BE
@@ -5475,7 +5449,7 @@ loc_62945:
 loc_62948:
 		JMP		_ppu_vblank_on
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_6294B:
 		JSR		_scr_getc
 		STA		_var0
@@ -5553,7 +5527,7 @@ loc_629C8:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_room_register:
 		JSR		_scr_getc
 		PHA
@@ -5666,7 +5640,7 @@ byte_62A9F:
 byte_62AA3:
 		.BYTE	$00,$00,$FF,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_read_mem:
 		JSR		_scr_getc
 		STA		_ptr06
@@ -5676,20 +5650,20 @@ _nsub_read_mem:
 		LDA		(_ptr06),Y
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_sub_rom_idx_calc:
 		LDX		_lvl_room_cur_idx
 		DEX
 		STX		_sub_room_idx
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62ABE:
 		JSR		sub_61AA1
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _unref_12:
 		JSR		_scr_getc	; *--
 		PHA				; *--
@@ -5711,7 +5685,7 @@ _unref_12:
 		STA		_scr_trds_y_mov_delta,X	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62AEC:
 		JSR		_scr_getc
 		PHA
@@ -5746,7 +5720,7 @@ loc_62B1B:
 locret_62B1D:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B1E:
 		JSR		_scr_getc
 		TAX
@@ -5755,7 +5729,7 @@ _nsub_62B1E:
 		INY
 		JMP		sub_61C5E
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_obj_spr_idx_set_from_sarg:
 		JSR		_scr_getc
 		TAX
@@ -5768,7 +5742,7 @@ _nsub_obj_spr_idx_set_from_sarg:
 		STA		_scr_trds_spr_idx,Y
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B40:
 		LDX		#$0D
 		LDA		#$FF
@@ -5781,7 +5755,7 @@ loc_62B4B:
 		BPL		loc_62B44
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B4F:
 		LDX		#$06
 		LDA		#$FF
@@ -5795,21 +5769,21 @@ loc_62B5A:
 		BCC		loc_62B53
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B60:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_x_pos_lo,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B68:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_y_pos_lo,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B70:
 		JSR		_scr_getc
 		STA		_ptr06
@@ -5819,7 +5793,7 @@ _nsub_62B70:
 		LSR
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_mcmp:
 		JSR		_scr_getc
 		STA		_ptr06
@@ -5834,7 +5808,7 @@ _nsub_mcmp:
 locret_62B94:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62B95:
 		LDA		_lvl_objects_ptr+1
 		BNE		locret_62BB0
@@ -5855,7 +5829,7 @@ _nsub_62BA9:
 locret_62BB0:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62BB1:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
@@ -5873,7 +5847,7 @@ _nsub_62BB1:
 		STA		_scr_trds_y_pos_hi,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_obj_sarg_set_from_nsub_return_value:
 		JSR		_scr_getc
 		TAX
@@ -5886,7 +5860,7 @@ _nsub_obj_sarg_set_from_nsub_return_value:
 		STA		(_ptr06),Y
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62BE5:
 		LDX		#$06
 loc_62BE7:
@@ -5906,7 +5880,7 @@ loc_62BFB:
 		CLC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62BFD:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -5919,7 +5893,7 @@ loc_62C09:
 		SEC
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62C0B:
 		LDY		#$00
 		LDX		_scr_cur_trd_idx
@@ -5935,7 +5909,7 @@ loc_62C18:
 		TYA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_ingame_collision_watch_start:
 		JSR		sub_62C2E
 		LDA		#$02
@@ -5945,7 +5919,7 @@ _nsub_ingame_collision_watch_start:
 		LDA		#$08
 		JMP		_script_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_62C2E:
 		LDA		#$00
 		STA		_var1
@@ -5955,7 +5929,7 @@ sub_62C2E:
 		TAX
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_ingame_player_control_start:
 		JSR		sub_62C2E
 		LDA		#$04
@@ -5965,7 +5939,7 @@ _nsub_ingame_player_control_start:
 		LDA		#$0A
 		JMP		_script_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62C49:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo,Y
@@ -6003,7 +5977,7 @@ byte_62C75:
 		.BYTE	$04,$FB
 		.BYTE	$04,$04
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62C7A:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_y_pos_lo,Y
@@ -6044,7 +6018,7 @@ byte_62CAB:
 		.BYTE	$FB,$04
 		.BYTE	$04,$04
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62CB0:
 		LDX		_scr_cur_trd_idx
 		LDA		#$00
@@ -6053,7 +6027,7 @@ _nsub_62CB0:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62CBA:
 		LDX		_scr_cur_trd_idx
 		LDA		#$80
@@ -6062,7 +6036,7 @@ _nsub_62CBA:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62CC4:
 		LDA		#$02
 		JSR		sub_61AB9
@@ -6073,7 +6047,7 @@ _nsub_62CC4:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62CD3:
 		JSR		_nsub_604CD
 		TAX
@@ -6091,7 +6065,7 @@ off_62CE4:
 		.BYTE	>[byte_62CAB]
 		.BYTE	>[byte_62C70]
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62CE8:
 		LDX		_scr_cur_trd_idx
 		LDA		#$80
@@ -6099,7 +6073,7 @@ _nsub_62CE8:
 		STA		_scr_trds_y_move_clk,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_62CF3:
 		LDX		#$02
 		LDA		_scr_trds_spr_idx,X
@@ -6119,7 +6093,7 @@ _nsub_62CF3:
 		STA		_scr_trds_spr_idx,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nsub_tlm_raw_arg2_idx_line_draw:
 		JSR		_scr_getc
 		STA		_ptr08
@@ -6165,7 +6139,7 @@ loc_62D3F:
 		.WORD	_tmp_buf+2
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _cur_obj_out_of_screen_test:
 		JSR		_cur_obj_screen_pos_calc
 		CPX		#$04
@@ -6180,7 +6154,7 @@ _cur_obj_out_of_screen_test:
 loc_62D76:
 		JMP		_scr_cur_trd_off
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_to_room_macro_collision_test_raw:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_hi,X
@@ -6195,139 +6169,124 @@ _obj_to_room_macro_collision_test_raw:
 		RTS
 loc_62D90:
 		JMP		_scr_cur_trd_off
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62D93:
-		.BYTE	$07		; NJSR		  _nsub_init_counters,$FC
-		.WORD	_nsub_init_counters
-		.BYTE	$FC
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_inc,$FF
-		.WORD	_nsub_counters_inc
-		.BYTE	$FF
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
+		NJSR			_nsub_init_counters
+			NARGB		$FC
+		SDELAY			$01
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_inc
+			NARGB		$FF
+		SDELAY			$03
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DA3:
-		.BYTE	$07		; NJSR		  _nsub_init_counters,$00
-		.WORD	_nsub_init_counters
-		.BYTE	$00
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_dec,$FF
-		.WORD	_nsub_counters_dec
-		.BYTE	$FF
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
+		NJSR			_nsub_init_counters
+			NARGB		$00
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_dec
+			NARGB		$FF
+		SDELAY			$03
+		SLOOP_END
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DB1:
-		.BYTE	$07		; NJSR		  _nsub_init_counters,$FC
-		.WORD	_nsub_init_counters
-		.BYTE	$FC
+		NJSR			_nsub_init_counters
+			NARGB		$FC
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DB5:
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_inc,$FF
-		.WORD	_nsub_counters_inc
-		.BYTE	$FF
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$13		; STORE8	  _scr_trds_priority_mode,$00
-		.WORD	_scr_trds_priority_mode
-		.BYTE	$00
-		.BYTE	$05		; SRET
+		SDELAY			$01
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_inc
+			NARGB		$FF
+		SDELAY			$03
+		SLOOP_END
+		STORE8			_scr_trds_priority_mode,$00
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DC5:
-		.BYTE	$07		; NJSR		  _nsub_init_counters,$00
-		.WORD	_nsub_init_counters
-		.BYTE	$00
+		NJSR			_nsub_init_counters
+			NARGB		$00
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DC9:
-		.BYTE	$13		; STORE8	  _scr_trds_priority_mode,$01
-		.WORD	_scr_trds_priority_mode
-		.BYTE	$01
-		.BYTE	$01,$04		; SLOOP_BEGIN	  $04
-		.BYTE	$07		; NJSR		  _nsub_counters_dec,$FF
-		.WORD	_nsub_counters_dec
-		.BYTE	$FF
-		.BYTE	$06,$03		; SDELAY	  $03
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$05		; SRET
+		STORE8			_scr_trds_priority_mode,$01
+		SLOOP_BEGIN		$04
+		NJSR			_nsub_counters_dec
+			NARGB		$FF
+		SDELAY			$03
+		SLOOP_END
+		SRET
 _sloc_62DD7:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$02
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$02
+		NJSR			_nsub_apu_snd_load
+			NARGB		$02
 _sloc_62DDB:
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$01
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$01
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$00		; SPR_IDX_SET	  1,$00
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$15,$01,$02,$01	; SARG_ALU	  $01,ADC,$01
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$01
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$01
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$01		; SPR_IDX_SET	  1,$01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$22,$00		; SPR_IDX_SET	  2,$00
+		SLOOP_BEGIN		$03
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$01
+		SDELAY			$01
+		SPR_IDX_SET		1,$00
+		SLOOP_END
+		SARG_ALU		$01,_ADC,$01
+		SLOOP_BEGIN		$02
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$01
+		SDELAY			$01
+		SPR_IDX_SET		1,$01
+		SLOOP_END
+		SPR_IDX_SET		2,$00
 _sloc_62DF7:
-		.BYTE	$9A		; SPR_IDX_INC	  2
-		.BYTE	$07		; NJSR		  _nsub_scores_add_obj_value
-		.WORD	_nsub_scores_add_obj_value
-		.BYTE	$07		; NJSR		  _nsub_prize_sequence_test
-		.WORD	_nsub_prize_sequence_test
-		.BYTE	$07		; NJSR		  _nsub_62B95
-		.WORD	_nsub_62B95
-		.BYTE	$05		; SRET
+		SPR_IDX_INC		2
+		NJSR			_nsub_scores_add_obj_value
+		NJSR			_nsub_prize_sequence_test
+		NJSR			_nsub_62B95
+		SRET
 _sloc_62E02:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$02
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$02
+		NJSR			_nsub_apu_snd_load
+			NARGB		$02
 _sloc_62E06:
-		.BYTE	$01,$03		; SLOOP_BEGIN	  $03
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$01
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$01
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$02		; SPR_IDX_SET	  1,$02
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$15,$01,$02,$01	; SARG_ALU	  $01,ADC,$01
-		.BYTE	$01,$02		; SLOOP_BEGIN	  $02
-		.BYTE	$07		; NJSR		  _nsub_obj_spr_idx_set_from_sarg,$01
-		.WORD	_nsub_obj_spr_idx_set_from_sarg
-		.BYTE	$01
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$21,$03		; SPR_IDX_SET	  1,$03
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$22,$02		; SPR_IDX_SET	  2,$02
-		.BYTE	$03		; SJMP		  _sloc_62DF7
-		.WORD	_sloc_62DF7
+		SLOOP_BEGIN		$03
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$01
+		SDELAY			$01
+		SPR_IDX_SET		1,$02
+		SLOOP_END
+		SARG_ALU		$01,_ADC,$01
+		SLOOP_BEGIN		$02
+		NJSR			_nsub_obj_spr_idx_set_from_sarg
+			NARGB		$01
+		SDELAY			$01
+		SPR_IDX_SET		1,$03
+		SLOOP_END
+		SPR_IDX_SET		2,$02
+		SJMP			_sloc_62DF7
 _sloc_62E25:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$19
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$19
-		.BYTE	$03		; SJMP		  _sloc_62DDB
-		.WORD	_sloc_62DDB
+		NJSR			_nsub_apu_snd_load
+			NARGB		$19
+		SJMP			_sloc_62DDB
 _sloc_62E2C:
-		.BYTE	$07		; NJSR		  _nsub_apu_snd_load,$19
-		.WORD	_nsub_apu_snd_load
-		.BYTE	$19
-		.BYTE	$03		; SJMP		  _sloc_62E06
-		.WORD	_sloc_62E06
+		NJSR			_nsub_apu_snd_load
+			NARGB		$19
+		SJMP			_sloc_62E06
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62E33:
-		.BYTE	$01,$80		; SLOOP_BEGIN	  $80
-		.BYTE	$0E		; SMEM_ALU	  _apu_var402,ADC,$02X
-		.WORD	_apu_var402
-		.BYTE	$02,$FF
-		.BYTE	$06,$01		; SDELAY	  $01
-		.BYTE	$02		; SLOOP_END
-		.BYTE	$13		; STORE8	  _apu_var402,$FF
-		.WORD	_apu_var402
-		.BYTE	$FF
-		.BYTE	$07		; NJSR		  _nsub_apu_mus_load,$04
-		.WORD	_nsub_apu_mus_load
-		.BYTE	$04
-		.BYTE	$05		; SRET
+		SLOOP_BEGIN		$80
+		SMEM_ALU	_apu_var402,_ADC,$FF
+		SDELAY			$01
+		SLOOP_END
+		STORE8			_apu_var402,$FF
+		NJSR			_nsub_apu_mus_load
+			NARGB		$04
+		SRET
 _spr_raw_lib1A_00:
 		.BYTE	$03
 		.BYTE	$F0,$C1,$00,$F8
@@ -6345,7 +6304,7 @@ _spr_raw_lib1A_03:
 		.BYTE	$01
 		.BYTE	$00,$D1,$40,$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_trds_list_reset:
 		LDA		#$FF
 		LDX		#$0D
@@ -6367,7 +6326,7 @@ loc_62E6E:
 		STA		_spr_buf_pos
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _script_load_enemy_ex:
 		PHA
 		LDA		#$06
@@ -6377,7 +6336,7 @@ _script_load_enemy_ex:
 		PLA
 		JMP		_script_load
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _script_event_start:
 		PHA
 		LDA		#$00
@@ -6389,7 +6348,7 @@ _script_event_start:
 		STA		_var5
 		PLA
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _script_load:
 		STA		_tmp0
 		STX		_tmp1
@@ -6430,7 +6389,7 @@ loc_62EBD:
 		TAY
 		PLA
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _script_load_ex:
 		PHA
 		TYA
@@ -6468,14 +6427,14 @@ _script_load_ex:
 		PLA
 		STA		_scr_trds_ptr,X
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _nbgsub_dummy:
 		CLC
 		RTS
 _unused_7:
 		.BYTE	$80,$C0,$E0,$F0	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_trds_manager:
 		LDX		#$0D
 		LDA		#$01
@@ -6602,7 +6561,7 @@ loc_63014:
 		BCC		loc_63000
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _obj_spr_insert:
 		LDA		_scr_trds_x_pos_lo,X
 		SEC
@@ -6681,10 +6640,10 @@ loc_6309D:
 		BEQ		locret_6309C
 		SBC		#$BF
 		ASL
-		ADC		_spr_lib_lo,Y
+		ADC		_spr_res_lib_lo,Y
 		STA		_ptr06
 		LDA		#$00
-		ADC		_spr_lib_hi,Y
+		ADC		_spr_res_lib_hi,Y
 		STA		_ptr06+1
 		LDY		#$00
 		LDA		(_ptr06),Y
@@ -6778,7 +6737,7 @@ loc_63114:
 		BNE		loc_630EA	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_trd_exec:
 		LDA		#$00
 		STA		_scr_loop_count
@@ -6791,7 +6750,7 @@ loc_63139:
 		TAX
 		LDA		_scr_trds_ptr._ptr+1,X
 		BEQ		loc_6314A
-		JSR		_scr_cmd_exec
+		JSR		_scmd_exec
 loc_6314A:
 		INC		_scr_loop_count
 		LDA		_scr_loop_count
@@ -6857,8 +6816,8 @@ loc_631BB:
 		STA		_scr_trds_y_pos_hi,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd_exec:
+; =============== S U B R O U T I N E =======================================
+_scmd_exec:
 		LDX		_scr_cur_trd_idxw
 		LDA		_scr_trds_delay,X
 		BNE		loc_63240
@@ -6896,9 +6855,9 @@ loc_631ED:
 		RTS
 loc_63203:
 		TAX
-		LDA		_scr_cmd_lib_lo-1,X
+		LDA		_scmd_lib_lo-1,X
 		STA		_ptr06
-		LDA		_scr_cmd_lib_hi-1,X
+		LDA		_scmd_lib_hi-1,X
 		BNE		loc_63227
 loc_6320E:
 		LDX		_scr_cur_trd_idxw
@@ -6913,9 +6872,9 @@ loc_6320E:
 		LSR
 		LSR
 		TAX
-		LDA		_scr_dcmd_lib_lo,X
+		LDA		_dcmd_lib_lo,X
 		STA		_ptr06
-		LDA		_scr_dcmd_lib_hi,X
+		LDA		_dcmd_lib_hi,X
 loc_63227:
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
@@ -6933,107 +6892,107 @@ loc_63240:
 		LDX		_scr_cur_trd_idxw
 		DEC		_scr_trds_delay,X
 		RTS
-_scr_cmd_lib_lo:
-		.BYTE	<[_scr_cmd01_for_begin]
-		.BYTE	<[_scr_cmd02_for_end]
-		.BYTE	<[_scr_cmd03_sjmp]
-		.BYTE	<[_scr_cmd04_sjsr]
-		.BYTE	<[_scr_cmd05_ret]
-		.BYTE	<[_scr_cmd06_delay]
-		.BYTE	<[_scr_cmd07_ejsr]
-		.BYTE	<[_scr_cmd08_erun]
-		.BYTE	<[_scr_cmd09_nbg_hndl_set]
-		.BYTE	<[_scr_cmd0A_suspend]
-		.BYTE	<[_scr_cmd0B_bcs]
-		.BYTE	<[_scr_cmd0C_bcc]
-		.BYTE	<[_scr_cmd0D_sdisable_this]
-		.BYTE	<[_scr_cmd0E_smem_alu]
-		.BYTE	<[_scr_cmd0F_sarg_set]
-		.BYTE	<[_scr_cmd10_nbg_hndl_reset]
-		.BYTE	<[_scr_cmd11_sjmp_sw]
-		.BYTE	<[_scr_cmd12_sjsr_sw]
-		.BYTE	<[_scr_cmd13_store8]
-		.BYTE	<[_scr_cmd14_sdisable]
-		.BYTE	<[_scr_cmd15_sarg_alu]
-		.BYTE	<[_scr_cmd16_store16]
-		.BYTE	<[_scr_cmd17_sbcs_break]
-		.BYTE	<[_scr_cmd18_sbcc_break] ; *--
-		.BYTE	<[_scr_cmd19_njsr_sw] ; *--
-_scr_cmd_lib_hi:
-		.BYTE	>[_scr_cmd01_for_begin]
-		.BYTE	>[_scr_cmd02_for_end]
-		.BYTE	>[_scr_cmd03_sjmp]
-		.BYTE	>[_scr_cmd04_sjsr]
-		.BYTE	>[_scr_cmd05_ret]
-		.BYTE	>[_scr_cmd06_delay]
-		.BYTE	>[_scr_cmd07_ejsr]
-		.BYTE	>[_scr_cmd08_erun]
-		.BYTE	>[_scr_cmd09_nbg_hndl_set]
-		.BYTE	>[_scr_cmd0A_suspend]
-		.BYTE	>[_scr_cmd0B_bcs]
-		.BYTE	>[_scr_cmd0C_bcc]
-		.BYTE	>[_scr_cmd0D_sdisable_this]
-		.BYTE	>[_scr_cmd0E_smem_alu]
-		.BYTE	>[_scr_cmd0F_sarg_set]
-		.BYTE	>[_scr_cmd10_nbg_hndl_reset]
-		.BYTE	>[_scr_cmd11_sjmp_sw]
-		.BYTE	>[_scr_cmd12_sjsr_sw]
-		.BYTE	>[_scr_cmd13_store8]
-		.BYTE	>[_scr_cmd14_sdisable]
-		.BYTE	>[_scr_cmd15_sarg_alu]
-		.BYTE	>[_scr_cmd16_store16]
-		.BYTE	>[_scr_cmd17_sbcs_break]
-		.BYTE	>[_scr_cmd18_sbcc_break] ; *--
-		.BYTE	>[_scr_cmd19_njsr_sw]	; *--
-_scr_dcmd_lib_lo:
-		.BYTE	<[_scr_dcmd00_spr_idx_set]
-		.BYTE	<[_scr_dcmd01_pos_x_set]
-		.BYTE	<[_scr_dcmd02_pos_y_set]
-		.BYTE	<[_scr_dcmd03_pos_x_move]
-		.BYTE	<[_scr_dcmd04_pos_y_move]
-		.BYTE	<[_scr_dcmd05_pos_x_delta]
-		.BYTE	<[_scr_dcmd06_pos_y_delta]
-		.BYTE	<[_scr_dcmd07_pos_x_delta_add]
-		.BYTE	<[_scr_dcmd08_pos_y_delta_add]
-		.BYTE	<[_scr_dcmd09_scrl_x_set] ; *--
-		.BYTE	<[_scr_dcmd0A_scrl_y_sey]
-		.BYTE	<[_scr_dcmd0B_scrl_x_move_set]	; *--
-		.BYTE	<[_scr_dcmd0C_scrl_move_y_set]
-		.BYTE	<[_scr_dcmd0D_scrl_x_move_add]	; *--
-		.BYTE	<[_scr_dcmd0E_scrl_y_move_add]	; *--
-		.BYTE	<[_scr_dcmd0F_spr_idx_inc]
-		.BYTE	<[_scr_dcmd10_spr_idx_dec]
-		.BYTE	<[_scr_dcmd11_spr_idx_add_imm]
-		.BYTE	<[_scr_dcmd12_byte_D5_add] ; *--
-		.BYTE	<[_scr_dcmd13_byte_D6_add] ; *--
-		.BYTE	<[_scr_dcmd14]
-		.BYTE	<[_scr_dcmd15]
-_scr_dcmd_lib_hi:
-		.BYTE	>[_scr_dcmd00_spr_idx_set]
-		.BYTE	>[_scr_dcmd01_pos_x_set]
-		.BYTE	>[_scr_dcmd02_pos_y_set]
-		.BYTE	>[_scr_dcmd03_pos_x_move]
-		.BYTE	>[_scr_dcmd04_pos_y_move]
-		.BYTE	>[_scr_dcmd05_pos_x_delta]
-		.BYTE	>[_scr_dcmd06_pos_y_delta]
-		.BYTE	>[_scr_dcmd07_pos_x_delta_add]
-		.BYTE	>[_scr_dcmd08_pos_y_delta_add]
-		.BYTE	>[_scr_dcmd09_scrl_x_set] ; *--
-		.BYTE	>[_scr_dcmd0A_scrl_y_sey]
-		.BYTE	>[_scr_dcmd0B_scrl_x_move_set] ; *--
-		.BYTE	>[_scr_dcmd0C_scrl_move_y_set]
-		.BYTE	>[_scr_dcmd0D_scrl_x_move_add] ; *--
-		.BYTE	>[_scr_dcmd0E_scrl_y_move_add] ; *--
-		.BYTE	>[_scr_dcmd0F_spr_idx_inc]
-		.BYTE	>[_scr_dcmd10_spr_idx_dec]
-		.BYTE	>[_scr_dcmd11_spr_idx_add_imm]
-		.BYTE	>[_scr_dcmd12_byte_D5_add] ; *--
-		.BYTE	>[_scr_dcmd13_byte_D6_add] ; *--
-		.BYTE	>[_scr_dcmd14]
-		.BYTE	>[_scr_dcmd15]
+_scmd_lib_lo:
+		CMD_IDX_LO	_scmd01_loop_begin
+		CMD_IDX_LO	_scmd02_loop_end
+		CMD_IDX_LO	_scmd03_sjmp
+		CMD_IDX_LO	_scmd04_sjsr
+		CMD_IDX_LO	_scmd05_ret
+		CMD_IDX_LO	_scmd06_delay
+		CMD_IDX_LO	_scmd07_ejsr
+		CMD_IDX_LO	_scmd08_erun
+		CMD_IDX_LO	_scmd09_nbg_hndl_set
+		CMD_IDX_LO	_scmd0A_suspend
+		CMD_IDX_LO	_scmd0B_bcs
+		CMD_IDX_LO	_scmd0C_bcc
+		CMD_IDX_LO	_scmd0D_sdisable_this
+		CMD_IDX_LO	_scmd0E_smem_alu
+		CMD_IDX_LO	_scmd0F_sarg_set
+		CMD_IDX_LO	_scmd10_nbg_hndl_reset
+		CMD_IDX_LO	_scmd11_sjmp_sw
+		CMD_IDX_LO	_scmd12_sjsr_sw
+		CMD_IDX_LO	_scmd13_store8
+		CMD_IDX_LO	_scmd14_sdisable
+		CMD_IDX_LO	_scmd15_sarg_alu
+		CMD_IDX_LO	_scmd16_store16
+		CMD_IDX_LO	_scmd17_sbcs_break
+		CMD_IDX_LO	_scmd18_sbcc_break	; unused
+		CMD_IDX_LO	_scmd19_njsr_sw		; unused
+_scmd_lib_hi:
+		CMD_IDX_HI	_scmd01_loop_begin
+		CMD_IDX_HI	_scmd02_loop_end
+		CMD_IDX_HI	_scmd03_sjmp
+		CMD_IDX_HI	_scmd04_sjsr
+		CMD_IDX_HI	_scmd05_ret
+		CMD_IDX_HI	_scmd06_delay
+		CMD_IDX_HI	_scmd07_ejsr
+		CMD_IDX_HI	_scmd08_erun
+		CMD_IDX_HI	_scmd09_nbg_hndl_set
+		CMD_IDX_HI	_scmd0A_suspend
+		CMD_IDX_HI	_scmd0B_bcs
+		CMD_IDX_HI	_scmd0C_bcc
+		CMD_IDX_HI	_scmd0D_sdisable_this
+		CMD_IDX_HI	_scmd0E_smem_alu
+		CMD_IDX_HI	_scmd0F_sarg_set
+		CMD_IDX_HI	_scmd10_nbg_hndl_reset
+		CMD_IDX_HI	_scmd11_sjmp_sw
+		CMD_IDX_HI	_scmd12_sjsr_sw
+		CMD_IDX_HI	_scmd13_store8
+		CMD_IDX_HI	_scmd14_sdisable
+		CMD_IDX_HI	_scmd15_sarg_alu
+		CMD_IDX_HI	_scmd16_store16
+		CMD_IDX_HI	_scmd17_sbcs_break
+		CMD_IDX_HI	_scmd18_sbcc_break
+		CMD_IDX_HI	_scmd19_njsr_sw
+_dcmd_lib_lo:
+		DCMD_IDX_LO	_dcmd00_spr_idx_set
+		DCMD_IDX_LO	_dcmd01_pos_x_set
+		DCMD_IDX_LO	_dcmd02_pos_y_set
+		DCMD_IDX_LO	_dcmd03_pos_x_move
+		DCMD_IDX_LO	_dcmd04_pos_y_move
+		DCMD_IDX_LO	_dcmd05_pos_x_delta
+		DCMD_IDX_LO	_dcmd06_pos_y_delta
+		DCMD_IDX_LO	_dcmd07_pos_x_delta_add
+		DCMD_IDX_LO	_dcmd08_pos_y_delta_add
+		DCMD_IDX_LO	_dcmd09_scrl_x_set		; unused
+		DCMD_IDX_LO	_dcmd0A_scrl_y_sey
+		DCMD_IDX_LO	_dcmd0B_scrl_x_move_set
+		DCMD_IDX_LO	_dcmd0C_scrl_move_y_set	; unused
+		DCMD_IDX_LO	_dcmd0D_scrl_x_move_add	; unused
+		DCMD_IDX_LO	_dcmd0E_scrl_y_move_add	; unused
+		DCMD_IDX_LO	_dcmd0F_spr_idx_inc
+		DCMD_IDX_LO	_dcmd10_spr_idx_dec
+		DCMD_IDX_LO	_dcmd11_spr_idx_add_imm
+		DCMD_IDX_LO	_dcmd12_byte_D5_add		; unused
+		DCMD_IDX_LO	_dcmd13_byte_D6_add		; unused
+		DCMD_IDX_LO	_dcmd14_pos_move_stop
+		DCMD_IDX_LO	_dcmd15_scrl_move_stop
+_dcmd_lib_hi:
+		DCMD_IDX_HI	_dcmd00_spr_idx_set
+		DCMD_IDX_HI	_dcmd01_pos_x_set
+		DCMD_IDX_HI	_dcmd02_pos_y_set
+		DCMD_IDX_HI	_dcmd03_pos_x_move
+		DCMD_IDX_HI	_dcmd04_pos_y_move
+		DCMD_IDX_HI	_dcmd05_pos_x_delta
+		DCMD_IDX_HI	_dcmd06_pos_y_delta
+		DCMD_IDX_HI	_dcmd07_pos_x_delta_add
+		DCMD_IDX_HI	_dcmd08_pos_y_delta_add
+		DCMD_IDX_HI	_dcmd09_scrl_x_set
+		DCMD_IDX_HI	_dcmd0A_scrl_y_sey
+		DCMD_IDX_HI	_dcmd0B_scrl_x_move_set
+		DCMD_IDX_HI	_dcmd0C_scrl_move_y_set
+		DCMD_IDX_HI	_dcmd0D_scrl_x_move_add
+		DCMD_IDX_HI	_dcmd0E_scrl_y_move_add
+		DCMD_IDX_HI	_dcmd0F_spr_idx_inc
+		DCMD_IDX_HI	_dcmd10_spr_idx_dec
+		DCMD_IDX_HI	_dcmd11_spr_idx_add_imm
+		DCMD_IDX_HI	_dcmd12_byte_D5_add
+		DCMD_IDX_HI	_dcmd13_byte_D6_add
+		DCMD_IDX_HI	_dcmd14_pos_move_stop
+		DCMD_IDX_HI	_dcmd15_scrl_move_stop
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd01_for_begin:
+; =============== S U B R O U T I N E =======================================
+_scmd01_loop_begin:
 		JSR		_scr_getc
 		PHA
 		LDX		_scr_cur_trd_idxw
@@ -7056,8 +7015,8 @@ _scr_cmd01_for_begin:
 		STA		_scr_trds_sp,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd02_for_end:
+; =============== S U B R O U T I N E =======================================
+_scmd02_loop_end:
 		LDX		_scr_cur_trd_idxw
 		LDY		_scr_trds_sp,X
 		DEY
@@ -7080,8 +7039,8 @@ loc_632E1:
 		STA		_scr_pc+1
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd03_sjmp:
+; =============== S U B R O U T I N E =======================================
+_scmd03_sjmp:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
@@ -7090,8 +7049,8 @@ _scr_cmd03_sjmp:
 		STA		_scr_pc
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd04_sjsr:
+; =============== S U B R O U T I N E =======================================
+_scmd04_sjsr:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
@@ -7113,8 +7072,8 @@ _scr_cmd04_sjsr:
 		STA		_scr_pc
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd05_ret:
+; =============== S U B R O U T I N E =======================================
+_scmd05_ret:
 		LDX		_scr_cur_trd_idxw
 		LDY		_scr_trds_sp,X
 		BEQ		loc_63334
@@ -7137,22 +7096,22 @@ loc_63334:
 		PLA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd06_delay:
+; =============== S U B R O U T I N E =======================================
+_scmd06_delay:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idxw
 		STA		_scr_trds_delay,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd00_spr_idx_set:
+; =============== S U B R O U T I N E =======================================
+_dcmd00_spr_idx_set:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		STA		_scr_trds_spr_idx,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd01_pos_x_set:
+; =============== S U B R O U T I N E =======================================
+_dcmd01_pos_x_set:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		STA		_scr_trds_x_pos_lo,X
@@ -7162,8 +7121,8 @@ _scr_dcmd01_pos_x_set:
 		STA		_scr_trds_x_move_clk,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd02_pos_y_set:
+; =============== S U B R O U T I N E =======================================
+_dcmd02_pos_y_set:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		STA		_scr_trds_y_pos_lo,X
@@ -7173,8 +7132,8 @@ _scr_dcmd02_pos_y_set:
 		STA		_scr_trds_y_move_clk,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd05_pos_x_delta:
+; =============== S U B R O U T I N E =======================================
+_dcmd05_pos_x_delta:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		STA		_scr_trds_x_move_speed,X
@@ -7182,8 +7141,8 @@ _scr_dcmd05_pos_x_delta:
 		STA		_scr_trds_x_move_delta,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd06_pos_y_delta:
+; =============== S U B R O U T I N E =======================================
+_dcmd06_pos_y_delta:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		STA		_scr_trds_y_move_speed,X
@@ -7191,8 +7150,8 @@ _scr_dcmd06_pos_y_delta:
 		STA		_scr_trds_y_mov_delta,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd07_pos_x_delta_add:
+; =============== S U B R O U T I N E =======================================
+_dcmd07_pos_x_delta_add:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		CLC
@@ -7205,8 +7164,8 @@ _scr_dcmd07_pos_x_delta_add:
 		STA		_scr_trds_x_move_delta,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd08_pos_y_delta_add:
+; =============== S U B R O U T I N E =======================================
+_dcmd08_pos_y_delta_add:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		CLC
@@ -7219,8 +7178,8 @@ _scr_dcmd08_pos_y_delta_add:
 		STA		_scr_trds_y_mov_delta,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd09_scrl_x_set:
+; =============== S U B R O U T I N E =======================================
+_dcmd09_scrl_x_set:
 		JSR		_scr_getc	; *--
 		STA		_ppu_scroll_pos_x ; *--
 		JSR		_scr_getc	; *--
@@ -7229,8 +7188,8 @@ _scr_dcmd09_scrl_x_set:
 		STA		_ppu_scroll_x_clk ; *--
 		JMP		_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd0A_scrl_y_sey:
+; =============== S U B R O U T I N E =======================================
+_dcmd0A_scrl_y_sey:
 		JSR		_scr_getc
 		STA		_ppu_scroll_pos_y
 		JSR		_scr_getc
@@ -7239,24 +7198,24 @@ _scr_dcmd0A_scrl_y_sey:
 		STA		_ppu_scroll_y_clk
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd0B_scrl_x_move_set:
+; =============== S U B R O U T I N E =======================================
+_dcmd0B_scrl_x_move_set:
 		JSR		_scr_getc	; *--
 		STA		_ppu_scroll_x_shift ; *--
 		JSR		_scr_getc	; *--
 		STA		_ppu_scroll_x_shift+1 ;	*--
 		JMP		_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd0C_scrl_move_y_set:
+; =============== S U B R O U T I N E =======================================
+_dcmd0C_scrl_move_y_set:
 		JSR		_scr_getc
 		STA		_ppu_scroll_y_shift
 		JSR		_scr_getc
 		STA		_ppu_scroll_y_shift+1
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd0D_scrl_x_move_add:
+; =============== S U B R O U T I N E =======================================
+_dcmd0D_scrl_x_move_add:
 		JSR		_scr_getc	; *--
 		CLC				; *--
 		ADC		_ppu_scroll_x_shift ; *--
@@ -7268,8 +7227,8 @@ _scr_dcmd0D_scrl_x_move_add:
 		STA		_ppu_scroll_x_shift+1 ;	*--
 		JMP		_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd0E_scrl_y_move_add:
+; =============== S U B R O U T I N E =======================================
+_dcmd0E_scrl_y_move_add:
 		JSR		_scr_getc	; *--
 		CLC				; *--
 		ADC		_ppu_scroll_y_shift ; *--
@@ -7281,8 +7240,8 @@ _scr_dcmd0E_scrl_y_move_add:
 		STA		_ppu_scroll_y_shift+1 ;	*--
 		JMP		_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd03_pos_x_move:
+; =============== S U B R O U T I N E =======================================
+_dcmd03_pos_x_move:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		LDY		#$00
@@ -7299,8 +7258,8 @@ loc_63447:
 		STA		_scr_trds_x_pos_hi,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd04_pos_y_move:
+; =============== S U B R O U T I N E =======================================
+_dcmd04_pos_y_move:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		CLC
@@ -7324,8 +7283,8 @@ loc_6347A:
 		STA		_scr_trds_y_pos_lo,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd12_byte_D5_add:
+; =============== S U B R O U T I N E =======================================
+_dcmd12_byte_D5_add:
 		LDX		_scr_cur_trd_idx ; *--
 		JSR		_scr_getc	; *--
 		CLC				; *--
@@ -7333,8 +7292,8 @@ _scr_dcmd12_byte_D5_add:
 		STA		_ppu_scroll_x_page ; *--
 		JMP		_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd13_byte_D6_add:
+; =============== S U B R O U T I N E =======================================
+_dcmd13_byte_D6_add:
 		LDX		_scr_cur_trd_idx ; *--
 		JSR		_scr_getc	; *--
 		CLC				; *--
@@ -7342,8 +7301,8 @@ _scr_dcmd13_byte_D6_add:
 		STA		_ppu_scroll_y_page ; *--
 		JMP		_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd14:
+; =============== S U B R O U T I N E =======================================
+_dcmd14_pos_move_stop:
 		LDX		_scr_cur_trd_idx
 		LDA		#$00
 		STA		_scr_trds_x_move_speed,X
@@ -7352,8 +7311,8 @@ _scr_dcmd14:
 		STA		_scr_trds_y_mov_delta,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd15:
+; =============== S U B R O U T I N E =======================================
+_dcmd15_scrl_move_stop:
 		LDX		_scr_cur_trd_idx
 		LDA		#$00
 		STA		_ppu_scroll_x_shift
@@ -7362,8 +7321,8 @@ _scr_dcmd15:
 		STA		_ppu_scroll_y_shift+1
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd07_ejsr:
+; =============== S U B R O U T I N E =======================================
+_scmd07_ejsr:
 		JSR		_scr_getc
 		STA		_ptr06
 		JSR		_scr_getc
@@ -7375,8 +7334,8 @@ _scr_cmd07_ejsr:
 		STA		_nsub_return_flags
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0C_bcc:
+; =============== S U B R O U T I N E =======================================
+_scmd0C_bcc:
 		LDA		_nsub_return_flags
 		PHA
 		JSR		_scr_getc
@@ -7387,19 +7346,19 @@ _scr_cmd0C_bcc:
 		LSR
 		BCS		__scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_pc_set:
 		STX		_scr_pc+1
 		LDA		_tmp0
 		STA		_scr_pc
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 __scr_pc_inc:
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0B_bcs:
+; =============== S U B R O U T I N E =======================================
+_scmd0B_bcs:
 		LDA		_nsub_return_flags
 		PHA
 		JSR		_scr_getc
@@ -7411,16 +7370,16 @@ _scr_cmd0B_bcs:
 		BCC		__scr_pc_inc
 		BCS		_scr_pc_set
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd11_sjmp_sw:
+; =============== S U B R O U T I N E =======================================
+_scmd11_sjmp_sw:
 		JSR		_scr_getc
 		JSR		_scr_pc_inc
 		CMP		_nsub_return_value
-		BCC		_scr_cmd_skip
+		BCC		_scmd_skip
 		BNE		_cmd_switch_case
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd_skip:
+; =============== S U B R O U T I N E =======================================
+_scmd_skip:
 		ASL
 		ADC		_scr_pc
 		STA		_scr_pc
@@ -7429,7 +7388,7 @@ _scr_cmd_skip:
 locret_63512:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _cmd_switch_case:
 		LDA		_nsub_return_value
 		ASL
@@ -7443,13 +7402,13 @@ _cmd_switch_case:
 		STA		_scr_pc
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd12_sjsr_sw:
+; =============== S U B R O U T I N E =======================================
+_scmd12_sjsr_sw:
 		JSR		_scr_getc
 		JSR		_scr_pc_inc
 		CMP		_nsub_return_value
-		BCC		_scr_cmd_skip
-		BEQ		_scr_cmd_skip
+		BCC		_scmd_skip
+		BEQ		_scmd_skip
 		LDX		_scr_cur_trd_idxw
 		LDY		_scr_trds_sp,X
 		INY
@@ -7466,13 +7425,13 @@ _scr_cmd12_sjsr_sw:
 		STA		_scr_trds_sp,X
 		BNE		_cmd_switch_case
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd19_njsr_sw:
+; =============== S U B R O U T I N E =======================================
+_scmd19_njsr_sw:
 		JSR		_scr_getc	; *--
 		JSR		_scr_pc_inc	; *--
 		CMP		_nsub_return_value ; *--
-		BCC		_scr_cmd_skip	; *--
-		BEQ		_scr_cmd_skip	; *--
+		BCC		_scmd_skip	; *--
+		BEQ		_scmd_skip	; *--
 		PHA				; *--
 		LDA		_nsub_return_value ; *--
 		ASL		; *--
@@ -7488,10 +7447,10 @@ _scr_cmd19_njsr_sw:
 		PLA				; *--
 		STA		_nsub_return_flags ; *--
 		PLA				; *--
-		JMP		_scr_cmd_skip	; *--
+		JMP		_scmd_skip	; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0D_sdisable_this:
+; =============== S U B R O U T I N E =======================================
+_scmd0D_sdisable_this:
 		LDA		_scr_cur_trd_idxw
 		ASL
 		TAX
@@ -7501,8 +7460,8 @@ _scr_cmd0D_sdisable_this:
 		PLA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd08_erun:
+; =============== S U B R O U T I N E =======================================
+_scmd08_erun:
 		JSR		_scr_getc
 		STA		_var0
 		JSR		_scr_getc
@@ -7525,8 +7484,8 @@ _scr_cmd08_erun:
 		STA		_scr_trds_ptr._ptr+1,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd14_sdisable:
+; =============== S U B R O U T I N E =======================================
+_scmd14_sdisable:
 		JSR		_scr_getc
 		STA		_tmp0
 		LDA		_scr_cur_trd_idx
@@ -7538,8 +7497,8 @@ _scr_cmd14_sdisable:
 		STA		_scr_trds_ptr._ptr+1,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd09_nbg_hndl_set:
+; =============== S U B R O U T I N E =======================================
+_scmd09_nbg_hndl_set:
 		LDA		_scr_cur_trd_idx
 		ASL
 		TAX
@@ -7549,27 +7508,27 @@ _scr_cmd09_nbg_hndl_set:
 		STA		_scr_trds_nbgsub_ptr+1,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0A_suspend:
+; =============== S U B R O U T I N E =======================================
+_scmd0A_suspend:
 		LDX		_scr_cur_trd_idxw
 		LDA		#$FF
 		STA		_scr_trds_delay,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd0F_spr_idx_inc:
+; =============== S U B R O U T I N E =======================================
+_dcmd0F_spr_idx_inc:
 		LDX		_scr_cur_trd_idx
 		INC		_scr_trds_spr_idx,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd10_spr_idx_dec:
+; =============== S U B R O U T I N E =======================================
+_dcmd10_spr_idx_dec:
 		LDX		_scr_cur_trd_idx
 		DEC		_scr_trds_spr_idx,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_dcmd11_spr_idx_add_imm:
+; =============== S U B R O U T I N E =======================================
+_dcmd11_spr_idx_add_imm:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CLC
@@ -7577,8 +7536,8 @@ _scr_dcmd11_spr_idx_add_imm:
 		STA		_scr_trds_spr_idx,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd15_sarg_alu:
+; =============== S U B R O U T I N E =======================================
+_scmd15_sarg_alu:
 		JSR		_scr_getc
 		TAX
 		LDA		_scr_args_list_ptr_lo,X
@@ -7590,60 +7549,60 @@ _scr_cmd15_sarg_alu:
 		STA		_ptr08+1
 		BCC		_scr_alu_exec
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0E_smem_alu:
+; =============== S U B R O U T I N E =======================================
+_scmd0E_smem_alu:
 		JSR		_scr_getc
 		STA		_ptr08
 		JSR		_scr_getc
 		STA		_ptr08+1
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_alu_exec:
 		JSR		_scr_getc
 		TAX
 		JSR		_scr_getc
 		STA		_tmp0
 		JSR		_scr_pc_inc
-		LDA		_scr_cmd0E_sub_lib_lo,X
+		LDA		_scmd0E_sub_lib_lo,X
 		STA		_ptr06
-		LDA		_scr_cmd0E_sub_lib_hi,X
+		LDA		_scmd0E_sub_lib_hi,X
 		STA		_ptr06+1
 		JMP		(_ptr06)
-_scr_cmd0E_sub_lib_lo:
-		.BYTE	<[_scr_cmd0E_and] ; *--
-		.BYTE	<[_scr_cmd0E_ora] ; *--
-		.BYTE	<[_scr_cmd0E_adc]
-_scr_cmd0E_sub_lib_hi:
-		.BYTE	>[_scr_cmd0E_and] ; *--
-		.BYTE	>[_scr_cmd0E_ora] ; *--
-		.BYTE	>[_scr_cmd0E_adc]
+_scmd0E_sub_lib_lo:
+		.BYTE	<[_scmd0E_and] ; *--
+		.BYTE	<[_scmd0E_ora] ; *--
+		.BYTE	<[_scmd0E_adc]
+_scmd0E_sub_lib_hi:
+		.BYTE	>[_scmd0E_and] ; *--
+		.BYTE	>[_scmd0E_ora] ; *--
+		.BYTE	>[_scmd0E_adc]
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 ; AND subfunction
-_scr_cmd0E_and:
+_scmd0E_and:
 		LDA		(_ptr08),Y	; *--
 		AND		_tmp0		; *--
 		STA		(_ptr08),Y	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 ; ORA subfunction
-_scr_cmd0E_ora:
+_scmd0E_ora:
 		LDA		(_ptr08),Y	; *--
 		ORA		_tmp0		; *--
 		STA		(_ptr08),Y	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0E_adc:
+; =============== S U B R O U T I N E =======================================
+_scmd0E_adc:
 		LDA		(_ptr08),Y
 		CLC
 		ADC		_tmp0
 		STA		(_ptr08),Y
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd0F_sarg_set:
+; =============== S U B R O U T I N E =======================================
+_scmd0F_sarg_set:
 		JSR		_scr_getc
 		TAX
 		LDA		_scr_args_list_ptr_lo,X
@@ -7663,8 +7622,8 @@ _scr_args_list_ptr_hi:
 		.BYTE	>[_scr_trds_args1]
 		.BYTE	>[_scr_trds_args2]
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd10_nbg_hndl_reset:
+; =============== S U B R O U T I N E =======================================
+_scmd10_nbg_hndl_reset:
 		LDA		_scr_cur_trd_idx
 		ASL
 		TAX
@@ -7674,8 +7633,8 @@ _scr_cmd10_nbg_hndl_reset:
 		STA		_scr_trds_nbgsub_ptr+1,X
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd13_store8:
+; =============== S U B R O U T I N E =======================================
+_scmd13_store8:
 		JSR		_scr_getc
 		STA		_ptr06
 		JSR		_scr_getc
@@ -7684,8 +7643,8 @@ _scr_cmd13_store8:
 		STA		(_ptr06),Y
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd16_store16:
+; =============== S U B R O U T I N E =======================================
+_scmd16_store16:
 		JSR		_scr_getc
 		STA		_ptr06
 		JSR		_scr_getc
@@ -7697,8 +7656,8 @@ _scr_cmd16_store16:
 		STA		(_ptr06),Y
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd18_sbcc_break:
+; =============== S U B R O U T I N E =======================================
+_scmd18_sbcc_break:
 		LDA		_nsub_return_flags ; *--
 		PHA				; *--
 		JSR		_scr_getc	; *--
@@ -7709,7 +7668,7 @@ _scr_cmd18_sbcc_break:
 		LSR		; *--
 		BCS		_j_scr_pc_inc	; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_break:
 		STX		_scr_pc+1
 		LDA		_tmp0
@@ -7721,12 +7680,12 @@ _scr_break:
 		STA		_scr_trds_sp,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _j_scr_pc_inc:
 		JMP		_scr_pc_inc
 
-; =============== S U B	R O U T	I N E =======================================
-_scr_cmd17_sbcs_break:
+; =============== S U B R O U T I N E =======================================
+_scmd17_sbcs_break:
 		LDA		_nsub_return_flags
 		PHA
 		JSR		_scr_getc
@@ -7738,7 +7697,7 @@ _scr_cmd17_sbcs_break:
 		BCC		_j_scr_pc_inc
 		BCS		_scr_break
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_getc:
 		INC		_scr_pc
 		BNE		loc_636DD
@@ -7747,7 +7706,7 @@ loc_636DD:
 		LDA		(_scr_pc),Y
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_pc_inc:
 		INC		_scr_pc
 		BNE		locret_636E6
@@ -7759,7 +7718,7 @@ _inv_bitmask_unref:
 _bit_mask:
 		.BYTE	$80,$40,$20,$10,$08,$04,$02,$01
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_spr_shuffle_pos:
 		LDA		_spr_buf_pos
 		CMP		#$21
@@ -7774,7 +7733,7 @@ loc_63706:
 		STA		_spr_buf_pos
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_spr_clear:
 		LDA		#$F0
 		LDY		_spr_buf_pos
@@ -7788,7 +7747,7 @@ loc_6370F:
 		BNE		loc_6370F
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_6371B:
 		STA		_tmp0
 		TYA
@@ -7801,7 +7760,7 @@ sub_6371B:
 		PLA
 		TAY
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _spr_clip_insert:
 		STX		_tmp1
 		STY		_tmp2
@@ -7879,15 +7838,15 @@ loc_637A2:
 		STX		_spr_buf_pos
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _jump_ptr_ind:
 		JMP		(_ptr06)
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _script_load_param:
 		LDX		_scr_cur_trd_idx
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _script_load_param_ex:
 		PLA
 		STA		_ptr06
@@ -7911,38 +7870,38 @@ _script_load_param_ex:
 		PLA
 		JMP		_script_load_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _scr_cur_trd_off:
 		LDX		_scr_cur_trd_idx
 		LDA		#$FF
 		STA		_scr_trds_idx,X
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_queue_reset:
 		LDA		#$00
 		STA		_ppu_queue_tail
 		STA		_ppu_queue_head
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_nmi_off:
 		LDA		_ppu_ctrl_shadow
 		AND		#$7F
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_ctrl_write:
 		STA		_PPU_CTRL
 		STA		_ppu_ctrl_shadow
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_nmi_on:
 		LDA		_ppu_ctrl_shadow
 		ORA		#$80
 		BNE		_ppu_ctrl_write
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _wait_for_nmi:
 		PHA
 		LDA		_ppu_ctrl_shadow
@@ -7965,24 +7924,24 @@ loc_63804:
 		PLA				; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_vblank_off:
 		LDA		#$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_vblank_ex:
 		JSR		_wait_for_nmi
 		STA		_PPU_MASK
 		STA		_ppu_mask_shadow
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_vblank_on:
 		LDA		_ppu_mask_req
 		JSR		_ppu_vblank_ex
 		JMP		_ppu_set_scroll
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_ptr:
 		STA		_ptr0A
 		STY		_ptr0A+1
@@ -7990,7 +7949,7 @@ _ppu_res_send_ptr:
 		STA		_var3
 		JMP		_ppu_res_send_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_ptr_repeat:
 		STA		_ptr0A
 		STY		_ptr0A+1
@@ -7998,30 +7957,30 @@ _ppu_res_send_ptr_repeat:
 		STA		_var3
 		JMP		_ppu_res_send_ex
 
-; =============== S U B	R O U T	I N E =======================================
-_ppu_res_send_param_repeat_no_ofs_0:
+; =============== S U B R O U T I N E =======================================
+_ppu_res_send_param_repeat:
 		STA		_tmp0
 		LDA		#$01
 		BNE		_ppu_res_send_param_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_param_no_ofs:
 		STA		_tmp0
 		LDA		#$02
 		BNE		_ppu_res_send_param_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_param_repeat_no_ofs:
 		STA		_tmp0
 		LDA		#$03
 		BNE		_ppu_res_send_param_ex
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_param:
 		STA		_tmp0
 		LDA		#$00
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_param_ex:
 		STA		_var3
 		STX		_tmp1
@@ -8048,7 +8007,7 @@ loc_6386C:
 		LDA		_ptr06
 		PHA
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_res_send_ex:
 		LDY		#$00
 		LDA		_var3
@@ -8238,13 +8197,13 @@ loc_63994:
 		LDY		_tmp2		; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_queue_reset_unref:
 		LDA		_ppu_queue_tail	; *--
 		STA		_ppu_queue_head	; *--
 		RTS				; *--
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_queue_putw:
 		LDA		_ppu_queue_head
 		SEC
@@ -8266,7 +8225,7 @@ loc_639AF:
 		LDX		_var4
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_queue_putc:
 		STX		_var4
 		LDX		_ppu_queue_pos
@@ -8275,13 +8234,13 @@ _ppu_queue_putc:
 		LDX		_var4
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_queue_head_update:
 		LDA		_ppu_queue_pos
 		STA		_ppu_queue_head
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_dequeue:
 		LDA		_ppu_queue_tail
 		STA		_ppu_queue_tail_tmp
@@ -8333,7 +8292,7 @@ loc_63A2A:
 locret_63A30:
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _get_input:
 		JSR		_read_pads
 		STA		_tmp1A
@@ -8354,7 +8313,7 @@ _get_input:
 		STA		_pad0_held
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _read_pads:
 		LDX		#$01
 		STX		_PAD0_REG
@@ -8374,7 +8333,7 @@ loc_63A63:
 		BNE		loc_63A63
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 sub_63A73:
 		LDX		#$00
 		LDA		#$F1
@@ -8384,7 +8343,7 @@ loc_63A77:
 		BNE		loc_63A77
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 NMI:
 		PHA
 		TXA
@@ -8442,7 +8401,7 @@ loc_63ADF:
 		PLA
 		RTI
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _ppu_set_scroll:
 		LDA		#$20
 		STA		_PPU_ADDR
@@ -8471,7 +8430,7 @@ _ppu_set_scroll:
 		STA		_PPU_SCROLL
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _mmc1_ctrl:
 		STA		_mmc1_ctrl_shadow
 		STA		$9FFF
@@ -8485,7 +8444,7 @@ _mmc1_ctrl:
 		STA		$9FFF
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _mmc1_prg_safe:
 		PHA
 		STA		_prg_bank
@@ -8530,7 +8489,7 @@ loc_63B6E:
 		PLA
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 _mmc1_prg:
 		STA		$FFF9
 		LSR
@@ -8543,7 +8502,7 @@ _mmc1_prg:
 		STA		$FFF9
 		RTS
 
-; =============== S U B	R O U T	I N E =======================================
+; =============== S U B R O U T I N E =======================================
 IRQ:
 		RTI				; *--
 _scr_flags:
@@ -8557,105 +8516,105 @@ _scr_bank_lib:
 		.BYTE	$04,$04,$03,$04,$04,$04,$04,$04,$04,$04,$04,$04,$04,$04,$03,$03
 		.BYTE	$03
 _scr_lib_lo:
-		.BYTE	<[_scr0_intro_title_select]
-		.BYTE	<[_scr1_lvl1_handler]
-		.BYTE	<[_scr2_lvl2_handler]
-		.BYTE	<[_scr3_lvl3_handler]
-		.BYTE	<[_scr4_lvl4_handler]
-		.BYTE	<[_scr5_lvl5_handler]
-		.BYTE	<[_scr6_lvl6_handler]
-		.BYTE	<[_scr7_ending]
-		.BYTE	<[_scr8_beam_player_handler]
-		.BYTE	<[_scr9_player_beam]
-		.BYTE	<[_scrA_catch_player_handler]
-		.BYTE	<[_scrB_player_catch]
-		.BYTE	<[_scrC_room_doors_handler]
-		.BYTE	<[_scrD_money_bag]
-		.BYTE	<[_scrE_empty_mine_trolley]
-		.BYTE	<[_scrF_candle]
-		.BYTE	<[_scr10_train_semaphores]
-		.BYTE	<[_scr11_lvl2_ghost_nanny]
-		.BYTE	<[_scr12_exit_arrow]
-		.BYTE	<[_scr13_slow_moving_slime]
-		.BYTE	<[_scr14_fast_moving_slime]
-		.BYTE	<[_scr15_trolley_kick_slime]
-		.BYTE	<[_scr16_still_throw_forward_slime]
-		.BYTE	<[_scr17_runner]
-		.BYTE	<[_scr18_chain_saw]
-		.BYTE	<[_scr19_toilet_snake]
-		.BYTE	<[_scr1A_lvl1_boss_judges]
-		.BYTE	<[_scr1B_court_chair]
-		.BYTE	<[_scr1C_girl_and_floaters]
-		.BYTE	<[_scr1D_air_hammer_miner]
-		.BYTE	<[_scr1E_pick_axe_miner]
-		.BYTE	<[_scr1F_hammer_miner]
-		.BYTE	<[_scr20_trolley_miner]
-		.BYTE	<[_scr21_train_ghost]
-		.BYTE	<[_scr22_lvl2_boss_train_slime]
-		.BYTE	<[_scr23_halloween]
-		.BYTE	<[_scr24_flying_wing_elephant]
-		.BYTE	<[_scr25_stinging_wing_elephant]
-		.BYTE	<[_scr26_sword_ninja]
-		.BYTE	<[_scr27_shuriken_ninja]
-		.BYTE	<[_scr28_pink_goo]
-		.BYTE	<[_scr29_sewer_worm]
-		.BYTE	<[_scr2A_morning_star_troll]
-		.BYTE	<[_scr2B_still_throw_ballistic_slime]
-		.BYTE	<[_scr2C_fast_moving_throw_forward_slime]
-		.BYTE	<[_scr2D_rotator]
-		.BYTE	<[_scr2E_lvl4_boss_dragons]
-		.BYTE	<[_scr2F_lvl5_boss_key_keeper]
-		.BYTE	<[_scr30_lvl6_boss_vega]
+		SCR_IDX_LO	_scr0_intro_title_select
+		SCR_IDX_LO	_scr1_lvl1_handler
+		SCR_IDX_LO	_scr2_lvl2_handler
+		SCR_IDX_LO	_scr3_lvl3_handler
+		SCR_IDX_LO	_scr4_lvl4_handler
+		SCR_IDX_LO	_scr5_lvl5_handler
+		SCR_IDX_LO	_scr6_lvl6_handler
+		SCR_IDX_LO	_scr7_ending
+		SCR_IDX_LO	_scr8_beam_player_handler
+		SCR_IDX_LO	_scr9_player_beam
+		SCR_IDX_LO	_scrA_catch_player_handler
+		SCR_IDX_LO	_scrB_player_catch
+		SCR_IDX_LO	_scrC_room_doors_handler
+		SCR_IDX_LO	_scrD_money_bag
+		SCR_IDX_LO	_scrE_empty_mine_trolley
+		SCR_IDX_LO	_scrF_candle
+		SCR_IDX_LO	_scr10_train_semaphores
+		SCR_IDX_LO	_scr11_lvl2_ghost_nanny
+		SCR_IDX_LO	_scr12_exit_arrow
+		SCR_IDX_LO	_scr13_slow_moving_slime
+		SCR_IDX_LO	_scr14_fast_moving_slime
+		SCR_IDX_LO	_scr15_trolley_kick_slime
+		SCR_IDX_LO	_scr16_still_throw_forward_slime
+		SCR_IDX_LO	_scr17_runner
+		SCR_IDX_LO	_scr18_chain_saw
+		SCR_IDX_LO	_scr19_toilet_snake
+		SCR_IDX_LO	_scr1A_lvl1_boss_judges
+		SCR_IDX_LO	_scr1B_court_chair
+		SCR_IDX_LO	_scr1C_girl_and_floaters
+		SCR_IDX_LO	_scr1D_air_hammer_miner
+		SCR_IDX_LO	_scr1E_pick_axe_miner
+		SCR_IDX_LO	_scr1F_hammer_miner
+		SCR_IDX_LO	_scr20_trolley_miner
+		SCR_IDX_LO	_scr21_train_ghost
+		SCR_IDX_LO	_scr22_lvl2_boss_train_slime
+		SCR_IDX_LO	_scr23_halloween
+		SCR_IDX_LO	_scr24_flying_wing_elephant
+		SCR_IDX_LO	_scr25_stinging_wing_elephant
+		SCR_IDX_LO	_scr26_sword_ninja
+		SCR_IDX_LO	_scr27_shuriken_ninja
+		SCR_IDX_LO	_scr28_pink_goo
+		SCR_IDX_LO	_scr29_sewer_worm
+		SCR_IDX_LO	_scr2A_morning_star_troll
+		SCR_IDX_LO	_scr2B_still_throw_ballistic_slime
+		SCR_IDX_LO	_scr2C_fast_moving_throw_forward_slime
+		SCR_IDX_LO	_scr2D_rotator
+		SCR_IDX_LO	_scr2E_lvl4_boss_dragons
+		SCR_IDX_LO	_scr2F_lvl5_boss_key_keeper
+		SCR_IDX_LO	_scr30_lvl6_boss_vega
 _scr_lib_hi:
-		.BYTE	>[_scr0_intro_title_select]
-		.BYTE	>[_scr1_lvl1_handler]
-		.BYTE	>[_scr2_lvl2_handler]
-		.BYTE	>[_scr3_lvl3_handler]
-		.BYTE	>[_scr4_lvl4_handler]
-		.BYTE	>[_scr5_lvl5_handler]
-		.BYTE	>[_scr6_lvl6_handler]
-		.BYTE	>[_scr7_ending]
-		.BYTE	>[_scr8_beam_player_handler]
-		.BYTE	>[_scr9_player_beam]
-		.BYTE	>[_scrA_catch_player_handler]
-		.BYTE	>[_scrB_player_catch]
-		.BYTE	>[_scrC_room_doors_handler]
-		.BYTE	>[_scrD_money_bag]
-		.BYTE	>[_scrE_empty_mine_trolley]
-		.BYTE	>[_scrF_candle]
-		.BYTE	>[_scr10_train_semaphores]
-		.BYTE	>[_scr11_lvl2_ghost_nanny]
-		.BYTE	>[_scr12_exit_arrow]
-		.BYTE	>[_scr13_slow_moving_slime]
-		.BYTE	>[_scr14_fast_moving_slime]
-		.BYTE	>[_scr15_trolley_kick_slime]
-		.BYTE	>[_scr16_still_throw_forward_slime]
-		.BYTE	>[_scr17_runner]
-		.BYTE	>[_scr18_chain_saw]
-		.BYTE	>[_scr19_toilet_snake]
-		.BYTE	>[_scr1A_lvl1_boss_judges]
-		.BYTE	>[_scr1B_court_chair]
-		.BYTE	>[_scr1C_girl_and_floaters]
-		.BYTE	>[_scr1D_air_hammer_miner]
-		.BYTE	>[_scr1E_pick_axe_miner]
-		.BYTE	>[_scr1F_hammer_miner]
-		.BYTE	>[_scr20_trolley_miner]
-		.BYTE	>[_scr21_train_ghost]
-		.BYTE	>[_scr22_lvl2_boss_train_slime]
-		.BYTE	>[_scr23_halloween]
-		.BYTE	>[_scr24_flying_wing_elephant]
-		.BYTE	>[_scr25_stinging_wing_elephant]
-		.BYTE	>[_scr26_sword_ninja]
-		.BYTE	>[_scr27_shuriken_ninja]
-		.BYTE	>[_scr28_pink_goo]
-		.BYTE	>[_scr29_sewer_worm]
-		.BYTE	>[_scr2A_morning_star_troll]
-		.BYTE	>[_scr2B_still_throw_ballistic_slime]
-		.BYTE	>[_scr2C_fast_moving_throw_forward_slime]
-		.BYTE	>[_scr2D_rotator]
-		.BYTE	>[_scr2E_lvl4_boss_dragons]
-		.BYTE	>[_scr2F_lvl5_boss_key_keeper]
-		.BYTE	>[_scr30_lvl6_boss_vega]
+		SCR_IDX_HI	_scr0_intro_title_select
+		SCR_IDX_HI	_scr1_lvl1_handler
+		SCR_IDX_HI	_scr2_lvl2_handler
+		SCR_IDX_HI	_scr3_lvl3_handler
+		SCR_IDX_HI	_scr4_lvl4_handler
+		SCR_IDX_HI	_scr5_lvl5_handler
+		SCR_IDX_HI	_scr6_lvl6_handler
+		SCR_IDX_HI	_scr7_ending
+		SCR_IDX_HI	_scr8_beam_player_handler
+		SCR_IDX_HI	_scr9_player_beam
+		SCR_IDX_HI	_scrA_catch_player_handler
+		SCR_IDX_HI	_scrB_player_catch
+		SCR_IDX_HI	_scrC_room_doors_handler
+		SCR_IDX_HI	_scrD_money_bag
+		SCR_IDX_HI	_scrE_empty_mine_trolley
+		SCR_IDX_HI	_scrF_candle
+		SCR_IDX_HI	_scr10_train_semaphores
+		SCR_IDX_HI	_scr11_lvl2_ghost_nanny
+		SCR_IDX_HI	_scr12_exit_arrow
+		SCR_IDX_HI	_scr13_slow_moving_slime
+		SCR_IDX_HI	_scr14_fast_moving_slime
+		SCR_IDX_HI	_scr15_trolley_kick_slime
+		SCR_IDX_HI	_scr16_still_throw_forward_slime
+		SCR_IDX_HI	_scr17_runner
+		SCR_IDX_HI	_scr18_chain_saw
+		SCR_IDX_HI	_scr19_toilet_snake
+		SCR_IDX_HI	_scr1A_lvl1_boss_judges
+		SCR_IDX_HI	_scr1B_court_chair
+		SCR_IDX_HI	_scr1C_girl_and_floaters
+		SCR_IDX_HI	_scr1D_air_hammer_miner
+		SCR_IDX_HI	_scr1E_pick_axe_miner
+		SCR_IDX_HI	_scr1F_hammer_miner
+		SCR_IDX_HI	_scr20_trolley_miner
+		SCR_IDX_HI	_scr21_train_ghost
+		SCR_IDX_HI	_scr22_lvl2_boss_train_slime
+		SCR_IDX_HI	_scr23_halloween
+		SCR_IDX_HI	_scr24_flying_wing_elephant
+		SCR_IDX_HI	_scr25_stinging_wing_elephant
+		SCR_IDX_HI	_scr26_sword_ninja
+		SCR_IDX_HI	_scr27_shuriken_ninja
+		SCR_IDX_HI	_scr28_pink_goo
+		SCR_IDX_HI	_scr29_sewer_worm
+		SCR_IDX_HI	_scr2A_morning_star_troll
+		SCR_IDX_HI	_scr2B_still_throw_ballistic_slime
+		SCR_IDX_HI	_scr2C_fast_moving_throw_forward_slime
+		SCR_IDX_HI	_scr2D_rotator
+		SCR_IDX_HI	_scr2E_lvl4_boss_dragons
+		SCR_IDX_HI	_scr2F_lvl5_boss_key_keeper
+		SCR_IDX_HI	_scr30_lvl6_boss_vega
 _spr_raw_lib_lo:
 		.BYTE	<[_spr_raw_lib00]
 		.BYTE	<[_spr_raw_lib01]
@@ -8663,7 +8622,7 @@ _spr_raw_lib_lo:
 		.BYTE	<[_spr_raw_lib01]
 		.BYTE	<[_spr_raw_lib01]
 		.BYTE	<[_spr_raw_lib01]
-		.BYTE	<[_spr_raw_lib01] ; *--
+		.BYTE	<[_spr_raw_lib01]
 		.BYTE	<[_spr_raw_lib07]
 		.BYTE	<[_spr_raw_lib08]
 		.BYTE	<[_spr_raw_lib09]
@@ -8713,7 +8672,7 @@ _spr_raw_lib_hi:
 		.BYTE	>[_spr_raw_lib01]
 		.BYTE	>[_spr_raw_lib01]
 		.BYTE	>[_spr_raw_lib01]
-		.BYTE	>[_spr_raw_lib01] ; *--
+		.BYTE	>[_spr_raw_lib01]
 		.BYTE	>[_spr_raw_lib07]
 		.BYTE	>[_spr_raw_lib08]
 		.BYTE	>[_spr_raw_lib09]
@@ -8756,7 +8715,7 @@ _spr_raw_lib_hi:
 		.BYTE	>[_spr_raw_lib1A]
 		.BYTE	>[_spr_raw_lib1A]
 		.BYTE	>[_spr_raw_lib1A]
-_spr_lib_lo:
+_spr_res_lib_lo:
 		.BYTE	$87		; *--
 		.BYTE	$D6		; *--
 		.BYTE	$D6		; *--
@@ -8764,7 +8723,7 @@ _spr_lib_lo:
 		.BYTE	$D6		; *--
 		.BYTE	$D6		; *--
 		.BYTE	$D6		; *--
-		.BYTE	<[_spr_lib07]
+		.BYTE	<[_spr_res_lib07]
 		.BYTE	$73		; *--
 		.BYTE	$D3		; *--
 		.BYTE	$73		; *--
@@ -8772,41 +8731,41 @@ _spr_lib_lo:
 		.BYTE	$D6		; *--
 		.BYTE	$D6		; *--
 		.BYTE	$52		; *--
-		.BYTE	<[_spr_lib0F]	; *--
-		.BYTE	<[_spr_lib0F]	; *--
-		.BYTE	<[_spr_lib11]	; *--
+		.BYTE	<[_spr_res_lib0F]	; *--
+		.BYTE	<[_spr_res_lib0F]	; *--
+		.BYTE	<[_spr_res_lib11]	; *--
 		.BYTE	$73		; *--
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
-		.BYTE	<[_spr_lib11]	; *--
-		.BYTE	<[_spr_lib11]	; *--
-		.BYTE	<[_spr_lib11]	; *--
-		.BYTE	<[_spr_lib1A]	; *--
+		.BYTE	<[_spr_res_lib11]	; *--
+		.BYTE	<[_spr_res_lib11]	; *--
+		.BYTE	<[_spr_res_lib11]	; *--
+		.BYTE	<[_spr_res_lib1A]	; *--
 		.BYTE	$52		; *--
-		.BYTE	<[_spr_lib11]	; *--
-		.BYTE	$52		; *--
-		.BYTE	$52		; *--
+		.BYTE	<[_spr_res_lib11]	; *--
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
-		.BYTE	<[_spr_lib0F]
-		.BYTE	<[_spr_lib0F]
-		.BYTE	<[_spr_lib0F]
-		.BYTE	<[_spr_lib0F]	; *--
-		.BYTE	<[_spr_lib0F]	; *--
-		.BYTE	<[_spr_lib0F]
-		.BYTE	<[_spr_lib0F]	; *--
-		.BYTE	<[_spr_lib11]
 		.BYTE	$52		; *--
 		.BYTE	$52		; *--
-		.BYTE	<[_spr_lib0F]	; *--
-		.BYTE	<[_spr_lib1A]	; *--
-		.BYTE	<[_spr_lib1A]	; *--
-		.BYTE	<[_spr_lib1A]
-_spr_lib_hi:
+		.BYTE	<[_spr_res_lib0F]
+		.BYTE	<[_spr_res_lib0F]
+		.BYTE	<[_spr_res_lib0F]
+		.BYTE	<[_spr_res_lib0F]	; *--
+		.BYTE	<[_spr_res_lib0F]	; *--
+		.BYTE	<[_spr_res_lib0F]
+		.BYTE	<[_spr_res_lib0F]	; *--
+		.BYTE	<[_spr_res_lib11]
+		.BYTE	$52		; *--
+		.BYTE	$52		; *--
+		.BYTE	<[_spr_res_lib0F]	; *--
+		.BYTE	<[_spr_res_lib1A]	; *--
+		.BYTE	<[_spr_res_lib1A]	; *--
+		.BYTE	<[_spr_res_lib1A]
+_spr_res_lib_hi:
 		.BYTE	$92		; *--
 		.BYTE	$A9		; *--
 		.BYTE	$A9		; *--
@@ -8814,7 +8773,7 @@ _spr_lib_hi:
 		.BYTE	$A9		; *--
 		.BYTE	$A9		; *--
 		.BYTE	$A9		; *--
-		.BYTE	>[_spr_lib07]
+		.BYTE	>[_spr_res_lib07]
 		.BYTE	$D7		; *--
 		.BYTE	$D7		; *--
 		.BYTE	$D7		; *--
@@ -8822,40 +8781,41 @@ _spr_lib_hi:
 		.BYTE	$A9		; *--
 		.BYTE	$A9		; *--
 		.BYTE	$94		; *--
-		.BYTE	>[_spr_lib0F]	; *--
-		.BYTE	>[_spr_lib0F]	; *--
-		.BYTE	>[_spr_lib11]	; *--
+		.BYTE	>[_spr_res_lib0F]	; *--
+		.BYTE	>[_spr_res_lib0F]	; *--
+		.BYTE	>[_spr_res_lib11]	; *--
 		.BYTE	$D7		; *--
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
-		.BYTE	>[_spr_lib11]	; *--
-		.BYTE	>[_spr_lib11]	; *--
-		.BYTE	>[_spr_lib11]	; *--
-		.BYTE	>[_spr_lib1A]	; *--
+		.BYTE	>[_spr_res_lib11]	; *--
+		.BYTE	>[_spr_res_lib11]	; *--
+		.BYTE	>[_spr_res_lib11]	; *--
+		.BYTE	>[_spr_res_lib1A]	; *--
 		.BYTE	$94		; *--
-		.BYTE	>[_spr_lib11]	; *--
-		.BYTE	$94		; *--
-		.BYTE	$94		; *--
+		.BYTE	>[_spr_res_lib11]	; *--
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
-		.BYTE	>[_spr_lib0F]
-		.BYTE	>[_spr_lib0F]
-		.BYTE	>[_spr_lib0F]
-		.BYTE	>[_spr_lib0F]	; *--
-		.BYTE	>[_spr_lib0F]	; *--
-		.BYTE	>[_spr_lib0F]
-		.BYTE	>[_spr_lib0F]	; *--
-		.BYTE	>[_spr_lib11]
 		.BYTE	$94		; *--
 		.BYTE	$94		; *--
-		.BYTE	>[_spr_lib0F]	; *--
-		.BYTE	>[_spr_lib1A]	; *--
-		.BYTE	>[_spr_lib1A]	; *--
-		.BYTE	>[_spr_lib1A]
+		.BYTE	>[_spr_res_lib0F]
+		.BYTE	>[_spr_res_lib0F]
+		.BYTE	>[_spr_res_lib0F]
+		.BYTE	>[_spr_res_lib0F]	; *--
+		.BYTE	>[_spr_res_lib0F]	; *--
+		.BYTE	>[_spr_res_lib0F]
+		.BYTE	>[_spr_res_lib0F]	; *--
+		.BYTE	>[_spr_res_lib11]
+		.BYTE	$94		; *--
+		.BYTE	$94		; *--
+		.BYTE	>[_spr_res_lib0F]	; *--
+		.BYTE	>[_spr_res_lib1A]	; *--
+		.BYTE	>[_spr_res_lib1A]	; *--
+		.BYTE	>[_spr_res_lib1A]
+
 off_63D0D:
 		.BYTE	<[_spr_raw_lib08_0A]
 		.BYTE	<[_spr_raw_lib08_09]
