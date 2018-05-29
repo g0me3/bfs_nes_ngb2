@@ -128,6 +128,10 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 		.WORD	{1}
 	ENDM
 
+	MAC	NARGI
+		.BYTE	{1}_idx
+	ENDM
+
 	MAC	NARGB
 		.BYTE	{0}
 	ENDM
@@ -187,14 +191,17 @@ SARG2	EQU	2
 	MAC	SJMP_SW
 		.BYTE	_scmd11_sjmp_sw_idx
 		.BYTE	{1}
+_SW_START	SET	.
 	ENDM
 
 	MAC	SJSR_SW
 		.BYTE	_scmd12_sjsr_sw_idx
 		.BYTE	{1}
+_SW_START	SET	.
 	ENDM
 
 	MAC	SCASE
+{1}_idx	SET	[[.-_SW_START]>>1]
 		.WORD	{1}
 	ENDM
 

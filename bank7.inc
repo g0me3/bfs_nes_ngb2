@@ -352,8 +352,8 @@ _scr_hit_anim:
 _scr_602CB:
 		POS_X_SET		0,$40,$00
 		POS_Y_SET		0,$C8,$02
-		SARG_SET		$00,$00
-		SARG_SET		$01,$40
+		SARG_SET		SARG0,$00
+		SARG_SET		SARG1,$40
 		NJSR			_nsub_605E8
 		SUSPEND
 
@@ -372,7 +372,7 @@ _scr_602DB:
 _scr_602EE:
 		NJSR			_nsub_605E8
 		SDELAY			$78
-		SARG_SET		$01,$80
+		SARG_SET		SARG1,$80
 		POS_Y_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$F0
 		SARG_ALU		$00,_ADC,$01
@@ -1520,7 +1520,7 @@ _spr_raw_lib08_AB:
 ; =============== S C R I P T ===============================================
 _scr9_player_beam:
 		NBG_HNDL_SET	_nbgsub_60CA3
-		SARG_SET		$00,$FF
+		SARG_SET		SARG0,$FF
 		SLOOP_BEGIN		$14
 		NJSR			_nsub_60CE0
 		SDELAY			$01
@@ -1920,8 +1920,8 @@ _scrA_catch_player_handler:
 _scr_60FCB:
 		POS_X_SET		0,$30,$00
 		POS_Y_SET		0,$C8,$02
-		SARG_SET		$00,$00
-		SARG_SET		$01,$40
+		SARG_SET		SARG0,$00
+		SARG_SET		SARG1,$40
 		NJSR			_nsub_610B9
 		SUSPEND
 
@@ -1940,7 +1940,7 @@ _scr_60FDB:
 _scr_60FEE:
 		NJSR			_nsub_610B9
 		SDELAY			$78
-		SARG_SET		$01,$80
+		SARG_SET		SARG1,$80
 		POS_Y_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$F0
 		SARG_ALU		$00,_ADC,$01
@@ -2472,7 +2472,7 @@ _nsub_61347:
 
 ; =============== S C R I P T ===============================================
 _scrB_player_catch:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_61379
 		NJSR			_nsub_613C5
 _sloc_61357:
@@ -3875,7 +3875,7 @@ loc_61CF6:
 		LDA		(_lvl_objects_ptr),Y
 		CMP		_cur_room_sequence_idx
 		BNE		_ld1_exit
-		LDA		_counters
+		LDA		_pal_fade_req_list
 		BMI		_ld1_exit
 		LDA		_near_room_door_data_pos
 		BPL		_ld1_exit
@@ -4393,7 +4393,7 @@ _unused_unref_0:
 		.BYTE	$23,$27,$27,$23	; *--
 
 ; =============== S U B R O U T I N E =======================================
-sub_6204A:
+_scroll_page_set:
 		PHA
 		AND		#$01
 		STA		_ppu_scroll_pos_x+1
@@ -4413,27 +4413,27 @@ _unref_6:
 		RTS				; *--
 
 ; =============== S U B R O U T I N E =======================================
-_unref_7:
+_init_pal_fade_unused:
 		LDX		#$07		; *--
 loc_62063:
 		; *--
-		STA		_counters,X
+		STA		_pal_fade_req_list,X
 		DEX				; *--
 		BPL		loc_62063	; *--
 		RTS				; *--
 
 ; =============== S U B R O U T I N E =======================================
-sub_62069:
+_pal_patch_fade:
 		STA		_ptr06
 		STX		_ptr06+1
 		TYA
 		PHA
 		ASL
 		ASL
-		ADC		#_pal_buf
+		ADC		#<[_pal_buf]
 		STA		_ptr08
 		LDA		#$00
-		ADC		#$00
+		ADC		#>[_pal_buf]
 		STA		_ptr08+1
 		LDY		#$03
 loc_6207D:
@@ -4457,13 +4457,13 @@ loc_6208A:
 		ASL
 		ASL
 		PHA
-		ADC		#_pal_buf
+		ADC		#<[_pal_buf]
 		STA		_ptr06
 		LDA		#$00
-		ADC		#$00
+		ADC		#>[_pal_buf]
 		STA		_ptr06+1
 		LDY		#$00
-		LDA		_counters,X
+		LDA		_pal_fade_req_list,X
 		BMI		loc_620D2
 		CMP		#$05
 		BCC		loc_620AF
@@ -4573,14 +4573,14 @@ loc_62137:
 		BPL		loc_62137
 
 ; =============== S U B R O U T I N E =======================================
-sub_62141:
+_full_pal_fade:
 		LDY		#$00
 loc_62143:
 		TYA
 		LSR
 		LSR
 		TAX
-		LDA		_counters,X
+		LDA		_pal_fade_req_list,X
 		BMI		loc_6217A
 		CMP		#$05
 		BCC		loc_62151
@@ -4998,45 +4998,45 @@ _far_prg6_apu_snd_load:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_init_counters:
+_nsub_pal_fade:
 		JSR		_scr_getc
 		LDY		#$07
 loc_62688:
-		STA		_counters,Y
+		STA		_pal_fade_req_list,Y
 		DEY
 		BPL		loc_62688
-		JMP		sub_62141
+		JMP		_full_pal_fade
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_counters_inc:
+_nsub_pal_fade_req_inc_by_mask:
 		JSR		_scr_getc
 		STA		_var0
 		LDX		#$07
 loc_62698:
 		LSR		_var0
 		BCC		loc_6269E
-		INC		_counters,X
+		INC		_pal_fade_req_list,X
 loc_6269E:
 		DEX
 		BPL		loc_62698
-		JMP		sub_62141
+		JMP		_full_pal_fade
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_counters_dec:
+_nsub_pal_fade_req_dec_by_mask:
 		JSR		_scr_getc
 		STA		_var0
 		LDX		#$07
 loc_626AB:
 		LSR		_var0
 		BCC		loc_626B1
-		DEC		_counters,X
+		DEC		_pal_fade_req_list,X
 loc_626B1:
 		DEX
 		BPL		loc_626AB
-		JMP		sub_62141
+		JMP		_full_pal_fade
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_626B7:
+_nsub_pal_patch_fade:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
@@ -5048,7 +5048,7 @@ _nsub_626B7:
 		PLA
 		TAY
 		LDA		_tmp0
-		JMP		sub_62069
+		JMP		_pal_patch_fade
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_bg_pal_load:
@@ -5167,9 +5167,9 @@ _far_prg0_tlm_lib_unpack:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62775:
+_nsub_scroll_page_set:
 		JSR		_scr_getc
-		JMP		sub_6204A
+		JMP		_scroll_page_set
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_mmc1_mirror_horizontal:
@@ -5254,7 +5254,7 @@ loc_627B7:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_arg12_load_data_ofs:
+_nsub_sarg01_load_data_ofs:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		STA		_scr_trds_args0,X
@@ -6171,31 +6171,31 @@ loc_62D90:
 		JMP		_scr_cur_trd_off
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_62D93:
-		NJSR			_nsub_init_counters
-			NARGB		$FC
-		SDELAY			$01
-		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_inc
-			NARGB		$FF
-		SDELAY			$03
-		SLOOP_END
+_ssub_pal_fade_in:
+		NJSR			_nsub_pal_fade					; fast shut down the palette in one
+			NARGB		$FC								; call, FC=max fade out speed
+		SDELAY			$01								; wait for buffers flush
+		SLOOP_BEGIN		$04								; now send pal fade reqests 4 times
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; with increasing negative fade out value
+			NARGB		$FF								; FD->FE->FF->00 (note, inc goes before fade)
+		SDELAY			$03								; 3 frames of delay for fade effect
+		SLOOP_END										; when finish, a full palette is loaded
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_62DA3:
-		NJSR			_nsub_init_counters
-			NARGB		$00
-		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_dec
-			NARGB		$FF
+_ssub_pal_fade_out:
+		NJSR			_nsub_pal_fade					; same with fade out, but starts from
+			NARGB		$00								; applying current palette at full bright
+		SLOOP_BEGIN		$04								; then decreasing the fade depth to make
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; fade it out.
+			NARGB		$FF								; FF->FE->FD->FC (note, dec goes before fade)
 		SDELAY			$03
 		SLOOP_END
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DB1:
-		NJSR			_nsub_init_counters
+		NJSR			_nsub_pal_fade
 			NARGB		$FC
 
 ; FALLTHROUGH!
@@ -6204,7 +6204,7 @@ _ssub_62DB1:
 _ssub_62DB5:
 		SDELAY			$01
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_inc
+		NJSR			_nsub_pal_fade_req_inc_by_mask
 			NARGB		$FF
 		SDELAY			$03
 		SLOOP_END
@@ -6213,14 +6213,14 @@ _ssub_62DB5:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DC5:
-		NJSR			_nsub_init_counters
+		NJSR			_nsub_pal_fade
 			NARGB		$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DC9:
 		STORE8			_scr_trds_priority_mode,$01
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_dec
+		NJSR			_nsub_pal_fade_req_dec_by_mask
 			NARGB		$FF
 		SDELAY			$03
 		SLOOP_END
@@ -6892,6 +6892,9 @@ loc_63240:
 		LDX		_scr_cur_trd_idxw
 		DEC		_scr_trds_delay,X
 		RTS
+; NOTE: there are two sets of script comands. this block describes
+; the immediate opcodes, executed immediately and continue code flow
+; after that.
 _scmd_lib_lo:
 		CMD_IDX_LO	_scmd01_loop_begin
 		CMD_IDX_LO	_scmd02_loop_end
@@ -6944,6 +6947,12 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd17_sbcs_break
 		CMD_IDX_HI	_scmd18_sbcc_break
 		CMD_IDX_HI	_scmd19_njsr_sw
+; NOTE: every opcode in this block has additional parameter of delay
+; command is executed then script delayed for a number of frames from
+; 1 to 7. if delay 0 selected, then there is no delay there.
+; delay means that current script will skip selected amount of frames
+; after execution. for sprite management this means setting of this
+; sprite will be applied and shown for selected amont of time.
 _dcmd_lib_lo:
 		DCMD_IDX_LO	_dcmd00_spr_idx_set
 		DCMD_IDX_LO	_dcmd01_pos_x_set
@@ -8446,14 +8455,14 @@ _mmc1_ctrl:
 
 ; =============== S U B R O U T I N E =======================================
 _mmc1_prg_safe:
-		PHA
-		STA		_prg_bank
-		LDA		_mmc1_busy
-		PHA
-		LDA		#$01
-		STA		_mmc1_busy
-		LDA		_prg_bank
-		STA		$FFF9
+		PHA								; very safe bank switching routine and
+		STA		_prg_bank				; very SLOOOOOW because of that sometimes
+		LDA		_mmc1_busy				; backup busy flag, however thechnically
+		PHA								; no one else set it, so we basicly just
+		LDA		#$01					; save zero then restore it, thus clear it again
+		STA		_mmc1_busy				; set our own busy flag, now when nmi
+		LDA		_prg_bank				; occurs, it will skip any mapper operations
+		STA		$FFF9					; this includes calling apu player routine
 		LSR
 		STA		$FFF9
 		LSR
@@ -8463,13 +8472,13 @@ _mmc1_prg_safe:
 		LSR
 		STA		$FFF9
 		PLA
-		STA		_mmc1_busy
-		LDA		_apu_play_delayed_req
-		BEQ		loc_63B6E
-		LDA		#$00
-		STA		_apu_play_delayed_req
-		TXA
-		PHA
+		STA		_mmc1_busy				; so after changing the bank here, we need to
+		LDA		_apu_play_delayed_req	; test if nmi occurs in the middle of process
+		BEQ		loc_63B6E				; if yes, then we need to call apu player manually
+		LDA		#$00					; this preventing music from slow downs when
+		STA		_apu_play_delayed_req	; frames skipped.
+		TXA								; also backup current X,Y registers here
+		PHA								; to not to break something in caller code
 		TYA
 		PHA
 		LDA		_prg_cur_bank
@@ -8491,7 +8500,7 @@ loc_63B6E:
 
 ; =============== S U B R O U T I N E =======================================
 _mmc1_prg:
-		STA		$FFF9
+		STA		$FFF9					; fastest raw routine to switch banks in mmc1
 		LSR
 		STA		$FFF9
 		LSR
@@ -8504,9 +8513,13 @@ _mmc1_prg:
 
 ; =============== S U B R O U T I N E =======================================
 IRQ:
-		RTI				; *--
+		RTI
+
+; NOTE: flags used to additionally load external arguments for selected script
+; index. bits 80, 40 and 20 are corresponds to ARG0, ARG1, ARG2 additionally
+; loaded values.
 _scr_flags:
-		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$80,$40,$00 ;	*--
+		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$80,$40,$00
 		.BYTE	$00,$00,$60,$00,$00,$00,$00,$00,$00,$00,$20,$40,$00,$00,$00,$00
 		.BYTE	$40,$80,$00,$00,$40,$40,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00

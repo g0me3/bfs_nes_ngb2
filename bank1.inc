@@ -120,7 +120,7 @@ _sloc_14104:
 			NARGB		$F8,$03,$40,$02
 		SBCC			_sloc_14104
 		SJSR			_ssub_62DC5
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
 			NARGW		byte_14354
 		NJSR			_nsub_mmc1_chr0_set
@@ -874,7 +874,7 @@ loc_147FC:
 		TAX
 		PLA
 		LDY		#$02
-		JSR		sub_62069
+		JSR		_pal_patch_fade
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_1480E:
@@ -1071,7 +1071,7 @@ _sjmp_case_149BE:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data18
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		SJSR			_ssub_62DB1
@@ -1117,7 +1117,7 @@ _sjmp_case_14A2E:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data19
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data19
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15175
 		SJSR			_ssub_62DB1
@@ -1205,7 +1205,7 @@ _sjmp_case_14B13:
 			NARGB		$01,$04,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1253,7 +1253,7 @@ _sjmp_case_14B83:
 			NARGB		$01,$06,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15175
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1344,7 +1344,7 @@ _sjmp_case_14C68:
 			NARGB		$01,$07,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1392,7 +1392,7 @@ _sjmp_case_14CD8:
 			NARGB		$01,$01,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15175
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1483,7 +1483,7 @@ _sjmp_case_14DBF:
 			NARGB		$01,$00,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1531,7 +1531,7 @@ _sjmp_case_14E2F:
 			NARGB		$01,$02,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15175
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1622,7 +1622,7 @@ _sjmp_case_14F19:
 			NARGB		$01,$03,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1670,7 +1670,7 @@ _sjmp_case_14F89:
 			NARGB		$01,$05,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1805,7 +1805,7 @@ _sjmp_case_150CD:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data28
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15175
 		SJSR			_ssub_62DB1
@@ -2276,7 +2276,7 @@ _nbgsub_15534:
 		TAX
 		PLA
 		LDY		#$03
-		JSR		sub_62069
+		JSR		_pal_patch_fade
 		INC		_scr_trds_args0
 		LDA		_scr_trds_args0
 		CMP		#$06
@@ -2427,7 +2427,7 @@ _sjmp_case_15691:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data36
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
 			NARGW		byte_15D35
 		SJSR			_ssub_62DB1
@@ -2832,7 +2832,7 @@ _sjmp_case_15A37:
 			NARGB		$02,$00,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -2872,7 +2872,7 @@ _sjmp_case_15A91:
 			NARGB		$00,$01,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15D39
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -3023,7 +3023,7 @@ _sjmp_case_15BE7:
 			NARGB		$02,$04,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15D3D
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -3063,7 +3063,7 @@ _sjmp_case_15C41:
 			NARGB		$00,$03,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$18
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_15D39
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -3221,7 +3221,7 @@ _sjmp_case_15DA1:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data4A
 		SDELAY			$01
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_inc
+		NJSR			_nsub_pal_fade_req_inc_by_mask
 			NARGB		$DD
 		SDELAY			$03
 		SLOOP_END
@@ -3350,7 +3350,7 @@ loc_15EA2:
 		LDA		_pad0_pressed
 		AND		#$10
 		BEQ		loc_15EA2
-		JSR		sub_62141
+		JSR		_full_pal_fade
 		JSR		sub_6290C
 		PLA
 		JSR		_mmc1_chr1_set
@@ -3448,11 +3448,11 @@ _scr_15F56:
 		NJSR			_nsub_62BB1
 			NARGB		$80,$7C
 		SPR_IDX_SET		0,$17
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_15FD6
 		SDELAY			$78
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_dec
+		NJSR			_nsub_pal_fade_req_dec_by_mask
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
@@ -3461,7 +3461,7 @@ _scr_15F56:
 		NJSR			_nsub_pause_info_display
 		NJSR			_nsub_bg_pal_load
 			NARGW		byte_15FC3
-		NJSR			_nsub_62775
+		NJSR			_nsub_scroll_page_set
 			NARGB		$00
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$7C,$00
@@ -3472,12 +3472,12 @@ _scr_15F56:
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$05
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_counters_inc
+		NJSR			_nsub_pal_fade_req_inc_by_mask
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
 		SDELAY			$F0
-		SJSR			_ssub_62DA3
+		SJSR			_ssub_pal_fade_out
 		STORE8			_game_flags,$80
 		SSTOP
 byte_15FC3:
@@ -3504,7 +3504,7 @@ loc_15FE3:
 		INX
 		CPX		#$04
 		BCC		loc_15FE3
-		JSR		sub_62141
+		JSR		_full_pal_fade
 		INC		_scr_trds_args0
 		LDA		_scr_trds_args0
 		CMP		#$0E
@@ -3616,10 +3616,10 @@ _scr_16111:
 			NARGB		$05
 		NJSR			_nsub_full_pal_load
 			NARGW		byte_16176
-		NJSR			_nsub_62775
+		NJSR			_nsub_scroll_page_set
 			NARGB		$00
 		NJSR			_nsub_game_over_draw
-		SJSR			_ssub_62D93
+		SJSR			_ssub_pal_fade_in
 		STORE8			_apu_var402,$FF
 		NJSR			_nsub_apu_mus_load
 			NARGB		$02
@@ -3646,7 +3646,7 @@ _sloc_16146:
 _sloc_16162:
 		SDELAY			$F0
 		SDELAY			$3C
-		SJSR			_ssub_62DA3
+		SJSR			_ssub_pal_fade_out
 		SSTOP
 
 ; =============== S C R I P T ===============================================
@@ -3654,7 +3654,7 @@ _scr_1616A:
 		SDELAY			$01
 		NJSR			_nsub_16213
 		SBCC			_scr_1616A
-		SJSR			_ssub_62DA3
+		SJSR			_ssub_pal_fade_out
 		SSTOP
 byte_16176:
 		.BYTE	$0F,$30,$15,$03,$0F,$30,$10,$0F,$0F,$37,$27,$17,$0F,$0F,$0F,$0F
@@ -4555,14 +4555,14 @@ _spr_raw_lib01_0A:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_1675D:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 _sloc_16760:
 		NJSR			_nsub_16787
 		SJMP			_sloc_16774
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16766:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 _sloc_16769:
 		NJSR			_nsub_apu_snd_load
 			NARGB		$07
@@ -4647,12 +4647,12 @@ _spr_raw_lib01_0B:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167CA:
-		SARG_SET		$00,$01
+		SARG_SET		SARG0,$01
 		SJMP			_sloc_16760
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167D0:
-		SARG_SET		$00,$01
+		SARG_SET		SARG0,$01
 		SJMP			_sloc_16769
 byte_167D6:
 		.BYTE	$4E,$98
@@ -4661,12 +4661,12 @@ byte_167D8:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167DA:
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 		SJMP			_sloc_16760
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167E0:
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 		SJMP			_sloc_16769
 byte_167E6:
 		.BYTE	$51,$9B
@@ -4675,12 +4675,12 @@ byte_167E8:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167EA:
-		SARG_SET		$00,$03
+		SARG_SET		SARG0,$03
 		SJMP			_sloc_16760
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167F0:
-		SARG_SET		$00,$03
+		SARG_SET		SARG0,$03
 		SJMP			_sloc_16769
 byte_167F6:
 		.BYTE	$22,$98		; *--
@@ -4912,12 +4912,12 @@ _spr_unref_2:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_16966:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 _sloc_16969:
 		SDELAY			$01
 		NJSR			_nsub_prize_sequence_completed_test
 		SBCC			_sloc_16969
-		SARG_SET		$02,$1E
+		SARG_SET		SARG2,$1E
 		NBG_HNDL_SET	_nbgsub_money_bag_collision_test
 _sloc_16977:
 		SPR_IDX_SET		2,$19

@@ -142,7 +142,7 @@ _nsub_return_flags:
 		.BYTE	0
 _nsub_return_value:
 		.BYTE	0
-_counters:
+_pal_fade_req_list:
 		.BYTE	0,0,0,0,0,0,0,0
 _pal_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

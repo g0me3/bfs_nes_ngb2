@@ -74,7 +74,7 @@ _scr_38068:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_38079:
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3807C:
 		SJSR			_ssub_3808C
 		NJSR			_nsub_62BFD
@@ -94,12 +94,12 @@ _ssub_3808C:
 
 ; =============== S C R I P T ===============================================
 _scr_38096:
-		SARG_SET		$01,$10
+		SARG_SET		SARG1,$10
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3809C:
-		SARG_SET		$01,$12
+		SARG_SET		SARG1,$12
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -347,7 +347,7 @@ _scr15_trolley_kick_slime:
 			NARGB		$00,$FF
 		SJMP_SW			$01
 		SCASE			_sjmp_case_3832C
-		SARG_SET		$01,$40
+		SARG_SET		SARG1,$40
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$05
 		SPR_IDX_SET		1,$FF
@@ -412,7 +412,7 @@ locret_3832B:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3832C:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_38338
 		POS_X_DELTA_SET 0,$00,$02
 		SPR_IDX_SET		0,$14
@@ -501,7 +501,7 @@ locret_383C1:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_383C2:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_383DA
 		NJSR			_nsub_628D1
 			NARGB		$80,$01
@@ -567,7 +567,7 @@ _scr1B_court_chair:
 		SPR_IDX_SET		1,$25
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-		SARG_SET		$02,$00
+		SARG_SET		SARG2,$00
 		NBG_HNDL_SET	_nbgsub_38477
 _sloc_38442:
 		SPR_IDX_SET		0,$25
@@ -750,7 +750,7 @@ _sloc_385BC:
 ; =============== S C R I P T ===============================================
 _scr_385D4:
 		NBG_HNDL_SET	_nbgsub_38636
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_385DA:
 		SPR_IDX_SET		1,$2D
 		SPR_IDX_SET		1,$2F
@@ -768,12 +768,12 @@ _sloc_385DA:
 
 ; =============== S C R I P T ===============================================
 _scr_385F6:
-		SARG_SET		$01,$30
+		SARG_SET		SARG1,$30
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_385FC:
-		SARG_SET		$01,$32
+		SARG_SET		SARG1,$32
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -876,7 +876,7 @@ _scr1E_pick_axe_miner:
 		SPR_IDX_SET		1,$36
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-		SARG_SET		$01,$80
+		SARG_SET		SARG1,$80
 
 ; !FALLTHROUGH!
 
@@ -921,7 +921,7 @@ _sloc_38739:
 ; =============== S C R I P T ===============================================
 _scr_3873C:
 		NBG_HNDL_SET	_nbgsub_3877C
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_38742:
 		SJSR			_ssub_3875C
 		NJSR			_nsub_62BFD
@@ -1125,7 +1125,7 @@ _scr1F_hammer_miner:
 		SPR_IDX_SET		1,$46
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-		SARG_SET		$01,$80
+		SARG_SET		SARG1,$80
 
 ; !FALLTHROUGH!
 
@@ -1170,7 +1170,7 @@ _sloc_389C0:
 ; =============== S C R I P T ===============================================
 _scr_389C3:
 		NBG_HNDL_SET	_nbgsub_38A03
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_389C9:
 		SJSR			_ssub_389E3
 		NJSR			_nsub_62BFD
@@ -1514,7 +1514,7 @@ _sloc_38D16:
 		SJMP			_sloc_38D16
 _sloc_38D2C:
 		NBG_HNDL_RESET
-		SARG_SET		$00,$80
+		SARG_SET		SARG0,$80
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_6273D
 			NARGB		$58,$40
@@ -1539,7 +1539,7 @@ _scr_38D4B:
 		NJSR			_nsub_script_start
 			NARGB		$0E,$00,$00,$00,$00
 		NBG_HNDL_SET	_nbgsub_38D93
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_38D59:
 		SJSR			_ssub_38D73
 		NJSR			_nsub_62BFD
@@ -1696,7 +1696,7 @@ _scr21_train_ghost:
 		SJMP_SW			$01
 		SCASE			_sjmp_case_390BD
 		NJSR			_nsub_38FB5
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NJSR			_nsub_380D2
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
@@ -1759,7 +1759,7 @@ _sloc_38F4F:
 ; =============== S C R I P T ===============================================
 _scr_38F51:
 		NBG_HNDL_SET	_nbgsub_38F9B
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_38F57:
 		SJSR			_ssub_38F71
 		NJSR			_nsub_62BFD
@@ -1783,12 +1783,12 @@ _ssub_38F71:
 
 ; =============== S C R I P T ===============================================
 _scr_38F79:
-		SARG_SET		$01,$76
+		SARG_SET		SARG1,$76
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_38F7F:
-		SARG_SET		$01,$78
+		SARG_SET		SARG1,$78
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -1933,7 +1933,7 @@ _spr_raw_lib0E_79:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_390BD:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_390D9
 		NJSR			_nsub_390E6
 		NJSR			_nsub_628D1
@@ -2049,7 +2049,7 @@ locret_39172:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_39173:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3919C
 		NJSR			_nsub_391A6
 		SRUN			$01,_scr_39194
@@ -2258,7 +2258,7 @@ locret_392FE:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_392FF:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_39315
 		NJSR			_nsub_391A6
 		NJSR			_nsub_628D1
@@ -2483,7 +2483,7 @@ _sloc_3949D:
 ; =============== S C R I P T ===============================================
 _scr_394A8:
 		NBG_HNDL_SET	_nbgsub_394F4
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_394AE:
 		SJSR			_ssub_394C8
 		NJSR			_nsub_62BFD
@@ -2507,12 +2507,12 @@ _ssub_394C8:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_394D2:
-		SARG_SET		$01,$04
+		SARG_SET		SARG1,$04
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_394D8:
-		SARG_SET		$01,$06
+		SARG_SET		SARG1,$06
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -2792,7 +2792,7 @@ _ssub_39746:
 ; =============== S C R I P T ===============================================
 _scr_3974F:
 		NBG_HNDL_SET	_nbgsub_3979B
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_39755:
 		SJSR			_ssub_3976F
 		NJSR			_nsub_62BFD
@@ -2816,12 +2816,12 @@ _ssub_3976F:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_39779:
-		SARG_SET		$01,$08
+		SARG_SET		SARG1,$08
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3977F:
-		SARG_SET		$01,$0A
+		SARG_SET		SARG1,$0A
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -3096,7 +3096,7 @@ _sloc_399E9:
 ; =============== S C R I P T ===============================================
 _scr_39A04:
 		NBG_HNDL_SET	_nbgsub_39A44
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_39A0A:
 		SJSR			_ssub_39A24
 		NJSR			_nsub_62BFD
@@ -3274,7 +3274,7 @@ _spr_res_lib0F_23_A:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_39B86:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_39BED
 		NJSR			_nsub_604CD
 		SJMP_SW			$04
@@ -3444,7 +3444,7 @@ _scr26_sword_ninja:
 		SDELAY			$01
 		NJSR			_nsub_39DA9
 		SBCS			_scr26_sword_ninja
-		SARG_SET		$01,$80
+		SARG_SET		SARG1,$80
 		SJSR			_ssub_39D36
 		NBG_HNDL_SET	_nbgsub_39D79
 		NJSR			_nsub_62CC4
@@ -3505,7 +3505,7 @@ _ssub_39D36:
 ; =============== S C R I P T ===============================================
 _scr_39D43:
 		NBG_HNDL_SET	_nbgsub_39D8F
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_39D49:
 		SJSR			_ssub_39D63
 		NJSR			_nsub_62BFD
@@ -3529,12 +3529,12 @@ _ssub_39D63:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_39D6D:
-		SARG_SET		$01,$32
+		SARG_SET		SARG1,$32
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_39D73:
-		SARG_SET		$01,$34
+		SARG_SET		SARG1,$34
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -3803,7 +3803,7 @@ _ssub_39FE1:
 ; =============== S C R I P T ===============================================
 _scr_39FEE:
 		NBG_HNDL_SET	_nbgsub_39D8F
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_39FF4:
 		SJSR			_ssub_39D63
 		NJSR			_nsub_62BFD
@@ -3917,7 +3917,7 @@ _spr_raw_lib0F_41:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3A120:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3A134
 		NJSR			_nsub_628D1
 			NARGB		$00,$02
@@ -4025,7 +4025,7 @@ _sjsr_case_3A1D7:
 ; =============== S C R I P T ===============================================
 _scr_3A1E4:
 		NBG_HNDL_SET	_nbgsub_3A228
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3A1EA:
 		SPR_IDX_SET		1,$E8
 		SPR_IDX_SET		1,$46
@@ -4043,12 +4043,12 @@ _sloc_3A1EA:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3A206:
-		SARG_SET		$01,$47
+		SARG_SET		SARG1,$47
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3A20C:
-		SARG_SET		$01,$49
+		SARG_SET		SARG1,$49
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -4237,7 +4237,7 @@ _sloc_3A335:
 ; =============== S C R I P T ===============================================
 _scr_3A340:
 		NBG_HNDL_SET	_nbgsub_3A3B4
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3A346:
 		SPR_IDX_SET		1,$4B
 		SPR_IDX_SET		1,$4E
@@ -4256,7 +4256,7 @@ _sloc_3A346:
 ; =============== S C R I P T ===============================================
 _scr_3A362:
 		NBG_HNDL_SET	_nbgsub_3A3E4
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3A368:
 		SPR_IDX_SET		1,$54
 		SPR_IDX_SET		1,$57
@@ -4275,22 +4275,22 @@ _sloc_3A368:
 
 ; =============== S C R I P T ===============================================
 _scr_3A386:
-		SARG_SET		$01,$4F
+		SARG_SET		SARG1,$4F
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3A38C:
-		SARG_SET		$01,$51
+		SARG_SET		SARG1,$51
 		SJMP			_sloc_62E02
 
 ; =============== S C R I P T ===============================================
 _scr_3A392:
-		SARG_SET		$01,$58
+		SARG_SET		SARG1,$58
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3A398:
-		SARG_SET		$01,$5A
+		SARG_SET		SARG1,$5A
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -4493,7 +4493,7 @@ _spr_raw_lib0F_52:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3A515:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3A531
 		NJSR			_nsub_3A53B
 		NJSR			_nsub_628D1
@@ -4590,7 +4590,7 @@ _sloc_3A5AB:
 ; =============== S C R I P T ===============================================
 _scr_3A5B5:
 		NBG_HNDL_SET	_nbgsub_3A5F9
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3A5BB:
 		SPR_IDX_SET		1,$66
 		SPR_IDX_SET		1,$62
@@ -4608,12 +4608,12 @@ _sloc_3A5BB:
 
 ; =============== S C R I P T ===============================================
 _scr_3A5D7:
-		SARG_SET		$01,$67
+		SARG_SET		SARG1,$67
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3A5DD:
-		SARG_SET		$01,$69
+		SARG_SET		SARG1,$69
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -5005,7 +5005,7 @@ _spr_res_lib0F:
 
 ; =============== S C R I P T ===============================================
 _scr17_runner:
-		SARG_SET		$01,$80
+		SARG_SET		SARG1,$80
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$0C
 		SPR_IDX_SET		1,$FF
@@ -5078,7 +5078,7 @@ _sjmp_case_3A960:
 ; =============== S C R I P T ===============================================
 _scr_3A978:
 		NBG_HNDL_SET	_nbgsub_3AA31
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3A97E:
 		SJSR			_ssub_3A998
 		NJSR			_nsub_62BFD
@@ -5104,12 +5104,12 @@ _ssub_3A998:
 
 ; =============== S C R I P T ===============================================
 _scr_3A9A7:
-		SARG_SET		$01,$18
+		SARG_SET		SARG1,$18
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3A9AD:
-		SARG_SET		$01,$1A
+		SARG_SET		SARG1,$1A
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -5439,7 +5439,7 @@ _ssub_3ACA6:
 ; =============== S C R I P T ===============================================
 _scr_3ACB4:
 		NBG_HNDL_SET	_nbgsub_3AD00
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3ACBA:
 		SJSR			_ssub_3ACD4
 		NJSR			_nsub_62BFD
@@ -5463,12 +5463,12 @@ _ssub_3ACD4:
 
 ; =============== S C R I P T ===============================================
 _scr_3ACDE:
-		SARG_SET		$01,$30
+		SARG_SET		SARG1,$30
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3ACE4:
-		SARG_SET		$01,$32
+		SARG_SET		SARG1,$32
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -5771,7 +5771,7 @@ _sjmp_case_3B003:
 ; =============== S C R I P T ===============================================
 _scr_3B01D:
 		NBG_HNDL_SET	_nbgsub_3B061
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3B023:
 		SPR_IDX_SET		1,$3D
 		SPR_IDX_SET		1,$3C
@@ -5789,12 +5789,12 @@ _sloc_3B023:
 
 ; =============== S C R I P T ===============================================
 _scr_3B03F:
-		SARG_SET		$01,$3E
+		SARG_SET		SARG1,$3E
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3B045:
-		SARG_SET		$01,$40
+		SARG_SET		SARG1,$40
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -6005,7 +6005,7 @@ _scr_3B24C:
 ; =============== S C R I P T ===============================================
 _scr_3B255:
 		NBG_HNDL_SET	_nbgsub_3B297
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3B25B:
 		SPR_IDX_SET		1,$C9
 		SPR_IDX_INC		1
@@ -6023,12 +6023,12 @@ _sloc_3B25B:
 
 ; =============== S C R I P T ===============================================
 _scr_3B275:
-		SARG_SET		$01,$42
+		SARG_SET		SARG1,$42
 		SJMP			_sloc_62E25
 
 ; =============== S C R I P T ===============================================
 _scr_3B27B:
-		SARG_SET		$01,$42
+		SARG_SET		SARG1,$42
 		SJMP			_sloc_62E2C
 
 ; =============== S U B R O U T I N E =======================================
@@ -6287,7 +6287,7 @@ _spr_raw_lib11_43:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3B4E6:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3B4FE
 		SPR_IDX_SET		2,$44
 		SLOOP_BEGIN		$05
@@ -6393,10 +6393,10 @@ _scr1C_girl_and_floaters:
 		SCASE			_sjmp_case_3B71F
 		SCASE			_sjmp_case_3B9C4
 		SCASE			_sjmp_case_3BA43
-		NJSR			_nsub_626B7
+		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
 			NARGW		byte_3B6D6
-		SARG_SET		$01,$00
+		SARG_SET		SARG1,$00
 		NJSR			_nsub_script_start
 			NARGB		$1C,$E0,$00,$01,$00
 		NJSR			_nsub_obj_sarg_set_from_nsub_return_value
@@ -6435,7 +6435,7 @@ _sloc_3B634:
 ; =============== S C R I P T ===============================================
 _scr_3B65D:
 		NBG_HNDL_SET	_nbgsub_3B6FC
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3B663:
 		SJSR			_ssub_3B67D
 		NJSR			_nsub_62BFD
@@ -6459,12 +6459,12 @@ _ssub_3B67D:
 
 ; =============== S C R I P T ===============================================
 _scr_3B687:
-		SARG_SET		$01,$58
+		SARG_SET		SARG1,$58
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3B68D:
-		SARG_SET		$01,$5A
+		SARG_SET		SARG1,$5A
 		SJMP			_sloc_62E02
 
 ; =============== S C R I P T ===============================================
@@ -6570,7 +6570,7 @@ locret_3B71E:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3B71F:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$4C
 		SPR_IDX_SET		1,$FF
@@ -6603,7 +6603,7 @@ _sloc_3B72C:
 ; =============== S C R I P T ===============================================
 _scr_3B755:
 		NBG_HNDL_SET	_nbgsub_3B6FC
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3B75B:
 		SJSR			_ssub_3B67D
 		NJSR			_nsub_62BFD
@@ -6821,7 +6821,7 @@ _spr_raw_lib11_65:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3B9C4:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 _sloc_3B9C7:
 		SPR_IDX_SET		6,$66
 		SPR_IDX_INC		6
@@ -6875,7 +6875,7 @@ _spr_raw_lib11_6B:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3BA43:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3BAC9
 _sloc_3BA49:
 		SDELAY			$01
@@ -6918,7 +6918,7 @@ _sjsr_case_3BA87:
 ; =============== S C R I P T ===============================================
 _scr_3BA93:
 		NBG_HNDL_SET	_nbgsub_3BADF
-		SARG_SET		$00,$02
+		SARG_SET		SARG0,$02
 _sloc_3BA99:
 		SJSR			_ssub_3BAB3
 		NJSR			_nsub_62BFD
@@ -6942,12 +6942,12 @@ _ssub_3BAB3:
 
 ; =============== S C R I P T ===============================================
 _scr_3BABD:
-		SARG_SET		$01,$78
+		SARG_SET		SARG1,$78
 		SJMP			_sloc_62DD7
 
 ; =============== S C R I P T ===============================================
 _scr_3BAC3:
-		SARG_SET		$01,$7A
+		SARG_SET		SARG1,$7A
 		SJMP			_sloc_62E02
 
 ; =============== S U B R O U T I N E =======================================
@@ -7197,7 +7197,7 @@ _spr_raw_lib11_83:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3BC8A:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$A0,$02
 		SLOOP_BEGIN		$0F
@@ -7218,7 +7218,7 @@ _spr_raw_lib11_85:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3BCAF:
-		SARG_SET		$00,$00
+		SARG_SET		SARG0,$00
 		POS_X_SET		0,$70,$00
 		POS_Y_SET		0,$00,$02
 		POS_Y_DELTA_SET 0,$40,$01
