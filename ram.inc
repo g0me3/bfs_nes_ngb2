@@ -97,7 +97,7 @@ _ppu_scroll_pos_x:
 		.BYTE	0,0
 _ppu_scroll_pos_y:
 		.BYTE	0,0
-_new_scr_started_flag:
+_trds_manager_restart_flag:
 		.BYTE	0
 _scr_trds_exec_req:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0  ; запрос на исполнение и флаг	уже исполненного треда,
@@ -185,9 +185,9 @@ _tmp_var0:
 		.BYTE	0
 _tmp_var1:
 		.BYTE	0
-_scr_trds_priority_mode:
+_scr_trds_pause_mode:
 		.BYTE	0
-_scr_trds_priority_enable:
+_scr_trds_out_of_screen_test:
 		.BYTE	0
 
 		ECHO "-------------"
@@ -347,6 +347,7 @@ _scr_trds_sp:
 _scr_trds_delay:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0  ; thread suspend for	a given	number of clocks
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0
+
 		_ttrd _scr_trds_ptr
 		_ttrd _scr_trds_ptr1
 		_ttrd _scr_trds_ptr2
@@ -361,6 +362,7 @@ _scr_trds_delay:
 		_ttrd _scr_trds_ptrB
 		_ttrd _scr_trds_ptrC
 		_ttrd _scr_trds_ptrD
+
 _scr_trds_stack:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -84,14 +84,14 @@ _MAIN_ENTRY:
 		JSR		sub_61FFC
 		JSR		_scr_trds_list_reset
 		LDA		#$00
-		JSR		_script_event_start
+		JSR		_event_thread_start
 		LDA		#$00
-		STA		_scr_trds_priority_mode
-		STA		_scr_trds_priority_enable
+		STA		_scr_trds_pause_mode
+		STA		_scr_trds_out_of_screen_test
 loc_600AF:
 		JSR		_wait_for_nmi
 		JSR		_ppu_spr_shuffle_pos
-		JSR		_scr_trds_manager
+		JSR		_threads_manager
 		JSR		_ppu_spr_clear
 		LDA		_scr_trds_idx
 		BPL		loc_600AF
@@ -123,7 +123,7 @@ _MAIN_GAME_LOOP:
 		LDA		_scores_to_next_live_max+1
 		STA		_scores_to_next_live+1
 		LDA		#$01
-		STA		_scr_trds_priority_enable
+		STA		_scr_trds_out_of_screen_test
 		LDA		#$04
 		SEC
 		SBC		_difficulty
@@ -134,13 +134,13 @@ loc_60112:
 		JSR		_scr_trds_list_reset
 		LDX		_level
 		LDA		_lvl_scripts_list,X
-		JSR		_script_event_start
+		JSR		_event_thread_start
 loc_60123:
 		JSR		_wait_for_nmi
 		LDA		#$00
 		STA		_cur_room_doors_cnt
 		JSR		_ppu_spr_shuffle_pos
-		JSR		_scr_trds_manager
+		JSR		_threads_manager
 		JSR		_ppu_spr_clear
 		JSR		_obj_exit_arrow_activate_test
 		JSR		sub_60166
@@ -160,6 +160,7 @@ loc_60123:
 loc_6015A:
 		BNE		_MAIN_GAME_LOOP
 		JMP		_MAIN_ENTRY
+
 _lvl_scripts_list:
 		.BYTE	$01,$02,$03,$04,$05,$06,$07
 
@@ -309,10 +310,10 @@ _spr_raw_lib08_AE:
 		.BYTE	$06,$8D,$80,$FC
 
 ; =============== S C R I P T ===============================================
-_scr8_beam_player_handler:
+_scr08_beam_player_handler:
 		STORE8			_collision_flag,$00
 		STORE8			_player_inv_timer,$00
-		STORE16	_tmp7B1,$180
+		STORE16			_tmp7B1,$180
 		NJSR			_nsub_603A2
 _sloc_6028E:
 		NJSR			_nsub_mcmp
@@ -366,7 +367,7 @@ _scr_602DB:
 		SDELAY			$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		SJMP			_scr8_beam_player_handler
+		SJMP			_scr08_beam_player_handler
 
 ; =============== S C R I P T ===============================================
 _scr_602EE:
@@ -394,7 +395,7 @@ _nbgsub_collision_flag_test:
 		LDA		_collision_flag
 		LSR
 		BCC		loc_60316
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_hit_anim
 		RTS
 loc_60316:
@@ -485,7 +486,7 @@ _nsub_player_hit_action:
 		DEC		_lives
 		BNE		loc_603B7
 		LDX		#$00
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_16111
 		SEC
 		RTS
@@ -898,7 +899,7 @@ _player_beam_obj_insert_test:
 		LDA		#$04
 		STA		_var5
 		LDA		#$09
-		JSR		_script_load
+		JSR		_thread_lib_load
 locret_60622:
 		RTS
 
@@ -1518,7 +1519,7 @@ _spr_raw_lib08_AB:
 		.BYTE	$F8,$2C,$00,$F6
 
 ; =============== S C R I P T ===============================================
-_scr9_player_beam:
+_scr09_player_beam:
 		NBG_HNDL_SET	_nbgsub_60CA3
 		SARG_SET		SARG0,$FF
 		SLOOP_BEGIN		$14
@@ -1907,11 +1908,11 @@ _spr_raw_lib09_0F:
 		.BYTE	$F4,$7C,$81,$F4
 
 ; =============== S C R I P T ===============================================
-_scrA_catch_player_handler:
+_scr0A_catch_player_handler:
 		STORE8			_tmp7AF,$00
 		STORE8			_tmp7BB,$02
 		STORE8			_tmp7BC,$18
-		STORE16	_tmp7B3,$180
+		STORE16			_tmp7B3,$180
 		NJSR			_nsub_61347
 		NBG_HNDL_SET	_nbgsub_ingame_player_control
 		SUSPEND
@@ -1934,7 +1935,7 @@ _scr_60FDB:
 		SDELAY			$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		SJMP			_scrA_catch_player_handler
+		SJMP			_scr0A_catch_player_handler
 
 ; =============== S C R I P T ===============================================
 _scr_60FEE:
@@ -2036,7 +2037,7 @@ _player_catch_obj_insert_test:
 		LDA		#$06
 		STA		_var5
 		LDA		#$0B
-		JSR		_script_load
+		JSR		_thread_lib_load
 		LDA		#$01
 		JMP		_far_prg6_apu_snd_load
 locret_610A9:
@@ -2471,7 +2472,7 @@ _nsub_61347:
 		RTS
 
 ; =============== S C R I P T ===============================================
-_scrB_player_catch:
+_scr0B_player_catch:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_61379
 		NJSR			_nsub_613C5
@@ -2533,7 +2534,7 @@ loc_613B5:
 		LDA		_scr_trds_y_pos_hi+5
 		SBC		#$00
 		STA		_scr_trds_y_pos_hi,X
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_61365
 locret_613C4:
 		RTS
@@ -3886,7 +3887,6 @@ loc_61D0D:
 		INC		_lvl_room_checkpoint_idx
 		BNE		loc_61D6A
 _assert_error:
-		; *--
 		JMP		_assert_error
 loc_61D19:
 		STA		_tmp0
@@ -3933,7 +3933,7 @@ loc_61D53:
 		LDA		#$0A
 		STA		_var5
 		LDA		_tmp0
-		JSR		_script_load
+		JSR		_thread_lib_load
 		PLA
 		TAY
 		BCS		_ld1_exit
@@ -4057,7 +4057,7 @@ loc_61E13:
 		STA		_scr_trds_args0,X
 		STX		_scr_trds_args0+3
 		LDX		#$03
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_60C91
 		SEC
 		RTS
@@ -4998,7 +4998,7 @@ _far_prg6_apu_snd_load:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_pal_fade:
+_nsub_full_pal_fade_set:
 		JSR		_scr_getc
 		LDY		#$07
 loc_62688:
@@ -5087,19 +5087,19 @@ _nsub_626F1:
 
 ; =============== S U B R O U T I N E =======================================
 ; arg2
-_nsub_thread_disable_unref:
-		JSR		_scr_getc	; *--
-		PHA				; *--
-		JSR		_scr_getc	; *--
-		STA		_tmp0		; *--
-		PLA				; *--
-		ASL		; *--
-		ADC		_tmp0		; *--
-		ASL		; *--
-		TAX				; *--
-		LDA		#$00		; *--
-		STA		_scr_trds_ptr._ptr+1,X ; *--
-		RTS				; *--
+_nsub_trd_scr_disable_unref:
+		JSR		_scr_getc
+		PHA
+		JSR		_scr_getc
+		STA		_tmp0
+		PLA
+		ASL
+		ADC		_tmp0
+		ASL
+		TAX
+		LDA		#$00
+		STA		_scr_trds_ptr+1,X
+		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_obj_delay_set_from_sarg:
@@ -5203,7 +5203,7 @@ _nsub_mmc1_prg_set_unused:
 		JMP		_mmc1_prg_safe	; *--
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_script_start:
+_nsub_new_thread_start:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		PHA
@@ -5243,7 +5243,7 @@ loc_627B7:
 		PLA
 		TAX
 		PLA
-		JSR		_script_load_enemy_ex
+		JSR		_thread_lib_load_enemy_ex
 		TXA
 		LSR
 		LSR
@@ -5263,7 +5263,13 @@ _nsub_sarg01_load_data_ofs:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_script_chain_start:
+; get the pointer to chain data in current thread's ARG0/ARG1 parameters,
+; reload given thread with the same lib idx as a new scripts with selected
+; arguments from data, also get the position and delays there.
+; so this routine will create a number of copies of the current thread with
+; predefined parameters.
+;
+_nsub_chain_thread_lib_load_enemy:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		STA		_ptr06
@@ -5319,7 +5325,7 @@ loc_62822:
 		PLA
 		TAX
 		PLA
-		JMP		_script_load_enemy_ex
+		JMP		_thread_lib_load_enemy_ex
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_obj_sarg_add_imm_test:
@@ -5824,7 +5830,7 @@ loc_62BA4:
 		BCC		loc_62B9B
 _nsub_62BA9:
 		LDX		#$00
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_15F56
 locret_62BB0:
 		RTS
@@ -5917,7 +5923,7 @@ _nsub_ingame_collision_watch_start:
 		LDA		#$03
 		STA		_var5
 		LDA		#$08
-		JMP		_script_load
+		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E =======================================
 sub_62C2E:
@@ -5937,7 +5943,7 @@ _nsub_ingame_player_control_start:
 		LDA		#$05
 		STA		_var5
 		LDA		#$0A
-		JMP		_script_load
+		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_62C49:
@@ -6078,7 +6084,7 @@ _nsub_62CF3:
 		LDX		#$02
 		LDA		_scr_trds_spr_idx,X
 		PHA
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_60306
 		PLA
 		LDX		#$02
@@ -6086,7 +6092,7 @@ _nsub_62CF3:
 		LDX		#$04
 		LDA		_scr_trds_spr_idx,X
 		PHA
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_60306
 		PLA
 		LDX		#$04
@@ -6172,7 +6178,7 @@ loc_62D90:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_pal_fade_in:
-		NJSR			_nsub_pal_fade					; fast shut down the palette in one
+		NJSR			_nsub_full_pal_fade_set			; fast shut down the palette in one
 			NARGB		$FC								; call, FC=max fade out speed
 		SDELAY			$01								; wait for buffers flush
 		SLOOP_BEGIN		$04								; now send pal fade reqests 4 times
@@ -6184,7 +6190,7 @@ _ssub_pal_fade_in:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_pal_fade_out:
-		NJSR			_nsub_pal_fade					; same with fade out, but starts from
+		NJSR			_nsub_full_pal_fade_set			; same with fade out, but starts from
 			NARGB		$00								; applying current palette at full bright
 		SLOOP_BEGIN		$04								; then decreasing the fade depth to make
 		NJSR			_nsub_pal_fade_req_dec_by_mask	; fade it out.
@@ -6195,7 +6201,7 @@ _ssub_pal_fade_out:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DB1:
-		NJSR			_nsub_pal_fade
+		NJSR			_nsub_full_pal_fade_set
 			NARGB		$FC
 
 ; FALLTHROUGH!
@@ -6208,17 +6214,19 @@ _ssub_62DB5:
 			NARGB		$FF
 		SDELAY			$03
 		SLOOP_END
-		STORE8			_scr_trds_priority_mode,$00
+		STORE8			_scr_trds_pause_mode,$00
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DC5:
-		NJSR			_nsub_pal_fade
+		NJSR			_nsub_full_pal_fade_set
 			NARGB		$00
+
+; !FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_62DC9:
-		STORE8			_scr_trds_priority_mode,$01
+		STORE8			_scr_trds_pause_mode,$01
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_dec_by_mask
 			NARGB		$FF
@@ -6287,6 +6295,7 @@ _ssub_62E33:
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
 		SRET
+
 _spr_raw_lib1A_00:
 		.BYTE	$03
 		.BYTE	$F0,$C1,$00,$F8
@@ -6327,17 +6336,17 @@ loc_62E6E:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_script_load_enemy_ex:
+_thread_lib_load_enemy_ex:
 		PHA
 		LDA		#$06
 		STA		_var4
 		LDA		#$0E
 		STA		_var5
 		PLA
-		JMP		_script_load
+		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E =======================================
-_script_event_start:
+_event_thread_start:
 		PHA
 		LDA		#$00
 		STA		_var0
@@ -6349,7 +6358,7 @@ _script_event_start:
 		PLA
 
 ; =============== S U B R O U T I N E =======================================
-_script_load:
+_thread_lib_load:
 		STA		_tmp0
 		STX		_tmp1
 		STY		_tmp2
@@ -6389,14 +6398,16 @@ loc_62EBD:
 		TAY
 		PLA
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E =======================================
-_script_load_ex:
+_thread_load:
 		PHA
 		TYA
 		PHA
 		LDA		#$FF
 		STA		_scr_trds_spr_idx,X
-		STA		_new_scr_started_flag
+		STA		_trds_manager_restart_flag
 		LDA		#$00
 		STA		_scr_trds_x_move_speed,X
 		STA		_scr_trds_x_move_delta,X
@@ -6421,74 +6432,80 @@ _script_load_ex:
 		ASL
 		TAX
 		LDA		#$00
-		STA		_scr_trds_ptr._flag1,X
+		STA		_scr_trds_ptr._ptr1+1,X		; set secondary script pointer to 00
 		PLA
-		STA		_scr_trds_ptr._ptr+1,X
+		STA		_scr_trds_ptr._ptr0+1,X		; load first script pointer with main script
 		PLA
-		STA		_scr_trds_ptr,X
+		STA		_scr_trds_ptr._ptr0,X
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_dummy:
 		CLC
 		RTS
+
 _unused_7:
 		.BYTE	$80,$C0,$E0,$F0	; *--
 
 ; =============== S U B R O U T I N E =======================================
-_scr_trds_manager:
-		LDX		#$0D
-		LDA		#$01
+; main core for script engine.
+;
+_threads_manager:
+		LDX		#$0D						; set thread execution request at new iteration
+		LDA		#$01						; every thread with flag set to 1 marked for execution
 loc_62F45:
-		STA		_scr_trds_exec_req,X
+		STA		_scr_trds_exec_req,X		; total 14 threads here
 		DEX
 		BPL		loc_62F45
-loc_62F4A:
+.trds_manager_restart:
 		LDA		#$00
-		STA		_scr_cur_trd_idx
-		STA		_new_scr_started_flag
-loc_62F50:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_exec_req,X
-		BEQ		loc_62F83
-		DEC		_scr_trds_exec_req,X
-		LDA		_scr_trds_idx,X
-		BMI		loc_62F83
-		LDA		_scr_trds_priority_enable
-		BEQ		loc_62F73
-		LDA		_scr_trds_priority_mode
-		BEQ		loc_62F6A
+		STA		_scr_cur_trd_idx			; init thread index counter, start from thread 0
+		STA		_trds_manager_restart_flag	; this flag may be set if any new script loaded runtime
+.trds_manager_loop:
+		LDX		_scr_cur_trd_idx			; here we check thread execution request first,
+		LDA		_scr_trds_exec_req,X		; on the first loop they are all 1, so pass here
+		BEQ		.trds_skip_exec
+		DEC		_scr_trds_exec_req,X		; clear request as soon as we start to manage thread
+		LDA		_scr_trds_idx,X				; check if thread initialized with script index
+		BMI		.trds_skip_exec				; if FF, then thrd is empty, skip it
+		LDA		_scr_trds_out_of_screen_test; check if out-of-screen test needed beforehead
+		BEQ		.trds_do_exec				; if no, then just execute
+		LDA		_scr_trds_pause_mode		; if not paused, performing out-of-screen test for
+		BEQ		loc_62F6A					; all level threads, skip system threads (<6)
+; NOTE: this TXA is redundant, comparison performed on X red directly!
+; and A never used after that...
 		TXA
-		CPX		#$02
-		BCS		loc_62F83
+; -
+		CPX		#$02						; if paused, hold all other threads, excluding the
+		BCS		.trds_skip_exec				; system threads: 0 - level, 1 - level doors
 loc_62F6A:
 		CPX		#$06
-		BCC		loc_62F73
-		JSR		_obj_screen_pos_calc
-		BCS		loc_62F83
-loc_62F73:
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_idx,X
-		LDA		_scr_bank_lib,Y
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
-		JSR		_scr_trd_exec
-loc_62F83:
-		INC		_scr_cur_trd_idx
+		BCC		.trds_do_exec
+		JSR		_obj_screen_pos_calc		; when object out of screen, hold it, so any object
+		BCS		.trds_skip_exec				; halted, but will resume if visible again...
+.trds_do_exec:
+		LDX		_scr_cur_trd_idx			; now, finally do execute. fetch current thread index
+		LDY		_scr_trds_idx,X				; and set corresponding PRG bank before executing
+		LDA		_scr_bank_lib,Y				; scripts may be executed independently, but must
+		STA		_prg_cur_bank				; inherit one of existing library indexes to be able
+		JSR		_mmc1_prg_safe				; to use proper programm bank and sprite library
+		JSR		_thread_exec
+.trds_skip_exec:
+		INC		_scr_cur_trd_idx			; repeat for all 14 threds
 		LDA		_scr_cur_trd_idx
 		CMP		#$0E
-		BCC		loc_62F50
-		LDA		_new_scr_started_flag
-		BNE		loc_62F4A
-		LDA		_ppu_scroll_x_shift+1
-		CLC
-		ADC		_ppu_scroll_x_page
-		STA		_tmp0
-		LDA		#$00
+		BCC		.trds_manager_loop
+		LDA		_trds_manager_restart_flag	; if one of threads added a new script, it must set
+		BNE		.trds_manager_restart		; restart flag. execution loop starts again, but
+		LDA		_ppu_scroll_x_shift+1		; will exec only that new added thread, because all
+		CLC									; others has execution request clear already.
+		ADC		_ppu_scroll_x_page			; next, time to adjust scrolls
+		STA		_tmp0						; and global objects shift parameter
+		LDA		#$00						; first for X scrolls
 		STA		_ppu_scroll_x_page
 		LDX		#$00
 		LDA		_tmp0
 		BPL		loc_62FA1
-		DEX				; *--
+		DEX
 loc_62FA1:
 		LDA		_ppu_scroll_x_clk
 		CLC
@@ -6500,7 +6517,7 @@ loc_62FA1:
 		TXA
 		ADC		_ppu_scroll_pos_x+1
 		STA		_ppu_scroll_pos_x+1
-		LDA		_ppu_scroll_y_shift+1
+		LDA		_ppu_scroll_y_shift+1		; then for Y scrolls
 		CLC
 		ADC		_ppu_scroll_y_page
 		STA		_tmp0
@@ -6515,9 +6532,9 @@ loc_62FA1:
 		LDA		_ppu_scroll_pos_y
 		ADC		_tmp0
 		CMP		#$F0
-		BCC		loc_62FD5
-		ADC		#$0F		; *--
-		INC		_ppu_scroll_pos_y+1 ; *--
+		BCC		loc_62FD5					; do not forget to wrap around 240 scanline
+		ADC		#$0F						; because of PPU specific
+		INC		_ppu_scroll_pos_y+1
 loc_62FD5:
 		STA		_ppu_scroll_pos_y
 		JMP		loc_62FFE
@@ -6545,12 +6562,12 @@ loc_62FFC:
 loc_62FFE:
 		LDX		#$00
 loc_63000:
-		LDY		_scr_trds_idx,X
-		BMI		loc_63014
-		LDA		_scr_bank_lib,Y
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
-		TXA
+		LDY		_scr_trds_idx,X				; after all scroll and shifts are recalculated
+		BMI		loc_63014					; we may draw sprite finally. one sprite for one thread
+		LDA		_scr_bank_lib,Y				; every object has its own sprite library in a
+		STA		_prg_cur_bank				; corresponding bank, so select bank again
+		JSR		_mmc1_prg_safe				; and perform sprite insertion procedure according
+		TXA									; to sprite index assigned in thread arrays
 		PHA
 		JSR		_obj_spr_insert
 		PLA
@@ -6558,7 +6575,7 @@ loc_63000:
 loc_63014:
 		INX
 		CPX		#$0E
-		BCC		loc_63000
+		BCC		loc_63000					; repeat for all threads...
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -6678,13 +6695,11 @@ loc_630C3:
 		BNE		loc_630C3
 		RTS
 loc_630E5:
-		; *--
-		AND		#$7F
+		AND		#$7F		; *--
 		STA		_scr_loop_count	; *--
 		INY				; *--
 loc_630EA:
-		; *--
-		LDA		_tmp1
+		LDA		_tmp1		; *--
 		PHA				; *--
 		LDA		_tmp2		; *--
 		PHA				; *--
@@ -6695,27 +6710,23 @@ loc_630EA:
 		BPL		loc_630FC	; *--
 		DEC		_tmpD8		; *--
 loc_630FC:
-		; *--
-		ADC		_tmp1
+		ADC		_tmp1		; *--
 		STA		_tmp1		; *--
 		BCC		loc_63104	; *--
 		INC		_tmpD8		; *--
 loc_63104:
-		; *--
-		INY
+		INY				; *--
 		LDA		(_scr_pc),Y	; *--
 		BPL		loc_6310B	; *--
 		DEC		_tmpD9		; *--
 loc_6310B:
-		; *--
-		CLC
+		CLC				; *--
 		ADC		_tmp2		; *--
 		STA		_tmp2		; *--
 		BCC		loc_63114	; *--
 		INC		_tmpD9		; *--
 loc_63114:
-		; *--
-		INY
+		INY				; *--
 		LDA		(_scr_pc),Y	; *--
 		STA		_ptr08		; *--
 		INY				; *--
@@ -6738,42 +6749,50 @@ loc_63114:
 		RTS				; *--
 
 ; =============== S U B R O U T I N E =======================================
-_scr_trd_exec:
+; main thread execution routine
+; every thread able to run TWO parallel scripts. all threads started with just
+; one default script in slot 0, but at runtime it may run additional parallel
+; script to perform any background work, like animation.
+; also, every thread may have an additional native code sub-thread. it also
+; assigned inside thread and used mostly for native IO operations, like pad
+; tests.
+;
+_thread_exec:
 		LDA		#$00
-		STA		_scr_loop_count
+		STA		_scr_loop_count				; init scripts counter here
 loc_63139:
-		LDA		_scr_cur_trd_idx
-		ASL
-		ADC		_scr_loop_count
-		STA		_scr_cur_trd_idxw
-		ASL
-		TAX
-		LDA		_scr_trds_ptr._ptr+1,X
-		BEQ		loc_6314A
-		JSR		_scmd_exec
+		LDA		_scr_cur_trd_idx			; calc the current script pointer offset
+		ASL									; NOTE, _scr_cur_trd_idxw is used to separate
+		ADC		_scr_loop_count				; both script stack operations, delays and exec flow.
+		STA		_scr_cur_trd_idxw			; but both scripts will refer as _scr_cur_trd_idx
+		ASL									; for all other parameters
+		TAX									;
+		LDA		_scr_trds_ptr+1,X			; if high nibble of script offset is zero
+		BEQ		loc_6314A					; then this script is disabled, skip it
+		JSR		_script_exec				; execute if not
 loc_6314A:
-		INC		_scr_loop_count
+		INC		_scr_loop_count				; repeat for both scripts
 		LDA		_scr_loop_count
 		CMP		#$02
 		BCC		loc_63139
-		LDA		_scr_cur_trd_idx
-		ASL
-		TAX
-		LDA		_scr_trds_nbgsub_ptr,X
+		LDA		_scr_cur_trd_idx			; now execute additional native
+		ASL									; background routine, this routine always
+		TAX									; defined to some dummy procedure by default
+		LDA		_scr_trds_nbgsub_ptr,X		; so no need to check if it used at all
 		STA		_ptr06
 		LDA		_scr_trds_nbgsub_ptr+1,X
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
 		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_idx,X
-		BPL		_scr_trd_adjust_pos
+		LDA		_scr_trds_idx,X				; if thread not stopped during execution,
+		BPL		_scr_trd_adjust_pos			; calculate new objexct position with parameters given
 		RTS
 _scr_trd_adjust_pos:
 		LDA		#$00
 		STA		_var0
 		STA		_var1
-		LDA		_scr_trds_x_move_delta,X
-		BPL		loc_63178
+		LDA		_scr_trds_x_move_delta,X	; all move parameters are defined, so just calculate
+		BPL		loc_63178					; final positions and update them
 		DEC		_var0
 loc_63178:
 		LDA		_scr_trds_y_mov_delta,X
@@ -6813,57 +6832,60 @@ loc_631BB:
 		STA		_scr_trds_y_pos_lo,X
 		LDA		_var1
 		ADC		_scr_trds_y_pos_hi,X
-		STA		_scr_trds_y_pos_hi,X
+		STA		_scr_trds_y_pos_hi,X		; that's all here
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_scmd_exec:
-		LDX		_scr_cur_trd_idxw
-		LDA		_scr_trds_delay,X
-		BNE		loc_63240
+; scripts execution routine, run code until delay is set either with
+; SDELAY command or with any delayed command
+;
+_script_exec:
+		LDX		_scr_cur_trd_idxw			; every script has delay priority option
+		LDA		_scr_trds_delay,X			; if not zero, skip this iteration
+		BNE		loc_63240					; and decrement delay
 		TXA
 		ASL
 		TAX
-		LDA		_scr_trds_ptr,X
+		LDA		_scr_trds_ptr,X				; fetch corresponding script pointer
 		STA		_scr_pc
-		LDA		_scr_trds_ptr._ptr+1,X
+		LDA		_scr_trds_ptr+1,X
 		STA		_scr_pc+1
 		LDA		#$00
-		STA		_scr_cur_trd_stack_ptr+1
+		STA		_scr_cur_trd_stack_ptr+1	; calculate current stack array pos
 		TXA
 		ASL
 		ASL
 		ROL		_scr_cur_trd_stack_ptr+1
-		ADC		#$0D
+		ADC		#<[_scr_trds_stack]
 		STA		_scr_cur_trd_stack_ptr
 		LDA		_scr_cur_trd_stack_ptr+1
-		ADC		#$06
+		ADC		#>[_scr_trds_stack]
 		STA		_scr_cur_trd_stack_ptr+1
 loc_631ED:
-		LDY		#$00
+		LDY		#$00						; start to fetch comand
 		LDA		(_scr_pc),Y
 		PHA
-		CMP		#$20
-		BCS		loc_6320E
-		PLA
-		BNE		loc_63203
-		LDX		_scr_cur_trd_idx
-		LDA		#$FF
-		STA		_scr_trds_idx,X
+		CMP		#$20						; commands below 0x20 are regular
+		BCS		.script_delayed_cmd			; continuos commands except SDELAY
+		PLA									; which forced the script execution
+		BNE		.script_regular_cmd			; flow interruption
+		LDX		_scr_cur_trd_idx			; command 00 is a STOP command
+		LDA		#$FF						; disables the thread idx flag and
+		STA		_scr_trds_idx,X				; exit from _thread_exec as well
 		PLA
 		PLA
 		RTS
-loc_63203:
+.script_regular_cmd:
 		TAX
 		LDA		_scmd_lib_lo-1,X
 		STA		_ptr06
 		LDA		_scmd_lib_hi-1,X
-		BNE		loc_63227
-loc_6320E:
-		LDX		_scr_cur_trd_idxw
-		PLA
-		PHA
-		AND		#$07
+		BNE		.script_cmd_exec
+.script_delayed_cmd:
+		LDX		_scr_cur_trd_idxw			; delayed cmd may be executed continuosly
+		PLA									; if no delay set, if set, every time it
+		PHA									; executed, script flow stopped to the next
+		AND		#$07						; iteration
 		STA		_scr_trds_delay,X
 		PLA
 		SEC
@@ -6875,23 +6897,24 @@ loc_6320E:
 		LDA		_dcmd_lib_lo,X
 		STA		_ptr06
 		LDA		_dcmd_lib_hi,X
-loc_63227:
+.script_cmd_exec:
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
-		LDX		_scr_cur_trd_idxw
-		LDA		_scr_trds_delay,X
-		BEQ		loc_631ED
-		TXA
+		LDX		_scr_cur_trd_idxw			; if no delays set during execution, continue
+		LDA		_scr_trds_delay,X			; script code flow
+		BEQ		loc_631ED					; otherwise stop execution and continue to the
+		TXA									; next script/thread
 		ASL
 		TAX
-		LDA		_scr_pc
+		LDA		_scr_pc						; flush current PC pointer
 		STA		_scr_trds_ptr,X
 		LDA		_scr_pc+1
-		STA		_scr_trds_ptr._ptr+1,X
+		STA		_scr_trds_ptr+1,X
 loc_63240:
-		LDX		_scr_cur_trd_idxw
+		LDX		_scr_cur_trd_idxw			; do delays count as well
 		DEC		_scr_trds_delay,X
 		RTS
+
 ; NOTE: there are two sets of script comands. this block describes
 ; the immediate opcodes, executed immediately and continue code flow
 ; after that.
@@ -6903,12 +6926,12 @@ _scmd_lib_lo:
 		CMD_IDX_LO	_scmd05_ret
 		CMD_IDX_LO	_scmd06_delay
 		CMD_IDX_LO	_scmd07_ejsr
-		CMD_IDX_LO	_scmd08_erun
+		CMD_IDX_LO	_scmd08_new_script_set
 		CMD_IDX_LO	_scmd09_nbg_hndl_set
 		CMD_IDX_LO	_scmd0A_suspend
 		CMD_IDX_LO	_scmd0B_bcs
 		CMD_IDX_LO	_scmd0C_bcc
-		CMD_IDX_LO	_scmd0D_sdisable_this
+		CMD_IDX_LO	_scmd0D_sdisable_self
 		CMD_IDX_LO	_scmd0E_smem_alu
 		CMD_IDX_LO	_scmd0F_sarg_set
 		CMD_IDX_LO	_scmd10_nbg_hndl_reset
@@ -6929,12 +6952,12 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd05_ret
 		CMD_IDX_HI	_scmd06_delay
 		CMD_IDX_HI	_scmd07_ejsr
-		CMD_IDX_HI	_scmd08_erun
+		CMD_IDX_HI	_scmd08_new_script_set
 		CMD_IDX_HI	_scmd09_nbg_hndl_set
 		CMD_IDX_HI	_scmd0A_suspend
 		CMD_IDX_HI	_scmd0B_bcs
 		CMD_IDX_HI	_scmd0C_bcc
-		CMD_IDX_HI	_scmd0D_sdisable_this
+		CMD_IDX_HI	_scmd0D_sdisable_self
 		CMD_IDX_HI	_scmd0E_smem_alu
 		CMD_IDX_HI	_scmd0F_sarg_set
 		CMD_IDX_HI	_scmd10_nbg_hndl_reset
@@ -7459,18 +7482,26 @@ _scmd19_njsr_sw:
 		JMP		_scmd_skip	; *--
 
 ; =============== S U B R O U T I N E =======================================
-_scmd0D_sdisable_this:
+; disables currently executing script for given thread
+;
+_scmd0D_sdisable_self:
 		LDA		_scr_cur_trd_idxw
 		ASL
 		TAX
 		LDA		#$00
-		STA		_scr_trds_ptr._ptr+1,X
+		STA		_scr_trds_ptr+1,X
 		PLA
 		PLA
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_scmd08_erun:
+; sets a new script pointer for current thread, select one of two script
+; slots with first parameter. never used for re-load the main script, only
+; for loading an additional secondary sub-script.
+;
+; TODO: remove redundant param (always 01!) to optimize opcode!
+;
+_scmd08_new_script_set:
 		JSR		_scr_getc
 		STA		_var0
 		JSR		_scr_getc
@@ -7490,10 +7521,16 @@ _scmd08_erun:
 		LDA		_var1
 		STA		_scr_trds_ptr,X
 		LDA		_var2
-		STA		_scr_trds_ptr._ptr+1,X
+		STA		_scr_trds_ptr+1,X
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E =======================================
+; disables the selected script for current thread. also never used to disable
+; main script for thread, only for secondary one... in any cases that need
+; to disable main script, SSCRIPT0_OFF command used!
+;
+; TODO: may be reduced in size by removing redundant argument (always 01!)
+;
 _scmd14_sdisable:
 		JSR		_scr_getc
 		STA		_tmp0
@@ -7503,7 +7540,7 @@ _scmd14_sdisable:
 		ASL
 		TAX
 		LDA		#$00
-		STA		_scr_trds_ptr._ptr+1,X
+		STA		_scr_trds_ptr+1,X
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E =======================================
@@ -7852,11 +7889,11 @@ _jump_ptr_ind:
 		JMP		(_ptr06)
 
 ; =============== S U B R O U T I N E =======================================
-_script_load_param:
+_cur_thread_reload_param:
 		LDX		_scr_cur_trd_idx
 
 ; =============== S U B R O U T I N E =======================================
-_script_load_param_ex:
+_thread_reload_param_ex:
 		PLA
 		STA		_ptr06
 		PLA
@@ -7877,7 +7914,7 @@ _script_load_param_ex:
 		LDA		(_ptr06),Y
 		TAY
 		PLA
-		JMP		_script_load_ex
+		JMP		_thread_load
 
 ; =============== S U B R O U T I N E =======================================
 _scr_cur_trd_off:
@@ -8529,22 +8566,28 @@ _scr_bank_lib:
 		.BYTE	$04,$04,$03,$04,$04,$04,$04,$04,$04,$04,$04,$04,$04,$04,$03,$03
 		.BYTE	$03
 _scr_lib_lo:
-		SCR_IDX_LO	_scr0_intro_title_select
-		SCR_IDX_LO	_scr1_lvl1_handler
-		SCR_IDX_LO	_scr2_lvl2_handler
-		SCR_IDX_LO	_scr3_lvl3_handler
-		SCR_IDX_LO	_scr4_lvl4_handler
-		SCR_IDX_LO	_scr5_lvl5_handler
-		SCR_IDX_LO	_scr6_lvl6_handler
-		SCR_IDX_LO	_scr7_ending
-		SCR_IDX_LO	_scr8_beam_player_handler
-		SCR_IDX_LO	_scr9_player_beam
-		SCR_IDX_LO	_scrA_catch_player_handler
-		SCR_IDX_LO	_scrB_player_catch
-		SCR_IDX_LO	_scrC_room_doors_handler
-		SCR_IDX_LO	_scrD_money_bag
-		SCR_IDX_LO	_scrE_empty_mine_trolley
-		SCR_IDX_LO	_scrF_candle
+;		SYSTEM scripts, never used in level objects lists, ran manually
+; 		by the system or by the other scripts
+;
+		SCR_IDX_LO	_scr00_intro_title_select
+		SCR_IDX_LO	_scr01_lvl1_handler
+		SCR_IDX_LO	_scr02_lvl2_handler
+		SCR_IDX_LO	_scr03_lvl3_handler
+		SCR_IDX_LO	_scr04_lvl4_handler
+		SCR_IDX_LO	_scr05_lvl5_handler
+		SCR_IDX_LO	_scr06_lvl6_handler
+		SCR_IDX_LO	_scr07_ending
+		SCR_IDX_LO	_scr08_beam_player_handler
+		SCR_IDX_LO	_scr09_player_beam
+		SCR_IDX_LO	_scr0A_catch_player_handler
+		SCR_IDX_LO	_scr0B_player_catch
+		SCR_IDX_LO	_scr0C_room_doors_handler
+; 		GAME OBJECT scripts, used in the level objects lists, may run
+;		other instances of self
+;
+		SCR_IDX_LO	_scr0D_money_bag
+		SCR_IDX_LO	_scr0E_empty_mine_trolley	; except this
+		SCR_IDX_LO	_scr0F_candle
 		SCR_IDX_LO	_scr10_train_semaphores
 		SCR_IDX_LO	_scr11_lvl2_ghost_nanny
 		SCR_IDX_LO	_scr12_exit_arrow
@@ -8573,28 +8616,28 @@ _scr_lib_lo:
 		SCR_IDX_LO	_scr29_sewer_worm
 		SCR_IDX_LO	_scr2A_morning_star_troll
 		SCR_IDX_LO	_scr2B_still_throw_ballistic_slime
-		SCR_IDX_LO	_scr2C_fast_moving_throw_forward_slime
+		SCR_IDX_LO	_scr2C_fast_throw_forward_slime
 		SCR_IDX_LO	_scr2D_rotator
 		SCR_IDX_LO	_scr2E_lvl4_boss_dragons
 		SCR_IDX_LO	_scr2F_lvl5_boss_key_keeper
 		SCR_IDX_LO	_scr30_lvl6_boss_vega
 _scr_lib_hi:
-		SCR_IDX_HI	_scr0_intro_title_select
-		SCR_IDX_HI	_scr1_lvl1_handler
-		SCR_IDX_HI	_scr2_lvl2_handler
-		SCR_IDX_HI	_scr3_lvl3_handler
-		SCR_IDX_HI	_scr4_lvl4_handler
-		SCR_IDX_HI	_scr5_lvl5_handler
-		SCR_IDX_HI	_scr6_lvl6_handler
-		SCR_IDX_HI	_scr7_ending
-		SCR_IDX_HI	_scr8_beam_player_handler
-		SCR_IDX_HI	_scr9_player_beam
-		SCR_IDX_HI	_scrA_catch_player_handler
-		SCR_IDX_HI	_scrB_player_catch
-		SCR_IDX_HI	_scrC_room_doors_handler
-		SCR_IDX_HI	_scrD_money_bag
-		SCR_IDX_HI	_scrE_empty_mine_trolley
-		SCR_IDX_HI	_scrF_candle
+		SCR_IDX_HI	_scr00_intro_title_select
+		SCR_IDX_HI	_scr01_lvl1_handler
+		SCR_IDX_HI	_scr02_lvl2_handler
+		SCR_IDX_HI	_scr03_lvl3_handler
+		SCR_IDX_HI	_scr04_lvl4_handler
+		SCR_IDX_HI	_scr05_lvl5_handler
+		SCR_IDX_HI	_scr06_lvl6_handler
+		SCR_IDX_HI	_scr07_ending
+		SCR_IDX_HI	_scr08_beam_player_handler
+		SCR_IDX_HI	_scr09_player_beam
+		SCR_IDX_HI	_scr0A_catch_player_handler
+		SCR_IDX_HI	_scr0B_player_catch
+		SCR_IDX_HI	_scr0C_room_doors_handler
+		SCR_IDX_HI	_scr0D_money_bag
+		SCR_IDX_HI	_scr0E_empty_mine_trolley
+		SCR_IDX_HI	_scr0F_candle
 		SCR_IDX_HI	_scr10_train_semaphores
 		SCR_IDX_HI	_scr11_lvl2_ghost_nanny
 		SCR_IDX_HI	_scr12_exit_arrow
@@ -8623,7 +8666,7 @@ _scr_lib_hi:
 		SCR_IDX_HI	_scr29_sewer_worm
 		SCR_IDX_HI	_scr2A_morning_star_troll
 		SCR_IDX_HI	_scr2B_still_throw_ballistic_slime
-		SCR_IDX_HI	_scr2C_fast_moving_throw_forward_slime
+		SCR_IDX_HI	_scr2C_fast_throw_forward_slime
 		SCR_IDX_HI	_scr2D_rotator
 		SCR_IDX_HI	_scr2E_lvl4_boss_dragons
 		SCR_IDX_HI	_scr2F_lvl5_boss_key_keeper

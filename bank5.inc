@@ -5,171 +5,171 @@
 
 _lvl4_objects_list:
 		.BYTE	$FF,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$01
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
-		.BYTE	$24,$88,$02,$88,$05,$80
-		.BYTE	$24,$28,$02,$48,$05,$80
-		.BYTE	$24,$08,$03,$D8,$05,$00
-		.BYTE	$24,$78,$03,$88,$05,$C0
-		.BYTE	$24,$B8,$03,$D8,$05,$C0
-		.BYTE	$24,$88,$02,$88,$05,$40
-		.BYTE	$12,$00,$00,$00,$00,$AD,$02
+		OBJ_SET	_scr24_flying_wing_elephant,		$88,$02,$88,$05,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$28,$02,$48,$05,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$08,$03,$D8,$05,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$78,$03,$88,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$B8,$03,$D8,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$88,$02,$88,$05,$40,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
 		.BYTE	$FF,$01,$02
-		.BYTE	$1C,$98,$04,$88,$05
-		.BYTE	$12,$00,$00,$00,$00,$AC,$03
+		OBJ_SET	_scr1C_girl_and_floaters,			$98,$04,$88,$05,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
 		.BYTE	$FF,$02
-		.BYTE	$24,$88,$04,$88,$04,$80
-		.BYTE	$24,$A8,$04,$D8,$04,$00
-		.BYTE	$24,$38,$04,$28,$03,$40
-		.BYTE	$24,$68,$04,$08,$04,$C0
-		.BYTE	$24,$A8,$04,$28,$03,$80
-		.BYTE	$24,$88,$04,$48,$04,$80
-		.BYTE	$24,$C8,$04,$D8,$04,$C0
-		.BYTE	$24,$38,$04,$98,$03,$00
-		.BYTE	$24,$88,$04,$88,$03,$80
-		.BYTE	$24,$A8,$04,$D8,$03,$00
-		.BYTE	$24,$38,$04,$B8,$03,$80
-		.BYTE	$12,$00,$00,$00,$00,$AD,$04
+		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$88,$04,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$D8,$04,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$28,$03,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$68,$04,$08,$04,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$28,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$48,$04,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$C8,$04,$D8,$04,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$98,$03,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$88,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$D8,$03,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$B8,$03,$80,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$04,_NON
 		.BYTE	$FF,$01,$04
-		.BYTE	$26,$58,$05,$B8,$03
-		.BYTE	$27,$B8,$05,$68,$03
-		.BYTE	$12,$00,$00,$00,$00,$AF,$05
+		OBJ_SET	_scr26_sword_ninja,					$58,$05,$B8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$B8,$05,$68,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$05,_NON
 		.BYTE	$FF,$01,$03
-		.BYTE	$12,$00,$00,$00,$00,$AF,$05
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$05,_NON
 		.BYTE	$FF,$01,$05
-		.BYTE	$2C,$88,$03,$48,$03
-		.BYTE	$2C,$D8,$03,$A0,$03
-		.BYTE	$2C,$38,$03,$78,$03
-		.BYTE	$12,$00,$00,$00,$00,$AE,$06
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$03,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$D8,$03,$A0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$38,$03,$78,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$06,_NON
 		.BYTE	$FF,$01,$06
-		.BYTE	$2D,$58,$03,$38,$04
-		.BYTE	$2D,$C8,$03,$48,$04
-		.BYTE	$2D,$B8,$03,$98,$04
-		.BYTE	$2D,$C8,$02,$98,$04
-		.BYTE	$2D,$88,$02,$48,$04
-		.BYTE	$2D,$38,$02,$88,$04
-		.BYTE	$2D,$98,$02,$A8,$04
-		.BYTE	$12,$00,$00,$00,$00,$AF,$07
+		OBJ_SET	_scr2D_rotator,						$58,$03,$38,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$C8,$03,$48,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$B8,$03,$98,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$C8,$02,$98,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$88,$02,$48,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$38,$02,$88,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$98,$02,$A8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$07,_NON
 		.BYTE	$FF,$01,$07
-		.BYTE	$2C,$40,$01,$68,$04
-		.BYTE	$2C,$78,$01,$F8,$04
-		.BYTE	$2C,$A8,$01,$B8,$04
-		.BYTE	$2C,$68,$01,$08,$05
-		.BYTE	$2C,$58,$01,$68,$05
-		.BYTE	$2C,$C8,$01,$48,$05
-		.BYTE	$2C,$A8,$01,$98,$05
-		.BYTE	$12,$00,$00,$00,$00,$AE,$08
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$40,$01,$68,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$78,$01,$F8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$01,$B8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$68,$01,$08,$05,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$01,$68,$05,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$C8,$01,$48,$05,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$01,$98,$05,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$08,_NON
 		.BYTE	$FF,$01,$08
-		.BYTE	$2B,$A8,$01,$98,$06
-		.BYTE	$2B,$48,$01,$68,$06
-		.BYTE	$12,$00,$00,$00,$00,$AC,$07
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$A8,$01,$98,$06,_NON,_NON,_NON
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$48,$01,$68,$06,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$07,_NON
 		.BYTE	$FF,$01,$07
-		.BYTE	$12,$00,$00,$00,$00,$AF,$09
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$09,_NON
 		.BYTE	$FF,$01,$09
-		.BYTE	$1A,$88,$00,$48,$05,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$0A
+		OBJ_SET	_scr1A_lvl1_boss_judges,			$88,$00,$48,$05,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0A,_NON
 		.BYTE	$FF,$01,$0A
 		.BYTE	$FF,$02
-		.BYTE	$23,$A8,$00,$98,$03
-		.BYTE	$23,$C8,$00,$C8,$03
-		.BYTE	$23,$78,$00,$58,$04
-		.BYTE	$23,$68,$00,$08,$04
-		.BYTE	$23,$88,$00,$80,$03
-		.BYTE	$12,$00,$00,$00,$00,$AD,$0B
+		OBJ_SET	_scr23_halloween,					$A8,$00,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$C8,$00,$C8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$78,$00,$58,$04,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$68,$00,$08,$04,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$88,$00,$80,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$0B,_NON
 		.BYTE	$FF,$01,$0B
-		.BYTE	$23,$A8,$01,$48,$03
-		.BYTE	$23,$58,$01,$B8,$03
-		.BYTE	$12,$00,$00,$00,$00,$AD,$0C
+		OBJ_SET	_scr23_halloween,					$A8,$01,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$58,$01,$B8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$0C,_NON
 		.BYTE	$FF,$01,$0C
-		.BYTE	$19,$84,$02,$80,$03
-		.BYTE	$19,$84,$02,$B0,$02
-		.BYTE	$18,$A8,$02,$58,$03
-		.BYTE	$19,$44,$02,$20,$02
-		.BYTE	$19,$B4,$02,$20,$02
-		.BYTE	$18,$98,$02,$18,$03
-		.BYTE	$18,$48,$02,$58,$02
-		.BYTE	$0D,$30,$02,$28,$03,$01
-		.BYTE	$12,$00,$00,$00,$00,$AF,$0D
+		OBJ_SET	_scr19_toilet_snake,				$84,$02,$80,$03,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$84,$02,$B0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$A8,$02,$58,$03,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$44,$02,$20,$02,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$B4,$02,$20,$02,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$98,$02,$18,$03,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$48,$02,$58,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$30,$02,$28,$03,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$0D,_NON
 		.BYTE	$FF,$01,$0D
-		.BYTE	$13,$C8,$01,$B8,$02
-		.BYTE	$19,$84,$00,$20,$02
-		.BYTE	$19,$A4,$00,$20,$02
-		.BYTE	$13,$88,$00,$78,$02
-		.BYTE	$17,$48,$00,$48,$02
-		.BYTE	$19,$64,$01,$20,$02
-		.BYTE	$19,$24,$01,$20,$02
-		.BYTE	$17,$88,$01,$88,$02
-		.BYTE	$0D,$30,$00,$90,$02,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$0E
+		OBJ_SET	_scr13_slow_moving_slime,			$C8,$01,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$84,$00,$20,$02,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$A4,$00,$20,$02,_NON,_NON,_NON
+		OBJ_SET	_scr13_slow_moving_slime,			$88,$00,$78,$02,_NON,_NON,_NON
+		OBJ_SET	_scr17_runner,						$48,$00,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$64,$01,$20,$02,_NON,_NON,_NON
+		OBJ_SET	_scr19_toilet_snake,				$24,$01,$20,$02,_NON,_NON,_NON
+		OBJ_SET	_scr17_runner,						$88,$01,$88,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$30,$00,$90,$02,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0E,_NON
 		.BYTE	$FF,$01,$0E
-		.BYTE	$2A,$68,$00,$58,$01
-		.BYTE	$2A,$C0,$00,$58,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$0F
+		OBJ_SET	_scr2A_morning_star_troll,			$68,$00,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$C0,$00,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$0F,_NON
 		.BYTE	$FF,$01,$0F
 		.BYTE	$FF,$02
-		.BYTE	$28,$78,$01,$78,$01
-		.BYTE	$28,$58,$01,$48,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$10
+		OBJ_SET	_scr28_pink_goo,					$78,$01,$78,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$58,$01,$48,$01,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$10,_NON
 		.BYTE	$FF,$01,$10
-		.BYTE	$26,$88,$01,$C8,$00
-		.BYTE	$26,$58,$01,$88,$00
-		.BYTE	$12,$00,$00,$00,$00,$AE,$0F
+		OBJ_SET	_scr26_sword_ninja,					$88,$01,$C8,$00,_NON,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$58,$01,$88,$00,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0F,_NON
 		.BYTE	$FF,$01,$0F
-		.BYTE	$28,$F8,$01,$58,$01
-		.BYTE	$28,$68,$02,$88,$01
-		.BYTE	$28,$98,$02,$58,$01
-		.BYTE	$28,$D8,$02,$B8,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$11
+		OBJ_SET	_scr28_pink_goo,					$F8,$01,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$68,$02,$88,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$98,$02,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$D8,$02,$B8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$11,_NON
 		.BYTE	$FF,$01,$11
-		.BYTE	$14,$98,$03,$B8,$01
-		.BYTE	$14,$A8,$03,$08,$02
-		.BYTE	$14,$A8,$03,$48,$02
-		.BYTE	$14,$B8,$03,$78,$02
-		.BYTE	$14,$98,$03,$A8,$02
-		.BYTE	$14,$58,$03,$58,$02
-		.BYTE	$14,$58,$03,$18,$02
-		.BYTE	$14,$48,$03,$D8,$01
-		.BYTE	$14,$58,$03,$98,$01
-		.BYTE	$14,$80,$03,$58,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$12
+		OBJ_SET	_scr14_fast_moving_slime,			$98,$03,$B8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$A8,$03,$08,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$A8,$03,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$B8,$03,$78,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$98,$03,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$58,$03,$58,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$58,$03,$18,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$48,$03,$D8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$58,$03,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$80,$03,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$12,_NON
 		.BYTE	$FF,$01,$12
-		.BYTE	$28,$88,$04,$78,$02
-		.BYTE	$28,$38,$04,$48,$02
-		.BYTE	$28,$C8,$04,$B8,$02
-		.BYTE	$28,$C8,$04,$48,$02
-		.BYTE	$28,$48,$04,$B8,$02
-		.BYTE	$28,$88,$04,$B8,$02
-		.BYTE	$28,$C8,$04,$88,$02
-		.BYTE	$28,$48,$04,$B8,$02
-		.BYTE	$28,$48,$04,$48,$02
-		.BYTE	$28,$C8,$04,$88,$02
-		.BYTE	$28,$88,$04,$78,$02
-		.BYTE	$28,$88,$04,$78,$02
-		.BYTE	$28,$38,$04,$48,$02
-		.BYTE	$28,$C8,$04,$B8,$02
-		.BYTE	$28,$C8,$04,$48,$02
-		.BYTE	$28,$48,$04,$B8,$02
-		.BYTE	$28,$88,$04,$B8,$02
-		.BYTE	$28,$48,$04,$B8,$02
-		.BYTE	$28,$48,$04,$48,$02
-		.BYTE	$28,$88,$04,$78,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$13
+		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$38,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$04,$88,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$04,$88,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$38,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$13,_NON
 		.BYTE	$FF,$01,$13
 		.BYTE	$FF,$02
-		.BYTE	$21,$88,$04,$88,$01,$00
-		.BYTE	$21,$48,$04,$48,$01,$01
-		.BYTE	$21,$D8,$04,$B8,$01,$02
-		.BYTE	$21,$48,$04,$A8,$01,$03
-		.BYTE	$21,$D8,$04,$58,$01,$04
-		.BYTE	$21,$68,$04,$98,$01,$05
-		.BYTE	$21,$D8,$04,$B8,$01,$01
-		.BYTE	$21,$48,$04,$A8,$01,$04
-		.BYTE	$12,$00,$00,$00,$00,$AC,$14
+		OBJ_SET	_scr21_train_ghost,					$88,$04,$88,$01,$00,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$48,$04,$48,$01,$01,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$D8,$04,$B8,$01,$02,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$48,$04,$A8,$01,$03,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$D8,$04,$58,$01,$04,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$68,$04,$98,$01,$05,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$D8,$04,$B8,$01,$01,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$48,$04,$A8,$01,$04,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$14,_NON
 		.BYTE	$FF,$01,$14
-		.BYTE	$12,$00,$00,$00,$00,$AF,$15
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$15,_NON
 		.BYTE	$FF,$01,$15
-		.BYTE	$2F,$80,$02,$40,$00
+		OBJ_SET	_scr2F_lvl5_boss_key_keeper,		$80,$02,$40,$00,_NON,_NON,_NON
 		.BYTE	$FF,$00
 _lvl_collisions_06:
 		.BYTE	$F0,$FE,$FC,$76,$0C,$BE,$FF,$F8,$F3,$F8,$C7,$F0,$FC,$F0,$FC,$F0
@@ -825,108 +825,108 @@ byte_4659D:
 		.BYTE	$00,$03,$1C,$14,$14,$19,$03,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl3_objects_list:
 		.BYTE	$FF,$02
-		.BYTE	$29,$88,$01,$A8,$05
-		.BYTE	$29,$98,$01,$98,$05
-		.BYTE	$29,$C8,$01,$B8,$05
-		.BYTE	$29,$B8,$01,$78,$05
-		.BYTE	$12,$00,$00,$00,$00,$AC,$01
+		OBJ_SET	_scr29_sewer_worm,					$88,$01,$A8,$05,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$98,$01,$98,$05,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$C8,$01,$B8,$05,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$B8,$01,$78,$05,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$02
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
 		.BYTE	$FF,$01,$02
-		.BYTE	$2C,$88,$02,$58,$04
-		.BYTE	$2C,$88,$02,$A8,$04
-		.BYTE	$2C,$48,$03,$B8,$04
-		.BYTE	$2C,$48,$03,$50,$04
-		.BYTE	$12,$00,$00,$00,$00,$AF,$01
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$02,$58,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$02,$A8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$48,$03,$B8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$48,$03,$50,$04,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$01,_NON
 		.BYTE	$FF,$01,$01
 		.BYTE	$FF,$02
-		.BYTE	$29,$38,$01,$88,$04
-		.BYTE	$29,$88,$01,$58,$04
-		.BYTE	$29,$78,$01,$68,$03
-		.BYTE	$29,$48,$01,$98,$03
-		.BYTE	$29,$B8,$01,$58,$03
-		.BYTE	$12,$00,$00,$00,$00,$AC,$03
+		OBJ_SET	_scr29_sewer_worm,					$38,$01,$88,$04,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$88,$01,$58,$04,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$78,$01,$68,$03,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$48,$01,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$B8,$01,$58,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
-		.BYTE	$29,$28,$01,$A8,$02
-		.BYTE	$29,$A8,$00,$A8,$02
-		.BYTE	$29,$58,$00,$A8,$02
-		.BYTE	$12,$00,$00,$00,$00,$AE,$04
+		OBJ_SET	_scr29_sewer_worm,					$28,$01,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$A8,$00,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$58,$00,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$04,_NON
 		.BYTE	$FF,$01,$04
 		.BYTE	$FF,$02
-		.BYTE	$2C,$58,$00,$88,$03
-		.BYTE	$2C,$A8,$00,$88,$03
-		.BYTE	$2C,$B8,$00,$08,$04
-		.BYTE	$29,$C8,$00,$48,$04
-		.BYTE	$29,$68,$00,$28,$04
-		.BYTE	$2C,$58,$00,$B8,$04
-		.BYTE	$2C,$98,$00,$B8,$04
-		.BYTE	$0D,$80,$00,$B0,$04,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$03
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$00,$88,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$00,$88,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$B8,$00,$08,$04,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$C8,$00,$48,$04,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$68,$00,$28,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$00,$B8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$98,$00,$B8,$04,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$80,$00,$B0,$04,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
-		.BYTE	$29,$08,$01,$A8,$02
-		.BYTE	$29,$B8,$01,$38,$02
-		.BYTE	$29,$48,$01,$58,$02
-		.BYTE	$29,$08,$01,$58,$02
-		.BYTE	$29,$B8,$00,$38,$02
-		.BYTE	$29,$88,$00,$38,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$05
+		OBJ_SET	_scr29_sewer_worm,					$08,$01,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$B8,$01,$38,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$48,$01,$58,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$08,$01,$58,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$B8,$00,$38,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$88,$00,$38,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 		.BYTE	$FF,$01,$05
 		.BYTE	$FF,$02
-		.BYTE	$29,$88,$00,$88,$01
-		.BYTE	$29,$48,$00,$58,$01
-		.BYTE	$29,$A8,$00,$88,$01
-		.BYTE	$29,$48,$00,$68,$01
-		.BYTE	$29,$A8,$00,$98,$01
-		.BYTE	$29,$68,$00,$98,$01
-		.BYTE	$29,$A8,$00,$78,$01
-		.BYTE	$29,$88,$00,$58,$01
-		.BYTE	$29,$48,$00,$78,$01
-		.BYTE	$29,$68,$00,$A8,$01
-		.BYTE	$29,$98,$00,$98,$01
-		.BYTE	$29,$88,$00,$88,$01
-		.BYTE	$29,$58,$00,$A8,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$06
+		OBJ_SET	_scr29_sewer_worm,					$88,$00,$88,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$48,$00,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$A8,$00,$88,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$48,$00,$68,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$A8,$00,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$68,$00,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$A8,$00,$78,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$88,$00,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$48,$00,$78,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$68,$00,$A8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$98,$00,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$88,$00,$88,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$58,$00,$A8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$06,_NON
 		.BYTE	$FF,$01,$06
 		.BYTE	$FF,$02
-		.BYTE	$2B,$2A,$02,$98,$01
-		.BYTE	$2B,$2A,$02,$E8,$01
-		.BYTE	$2B,$2A,$02,$38,$02
-		.BYTE	$2B,$2A,$02,$88,$02
-		.BYTE	$2D,$88,$02,$18,$02
-		.BYTE	$2D,$C8,$02,$B8,$01
-		.BYTE	$2D,$78,$02,$48,$02
-		.BYTE	$2D,$B8,$02,$A8,$02
-		.BYTE	$2C,$A8,$02,$38,$02
-		.BYTE	$0D,$30,$02,$20,$02,$01
-		.BYTE	$12,$00,$00,$00,$00,$AE,$07
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$2A,$02,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$2A,$02,$E8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$2A,$02,$38,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$2A,$02,$88,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$88,$02,$18,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$C8,$02,$B8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$78,$02,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$B8,$02,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$02,$38,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$30,$02,$20,$02,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$07,_NON
 		.BYTE	$FF,$01,$07
-		.BYTE	$2D,$88,$02,$48,$03
-		.BYTE	$29,$68,$02,$58,$03
-		.BYTE	$29,$58,$02,$A8,$03
-		.BYTE	$2D,$D8,$02,$98,$03
-		.BYTE	$29,$E8,$02,$A8,$03
-		.BYTE	$2B,$9C,$03,$98,$03
-		.BYTE	$2D,$88,$03,$78,$03
-		.BYTE	$29,$A8,$03,$48,$03
-		.BYTE	$2D,$D8,$03,$C0,$03
-		.BYTE	$0D,$A0,$03,$78,$03,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$08
+		OBJ_SET	_scr2D_rotator,						$88,$02,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$68,$02,$58,$03,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$58,$02,$A8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$D8,$02,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$E8,$02,$A8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$9C,$03,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$88,$03,$78,$03,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$A8,$03,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$D8,$03,$C0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$A0,$03,$78,$03,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$08,_NON
 		.BYTE	$FF,$01,$08
 		.BYTE	$FF,$02
-		.BYTE	$2D,$98,$03,$30,$02
-		.BYTE	$29,$88,$03,$88,$02
-		.BYTE	$2C,$58,$03,$B0,$02
-		.BYTE	$29,$98,$03,$A8,$01
-		.BYTE	$2D,$98,$03,$08,$02
-		.BYTE	$2C,$68,$03,$60,$01
-		.BYTE	$2C,$A8,$03,$60,$01
-		.BYTE	$2D,$B8,$03,$58,$01
-		.BYTE	$2D,$28,$03,$70,$01
-		.BYTE	$29,$28,$03,$38,$01
-		.BYTE	$0D,$90,$03,$60,$01,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$09
+		OBJ_SET	_scr2D_rotator,						$98,$03,$30,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$88,$03,$88,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$03,$B0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$98,$03,$A8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$98,$03,$08,$02,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$68,$03,$60,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$03,$60,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$B8,$03,$58,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2D_rotator,						$28,$03,$70,$01,_NON,_NON,_NON
+		OBJ_SET	_scr29_sewer_worm,					$28,$03,$38,$01,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$90,$03,$60,$01,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$09,_NON
 		.BYTE	$FF,$01,$09
-		.BYTE	$2E,$88,$03,$88,$00
+		OBJ_SET	_scr2E_lvl4_boss_dragons,			$88,$03,$88,$00,_NON,_NON,_NON
 		.BYTE	$FF,$00
 _lvl_collisions_05:
 		.BYTE	$7F,$C0,$FF,$C0,$FF,$00,$FC,$00,$FC,$00,$FC,$00,$D4,$00,$DC,$00

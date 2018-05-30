@@ -11,6 +11,15 @@ LANR_RU			EQU		2
 
 LANGUAGE		EQU		LANG_EN
 
+PAD_A			EQU		$80
+PAD_B			EQU		$40
+PAD_SEL			EQU		$20
+PAD_START		EQU		$10
+PAD_U			EQU		$08
+PAD_D			EQU		$04
+PAD_L			EQU		$02
+PAD_R			EQU		$01
+
 ;-------------------F-O-N-T-S-------------------
 
 ;--------------------A-P-U----------------------
@@ -48,6 +57,20 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
 
+_NON	EQU	-1
+
+	MAC	OBJ_SET
+		.BYTE	{1}_idx,{2},{3},{4},{5}
+#if {6}!=_NON
+		.BYTE	{6}
+#endif
+#if {7}!=_NON
+		.BYTE	{7}
+#endif
+#if {8}!=_NON
+		.BYTE	{8}
+#endif
+	ENDM
 
 	MAC	TLM_PAK
 {1}_idx	SET	[.-_tlm_pak_lib]>>2
@@ -84,9 +107,8 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 
 	MAC	_ttrd
 {1}		SET	.
-{1}._ptr:		.WORD 0
-{1}._flags0:	.BYTE 0
-{1}._flag1:		.BYTE 0
+{1}._ptr0:		.WORD 0
+{1}._ptr1:		.WORD 0
 	ENDM
 
 ;---------------S-C-R-I-P-T-S-------------------
@@ -140,10 +162,10 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 		.WORD	{0}
 	ENDM
 
-	MAC	SRUN
-		.BYTE	_scmd08_erun_idx
-		.BYTE	{1}
-		.WORD	{2}
+	MAC	SSCRIPT1_SET
+		.BYTE	_scmd08_new_script_set_idx
+		.BYTE	$01
+		.WORD	{1}
 	ENDM
 
 	MAC	NBG_HNDL_SET
@@ -165,8 +187,8 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 		.WORD	{1}
 	ENDM
 
-	MAC	SDISABLE_SELF
-		.BYTE	_scmd0D_sdisable_this_idx
+	MAC	SSCRIPT0_OFF
+		.BYTE	_scmd0D_sdisable_self_idx
 	ENDM
 
 	MAC	SMEM_ALU
@@ -211,9 +233,9 @@ _SW_START	SET	.
 		.BYTE	{2}
 	ENDM
 
-	MAC	SDISABLE
+	MAC	SSCRIPT1_OFF
 		.BYTE	_scmd14_sdisable_idx
-		.BYTE	{1}
+		.BYTE	$01
 	ENDM
 
 _AND	EQU	$00

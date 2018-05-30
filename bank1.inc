@@ -4,7 +4,7 @@
 		BANK_START $01
 
 ; =============== S C R I P T ===============================================
-_scr1_lvl1_handler:
+_scr01_lvl1_handler:
 		NJSR			_nsub_sub_rom_idx_calc
 		NJSR			_nsub_read_mem
 			NARGW		_sub_room_idx
@@ -303,7 +303,7 @@ _lvl_doors_data06:
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data06:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_142CD:
@@ -339,7 +339,7 @@ _sloc_142F4:
 		NJSR			_nsub_ingame_collision_watch_start
 		NJSR			_nsub_ingame_player_control_start
 		NBG_HNDL_SET	_j_nbgsub_1437C
-		SRUN			$01,_scr_14324
+		SSCRIPT1_SET	_scr_14324
 		STORE16			_lvl_objects_ptr,_lvl0_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
@@ -355,6 +355,7 @@ _scr_14324:
 		NJSR			_nsub_pause_menu_handler
 		SJSR			_ssub_62DB5
 		SJMP			_scr_14324
+
 byte_1433C:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$1A,$17,$0F,$37,$27,$17,$0F,$30,$05,$17
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
@@ -369,7 +370,7 @@ _j_nbgsub_1437C:
 		JMP		_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
-_scr2_lvl2_handler:
+_scr02_lvl2_handler:
 		NJSR			_nsub_sub_rom_idx_calc
 		NJSR			_nsub_read_mem
 			NARGW		_sub_room_idx
@@ -705,7 +706,7 @@ _lvl_doors_data10:
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data10:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14675:
@@ -715,7 +716,7 @@ _sjmp_case_14675:
 		NJSR			_nsub_bg_pal_load
 			NARGW		byte_147C5
 		NBG_HNDL_SET	_nbgsub_147F1
-		SRUN			$01,_scr_14734
+		SSCRIPT1_SET	_scr_14734
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data11
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data11
@@ -840,7 +841,7 @@ _sloc_14770:
 			NARGB		$06
 		NJSR			_nsub_ingame_collision_watch_start
 		NJSR			_nsub_ingame_player_control_start
-		SRUN			$01,_scr_14324
+		SSCRIPT1_SET	_scr_14324
 		NBG_HNDL_SET	_nbgsub_1480E
 		STORE16			_lvl_objects_ptr,_lvl1_objects_list
 		NJSR			_nsub_lvl_room_objects_init
@@ -881,7 +882,7 @@ _nbgsub_1480E:
 		JMP		_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
-_scr3_lvl3_handler:
+_scr03_lvl3_handler:
 		NJSR			_nsub_sub_rom_idx_calc
 		NJSR			_nsub_read_mem
 			NARGW		_sub_room_idx
@@ -1793,7 +1794,7 @@ _lvl_doors_data27:
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data27:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_150CD:
@@ -1828,7 +1829,7 @@ _lvl_doors_data28:
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
 _prize_sequence_data28:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15117:
@@ -1852,7 +1853,7 @@ _ssub_15117:
 		NBG_HNDL_SET	_j_nbgsub_1437C_0
 		NJSR			_nsub_ingame_collision_watch_start
 		NJSR			_nsub_ingame_player_control_start
-		SRUN			$01,_scr_14324
+		SSCRIPT1_SET	_scr_14324
 		STORE16			_lvl_objects_ptr,_lvl2_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
@@ -1869,7 +1870,7 @@ _j_nbgsub_1437C_0:
 		JMP		_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
-_scr4_lvl4_handler:
+_scr04_lvl4_handler:
 		NJSR			_nsub_sub_rom_idx_calc
 		NJSR			_nsub_read_mem
 			NARGW		_sub_room_idx
@@ -2253,7 +2254,7 @@ _ssub_154D2:
 		NBG_HNDL_SET	_nbgsub_15534
 		NJSR			_nsub_ingame_collision_watch_start
 		NJSR			_nsub_ingame_player_control_start
-		SRUN			$01,_scr_14324
+		SSCRIPT1_SET	_scr_14324
 		STORE16			_lvl_objects_ptr,_lvl3_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
@@ -2290,7 +2291,7 @@ byte_1555B:
 		.BYTE	$0F,$05,$07,$16,$0F,$16,$05,$07
 
 ; =============== S C R I P T ===============================================
-_scr5_lvl5_handler:
+_scr05_lvl5_handler:
 		NJSR			_nsub_sub_rom_idx_calc
 		NJSR			_nsub_read_mem
 			NARGW		_sub_room_idx
@@ -2341,7 +2342,7 @@ _lvl_doors_data33:
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
 _prize_sequence_data33:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_155E9:
@@ -3094,7 +3095,7 @@ _lvl_doors_data47:
 		.WORD	_room_door_enemy_clear_open
 		.BYTE	$FF
 _prize_sequence_data47:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15C9B:
@@ -3148,7 +3149,7 @@ _ssub_15CDB:
 			NARGB		$09
 		NJSR			_nsub_ingame_collision_watch_start
 		NJSR			_nsub_ingame_player_control_start
-		SRUN			$01,_scr_14324
+		SSCRIPT1_SET	_scr_14324
 		STORE16			_lvl_objects_ptr,_lvl4_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
@@ -3167,7 +3168,7 @@ _j_nbgsub_1437C_1:
 		JMP		_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
-_scr6_lvl6_handler:
+_scr06_lvl6_handler:
 		NJSR			_nsub_sub_rom_idx_calc
 		NJSR			_nsub_read_mem
 			NARGW		_sub_room_idx
@@ -3209,7 +3210,7 @@ _sloc_15D76:
 _lvl_doors_data49:
 		.BYTE	$FF
 _prize_sequence_data49:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15DA1:
@@ -3225,7 +3226,7 @@ _sjmp_case_15DA1:
 			NARGB		$DD
 		SDELAY			$03
 		SLOOP_END
-		STORE8			_scr_trds_priority_mode,$00
+		STORE8			_scr_trds_pause_mode,$00
 		NJSR			_nsub_15E3B
 		SCRL_Y_MOVE_SET 0,$80,$FF
 		SDELAY			$F0
@@ -3236,7 +3237,7 @@ _sjmp_case_15DA1:
 _lvl_doors_data4A:
 		.BYTE	$FF
 _prize_sequence_data4A:
-		.BYTE	$FF	; *--
+		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15DD6:
@@ -3260,7 +3261,7 @@ _ssub_15DD6:
 		NBG_HNDL_SET	_j_nbgsub_1437C_2
 		NJSR			_nsub_ingame_collision_watch_start
 		NJSR			_nsub_ingame_player_control_start
-		SRUN			$01,_scr_14324
+		SSCRIPT1_SET	_scr_14324
 		STORE16			_lvl_objects_ptr,_lvl5_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
@@ -3275,16 +3276,16 @@ _j_nbgsub_1437C_2:
 ; =============== S U B R O U T I N E =======================================
 _nsub_15E3B:
 		LDX		#$02
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_602DB
 		LDX		#$04
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_60FDB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_15E4A:
-		LDA		_scr_trds_priority_mode
+		LDA		_scr_trds_pause_mode
 		BNE		loc_15E56
 		LDA		_pad0_pressed
 		AND		#$10
@@ -3297,17 +3298,16 @@ loc_15E56:
 
 ; =============== S U B R O U T I N E =======================================
 _unref_0:
-		LDA		_pad0_pressed	; *--
-		AND		#$20       ; *--
-		BEQ		loc_15E65	; *--
-		LDA		#$80       ; *--
-		STA		_game_flags	; *--
-		SEC				; *--
-		RTS				; *--
+		LDA		_pad0_pressed
+		AND		#$20
+		BEQ		loc_15E65
+		LDA		#$80
+		STA		_game_flags
+		SEC
+		RTS
 loc_15E65:
-		; *--
 		CLC
-		RTS				; *--
+		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_pause_menu_handler:
@@ -3409,21 +3409,21 @@ _pause_menu_anim:
 off_15F18:
 		.WORD	_nsub_16444
 		.WORD	_nsub_164DE
-		.WORD	_nsub_1655A	; *--
-		.WORD	_nsub_16602	; *--
-		.WORD	_nsub_1663E	; *--
+		.WORD	_nsub_1655A
+		.WORD	_nsub_16602
+		.WORD	_nsub_1663E
 		.WORD	_nsub_1667D
-		.WORD	_nsub_166C4	; *--
+		.WORD	_nsub_166C4
 		.WORD	_nsub_1670B
-		.WORD	_nsub_16736	; *--
-		.WORD	sub_1679C		; *--
-		.WORD	sub_167A0		; *--
-		.WORD	sub_167A4		; *--
-		.WORD	sub_167A8		; *--
-		.WORD	_nsub_1681A	; *--
-		.WORD	_nsub_16894	; *--
-		.WORD	_nsub_16913	; *--
-		.WORD	_nsub_16855	; *--
+		.WORD	_nsub_16736
+		.WORD	sub_1679C
+		.WORD	sub_167A0
+		.WORD	sub_167A4
+		.WORD	sub_167A8
+		.WORD	_nsub_1681A
+		.WORD	_nsub_16894
+		.WORD	_nsub_16913
+		.WORD	_nsub_16855
 _res_pause_pal:
 		.WORD	$3F00
 		.BYTE	$18,$01
@@ -3437,7 +3437,7 @@ _scr_15F56:
 			NARGB		$FF
 		STORE8			_apu_var402,$FF
 		SDELAY			$10
-		STORE8			_scr_trds_priority_mode,$01
+		STORE8			_scr_trds_pause_mode,$01
 		SDELAY			$4B
 		NJSR			_nsub_62B40
 		SDELAY			$2D
@@ -3628,7 +3628,7 @@ _scr_16111:
 			NARGB		$00
 		SBCS			_sloc_16162
 		POS_X_SET		0,$58,$00
-		SRUN			$01,_scr_1616A
+		SSCRIPT1_SET	_scr_1616A
 _sloc_16146:
 		POS_X_DELTA_SET 0,$00,$01
 		SPR_IDX_SET		0,$15
@@ -3752,7 +3752,7 @@ _spr_raw_lib01_16:
 		.BYTE	$F0,$1D,$62,$00
 
 ; =============== S C R I P T ===============================================
-_scrC_room_doors_handler:
+_scr0C_room_doors_handler:
 		NBG_HNDL_SET	_nbgsub_room_doors_data_load
 		NJSR			_nsub_room_door_exit_allow_test
 		SBCC			_sloc_16284
@@ -3863,7 +3863,7 @@ _nsub_room_doors_handler_and_data_init:
 		LDA		#$02
 		STA		_var5
 		LDA		#$0C
-		JMP		_script_load
+		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_room_door_exit_allow_test:
@@ -4342,11 +4342,12 @@ byte_16609:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_1660B:
-		LDA		#<[byte_16612] ; *--
-		LDX		#>[byte_16612] ; *--
-		JMP		sub_164F0	; *--
+		LDA		#<[byte_16612]
+		LDX		#>[byte_16612]
+		JMP		sub_164F0
 byte_16612:
-		.BYTE	$D3,$D2		; *--
+		.BYTE	$D3,$D2
+
 _spr_raw_lib01_05:
 		.BYTE	$01
 		.BYTE	$00,$D9,$03,$FF
@@ -4385,11 +4386,12 @@ byte_16645:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_16649:
-		LDA		#<[byte_16650] ; *--
-		LDX		#>[byte_16650] ; *--
-		JMP		sub_1645A	; *--
+		LDA		#<[byte_16650]
+		LDX		#>[byte_16650]
+		JMP		sub_1645A
 byte_16650:
-		.BYTE	$D4,$D6,$D5,$D7	; *--
+		.BYTE	$D4,$D6,$D5,$D7
+
 _spr_raw_lib01_07:
 		.BYTE	$02
 		.BYTE	$F0,$AF,$40,$F8
@@ -4596,32 +4598,32 @@ off_16794:
 		.BYTE	<[byte_16783]
 		.BYTE	<[byte_167D6]
 		.BYTE	<[byte_167E6]
-		.BYTE	<[byte_167F6]	; *--
+		.BYTE	<[byte_167F6]
 off_16798:
 		.BYTE	>[byte_16783]
 		.BYTE	>[byte_167D6]
 		.BYTE	>[byte_167E6]
-		.BYTE	>[byte_167F6]	; *--
+		.BYTE	>[byte_167F6]
 
 ; =============== S U B R O U T I N E =======================================
 sub_1679C:
-		LDY		#$00		; *--
-		BEQ		sub_1678B	; *--
+		LDY		#$00
+		BEQ		sub_1678B
 
 ; =============== S U B R O U T I N E =======================================
 sub_167A0:
-		LDY		#$01		; *--
-		BNE		sub_1678B	; *--
+		LDY		#$01
+		BNE		sub_1678B
 
 ; =============== S U B R O U T I N E =======================================
 sub_167A4:
-		LDY		#$02		; *--
-		BNE		sub_1678B	; *--
+		LDY		#$02
+		BNE		sub_1678B
 
 ; =============== S U B R O U T I N E =======================================
 sub_167A8:
-		LDY		#$03		; *--
-		BNE		sub_1678B	; *--
+		LDY		#$03
+		BNE		sub_1678B
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_167AC:
@@ -4634,12 +4636,12 @@ off_167B9:
 		.BYTE	<[byte_16785]
 		.BYTE	<[byte_167D8]
 		.BYTE	<[byte_167E8]
-		.BYTE	<[byte_167F8]	; *--
+		.BYTE	<[byte_167F8]
 off_167BD:
 		.BYTE	>[byte_16785]
 		.BYTE	>[byte_167D8]
 		.BYTE	>[byte_167E8]
-		.BYTE	>[byte_167F8]	; *--
+		.BYTE	>[byte_167F8]
 _spr_raw_lib01_0B:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$00
@@ -4683,9 +4685,9 @@ _sjsr_case_167F0:
 		SARG_SET		SARG0,$03
 		SJMP			_sloc_16769
 byte_167F6:
-		.BYTE	$22,$98		; *--
+		.BYTE	$22,$98
 byte_167F8:
-		.BYTE	$90,$91		; *--
+		.BYTE	$90,$91
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_167FA:
@@ -4759,11 +4761,12 @@ byte_1685C:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_1685E:
-		LDA		#<[byte_16865] ; *--
-		LDX		#>[byte_16865] ; *--
-		JMP		sub_164F0	; *--
+		LDA		#<[byte_16865]
+		LDX		#>[byte_16865]
+		JMP		sub_164F0
 byte_16865:
-		.BYTE	$9C,$9D		; *--
+		.BYTE	$9C,$9D
+
 _spr_raw_lib01_0D:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$08
@@ -4891,24 +4894,25 @@ _spr_raw_lib01_14:
 		.BYTE	$00,$6D,$00,$00
 
 ; =============== S C R I P T ===============================================
-_scrD_money_bag:
+_scr0D_money_bag:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$01
 		SCASE			_sjmp_case_16966
+
 _spr_unref:
-		.BYTE	$02		; *--
-		.BYTE	$F8,$BB,$00,$00	; *--
-		.BYTE	$F8,$AB,$00,$F8	; *--
+		.BYTE	$02
+		.BYTE	$F8,$BB,$00,$00
+		.BYTE	$F8,$AB,$00,$F8
 _spr_unref_0:
-		.BYTE	$01		; *--
-		.BYTE	$F8,$BF,$00,$FC	; *--
+		.BYTE	$01
+		.BYTE	$F8,$BF,$00,$FC
 _spr_unref_1:
-		.BYTE	$01		; *--
-		.BYTE	$F8,$AF,$00,$FC	; *--
+		.BYTE	$01
+		.BYTE	$F8,$AF,$00,$FC
 _spr_unref_2:
-		.BYTE	$01		; *--
-		.BYTE	$F8,$BF,$40,$FC	; *--
+		.BYTE	$01
+		.BYTE	$F8,$BF,$40,$FC
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_16966:
@@ -4976,71 +4980,72 @@ _spr_raw_lib01:
 		.WORD	_spr_raw_lib01_18
 		.WORD	_spr_raw_lib01_19
 		.WORD	_spr_raw_lib01_1A
+
 _lvl0_objects_list:
 		.BYTE	$FF,$02
-		.BYTE	$13,$30,$02,$88,$03
-		.BYTE	$13,$70,$03,$98,$03
-		.BYTE	$13,$A0,$03,$78,$03
-		.BYTE	$17,$D0,$03,$40,$03
-		.BYTE	$0D,$70,$03,$A0,$03,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$02
+		OBJ_SET	_scr13_slow_moving_slime,			$30,$02,$88,$03,_NON,_NON,_NON
+		OBJ_SET	_scr13_slow_moving_slime,			$70,$03,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr13_slow_moving_slime,			$A0,$03,$78,$03,_NON,_NON,_NON
+		OBJ_SET	_scr17_runner,						$D0,$03,$40,$03,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$70,$03,$A0,$03,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
 		.BYTE	$FF,$01,$02
-		.BYTE	$1C,$90,$04,$E0,$02
-		.BYTE	$12,$00,$00,$00,$00,$AF,$03
+		OBJ_SET	_scr1C_girl_and_floaters,			$90,$04,$E0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$03,_NON
 		.BYTE	$FF,$01,$03
 		.BYTE	$FF,$02
-		.BYTE	$17,$A8,$03,$C0,$02
-		.BYTE	$18,$C8,$03,$70,$02
-		.BYTE	$18,$50,$03,$40,$02
-		.BYTE	$18,$10,$03,$60,$02
-		.BYTE	$13,$70,$02,$A0,$02
-		.BYTE	$14,$D0,$02,$48,$02
-		.BYTE	$0D,$80,$02,$50,$02,$01
-		.BYTE	$12,$00,$00,$00,$00,$AF,$04
+		OBJ_SET	_scr17_runner,						$A8,$03,$C0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$C8,$03,$70,$02,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$50,$03,$40,$02,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$10,$03,$60,$02,_NON,_NON,_NON
+		OBJ_SET	_scr13_slow_moving_slime,			$70,$02,$A0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$D0,$02,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$80,$02,$50,$02,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$04,_NON
 		.BYTE	$FF,$01,$04
-		.BYTE	$19,$78,$01,$50,$02
-		.BYTE	$13,$C8,$01,$68,$02
-		.BYTE	$12,$00,$00,$00,$00,$AD,$03
+		OBJ_SET	_scr19_toilet_snake,				$78,$01,$50,$02,_NON,_NON,_NON
+		OBJ_SET	_scr13_slow_moving_slime,			$C8,$01,$68,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$03,_NON
 		.BYTE	$FF,$01,$03
-		.BYTE	$13,$60,$02,$70,$02
-		.BYTE	$14,$A0,$02,$70,$02
-		.BYTE	$12,$00,$00,$00,$00,$AE,$00
+		OBJ_SET	_scr13_slow_moving_slime,			$60,$02,$70,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$A0,$02,$70,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$00,_NON
 		.BYTE	$FF,$01,$00
-		.BYTE	$13,$98,$02,$A8,$03
-		.BYTE	$14,$78,$02,$98,$03
-		.BYTE	$17,$80,$02,$48,$03
-		.BYTE	$12,$00,$00,$00,$00,$AF,$01
+		OBJ_SET	_scr13_slow_moving_slime,			$98,$02,$A8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$78,$02,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr17_runner,						$80,$02,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$01,_NON
 		.BYTE	$FF,$01,$01
 		.BYTE	$FF,$02
-		.BYTE	$15,$08,$01,$80,$03
-		.BYTE	$16,$B8,$00,$A0,$03
-		.BYTE	$16,$80,$00,$50,$03
-		.BYTE	$16,$60,$00,$B0,$03
-		.BYTE	$14,$48,$01,$40,$03
-		.BYTE	$14,$40,$01,$B8,$03
-		.BYTE	$13,$B8,$01,$40,$03
-		.BYTE	$14,$A0,$01,$B8,$03
-		.BYTE	$0D,$B0,$00,$60,$03,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$00
+		OBJ_SET	_scr15_trolley_kick_slime,			$08,$01,$80,$03,_NON,_NON,_NON
+		OBJ_SET	_scr16_still_throw_forward_slime,	$B8,$00,$A0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr16_still_throw_forward_slime,	$80,$00,$50,$03,_NON,_NON,_NON
+		OBJ_SET	_scr16_still_throw_forward_slime,	$60,$00,$B0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$48,$01,$40,$03,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$40,$01,$B8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr13_slow_moving_slime,			$B8,$01,$40,$03,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$A0,$01,$B8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$B0,$00,$60,$03,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$00,_NON
 		.BYTE	$FF,$01,$00
-		.BYTE	$18,$78,$02,$40,$03
-		.BYTE	$18,$B8,$02,$88,$03
-		.BYTE	$18,$88,$02,$98,$03
-		.BYTE	$12,$00,$00,$00,$00,$AC,$03
+		OBJ_SET	_scr18_chain_saw,					$78,$02,$40,$03,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$B8,$02,$88,$03,_NON,_NON,_NON
+		OBJ_SET	_scr18_chain_saw,					$88,$02,$98,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
-		.BYTE	$17,$48,$02,$C8,$02
-		.BYTE	$14,$A8,$02,$88,$02
-		.BYTE	$17,$C8,$02,$C8,$02
-		.BYTE	$14,$58,$02,$68,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$05
+		OBJ_SET	_scr17_runner,						$48,$02,$C8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$A8,$02,$88,$02,_NON,_NON,_NON
+		OBJ_SET	_scr17_runner,						$C8,$02,$C8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr14_fast_moving_slime,			$58,$02,$68,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 		.BYTE	$FF,$01,$06
 		.BYTE	$FF,$02
 		.BYTE	$FF,$01,$05
-		.BYTE	$1B,$78,$02,$78,$01,$00
-		.BYTE	$1B,$B8,$02,$58,$01,$01
-		.BYTE	$1B,$48,$02,$58,$01,$02
-		.BYTE	$1B,$68,$02,$38,$01,$03
-		.BYTE	$1A,$80,$02,$40,$00,$00
+		OBJ_SET	_scr1B_court_chair,					$78,$02,$78,$01,$00,_NON,_NON
+		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,$01,_NON,_NON
+		OBJ_SET	_scr1B_court_chair,					$48,$02,$58,$01,$02,_NON,_NON
+		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,$03,_NON,_NON
+		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,$00,_NON,_NON
 		.BYTE	$FF,$00
 _lvl_collisions_00:
 		.BYTE	$FF,$FC,$FB,$F3,$03,$DB,$03,$F7,$03,$F8,$0F,$FF,$7E,$FF,$7E,$7F

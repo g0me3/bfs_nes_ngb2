@@ -5,105 +5,105 @@
 
 _lvl1_objects_list:
 		.BYTE	$FF,$02
-		.BYTE	$1E,$A8,$00,$98,$06
-		.BYTE	$1E,$A8,$00,$68,$06
-		.BYTE	$12,$00,$00,$00,$00,$AC,$01
+		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$98,$06,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$68,$06,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
-		.BYTE	$1E,$50,$00,$88,$05
-		.BYTE	$1E,$A0,$00,$98,$05
-		.BYTE	$1E,$C0,$00,$08,$05
-		.BYTE	$1E,$38,$00,$D0,$04
-		.BYTE	$1E,$88,$00,$28,$05
-		.BYTE	$1E,$98,$00,$C0,$04
-		.BYTE	$1E,$C0,$00,$48,$04
-		.BYTE	$12,$00,$00,$00,$00,$AC,$02
+		OBJ_SET	_scr1E_pick_axe_miner,				$50,$00,$88,$05,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$A0,$00,$98,$05,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$C0,$00,$08,$05,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$38,$00,$D0,$04,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$88,$00,$28,$05,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$98,$00,$C0,$04,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$C0,$00,$48,$04,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$02,_NON
 		.BYTE	$FF,$01,$02
-		.BYTE	$1D,$80,$00,$C0,$03
-		.BYTE	$1D,$80,$00,$30,$03
-		.BYTE	$12,$00,$00,$00,$00,$AC,$03
+		OBJ_SET	_scr1D_air_hammer_miner,			$80,$00,$C0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$80,$00,$30,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
 		.BYTE	$FF,$02
-		.BYTE	$1E,$38,$01,$88,$06
-		.BYTE	$20,$88,$01,$78,$06,$80
-		.BYTE	$12,$00,$00,$00,$00,$AC,$04
+		OBJ_SET	_scr1E_pick_axe_miner,				$38,$01,$88,$06,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$88,$01,$78,$06,$80,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$04,_NON
 		.BYTE	$FF,$01,$04
-		.BYTE	$20,$18,$01,$28,$05,$40
-		.BYTE	$20,$78,$01,$78,$04,$40
-		.BYTE	$20,$F8,$01,$A8,$04,$C0
-		.BYTE	$1D,$38,$01,$78,$05
-		.BYTE	$1D,$88,$01,$20,$05
-		.BYTE	$1D,$80,$01,$D0,$04
-		.BYTE	$1D,$38,$01,$68,$04
-		.BYTE	$20,$E8,$01,$A8,$05,$C0
-		.BYTE	$1D,$98,$01,$98,$04
-		.BYTE	$1E,$50,$01,$38,$04
-		.BYTE	$0D,$80,$01,$50,$04,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$05
+		OBJ_SET	_scr20_trolley_miner,				$18,$01,$28,$05,$40,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$78,$01,$78,$04,$40,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$F8,$01,$A8,$04,$C0,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$38,$01,$78,$05,_NON,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$88,$01,$20,$05,_NON,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$80,$01,$D0,$04,_NON,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$38,$01,$68,$04,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$E8,$01,$A8,$05,$C0,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$98,$01,$98,$04,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$50,$01,$38,$04,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$80,$01,$50,$04,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 		.BYTE	$FF,$01,$05
 		.BYTE	$FF,$02
-		.BYTE	$20,$68,$01,$78,$03,$00
-		.BYTE	$1E,$A8,$01,$60,$03
-		.BYTE	$20,$B8,$01,$08,$03,$80
-		.BYTE	$1D,$30,$01,$20,$03
-		.BYTE	$1E,$98,$01,$98,$02
-		.BYTE	$20,$68,$01,$78,$02,$80
-		.BYTE	$1D,$38,$01,$40,$02
-		.BYTE	$1E,$C0,$01,$48,$02
-		.BYTE	$20,$B8,$01,$58,$02,$80
-		.BYTE	$0D,$80,$01,$50,$02,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$06
+		OBJ_SET	_scr20_trolley_miner,				$68,$01,$78,$03,$00,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$01,$60,$03,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$B8,$01,$08,$03,$80,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$30,$01,$20,$03,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$98,$01,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$68,$01,$78,$02,$80,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$38,$01,$40,$02,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$C0,$01,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$B8,$01,$58,$02,$80,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$80,$01,$50,$02,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$06,_NON
 		.BYTE	$FF,$01,$06
-		.BYTE	$20,$98,$02,$58,$02,$C0
-		.BYTE	$1F,$78,$02,$B0,$02
-		.BYTE	$1F,$10,$03,$80,$02
-		.BYTE	$20,$98,$03,$98,$02,$C0
-		.BYTE	$20,$38,$03,$88,$02,$40
-		.BYTE	$1F,$78,$03,$50,$02
-		.BYTE	$0D,$60,$02,$70,$02,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$07
+		OBJ_SET	_scr20_trolley_miner,				$98,$02,$58,$02,$C0,_NON,_NON
+		OBJ_SET	_scr1F_hammer_miner,				$78,$02,$B0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr1F_hammer_miner,				$10,$03,$80,$02,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$98,$03,$98,$02,$C0,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$38,$03,$88,$02,$40,_NON,_NON
+		OBJ_SET	_scr1F_hammer_miner,				$78,$03,$50,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$60,$02,$70,$02,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$07,_NON
 		.BYTE	$FF,$01,$07
 		.BYTE	$FF,$02
-		.BYTE	$1F,$58,$04,$48,$02
-		.BYTE	$1E,$B8,$04,$68,$02
-		.BYTE	$20,$A8,$04,$C8,$02,$00
-		.BYTE	$1E,$C8,$04,$C0,$02
-		.BYTE	$0D,$88,$04,$C0,$02,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$08
+		OBJ_SET	_scr1F_hammer_miner,				$58,$04,$48,$02,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$B8,$04,$68,$02,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$A8,$04,$C8,$02,$00,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$C8,$04,$C0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$88,$04,$C0,$02,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$08,_NON
 		.BYTE	$FF,$01,$08
-		.BYTE	$20,$68,$04,$B8,$01,$00
-		.BYTE	$1E,$D0,$04,$98,$01
-		.BYTE	$20,$B8,$04,$68,$01,$80
-		.BYTE	$1F,$40,$04,$60,$01
-		.BYTE	$1D,$80,$04,$00,$01
-		.BYTE	$1F,$40,$04,$90,$00
-		.BYTE	$20,$B8,$04,$88,$00,$00
-		.BYTE	$1E,$80,$04,$38,$00
-		.BYTE	$1D,$B8,$04,$68,$00
-		.BYTE	$0D,$80,$04,$58,$00,$01
-		.BYTE	$12,$00,$00,$00,$00,$AD,$09
+		OBJ_SET	_scr20_trolley_miner,				$68,$04,$B8,$01,$00,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$D0,$04,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$B8,$04,$68,$01,$80,_NON,_NON
+		OBJ_SET	_scr1F_hammer_miner,				$40,$04,$60,$01,_NON,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$80,$04,$00,$01,_NON,_NON,_NON
+		OBJ_SET	_scr1F_hammer_miner,				$40,$04,$90,$00,_NON,_NON,_NON
+		OBJ_SET	_scr20_trolley_miner,				$B8,$04,$88,$00,$00,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$80,$04,$38,$00,_NON,_NON,_NON
+		OBJ_SET	_scr1D_air_hammer_miner,			$B8,$04,$68,$00,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$80,$04,$58,$00,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$09,_NON
 		.BYTE	$FF,$01,$09
 		.BYTE	$FF,$02
 		.BYTE	$FF,$01,$0A
-		.BYTE	$10,$80,$05,$80,$01
-		.BYTE	$21,$90,$05,$98,$01,$00
-		.BYTE	$21,$70,$05,$08,$02,$01
-		.BYTE	$21,$80,$05,$40,$02,$02
-		.BYTE	$21,$70,$05,$98,$02,$01
-		.BYTE	$21,$80,$05,$60,$02,$00
+		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$01,_NON,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$90,$05,$98,$01,$00,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$70,$05,$08,$02,$01,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$80,$05,$40,$02,$02,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$70,$05,$98,$02,$01,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$80,$05,$60,$02,$00,_NON,_NON
 		.BYTE	$FF,$01,$0B
-		.BYTE	$10,$80,$05,$80,$03
-		.BYTE	$21,$6C,$05,$98,$04,$03
-		.BYTE	$21,$6C,$05,$68,$03,$04
-		.BYTE	$21,$94,$05,$98,$03,$03
-		.BYTE	$21,$6C,$05,$38,$04,$05
-		.BYTE	$21,$80,$05,$A8,$03,$03
-		.BYTE	$21,$80,$05,$88,$04,$05
-		.BYTE	$21,$94,$05,$68,$04,$04
-		.BYTE	$21,$6C,$05,$C8,$03,$03
-		.BYTE	$21,$94,$05,$08,$04,$05
+		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$03,_NON,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$6C,$05,$98,$04,$03,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$6C,$05,$68,$03,$04,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$94,$05,$98,$03,$03,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$6C,$05,$38,$04,$05,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$80,$05,$A8,$03,$03,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$80,$05,$88,$04,$05,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$94,$05,$68,$04,$04,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$6C,$05,$C8,$03,$03,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$94,$05,$08,$04,$05,_NON,_NON
 		.BYTE	$FF,$01,$0C
-		.BYTE	$10,$80,$05,$80,$05
-		.BYTE	$22,$80,$05,$90,$05
+		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$05,_NON,_NON,_NON
+		OBJ_SET	_scr22_lvl2_boss_train_slime,		$80,$05,$90,$05,_NON,_NON,_NON
 		.BYTE	$FF,$00
 _lvl_collisions_03:
 		.BYTE	$3C,$00,$00,$00,$C0,$03,$0C,$03,$03,$FB,$F3,$FB,$F0,$F0,$F0,$F1
@@ -506,155 +506,155 @@ byte_21574:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$CD,$CD,$40,$2A,$2A,$2A,$2A,$2A,$2A
 _lvl2_objects_list:
 		.BYTE	$FF,$02
-		.BYTE	$28,$D8,$00,$48,$01
-		.BYTE	$28,$D8,$00,$78,$01
-		.BYTE	$28,$D8,$00,$A8,$01
-		.BYTE	$28,$90,$01,$88,$01
-		.BYTE	$28,$08,$01,$98,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$01
+		OBJ_SET	_scr28_pink_goo,					$D8,$00,$48,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$D8,$00,$78,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$D8,$00,$A8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$90,$01,$88,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$08,$01,$98,$01,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
-		.BYTE	$28,$58,$01,$78,$00
-		.BYTE	$28,$D8,$01,$58,$00
-		.BYTE	$28,$88,$00,$88,$00
-		.BYTE	$28,$58,$00,$58,$00
-		.BYTE	$28,$58,$00,$A8,$00
-		.BYTE	$28,$A8,$00,$68,$00
-		.BYTE	$12,$00,$00,$00,$00,$AC,$02
+		OBJ_SET	_scr28_pink_goo,					$58,$01,$78,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$D8,$01,$58,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$00,$88,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$58,$00,$58,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$58,$00,$A8,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$A8,$00,$68,$00,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$02,_NON
 		.BYTE	$FF,$01,$02
 		.BYTE	$FF,$02
-		.BYTE	$25,$A8,$02,$80,$00,$40
-		.BYTE	$28,$48,$02,$48,$00
-		.BYTE	$28,$98,$02,$C8,$00
-		.BYTE	$25,$48,$02,$A0,$01,$C0
-		.BYTE	$25,$70,$02,$60,$01,$00
-		.BYTE	$28,$A8,$02,$A8,$01
-		.BYTE	$0D,$B0,$02,$B0,$01,$01
-		.BYTE	$12,$00,$00,$00,$00,$AE,$03
+		OBJ_SET	_scr25_stinging_wing_elephant,		$A8,$02,$80,$00,$40,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$48,$02,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$98,$02,$C8,$00,_NON,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$48,$02,$A0,$01,$C0,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$70,$02,$60,$01,$00,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$A8,$02,$A8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$B0,$02,$B0,$01,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$03,_NON
 		.BYTE	$FF,$01,$03
-		.BYTE	$28,$A8,$02,$68,$02
-		.BYTE	$28,$B8,$02,$98,$02
-		.BYTE	$28,$58,$02,$A8,$02
-		.BYTE	$26,$38,$03,$A8,$02
-		.BYTE	$28,$98,$03,$A8,$02
-		.BYTE	$28,$C8,$03,$68,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$04
+		OBJ_SET	_scr28_pink_goo,					$A8,$02,$68,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$B8,$02,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$58,$02,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$38,$03,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$98,$03,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$03,$68,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$04,_NON
 		.BYTE	$FF,$01,$04
-		.BYTE	$2A,$88,$03,$48,$00
-		.BYTE	$12,$00,$00,$00,$00,$AC,$05
+		OBJ_SET	_scr2A_morning_star_troll,			$88,$03,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 		.BYTE	$FF,$01,$05
 		.BYTE	$FF,$02
-		.BYTE	$26,$88,$05,$80,$00
-		.BYTE	$28,$78,$05,$A8,$01
-		.BYTE	$26,$88,$05,$88,$00
-		.BYTE	$0D,$40,$05,$68,$01,$01
-		.BYTE	$12,$00,$00,$00,$00,$AE,$06
+		OBJ_SET	_scr26_sword_ninja,					$88,$05,$80,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$78,$05,$A8,$01,_NON,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$88,$05,$88,$00,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$40,$05,$68,$01,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$06,_NON
 		.BYTE	$FF,$01,$06
-		.BYTE	$26,$90,$05,$A0,$02
-		.BYTE	$25,$60,$05,$60,$02,$00
-		.BYTE	$25,$F8,$04,$60,$02,$00
-		.BYTE	$25,$98,$04,$60,$02,$00
-		.BYTE	$26,$78,$04,$60,$02
-		.BYTE	$25,$42,$04,$60,$02,$00
-		.BYTE	$28,$80,$04,$90,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$07
+		OBJ_SET	_scr26_sword_ninja,					$90,$05,$A0,$02,_NON,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$05,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$78,$04,$60,$02,_NON,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$42,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$80,$04,$90,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$07,_NON
 		.BYTE	$FF,$01,$07
-		.BYTE	$2A,$60,$04,$48,$00
-		.BYTE	$2A,$B0,$04,$48,$00
-		.BYTE	$12,$00,$00,$00,$00,$AC,$08
+		OBJ_SET	_scr2A_morning_star_troll,			$60,$04,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$B0,$04,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$08,_NON
 		.BYTE	$FF,$01,$08
 		.BYTE	$FF,$02
-		.BYTE	$27,$88,$06,$68,$00
-		.BYTE	$28,$B0,$06,$10,$01
-		.BYTE	$27,$40,$06,$C0,$01
-		.BYTE	$0D,$58,$06,$A0,$01,$01
-		.BYTE	$12,$00,$00,$00,$00,$AE,$09
+		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$68,$00,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$B0,$06,$10,$01,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$40,$06,$C0,$01,_NON,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$58,$06,$A0,$01,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$09,_NON
 		.BYTE	$FF,$01,$09
-		.BYTE	$27,$88,$06,$A8,$02
-		.BYTE	$28,$28,$07,$A8,$02
-		.BYTE	$28,$D8,$06,$B8,$02
-		.BYTE	$27,$A8,$06,$98,$02
-		.BYTE	$27,$88,$07,$98,$02
-		.BYTE	$28,$C8,$07,$B8,$02
-		.BYTE	$27,$88,$06,$98,$02
-		.BYTE	$12,$00,$00,$00,$00,$AC,$0A
+		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$28,$07,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$D8,$06,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$A8,$06,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$88,$07,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$C8,$07,$B8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0A,_NON
 		.BYTE	$FF,$01,$0A
-		.BYTE	$23,$80,$07,$80,$01
-		.BYTE	$2A,$60,$07,$48,$00
-		.BYTE	$2A,$78,$07,$98,$00
-		.BYTE	$2A,$B0,$07,$48,$00
-		.BYTE	$12,$00,$00,$00,$00,$AC,$0B
+		OBJ_SET	_scr23_halloween,					$80,$07,$80,$01,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$60,$07,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$78,$07,$98,$00,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$B0,$07,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0B,_NON
 		.BYTE	$FF,$01,$0B
 		.BYTE	$FF,$02
-		.BYTE	$24,$30,$01,$90,$03,$80
-		.BYTE	$24,$A0,$01,$00,$04,$00
-		.BYTE	$24,$30,$01,$A0,$04,$40
-		.BYTE	$12,$00,$00,$00,$00,$AE,$0C
+		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$90,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$01,$00,$04,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$A0,$04,$40,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0C,_NON
 		.BYTE	$FF,$01,$0C
-		.BYTE	$24,$A0,$00,$68,$05,$00
-		.BYTE	$28,$58,$00,$98,$05
-		.BYTE	$24,$30,$01,$A0,$05,$C0
-		.BYTE	$24,$70,$01,$80,$05,$40
-		.BYTE	$24,$D0,$00,$30,$05,$40
-		.BYTE	$28,$98,$01,$A8,$05
-		.BYTE	$24,$C0,$01,$68,$05,$C0
-		.BYTE	$24,$50,$00,$B0,$05,$00
-		.BYTE	$0D,$B0,$00,$B0,$05,$01
-		.BYTE	$12,$00,$00,$00,$00,$AC,$0D
+		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$00,$68,$05,$00,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$58,$00,$98,$05,_NON,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$A0,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$70,$01,$80,$05,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$D0,$00,$30,$05,$40,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$98,$01,$A8,$05,_NON,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$C0,$01,$68,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$50,$00,$B0,$05,$00,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$B0,$00,$B0,$05,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0D,_NON
 		.BYTE	$FF,$01,$0D
-		.BYTE	$2A,$60,$00,$78,$03
-		.BYTE	$2A,$B8,$00,$48,$03
-		.BYTE	$2A,$88,$00,$48,$03
-		.BYTE	$23,$48,$00,$40,$03
-		.BYTE	$12,$00,$00,$00,$00,$AC,$0E
+		OBJ_SET	_scr2A_morning_star_troll,			$60,$00,$78,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$B8,$00,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$88,$00,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$48,$00,$40,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0E,_NON
 		.BYTE	$FF,$01,$0E
 		.BYTE	$FF,$02
-		.BYTE	$24,$40,$02,$30,$03,$80
-		.BYTE	$24,$60,$02,$C0,$03,$C0
-		.BYTE	$24,$80,$02,$90,$03,$00
-		.BYTE	$28,$88,$02,$18,$04
-		.BYTE	$24,$30,$02,$30,$04,$40
-		.BYTE	$24,$A0,$02,$A0,$04,$00
-		.BYTE	$25,$48,$02,$A0,$04,$C0
-		.BYTE	$24,$C0,$02,$80,$04,$40
-		.BYTE	$0D,$C8,$02,$98,$04,$01
-		.BYTE	$12,$00,$00,$00,$00,$AE,$0F
+		OBJ_SET	_scr24_flying_wing_elephant,		$40,$02,$30,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$60,$02,$C0,$03,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$80,$02,$90,$03,$00,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$88,$02,$18,$04,_NON,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$30,$02,$30,$04,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$02,$A0,$04,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$48,$02,$A0,$04,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$C0,$02,$80,$04,$40,_NON,_NON
+		OBJ_SET	_scr0D_money_bag,					$C8,$02,$98,$04,$01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0F,_NON
 		.BYTE	$FF,$01,$0F
-		.BYTE	$25,$F8,$02,$60,$05,$00
-		.BYTE	$25,$98,$02,$60,$05,$00
-		.BYTE	$24,$80,$03,$90,$05,$40
-		.BYTE	$24,$00,$03,$50,$05,$80
-		.BYTE	$25,$C0,$03,$60,$05,$00
-		.BYTE	$25,$60,$03,$60,$05,$00
-		.BYTE	$12,$00,$00,$00,$00,$AC,$10
+		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$02,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$02,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$80,$03,$90,$05,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_wing_elephant,		$00,$03,$50,$05,$80,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$C0,$03,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$03,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$10,_NON
 		.BYTE	$FF,$01,$10
-		.BYTE	$2A,$68,$03,$A8,$03
-		.BYTE	$2A,$98,$03,$78,$03
-		.BYTE	$2A,$B8,$03,$48,$03
-		.BYTE	$23,$58,$03,$40,$03
-		.BYTE	$23,$48,$03,$00,$04
-		.BYTE	$23,$C0,$03,$C0,$03
-		.BYTE	$12,$00,$00,$00,$00,$AC,$14
+		OBJ_SET	_scr2A_morning_star_troll,			$68,$03,$A8,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$98,$03,$78,$03,_NON,_NON,_NON
+		OBJ_SET	_scr2A_morning_star_troll,			$B8,$03,$48,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$58,$03,$40,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$48,$03,$00,$04,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$C0,$03,$C0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$14,_NON
 		.BYTE	$FF,$01,$14
 		.BYTE	$FF,$02
-		.BYTE	$23,$80,$05,$88,$03
-		.BYTE	$23,$30,$05,$E0,$03
-		.BYTE	$23,$C8,$05,$78,$04
-		.BYTE	$23,$30,$05,$A0,$04
-		.BYTE	$23,$B0,$05,$90,$03
-		.BYTE	$12,$00,$00,$00,$00,$AE,$15
+		OBJ_SET	_scr23_halloween,					$80,$05,$88,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$30,$05,$E0,$03,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$C8,$05,$78,$04,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$30,$05,$A0,$04,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$B0,$05,$90,$03,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$15,_NON
 		.BYTE	$FF,$01,$15
-		.BYTE	$23,$70,$04,$90,$05
-		.BYTE	$23,$A0,$04,$B0,$05
-		.BYTE	$23,$E0,$04,$88,$05
-		.BYTE	$23,$40,$04,$A8,$05
-		.BYTE	$23,$A8,$05,$A8,$05
-		.BYTE	$23,$10,$05,$98,$05
-		.BYTE	$23,$30,$05,$A8,$05
-		.BYTE	$12,$00,$00,$00,$00,$AC,$16
+		OBJ_SET	_scr23_halloween,					$70,$04,$90,$05,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$A0,$04,$B0,$05,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$E0,$04,$88,$05,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$40,$04,$A8,$05,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$A8,$05,$A8,$05,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$10,$05,$98,$05,_NON,_NON,_NON
+		OBJ_SET	_scr23_halloween,					$30,$05,$A8,$05,_NON,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$16,_NON
 		.BYTE	$FF,$01,$16
-		.BYTE	$12,$00,$00,$00,$00,$AC,$17
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$17,_NON
 		.BYTE	$FF,$01,$17
-		.BYTE	$11,$80,$00,$80,$02
+		OBJ_SET	_scr11_lvl2_ghost_nanny,			$80,$00,$80,$02,_NON,_NON,_NON
 		.BYTE	$FF,$00
 _lvl_collisions_04:
 		.BYTE	$03,$BE,$EF,$8E,$0F,$8F,$0F,$BF,$0F,$B7,$0B,$B4,$FF,$B5,$FD,$34

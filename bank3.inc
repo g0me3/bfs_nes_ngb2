@@ -6,12 +6,12 @@
 ; =============== S C R I P T ===============================================
 _scr1A_lvl1_boss_judges:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$01
 		SCASE			_sjmp_case_2C148
 		SPR_IDX_SET		0,$04
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$02,$FF
+			NARGB		SARG2,$FF
 		SJMP_SW			$01
 		SCASE			_sjmp_case_2C029
 _sloc_2C014:
@@ -42,7 +42,7 @@ _sjmp_case_2C029:
 		SPR_IDX_INC		5
 		SPR_IDX_DEC		4
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$1A,$38,$40,$01,$00
 		POS_X_MOVE	0,$C0
 		POS_Y_MOVE		0,$40
@@ -168,7 +168,7 @@ loc_2C105:
 loc_2C10F:
 		TYA
 		BEQ		loc_2C118
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C06C
 		RTS
 loc_2C118:
@@ -176,7 +176,7 @@ loc_2C118:
 		LDY		#$0E
 		JSR		sub_61DD6
 		BCC		loc_2C127
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C089
 		RTS
 loc_2C127:
@@ -193,11 +193,11 @@ _nbgsub_2C12E:
 		LDA		#$0A
 		STA		_scores_obj_value
 		BCS		loc_2C142
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C0BF
 		RTS
 loc_2C142:
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C0C5
 locret_2C147:
 		RTS
@@ -210,7 +210,7 @@ _sjmp_case_2C148:
 			NARGW		byte_2C0CF
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$80
-		SRUN			$01,_scr_2C1C2
+		SSCRIPT1_SET	_scr_2C1C2
 		SDELAY			$48
 		SJMP			_sloc_2C16B
 
@@ -316,7 +316,7 @@ _sjmp_case_2C204:
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_2C0CF
-		SRUN			$01,_scr_2C1C2
+		SSCRIPT1_SET	_scr_2C1C2
 		NJSR			_nsub_62879
 			NARGB		$03
 		SJMP_SW			$03
@@ -349,7 +349,7 @@ _nbgsub_2C23F:
 		LDY		#$0E
 		JSR		sub_61DD6
 		BCC		loc_2C24E
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C1CE
 		RTS
 loc_2C24E:
@@ -366,11 +366,11 @@ _nbgsub_2C255:
 		LDA		#$0A
 		STA		_scores_obj_value
 		BCS		loc_2C269
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C233
 		RTS
 loc_2C269:
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_sjmp_case_2C239
 locret_2C26E:
 		RTS
@@ -695,7 +695,7 @@ _spr_raw_lib1A_18:
 ; =============== S C R I P T ===============================================
 _scr22_lvl2_boss_train_slime:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$04
 		SCASE			_sjmp_case_2C91D
 		SCASE			_sjmp_case_2C978
@@ -736,7 +736,7 @@ _ssub_2C686:
 		SPR_IDX_INC		3
 		SPR_IDX_INC		3
 		SPR_IDX_INC		3
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$22,$00,$F8,$01,$00
 		SPR_IDX_INC		7
 		SPR_IDX_DEC		3
@@ -748,12 +748,12 @@ _ssub_2C686:
 _scr_2C698:
 		NBG_HNDL_SET	_nbgsub_2C70D
 		SARG_SET		SARG0,$02
-		SRUN			$01,_scr_2C6B7
+		SSCRIPT1_SET	_scr_2C6B7
 _sloc_2C6A2:
 		SDELAY			$01
 		NJSR			_nsub_62BFD
 		SBCC			_sloc_2C6A2
-		SDISABLE		$01
+		SSCRIPT1_OFF
 		NJSR			_nsub_62C0B
 		SJMP_SW			$03
 		SCASE			_sjmp_case_2C658
@@ -778,7 +778,7 @@ _scr_2C6B7:
 		NJSR			_nsub_626F1
 			NARGB		$03
 		NJSR			_nsub_60EF1
-		SDISABLE_SELF
+		SSCRIPT0_OFF
 
 ; =============== S C R I P T ===============================================
 _scr_2C6D0:
@@ -794,7 +794,7 @@ _scr_2C6D9:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_2C6E2:
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$22,$00,$00,$04,$00
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
@@ -810,7 +810,7 @@ _nbgsub_2C6F7:
 		LDY		#$08
 		JSR		sub_61DD6
 		BCC		loc_2C706
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C698
 		RTS
 loc_2C706:
@@ -830,12 +830,12 @@ _nbgsub_2C70D:
 		PLA
 		LSR
 		BCS		loc_2C726
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C6D0
 		RTS
 loc_2C726:
 		; *--
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C6D9	; *--
 locret_2C72B:
 		RTS
@@ -1009,9 +1009,9 @@ _nsub_2C90E:
 ; =============== S C R I P T ===============================================
 _sjmp_case_2C91D:
 		NJSR			_nsub_2C952
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$22,$F8,$00,$02,$E0
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$22,$08,$00,$03,$20
 		SPR_IDX_SET		0,$37
 _sloc_2C932:
@@ -1072,7 +1072,7 @@ _sjmp_case_2C97D:
 ; =============== S C R I P T ===============================================
 _scr2E_lvl4_boss_dragons:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$02
 		SCASE			_sjmp_case_2C9AE
 		SCASE			_sjmp_case_2CE6C
@@ -1088,7 +1088,7 @@ _sloc_2C99C:
 		NJSR			_nsub_2CADF
 			NARGB		$04
 		SBCS			_sloc_2C99C
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2E,$00,$00,$01,$00
 		SLOOP_END
 
@@ -1144,7 +1144,7 @@ _sloc_2C9E4:
 		NJSR			_nsub_apu_snd_load
 			NARGB		$15
 		SLOOP_BEGIN		$20
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2E,$00,$00,$02,$00
 		SDELAY			$03
 		SLOOP_END
@@ -1232,7 +1232,7 @@ _nbgsub_2CAAF:
 		LDY		#$10
 		JSR		sub_61DD6
 		BCC		loc_2CABE
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2CA40
 		RTS
 loc_2CABE:
@@ -1249,12 +1249,12 @@ _nbgsub_2CAC5:
 		LDA		#$1E
 		STA		_scores_obj_value
 		BCS		loc_2CAD9
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2CA9B
 		RTS
 loc_2CAD9:
 		; *--
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2CAA1	; *--
 locret_2CADE:
 		RTS
@@ -1672,7 +1672,7 @@ _spr_raw_lib1A_57:
 ; =============== S C R I P T ===============================================
 _scr2F_lvl5_boss_key_keeper:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$04
 		SCASE			_sjmp_case_2CFB4
 		SCASE			_sjmp_case_2CFCC
@@ -1685,10 +1685,10 @@ _scr2F_lvl5_boss_key_keeper:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$18
 		SARG_SET		SARG1,$40
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2F,$00,$00,$01,$00
 		NJSR			_nsub_2D257
-		SRUN			$01,_scr_2CFA1
+		SSCRIPT1_SET	_scr_2CFA1
 		SDELAY			$28
 		SDELAY			$B4
 _sloc_2CF30:
@@ -1696,10 +1696,10 @@ _sloc_2CF30:
 		SBCC			_sloc_2CF51
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2CFD9
-		SRUN			$01,_scr_2CFA1
+		SSCRIPT1_SET	_scr_2CFA1
 		SDELAY			$28
 		NJSR			_nsub_2D282
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2F,$00,$00,$02,$00
 		NJSR			_nsub_2D257
 		SDELAY			$B4
@@ -1707,7 +1707,7 @@ _sloc_2CF51:
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2CFE3
 		SDELAY			$28
-		SDISABLE		$01
+		SSCRIPT1_OFF
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_2D15C
@@ -1764,7 +1764,7 @@ _sjmp_case_2CFB4:
 		NJSR			_nsub_6273D
 			NARGB		$5A,$40
 		SDELAY			$28
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2F,$00,$00,$02,$00
 		NJSR			_nsub_2D257
 		SJMP			_sloc_2CFED
@@ -1803,12 +1803,12 @@ _sloc_2D002:
 			NARGB		$5A,$40
 		NJSR			_nsub_2D1B1
 		SDELAY			$01
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2F,$00,$00,$04,$00
 		SDELAY			$3C
 		SJMP			_sloc_2D002
 _sjsr_case_2D01E:
-		SRUN			$01,_scr_2D02F
+		SSCRIPT1_SET	_scr_2D02F
 _sloc_2D022:
 		NJSR			_nsub_2D2BB
 			NARGB		$C8
@@ -1834,7 +1834,7 @@ _scr_2D02F:
 		SDELAY			$06
 		SJMP			_scr_2D02F
 _sjsr_case_2D04C:
-		SRUN			$01,_scr_2D05D
+		SSCRIPT1_SET	_scr_2D05D
 _sloc_2D050:
 		NJSR			_nsub_2D2CC
 			NARGB		$30
@@ -1860,7 +1860,7 @@ _scr_2D05D:
 		SDELAY			$06
 		SJMP			_scr_2D05D
 _sjsr_case_2D07A:
-		SRUN			$01,_scr_2D08B
+		SSCRIPT1_SET	_scr_2D08B
 _sloc_2D07E:
 		NJSR			_nsub_2D2D8
 			NARGB		$40
@@ -1886,7 +1886,7 @@ _scr_2D08B:
 		SDELAY			$06
 		SJMP			_scr_2D08B
 _sjsr_case_2D0A8:
-		SRUN			$01,_scr_2D0B9
+		SSCRIPT1_SET	_scr_2D0B9
 _sloc_2D0AC:
 		NJSR			_nsub_2D2E4
 			NARGB		$A8
@@ -1957,7 +1957,7 @@ _scr_2D122:
 		NJSR			_nsub_2D23D
 		NJSR			_nsub_2D1A8
 		SBCC			_sloc_2D133
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2F,$00,$18,$03,$00
 _sloc_2D133:
 		SARG_SET		SARG1,$72
@@ -1968,7 +1968,7 @@ _scr_2D139:
 		NJSR			_nsub_2D23D
 		NJSR			_nsub_2D1A8
 		SBCC			_sloc_2D14A
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$2F,$00,$18,$03,$00
 _sloc_2D14A:
 		SARG_SET		SARG1,$74
@@ -1988,7 +1988,7 @@ _nbgsub_2D164:
 		BCC		loc_2D178
 		LDA		#$01
 		STA		byte_7DA
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2D0D6
 		RTS
 loc_2D178:
@@ -2005,11 +2005,11 @@ _nbgsub_2D17F:
 		LDA		#$0F
 		STA		_scores_obj_value
 		BCS		loc_2D193
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2D122
 		RTS
 loc_2D193:
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2D139
 locret_2D198:
 		RTS
@@ -2070,7 +2070,7 @@ loc_2D1CB:
 		LDA		_tmp0
 		PHA
 		LDY		_tmp2
-		JSR		_script_load_ex
+		JSR		_thread_load
 		PLA
 		STA		_tmp0
 		PLA
@@ -2755,7 +2755,7 @@ _spr_raw_lib1A_83:
 ; =============== S C R I P T ===============================================
 _scr30_lvl6_boss_vega:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$04
 		SCASE			_sjmp_case_2DEF2
 		SCASE			_sjmp_case_2DF47
@@ -2777,9 +2777,9 @@ _scr30_lvl6_boss_vega:
 			NARGB		$22
 		SDELAY			$06
 		SLOOP_END
-		STORE16	byte_7D7,$800
+		STORE16			byte_7D7,$800
 		NBG_HNDL_SET	_nbgsub_2DA3B
-		SRUN			$01,_scr_2D996
+		SSCRIPT1_SET	_scr_2D996
 		SDELAY			$B4
 		POS_Y_DELTA_SET 0,$80,$00
 		SDELAY			$60
@@ -2788,13 +2788,13 @@ _sloc_2D90E:
 		SPR_IDX_SET		0,$C0
 		SDELAY			$62
 		SARG_SET		SARG1,$00
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$00,$00,$01,$20
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$00,$00,$01,$60
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$00,$00,$01,$A0
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$00,$00,$01,$E0
 		SDELAY			$2E
 		SLOOP_BEGIN		$04
@@ -2807,7 +2807,7 @@ _sloc_2D90E:
 		SLOOP_END
 		SPR_IDX_DEC		0
 		SDELAY			$0C
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$00,$00,$02,$00
 		SDELAY			$20
 		SPR_IDX_SET		0,$C0
@@ -2815,20 +2815,20 @@ _sloc_2D90E:
 		SPR_IDX_SET		0,$C5
 		SDELAY			$08
 		NJSR			_nsub_2DA70
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$10,$F8,$03,$4C
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$10,$F8,$03,$6C
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$10,$F8,$03,$8C
 		SDELAY			$10
 		SPR_IDX_INC		0
 		SDELAY			$08
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$F0,$F8,$03,$74
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$F0,$F8,$03,$94
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$F0,$F8,$03,$B4
 		SDELAY			$10
 		SJMP			_sloc_2D90E
@@ -2837,7 +2837,7 @@ _sloc_2D90E:
 _scr_2D996:
 		SDELAY			$01
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$00
+			NARGB		SARG0,$00
 		SJMP_SW			$01
 		SCASE			_scr_2D996
 		NJSR			_nsub_pal_patch_fade
@@ -2905,7 +2905,7 @@ _scr_2D9BC:
 		SDELAY			$0E
 		SPR_IDX_SET		0,$91
 		SDELAY			$96
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$30,$00,$58,$04,$00
 		SDELAY			$40
 		SLOOP_BEGIN		$04
@@ -2937,7 +2937,7 @@ _nbgsub_2DA3B:
 		STA		byte_7D7+1
 		ORA		byte_7D7
 		BNE		locret_2DA6F
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_2D9BC
 		LDA		#$C8
 		JSR		_scores_add
@@ -2957,10 +2957,10 @@ _nsub_2DA70:
 ; =============== S U B R O U T I N E =======================================
 _nsub_2DA7D:
 		LDX		#$02
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_602EE
 		LDX		#$04
-		JSR		_script_load_param_ex
+		JSR		_thread_reload_param_ex
 		.WORD	_scr_60FEE
 		RTS
 _spr_res_lib1A_00:
@@ -3302,7 +3302,7 @@ _spr_raw_lib1A_94:
 ; =============== S C R I P T ===============================================
 _sjmp_case_2DEF2:
 		SARG_SET		SARG0,$00
-		SRUN			$01,_scr_2DF30
+		SSCRIPT1_SET	_scr_2DF30
 		NBG_HNDL_SET	_nbgsub_2DF36
 		NJSR			_nsub_628D1
 			NARGB		$00,$04
@@ -3592,10 +3592,10 @@ _spr_res_lib1A:
 		.WORD	_spr_res_lib1A_07
 _lvl5_objects_list:
 		.BYTE	$FF,$02
-		.BYTE	$0F,$80,$00,$5C,$03
-		.BYTE	$0F,$80,$00,$5C,$02
+		OBJ_SET	_scr0F_candle,$80,$00,$5C,$03,_NON,_NON,_NON
+		OBJ_SET	_scr0F_candle,$80,$00,$5C,$02,_NON,_NON,_NON
 		.BYTE	$FF,$01,$01
-		.BYTE	$30,$80,$00,$48,$00
+		OBJ_SET	_scr30_lvl6_boss_vega,$80,$00,$48,$00,_NON,_NON,_NON
 		.BYTE	$FF,$00
 _lvl_collisions_07:
 		.BYTE	$A1,$78,$A1,$7F,$E1,$7F,$41,$43,$01,$43,$01,$00,$FB,$FF,$EF,$F0

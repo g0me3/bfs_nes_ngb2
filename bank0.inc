@@ -9,7 +9,7 @@
 		SECTION_START
 
 ; =============== S C R I P T ===============================================
-_scr0_intro_title_select:
+_scr00_intro_title_select:
 ; NOTE: if switch case index higher than maximum number of entries in table,
 ; then switch case skipped, so default branch is always just after the case
 ; but. there are scripts isn't using this method rather than using raw direct
@@ -18,26 +18,26 @@ _scr0_intro_title_select:
 ; TODO: also not sure why they not use default branch as case with index 00 here
 ; then with corresponding adjusting of other indexes...
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$0C
-		SCASE			_intro_sub01_slime		; 01
-		SCASE			_intro_sub02_busterA	; 02
-		SCASE			_intro_sub03_busterB	; 03
-		SCASE			_intro_sub04_busterC	; 04
-		SCASE			_intro_sub05_busterD	; 05
-		SCASE			_sjmp_case_8CC9			; 06
-		SCASE			_sjmp_case_8E09			; 07
-		SCASE			_sjmp_case_8E14			; 08
-		SCASE			_sjmp_case_8E1F			; 09
-		SCASE			_sjmp_case_8E2A			; 0A
-		SCASE			_sjmp_case_89AC			; 0B
-		SCASE			_intro_sub0C_new_blink	; 0C
+		SCASE			_sub01_intro_slime		; 01
+		SCASE			_sub02_intro_busterA	; 02
+		SCASE			_sub03_intro_busterB	; 03
+		SCASE			_sub04_intro_busterC	; 04
+		SCASE			_sub05_intro_busterD	; 05
+		SCASE			_sub06_select_busterA	; 06
+		SCASE			_sub07_select_busterB	; 07
+		SCASE			_sub08_select_busterC	; 08
+		SCASE			_sub09_select_busterD	; 09
+		SCASE			_sub0A_select_busterE	; 0A
+		SCASE			_intro_sub0B_title_ghost; 0B
+		SCASE			_intro_sub0C_title_new	; 0C
 		NJSR			_nsub_mcmp						; default case for script startup
 			NARGW		_license_screen_display_flag	; check for special flag, set at reset
 			NARGB		$01								; preventing from show license screens
 		SBCC			_sloc_title_start				; after game over, if clear, jump to title
 		STORE8			_license_screen_display_flag,$00; if set, clear it, then load first
-		NJSR			_nsub_pal_fade					; do full palette fade
+		NJSR			_nsub_full_pal_fade_set			; do full palette fade
 			NARGB		$FC								; $FC = fade out at max peed (sub 40)
 		NJSR			_nsub_scroll_page_set			; set nt page
 			NARGB		$00
@@ -93,72 +93,80 @@ _sloc_title_start:
 ; here for different switch cases we need to add +1 sometimes, so this may now
 ; work here or need assign another one macro.. too much macroses bad too, so let's
 ; just use the _idx postfix by now.
-		NJSR			_nsub_script_start				; load additional title script
-			NARGB		_scr0_intro_title_select_idx	; technically the same
-			NARGB		$00,$00							; _scr0_intro_title_select but with
-			NARGB		_intro_sub0C_new_blink_idx+1	; different switch case index: 0C
+		NJSR			_nsub_new_thread_start			; load additional title script
+			NARGB		_scr00_intro_title_select_idx	; technically the same
+			NARGB		$00,$00							; _scr00_intro_title_select but with
+			NARGB		_intro_sub0C_title_new_idx+1	; different switch case index: 0C
 			NARGB		$00								; also indexes here are +1 by default
 		POS_X_SET		0,$80,$00						; initialize title picture patch sprite
 		POS_Y_SET		0,$88,$00						; with ghost's foot with no hole
 		SPR_IDX_SET		1,$00							; the original tilemap for title has this hole
 		SJSR			_ssub_pal_fade_in				; show the picture
 		NBG_HNDL_SET	_nbgsub_title_input				; set the background handler for input tests
-_sloc_809A:
+_sloc_title_loop:
 		SDELAY			$3B								; here starting the main title loop
 		SPR_IDX_INC		3								; after 1sec animate title sprite patch to show
 		SPR_IDX_SET		2,$FF							; small hole for 3 frames (too small), then turn sprite off
 		NJSR			_nsub_sarg01_load_data_ofs		; load animation sequence data pointer to SARG0/SARG1
 			NARGW		_chain_title_anim_scripts_data
 		SLOOP_BEGIN		$05								; load the current script 5 more times with different
-		NJSR			_nsub_script_chain_start		; settings for every single sprite. this includes position
-		SLOOP_END										; offset, delay and an SJMP_SW index for particular object
-		SDELAY			$F0
-		SJSR			_ssub_812C
-		SARG_SET		SARG2,$00
+		NJSR			_nsub_chain_thread_lib_load_enemy	; settings for every single instance. this includes position
+		SLOOP_END										; offset, delay and an SJMP_SW index to each object
+		SDELAY			$F0								; when scripts loaded, they run immediately. wait while they stop
+		SJSR			_ssub_title_maskDB_fade_out		; now fade out middle part of the screen only
+		SARG_SET		SARG2,$00						; while window is black, replace logo with title text
 		SLOOP_BEGIN		$12
 		NJSR			_nsub_tlm_raw_arg2_idx_line_draw
 			NARGW		_tlm_title_text
 		SDELAY			$01
 		SLOOP_END
-		NJSR			_nsub_title_attr_select
+		NJSR			_nsub_title_attr_select			; load second set of attrs
 			NARGB		$01
-		NJSR			_nsub_hi_scores_display
+		NJSR			_nsub_hi_scores_display			; draw additional hi-scores
 			NARGB		$0F,$0A
-		NJSR			_nsub_full_pal_load
+		NJSR			_nsub_full_pal_load				; load new paletter for this portion
 			NARGW		_pal3
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$09
-		NJSR			_nsub_script_start
-			NARGB		$00,$00,$00,$0B,$00
-		SJSR			_ssub_8136
-		SRUN			$01,_scr_810E
-		SDELAY			$F0
+		NJSR			_nsub_mmc1_chr1_set				; and change the CHR page, pages 00 and 09 shares
+			NARGB		$09								; title curtain graphics, so nothing is changes there
+		NJSR			_nsub_new_thread_start			; start new thread to display an additional
+			NARGB		_scr00_intro_title_select_idx	; animated sprite object - small ghost in "stop" sign
+			NARGB		$00,$00							; this object has limited lifetime and stopped
+			NARGB		_intro_sub0B_title_ghost_idx+1	; automatically after about 10 seconds
+			NARGB		$00
+		SJSR			_ssub_title_maskDB_fade_in		; fade in palette for the center of the screen
+		SSCRIPT1_SET	_scr_title_push_start_anim		; run secondary script to animate palette for "push start button"
+		SDELAY			$F0								; just wait about 9 seconds
 		SDELAY			$F0
 		SDELAY			$67
-		SDISABLE		$01
-		NJSR			_nsub_pal_fade
+		SSCRIPT1_OFF									; then kill the "push start button" animation
+		NJSR			_nsub_full_pal_fade_set			; restore full palette
 			NARGB		$00
-		SJSR			_ssub_812C
-		SARG_SET		SARG2,$00
+		SJSR			_ssub_title_maskDB_fade_out		; and then fade it out
+; TODO: this portion mostly the same as the first part of the title script
+; it may be reduced in size by separating the common operations to a
+; _ssub function, or just rearranged to allow just restarting from position
+; where it redraws the screen...
+;
+		SARG_SET		SARG2,$00						; now redraw the title logo again
 		SLOOP_BEGIN		$12
 		NJSR			_nsub_tlm_raw_arg2_idx_line_draw
 			NARGW		_tlm_title_logo
 		SDELAY			$01
 		SLOOP_END
-		NJSR			_nsub_title_attr_select
+		NJSR			_nsub_title_attr_select			; restore attribs...
 			NARGB		$00
-		NJSR			_nsub_full_pal_load
+		NJSR			_nsub_full_pal_load				; ...palettes
 			NARGW		_pal2
-		NJSR			_nsub_mmc1_chr1_set
+		NJSR			_nsub_mmc1_chr1_set				; ...and CHR bank 0
 			NARGB		$00
-		SPR_IDX_SET		1,$00
-		SJSR			_ssub_8136
-		SJMP			_sloc_809A
+		SPR_IDX_SET		1,$00							; not sure whey they restore the sprite here
+		SJSR			_ssub_title_maskDB_fade_in		; fade in and do loop
+		SJMP			_sloc_title_loop
 
 ; =============== S C R I P T ===============================================
-_scr_810E:
-		SLOOP_BEGIN		$02
-		NJSR			_nsub_pal_fade_req_inc_by_mask
+_scr_title_push_start_anim:
+		SLOOP_BEGIN		$02								; just does masked fade for
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; particular paletter entry
 			NARGB		$40
 		SDELAY			$04
 		SLOOP_END
@@ -172,20 +180,20 @@ _scr_810E:
 			NARGB		$40
 		SDELAY			$04
 		SLOOP_END
-		SJMP			_scr_810E
+		SJMP			_scr_title_push_start_anim
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_812C:
-		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask
+_ssub_title_maskDB_fade_out:
+		SLOOP_BEGIN		$04								; masked fade out for middle part
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; of the title screen, excluding curtains
 			NARGB		$DB
 		SDELAY			$04
 		SLOOP_END
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_8136:
-		SLOOP_BEGIN		$04
+_ssub_title_maskDB_fade_in:
+		SLOOP_BEGIN		$04								; fade in the same area
 		NJSR			_nsub_pal_fade_req_inc_by_mask
 			NARGB		$DB
 		SDELAY			$04
@@ -202,13 +210,13 @@ _scr_secret_menu_start:
 		SJSR			_ssub_pal_fade_out
 		SJMP			_scr_secret_menu
 
-; =============== S C R I P T ===============================================
 _chain_title_anim_scripts_data:
-		.BYTE	_intro_sub01_slime_idx+1,$00,$08,$60
-		.BYTE	_intro_sub02_busterA_idx+1,$00,$10,$20
-		.BYTE	_intro_sub03_busterB_idx+1,$F8,$10,$00
-		.BYTE	_intro_sub04_busterC_idx+1,$08,$10,$20
-		.BYTE	_intro_sub05_busterD_idx+1,$00,$10,$00
+		.BYTE	_sub01_intro_slime_idx+1,	$00,$08,$60
+		.BYTE	_sub02_intro_busterA_idx+1,	$00,$10,$20
+		.BYTE	_sub03_intro_busterB_idx+1,	$F8,$10,$00
+		.BYTE	_sub04_intro_busterC_idx+1,	$08,$10,$20
+		.BYTE	_sub05_intro_busterD_idx+1,	$00,$10,$00
+
 ; TODO: both paletters are the same for released versions, however, the prototype
 ; version uses different palettes, so they just not changed scripts but changed
 ; only palettes
@@ -216,6 +224,7 @@ _pal0:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00
 _pal1:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00
+; -
 _pal2:
 		.BYTE	$0F,$30,$15,$29,$0F,$30,$01,$29,$0F,$21,$11,$01,$0F,$14,$10,$30
 		.BYTE	$0F,$36,$1C,$0F,$0F,$30,$35,$0F,$0F,$30,$15,$29,$0F,$36,$2B,$0F
@@ -263,19 +272,19 @@ _tlm_title_text:
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_title_input:
-		LDA		_pad0_pressed
-		AND		#$10
-		BEQ		locret_8539
+		LDA		_pad0_pressed				; this is native background routine for
+		AND		#PAD_START					; title thread. when START pressed, test
+		BEQ		locret_8539					; additionally for A+B held
 		LDA		_pad0_held
-		AND		#$C0
-		CMP		#$C0
-		BNE		loc_8534
-		JSR		_script_load_param
+		AND		#PAD_A|PAD_B
+		CMP		#PAD_A|PAD_B
+		BNE		loc_8534					; if true, restart current thread with
+		JSR		_cur_thread_reload_param	; secret menu script
 		.WORD	_scr_secret_menu_start
 		RTS
 loc_8534:
-		JSR		_script_load_param
-		.WORD	_scr_select_busters_start
+		JSR		_cur_thread_reload_param	; if false, restart this thread with
+		.WORD	_scr_select_busters_start	; busters select script
 locret_8539:
 		RTS
 
@@ -290,6 +299,7 @@ loc_8545:
 		JSR		_ppu_res_send_param
 		.WORD	_attr_title1
 		RTS
+
 _attr_title0:
 		.WORD	$23C0
 		.BYTE	$20,$02
@@ -330,18 +340,18 @@ _spr_raw_lib00_01:
 		.BYTE	$00,$B2,$02,$00
 
 ; =============== S C R I P T ===============================================
-_intro_sub01_slime:
-		SRUN			$01,_scr_8642	; TODO, re carefully...
-		POS_Y_DELTA_SET 6,$00,$01
-		POS_Y_DELTA_SET 0,$80,$00
-		SDELAY			$C8
+_sub01_intro_slime:
+		SSCRIPT1_SET	_scr_8642	; run additionally parallel script for
+		POS_Y_DELTA_SET 6,$00,$01		; this object, while main script just
+		POS_Y_DELTA_SET 0,$80,$00		; set the moving parameters and then
+		SDELAY			$C8				; wait before stop
 		SSTOP
 
 ; =============== S C R I P T ===============================================
 _scr_8642:
-		SPR_IDX_SET		6,$02
-		SPR_IDX_INC		6
-		SJMP			_scr_8642
+		SPR_IDX_SET		6,$02			; secondary slime script for sprite
+		SPR_IDX_INC		6				; sprite animation. when main script
+		SJMP			_scr_8642		; stops, this will disable as well
 
 _spr_raw_lib00_02:
 		.BYTE	$04
@@ -357,16 +367,20 @@ _spr_raw_lib00_03:
 		.BYTE	$F0,$8C,$43,$00
 
 ; =============== S C R I P T ===============================================
-_intro_sub02_busterA:
+_sub02_intro_busterA:
 		SPR_IDX_SET		0,$04
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ===============================================
-_sloc_866C:
+_sloc_intro_busters_delay:
 		POS_Y_DELTA_SET 0,$00,$02
 		SDELAY			$0C
-_sloc_8671:
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_sloc_intro_busters_no_delay:
 		SPR_IDX_INC		0
 		POS_MOVE_STOP	0
 		SDELAY			$10
@@ -451,10 +465,10 @@ _spr_raw_lib00_0F:
 		.BYTE	$F0,$C8,$40,$FA
 
 ; =============== S C R I P T ===============================================
-_intro_sub03_busterB:
+_sub03_intro_busterB:
 		SPR_IDX_SET		0,$10
 		POS_X_DELTA_SET 0,$40,$FF
-		SJMP			_sloc_866C
+		SJMP			_sloc_intro_busters_delay
 
 _spr_raw_lib00_10:
 		.BYTE	$04
@@ -528,10 +542,10 @@ _spr_raw_lib00_1B:
 		.BYTE	$F0,$CC,$40,$FA
 
 ; =============== S C R I P T ===============================================
-_intro_sub04_busterC:
+_sub04_intro_busterC:
 		SPR_IDX_SET		0,$1C
 		POS_X_DELTA_SET 0,$C0,$00
-		SJMP			_sloc_866C
+		SJMP			_sloc_intro_busters_delay
 
 _spr_raw_lib00_1C:
 		.BYTE	$04
@@ -605,11 +619,11 @@ _spr_raw_lib00_27:
 		.BYTE	$F0,$CE,$40,$FA
 
 ; =============== S C R I P T ===============================================
-_intro_sub05_busterD:
+_sub05_intro_busterD:
 		SPR_IDX_SET		0,$28
 		POS_Y_DELTA_SET 0,$00,$02
 		SDELAY			$0A
-		SJMP			_sloc_8671
+		SJMP			_sloc_intro_busters_no_delay
 
 _spr_raw_lib00_28:
 		.BYTE	$04
@@ -683,7 +697,7 @@ _spr_raw_lib00_33:
 		.BYTE	$F0,$CA,$40,$FA
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_89AC:
+_intro_sub0B_title_ghost:
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$68,$00
 		SLOOP_BEGIN		$05
@@ -753,7 +767,7 @@ _spr_raw_lib00_4B:
 		.BYTE	$00,$CB,$02,$F4
 
 ; =============== S C R I P T ===============================================
-_intro_sub0C_new_blink:
+_intro_sub0C_title_new:
 		POS_X_SET		0,$30,$00				; set "NEW" sprite position
 		POS_Y_SET		0,$20,$00
 		SPR_IDX_SET		0,$4C					; select sprite index from lib00
@@ -774,7 +788,7 @@ _sloc_8A65:
 ; but since it goes to infinite loop as well, they planned to run it separately
 ; in some unknown cases.
 ;
-_intro_sub0C_new_blink_unref:
+_intro_sub0C_title_new_unref:
 		SARG_SET		SARG1,$00
 		SLOOP_BEGIN		$06
 		NJSR			_nsub_pal_patch_load
@@ -783,7 +797,7 @@ _intro_sub0C_new_blink_unref:
 		SARG_ALU		$01,_ADC,$01
 		SDELAY			$01
 		SLOOP_END
-		SJMP			_intro_sub0C_new_blink_unref
+		SJMP			_intro_sub0C_title_new_unref
 
 _pal_new_blink:
 		.BYTE	$35,$25,$15,$05,$15,$25
@@ -845,9 +859,9 @@ _scr_select_busters:
 		STORE8			_cur_room_x_pageB,$00
 		POS_X_SET		0,$00,$01
 		NJSR			_nsub_sarg01_load_data_ofs
-			NARGW		_script_chain_data1
+			NARGW		_select_buster_chain_scripts
 		SLOOP_BEGIN		$05
-		NJSR			_nsub_script_chain_start
+		NJSR			_nsub_chain_thread_lib_load_enemy
 		SLOOP_END
 		SJSR			_ssub_pal_fade_in
 		NJSR			_nsub_apu_mus_load
@@ -881,12 +895,12 @@ _sloc_8B5D:
 		NJSR			_nsub_8BAA
 		SSTOP
 
-_script_chain_data1:
-		.BYTE	$06,$00,$F8,$00
-		.BYTE	$07,$18,$F8,$00
-		.BYTE	$08,$30,$F8,$00
-		.BYTE	$09,$48,$F8,$00
-		.BYTE	$0A,$E0,$40,$00
+_select_buster_chain_scripts:
+		.BYTE	_sub06_select_busterA_idx+1,	$00,$F8,$00
+		.BYTE	_sub07_select_busterB_idx+1,	$18,$F8,$00
+		.BYTE	_sub08_select_busterC_idx+1,	$30,$F8,$00
+		.BYTE	_sub09_select_busterD_idx+1,	$48,$F8,$00
+		.BYTE	_sub0A_select_busterE_idx+1,	$E0,$40,$00
 byte_8B8A:
 		.BYTE	$0F,$00,$16,$07,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$30,$0F,$0F
 		.BYTE	$0F,$36,$1C,$0F,$0F,$0F,$0F,$0F,$0F,$30,$0F,$0F,$0F,$0F,$0F,$0F
@@ -1027,15 +1041,15 @@ _spr_raw_lib00_45:
 		.BYTE	$00,$EE,$40,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_8CC9:
+_sub06_select_busterA:
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$08
 		SPR_IDX_SET		0,$09
-		SJSR			_ssub_8CD5
+		SJSR			_ssub_select_busters
 		SUSPEND
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_8CD5:
+_ssub_select_busters:
 		POS_X_DELTA_SET 0,$00,$FC
 		SDELAY			$20
 		SPR_IDX_ADD_IMM 3,$FE
@@ -1081,13 +1095,13 @@ _sloc_8D29:
 		SPR_IDX_ADD_IMM 0,$03
 _sloc_8D2E:
 		POS_X_DELTA_SET 0,$00,$FF
-		SRUN			$01,_scr_8DD2
+		SSCRIPT1_SET	_scr_8DD2
 _sloc_8D35:
 		SDELAY			$01
 		NJSR			_nsub_62B60
 			NARGB		$50
 		SBCC			_sloc_8D35
-		SDISABLE		$01
+		SSCRIPT1_OFF
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		$01
 		POS_MOVE_STOP	0
@@ -1130,7 +1144,7 @@ _sloc_8D88:
 		SPR_IDX_ADD_IMM 0,$03
 _sloc_8D8D:
 		POS_X_DELTA_SET 0,$00,$FF
-		SRUN			$01,_scr_8DD2
+		SSCRIPT1_SET	_scr_8DD2
 _sloc_8D94:
 		NJSR			_nsub_62B60
 			NARGB		$68
@@ -1144,7 +1158,7 @@ _sloc_8DA4:
 		NJSR			_nsub_62B60
 			NARGB		$50
 		SBCC			_sloc_8DA4
-		SDISABLE		$01
+		SSCRIPT1_OFF
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		$01
 		POS_MOVE_STOP	0
@@ -1222,28 +1236,28 @@ loc_8E07:
 		RTS
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_8E09:
+_sub07_select_busterB:
 		SARG_SET		SARG0,$01
 		SARG_SET		SARG1,$2C
 		SPR_IDX_SET		0,$2D
-		SJMP			_ssub_8CD5
+		SJMP			_ssub_select_busters
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_8E14:
+_sub08_select_busterC:
 		SARG_SET		SARG0,$02
 		SARG_SET		SARG1,$14
 		SPR_IDX_SET		0,$15
-		SJMP			_ssub_8CD5
+		SJMP			_ssub_select_busters
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_8E1F:
+_sub09_select_busterD:
 		SARG_SET		SARG0,$03
 		SARG_SET		SARG1,$20
 		SPR_IDX_SET		0,$21
-		SJMP			_ssub_8CD5
+		SJMP			_ssub_select_busters
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_8E2A:
+_sub0A_select_busterE:
 		SARG_SET		SARG0,$04
 		SARG_SET		SARG1,$38
 		SPR_IDX_SET		0,$34
@@ -1409,7 +1423,7 @@ _nbgsub_8F80:
 		JSR		_far_prg6_apu_mus_load
 		LDA		#$FF
 		JSR		_far_prg6_apu_snd_load
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_8F6A
 locret_8FAA:
 		RTS
@@ -1816,11 +1830,11 @@ _spr_raw_lib00:
 		SECTION_START
 
 ; =============== S C R I P T ===============================================
-_scr7_ending:
+_scr07_ending:
 		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		$00,$FF
+			NARGB		SARG0,$FF
 		SJMP_SW			$16
-		SCASE			_scr7_ending_sub01
+		SCASE			_scr07_ending_sub01
 		SCASE			_sjmp_case_97DD
 		SCASE			_sjmp_case_98D0
 		SCASE			_sjmp_case_9914
@@ -1842,7 +1856,7 @@ _scr7_ending:
 		SCASE			_sjmp_case_A6C4
 		SCASE			_sjmp_case_A782
 		SCASE			_sjmp_case_A2E5
-		STORE8			_scr_trds_priority_enable,$00	; default
+		STORE8			_scr_trds_out_of_screen_test,$00	; default
 		SDELAY			$5A
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$09
@@ -1871,7 +1885,7 @@ _sloc_92E5:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_92F5:
-		NJSR			_nsub_script_chain_start
+		NJSR			_nsub_chain_thread_lib_load_enemy
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
@@ -1974,7 +1988,7 @@ _nbgsub_9413:
 		LDA		_pad0_pressed
 		AND		#$10
 		BEQ		locret_941E
-		JSR		_script_load_param
+		JSR		_cur_thread_reload_param
 		.WORD	_scr_935F
 locret_941E:
 		RTS
@@ -2298,7 +2312,7 @@ _res_by_hal_laboratory:
 		.BYTE	"BY HAL LABORATORY"
 
 ; =============== S C R I P T ===============================================
-_scr7_ending_sub01:
+_scr07_ending_sub01:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$19
 		POS_X_DELTA_SET 0,$00,$01
@@ -3326,7 +3340,7 @@ _sjmp_case_A0AB:
 		POS_Y_DELTA_SET 6,$00,$FA
 		POS_Y_DELTA_SET 6,$00,$06
 		POS_MOVE_STOP	0
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$07,$00,$00,$0C,$00
 		SPR_IDX_SET		0,$65
 		SDELAY			$20
@@ -3632,7 +3646,7 @@ _sjmp_case_A510:
 		SPR_IDX_DEC		6
 		POS_X_DELTA_SET 6,$C0,$00
 		POS_MOVE_STOP	0
-		NJSR			_nsub_script_start
+		NJSR			_nsub_new_thread_start
 			NARGB		$07,$00,$00,$10,$00
 		SDELAY			$F0
 		POS_X_DELTA_SET 0,$40,$FF
