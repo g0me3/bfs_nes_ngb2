@@ -60,11 +60,11 @@ _lvl_doors_data00:
 		.BYTE	$02,$80,$03,$D0,$00
 		.WORD	_room_door_always_closed
 		.BYTE	$02,$10,$03,$80,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$80,$03,$20,$00
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$E0,$03,$B0,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data00:
 		.BYTE	$17,$13,$13,$00
@@ -94,7 +94,7 @@ _sloc_140B2:
 		SCASE			_sjmp_case_14031
 _lvl_doors_data01:
 		.BYTE	$01,$E0,$03,$80,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$F0,$03,$80,$01
 		.WORD	_room_door_always_open
 		.BYTE	$FF
@@ -136,13 +136,13 @@ _sloc_14104:
 		SCASE			_sjmp_case_14155
 _lvl_doors_data02:
 		.BYTE	$04,$10,$03,$B0,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$C0,$03,$90,$00
 		.WORD	_room_door_always_open
 		.BYTE	$04,$C0,$02,$60,$00
 		.WORD	_room_door_always_open
 		.BYTE	$04,$10,$02,$40,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data02:
 		.BYTE	$FF
@@ -188,15 +188,15 @@ _sloc_1417E:
 		SCASE			_sjmp_case_1426B
 _lvl_doors_data03:
 		.BYTE	$03,$E0,$02,$40,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$70,$02,$B0,$00
 		.WORD	_room_door_always_open
 		.BYTE	$02,$10,$02,$C0,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$80,$02,$E0,$00
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$80,$02,$20,$00
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data03:
 		.BYTE	$17,$18,$18,$18,$14,$13,$00
@@ -226,7 +226,7 @@ _sloc_141FB:
 		SCASE			_sjmp_case_14155
 _lvl_doors_data04:
 		.BYTE	$01,$E0,$02,$C0,$01
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$70,$02,$90,$00
 		.WORD	_room_door_always_open
 		.BYTE	$FF
@@ -258,7 +258,7 @@ _sloc_14242:
 		SCASE			_sjmp_case_1426B
 _lvl_doors_data05:
 		.BYTE	$02,$80,$01,$A0,$00
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data05:
 		.BYTE	$FF
@@ -298,9 +298,9 @@ _sloc_14294:
 		SCASE			_sjmp_case_14155
 _lvl_doors_data06:
 		.BYTE	$03,$80,$01,$30,$00
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$80,$01,$D0,$00
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data06:
 		.BYTE	$FF
@@ -421,7 +421,7 @@ _sloc_143CE:
 		SCASE			_sjmp_case_143F7
 _lvl_doors_data07:
 		.BYTE	$00,$80,$06,$10,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data07:
 		.BYTE	$FF
@@ -451,7 +451,7 @@ _sloc_1440E:
 		SCASE			_sjmp_case_14437
 _lvl_doors_data08:
 		.BYTE	$00,$80,$04,$20,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data08:
 		.BYTE	$FF
@@ -481,7 +481,7 @@ _sloc_1444E:
 		SCASE			_sjmp_case_1447E
 _lvl_doors_data09:
 		.BYTE	$00,$80,$03,$10,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$80,$03,$D0,$02
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
@@ -513,7 +513,7 @@ _sloc_14495:
 		SCASE			_sjmp_case_144BE
 _lvl_doors_data0A:
 		.BYTE	$01,$80,$06,$20,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data0A:
 		.BYTE	$FF
@@ -546,9 +546,9 @@ _sloc_144D5:
 		SCASE			_sjmp_case_144BE
 _lvl_doors_data0B:
 		.BYTE	$01,$B0,$04,$20,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$50,$04,$20,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data0B:
 		.BYTE	$1D,$1D,$20,$1D,$1D,$1E,$00
@@ -578,7 +578,7 @@ _sloc_1452B:
 		SCASE			_sjmp_case_1455A
 _lvl_doors_data0C:
 		.BYTE	$01,$E0,$02,$40,$03
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data0C:
 		.BYTE	$20,$1D,$1E,$20,$1D,$1E,$00
@@ -608,7 +608,7 @@ _sloc_14571:
 		SCASE			_sjmp_case_145A4
 _lvl_doors_data0D:
 		.BYTE	$03,$E0,$02,$40,$03
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$20,$02,$40,$03
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
@@ -640,7 +640,7 @@ _sloc_145BB:
 		SCASE			_sjmp_case_145E8
 _lvl_doors_data0E:
 		.BYTE	$04,$80,$02,$20,$02
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data0E:
 		.BYTE	$1E,$1F,$1E,$20,$00
@@ -670,7 +670,7 @@ _sloc_145FF:
 		SCASE			_sjmp_case_1462C
 _lvl_doors_data0F:
 		.BYTE	$04,$E0,$00,$40,$03
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data0F:
 		.BYTE	$1E,$1F,$1D,$20,$00
@@ -703,7 +703,7 @@ _sloc_1464C:
 		SCASE			_sjmp_case_14675
 _lvl_doors_data10:
 		.BYTE	$05,$80,$00,$D0,$04
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data10:
 		.BYTE	$FF
@@ -739,7 +739,7 @@ _lvl_doors_data11:
 		.BYTE	$05,$80,$01,$20,$04
 		.WORD	_room_door_always_closed
 		.BYTE	$05,$80,$02,$D0,$04
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data11:
 		.BYTE	$FF
@@ -771,7 +771,7 @@ _lvl_doors_data12:
 		.BYTE	$05,$80,$03,$20,$04
 		.WORD	_room_door_always_closed
 		.BYTE	$05,$80,$04,$D0,$04
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data12:
 		.BYTE	$FF
@@ -932,7 +932,7 @@ _sloc_14861:
 		SCASE			_sjmp_case_14891
 _lvl_doors_data14:
 		.BYTE	$01,$80,$01,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$90,$01,$D0,$06
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
@@ -967,9 +967,9 @@ _sloc_148A8:
 		SCASE			_sjmp_case_1484A
 _lvl_doors_data15:
 		.BYTE	$00,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$80,$00,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data15:
 		.BYTE	$FF
@@ -1002,7 +1002,7 @@ _sloc_148F8:
 		SCASE			_sjmp_case_14891
 _lvl_doors_data16:
 		.BYTE	$02,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$00,$B0,$07
 		.WORD	_room_door_always_open
 		.BYTE	$02,$80,$00,$E0,$05
@@ -1012,7 +1012,7 @@ _lvl_doors_data16:
 		.BYTE	$02,$70,$01,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$02,$30,$01,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data16:
 		.BYTE	$25,$25,$25,$28,$28,$00
@@ -1045,7 +1045,7 @@ _sloc_14969:
 		SCASE			_sjmp_case_148E1
 _lvl_doors_data17:
 		.BYTE	$02,$30,$02,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$02,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$02,$C0,$02,$50,$05
@@ -1055,7 +1055,7 @@ _lvl_doors_data17:
 		.BYTE	$03,$C0,$02,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$03,$D0,$02,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data17:
 		.BYTE	$FF
@@ -1101,9 +1101,9 @@ _lvl_doors_data18:
 		.BYTE	$03,$40,$01,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$03,$D0,$01,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data18:
 		.BYTE	$FF
@@ -1141,7 +1141,7 @@ _sloc_14A4F:
 		SCASE			_sjmp_case_149BE
 _lvl_doors_data19:
 		.BYTE	$05,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$05,$70,$00,$B0,$07
 		.WORD	_room_door_always_open
 		.BYTE	$05,$B0,$00,$E0,$05
@@ -1151,7 +1151,7 @@ _lvl_doors_data19:
 		.BYTE	$05,$40,$01,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$05,$D0,$01,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data19:
 		.BYTE	$28,$26,$26,$00
@@ -1184,7 +1184,7 @@ _sloc_14ABE:
 		SCASE			_sjmp_case_14A2E
 _lvl_doors_data1A:
 		.BYTE	$04,$30,$02,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$40,$02,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$04,$D0,$02,$50,$05
@@ -1194,7 +1194,7 @@ _lvl_doors_data1A:
 		.BYTE	$05,$C0,$02,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$05,$D0,$02,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data1A:
 		.BYTE	$FF
@@ -1236,13 +1236,13 @@ _sloc_14B38:
 		SCASE			_sjmp_case_14AA7
 _lvl_doors_data1B:
 		.BYTE	$04,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$01,$50,$05
 		.WORD	_room_door_always_open
 		.BYTE	$04,$70,$01,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$04,$30,$01,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data1B:
 		.BYTE	$FF
@@ -1280,7 +1280,7 @@ _sloc_14BA4:
 		SCASE			_sjmp_case_14B13
 _lvl_doors_data1C:
 		.BYTE	$06,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$06,$40,$00,$B0,$07
 		.WORD	_room_door_always_open
 		.BYTE	$06,$80,$00,$E0,$05
@@ -1290,7 +1290,7 @@ _lvl_doors_data1C:
 		.BYTE	$06,$70,$01,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$06,$30,$01,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data1C:
 		.BYTE	$27,$27,$28,$00
@@ -1323,7 +1323,7 @@ _sloc_14C13:
 		SCASE			_sjmp_case_14B83
 _lvl_doors_data1D:
 		.BYTE	$06,$30,$02,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$06,$40,$02,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$06,$C0,$02,$50,$05
@@ -1333,7 +1333,7 @@ _lvl_doors_data1D:
 		.BYTE	$07,$C0,$02,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$07,$D0,$02,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data1D:
 		.BYTE	$FF
@@ -1375,13 +1375,13 @@ _sloc_14C8D:
 		SCASE			_sjmp_case_14BFC
 _lvl_doors_data1E:
 		.BYTE	$07,$80,$00,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$07,$80,$01,$50,$05
 		.WORD	_room_door_always_open
 		.BYTE	$07,$40,$01,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$07,$D0,$01,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data1E:
 		.BYTE	$FF
@@ -1419,7 +1419,7 @@ _sloc_14CF9:
 		SCASE			_sjmp_case_14C68
 _lvl_doors_data1F:
 		.BYTE	$01,$80,$03,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$70,$03,$B0,$07
 		.WORD	_room_door_always_open
 		.BYTE	$01,$B0,$03,$E0,$05
@@ -1429,7 +1429,7 @@ _lvl_doors_data1F:
 		.BYTE	$01,$40,$04,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$01,$D0,$04,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data1F:
 		.BYTE	$FF
@@ -1462,7 +1462,7 @@ _sloc_14D65:
 		SCASE			_sjmp_case_14CD8
 _lvl_doors_data20:
 		.BYTE	$00,$30,$05,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$40,$05,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$00,$C0,$05,$50,$05
@@ -1472,7 +1472,7 @@ _lvl_doors_data20:
 		.BYTE	$01,$C0,$05,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$01,$D0,$05,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data20:
 		.BYTE	$28,$24,$24,$24,$28,$00
@@ -1514,13 +1514,13 @@ _sloc_14DE4:
 		SCASE			_sjmp_case_14D4E
 _lvl_doors_data21:
 		.BYTE	$00,$80,$03,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$B0,$04,$50,$05
 		.WORD	_room_door_always_open
 		.BYTE	$00,$70,$04,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$00,$30,$04,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data21:
 		.BYTE	$FF
@@ -1558,7 +1558,7 @@ _sloc_14E50:
 		SCASE			_sjmp_case_14DBF
 _lvl_doors_data22:
 		.BYTE	$02,$80,$03,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$80,$03,$E0,$05
 		.WORD	_room_door_always_open
 		.BYTE	$02,$40,$03,$B0,$07
@@ -1568,7 +1568,7 @@ _lvl_doors_data22:
 		.BYTE	$02,$70,$04,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$02,$30,$04,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data22:
 		.BYTE	$28,$24,$24,$24,$24,$24,$24,$25,$00
@@ -1601,7 +1601,7 @@ _sloc_14EC4:
 		SCASE			_sjmp_case_14E2F
 _lvl_doors_data23:
 		.BYTE	$02,$30,$05,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$05,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$02,$D0,$05,$50,$05
@@ -1611,7 +1611,7 @@ _lvl_doors_data23:
 		.BYTE	$03,$C0,$05,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$03,$D0,$05,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data23:
 		.BYTE	$FF
@@ -1653,13 +1653,13 @@ _sloc_14F3E:
 		SCASE			_sjmp_case_14EAD
 _lvl_doors_data24:
 		.BYTE	$03,$80,$03,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$80,$04,$50,$05
 		.WORD	_room_door_always_open
 		.BYTE	$03,$40,$04,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$03,$D0,$04,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data24:
 		.BYTE	$FF
@@ -1697,7 +1697,7 @@ _sloc_14FAA:
 		SCASE			_sjmp_case_14F19
 _lvl_doors_data25:
 		.BYTE	$05,$80,$03,$20,$06
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$05,$70,$03,$B0,$07
 		.WORD	_room_door_always_open
 		.BYTE	$05,$B0,$03,$E0,$05
@@ -1707,7 +1707,7 @@ _lvl_doors_data25:
 		.BYTE	$05,$40,$04,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$05,$D0,$04,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data25:
 		.BYTE	$FF
@@ -1740,7 +1740,7 @@ _sloc_15016:
 		SCASE			_sjmp_case_14F89
 _lvl_doors_data26:
 		.BYTE	$04,$30,$05,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$40,$05,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$04,$C0,$05,$50,$05
@@ -1750,7 +1750,7 @@ _lvl_doors_data26:
 		.BYTE	$05,$C0,$05,$80,$07
 		.WORD	_room_door_always_open
 		.BYTE	$05,$D0,$05,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data26:
 		.BYTE	$FF
@@ -1789,9 +1789,9 @@ _lvl_doors_data27:
 		.BYTE	$04,$80,$04,$A0,$05
 		.WORD	_room_door_always_open
 		.BYTE	$04,$30,$04,$D0,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$30,$03,$20,$05
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data27:
 		.BYTE	$FF
@@ -1918,7 +1918,7 @@ _sloc_151CB:
 		SCASE			_sjmp_case_151F4
 _lvl_doors_data29:
 		.BYTE	$01,$A0,$05,$20,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data29:
 		.BYTE	$FF
@@ -1953,9 +1953,9 @@ _lvl_doors_data2A:
 		.BYTE	$01,$90,$04,$D0,$08
 		.WORD	_room_door_always_closed
 		.BYTE	$01,$E0,$04,$A0,$09
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$B0,$03,$20,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2A:
 		.BYTE	$FF
@@ -1985,7 +1985,7 @@ _sloc_15262:
 		SCASE			_sjmp_case_151F4
 _lvl_doors_data2B:
 		.BYTE	$02,$10,$04,$A0,$0A
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2B:
 		.BYTE	$FF
@@ -2021,11 +2021,11 @@ _sloc_152A2:
 		SCASE			_sjmp_case_15331
 _lvl_doors_data2C:
 		.BYTE	$01,$B0,$02,$D0,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$50,$02,$D0,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$50,$02,$20,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2C:
 		.BYTE	$FF
@@ -2055,7 +2055,7 @@ _sloc_15302:
 		SCASE			_sjmp_case_1528B
 _lvl_doors_data2D:
 		.BYTE	$00,$50,$03,$20,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2D:
 		.BYTE	$2C,$2C,$2C,$29,$29,$2C,$00
@@ -2088,11 +2088,11 @@ _sloc_15348:
 		SCASE			_sjmp_case_15388
 _lvl_doors_data2E:
 		.BYTE	$00,$50,$01,$D0,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$E0,$01,$30,$10
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$00,$01,$80,$0B
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2E:
 		.BYTE	$FF
@@ -2125,9 +2125,9 @@ _sloc_1539F:
 		SCASE			_sjmp_case_153E1
 _lvl_doors_data2F:
 		.BYTE	$02,$10,$01,$30,$0C
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$60,$02,$D0,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2F:
 		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$2C,$00
@@ -2160,9 +2160,9 @@ _sloc_153F8:
 		SCASE			_sjmp_case_1543A
 _lvl_doors_data30:
 		.BYTE	$02,$60,$03,$20,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$C0,$03,$20,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data30:
 		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$2B,$00
@@ -2195,9 +2195,9 @@ _sloc_15451:
 		SCASE			_sjmp_case_15492
 _lvl_doors_data31:
 		.BYTE	$03,$C0,$02,$D0,$08
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$20,$01,$20,$0D
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data31:
 		.BYTE	$29,$2D,$2D,$2C,$29,$2D,$2C,$2D,$00
@@ -2227,7 +2227,7 @@ _sloc_154A9:
 		SCASE			_sjmp_case_1543A
 _lvl_doors_data32:
 		.BYTE	$03,$20,$00,$D0,$0D
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data32:
 		.BYTE	$FF
@@ -2337,7 +2337,7 @@ _sloc_155B9:
 		SCASE			_sjmp_case_155E9
 _lvl_doors_data33:
 		.BYTE	$02,$40,$06,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$06,$D0,$0E
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
@@ -2374,9 +2374,9 @@ _sloc_15604:
 		SCASE			_sjmp_case_155A2
 _lvl_doors_data34:
 		.BYTE	$02,$40,$05,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$E0,$05,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data34:
 		.BYTE	$FF
@@ -2411,9 +2411,9 @@ _sloc_15658:
 		SCASE			_sjmp_case_155E9
 _lvl_doors_data35:
 		.BYTE	$04,$10,$05,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$05,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data35:
 		.BYTE	$FF
@@ -2454,11 +2454,11 @@ _sloc_156B2:
 		SCASE			_sjmp_case_1563D
 _lvl_doors_data36:
 		.BYTE	$04,$B0,$04,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$E0,$03,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$10,$03,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data36:
 		.BYTE	$FF
@@ -2494,7 +2494,7 @@ _sloc_15716:
 		SCASE			_sjmp_case_15691
 _room_doors_data37:
 		.BYTE	$05,$10,$03,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data37:
 		.BYTE	$FF
@@ -2529,9 +2529,9 @@ _sloc_1575A:
 		SCASE			_sjmp_case_15793
 _lvl_doors_data38:
 		.BYTE	$03,$E0,$03,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$B0,$03,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data38:
 		.BYTE	$FF
@@ -2564,9 +2564,9 @@ _sloc_157AA:
 		SCASE			_sjmp_case_157E3
 _lvl_doors_data39:
 		.BYTE	$03,$B0,$04,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$10,$04,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data39:
 		.BYTE	$FF
@@ -2602,11 +2602,11 @@ _sloc_157FA:
 		SCASE			_sjmp_case_15887
 _lvl_doors_data3A:
 		.BYTE	$01,$E0,$04,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$B0,$05,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$10,$05,$A0,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data3A:
 		.BYTE	$FF
@@ -2638,7 +2638,7 @@ _sloc_1585E:
 		SCASE			_sjmp_case_157E3
 _lvl_doors_data3B:
 		.BYTE	$01,$B0,$06,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data3B:
 		.BYTE	$FF
@@ -2673,9 +2673,9 @@ _sloc_158A2:
 		SCASE			_sjmp_case_158DB
 _lvl_doors_data3C:
 		.BYTE	$00,$40,$05,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$E0,$05,$A0,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data3C:
 		.BYTE	$FF
@@ -2712,9 +2712,9 @@ _sloc_158FB:
 		SCASE			_sjmp_case_15934
 _lvl_doors_data3D:
 		.BYTE	$00,$40,$04,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$E0,$03,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data3D:
 		.BYTE	$FF
@@ -2747,9 +2747,9 @@ _sloc_1594B:
 		SCASE			_sjmp_case_158DB
 _lvl_doors_data3E:
 		.BYTE	$01,$10,$03,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$E0,$03,$A0,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data3E:
 		.BYTE	$FF
@@ -2784,9 +2784,9 @@ _sloc_1599F:
 		SCASE			_sjmp_case_15934
 _lvl_doors_data3F:
 		.BYTE	$02,$10,$03,$A0,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$10,$02,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data3F:
 		.BYTE	$19,$18,$19,$19,$19,$18,$18,$00
@@ -2819,9 +2819,9 @@ _sloc_159F6:
 		SCASE			_sjmp_case_15984
 _lvl_doors_data40:
 		.BYTE	$01,$E0,$02,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$40,$02,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data40:
 		.BYTE	$13,$13,$19,$19,$19,$19,$17,$17,$00
@@ -2859,9 +2859,9 @@ _sloc_15A58:
 		SCASE			_sjmp_case_159DF
 _lvl_doors_data41:
 		.BYTE	$00,$E0,$01,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$40,$01,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data41:
 		.BYTE	$FF
@@ -2902,11 +2902,11 @@ _sloc_15AB2:
 		SCASE			_sjmp_case_15AFB
 _lvl_doors_data42:
 		.BYTE	$01,$70,$01,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$10,$01,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$E0,$01,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data42:
 		.BYTE	$FF
@@ -2938,7 +2938,7 @@ _sloc_15B16:
 		SCASE			_sjmp_case_15A91
 _lvl_doors_data43:
 		.BYTE	$01,$70,$00,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data43:
 		.BYTE	$FF
@@ -2973,9 +2973,9 @@ _sloc_15B5A:
 		SCASE			_sjmp_case_15A91
 _lvl_doors_data44:
 		.BYTE	$03,$10,$01,$50,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$E0,$02,$A0,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data44:
 		.BYTE	$FF
@@ -3010,9 +3010,9 @@ _sloc_15BAE:
 		SCASE			_sjmp_case_15B3F
 _lvl_doors_data45:
 		.BYTE	$04,$10,$02,$A0,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$02,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data45:
 		.BYTE	$FF
@@ -3050,9 +3050,9 @@ _sloc_15C08:
 		SCASE			_sjmp_case_15B93
 _lvl_doors_data46:
 		.BYTE	$04,$B0,$01,$20,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$01,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data46:
 		.BYTE	$FF
@@ -3090,9 +3090,9 @@ _sloc_15C62:
 		SCASE			_sjmp_case_15BE7
 _lvl_doors_data47:
 		.BYTE	$04,$B0,$00,$D0,$0E
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$10,$00,$70,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data47:
 		.BYTE	$FF
@@ -3122,7 +3122,7 @@ _sloc_15CB2:
 		SCASE			_sjmp_case_15C41
 _lvl_doors_data48:
 		.BYTE	$02,$E0,$00,$70,$0F
-		.WORD	_room_door_enemy_clear_open
+		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data48:
 		.BYTE	$FF
@@ -3393,7 +3393,7 @@ _pause_menu_anim:
 		LDA		#$00
 		STA		_tmpD8
 		STA		_tmpD9
-		LDA		_tmp7B7
+		LDA		_beam_player_idxA
 		AND		#$F0
 		LSR
 		LSR
@@ -3439,7 +3439,7 @@ _scr_15F56:
 		SDELAY			$10
 		STORE8			_scr_trds_pause_mode,$01
 		SDELAY			$4B
-		NJSR			_nsub_62B40
+		NJSR			_nsub_all_threads_off_except_cur
 		SDELAY			$2D
 		NJSR			_nsub_apu_mus_load
 			NARGB		$03
@@ -3609,7 +3609,7 @@ _spr_raw_lib01_18:
 ; =============== S C R I P T ===============================================
 _scr_16111:
 		SJSR			_ssub_62DC5
-		NJSR			_nsub_62B40
+		NJSR			_nsub_all_threads_off_except_cur
 		NJSR			_nsub_far_prg0_tlm_lib_unpack
 			NARGB		_tlm3_game_over_idx
 		NJSR			_nsub_mmc1_chr1_set
@@ -4001,7 +4001,7 @@ _room_door_always_closed:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_room_door_enemy_clear_open:
+_room_door_gen_clear_open:
 		STX		_tmp1
 		LDX		#$06
 loc_16400:

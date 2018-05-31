@@ -259,7 +259,7 @@ _scr12_exit_arrow:
 		NBG_HNDL_SET	_nbgsub_60205
 _sloc_601FA:
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
+			NARGB		SARG1
 		SDELAY			$07
 		SPR_IDX_SET		7,$FF
 		SJMP			_sloc_601FA
@@ -412,11 +412,11 @@ sub_60327:
 		JSR		sub_6034F
 		STA		_tmp7B1
 		STY		_tmp7B2
-		LDA		_tmp7B7
+		LDA		_beam_player_idxA
 		BCC		loc_60337
 		ADC		#$4F
 loc_60337:
-		STA		_tmp7B9
+		STA		_beam_player_idxB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -424,11 +424,11 @@ sub_6033B:
 		JSR		sub_6034F
 		STA		_tmp7B3
 		STY		_tmp7B3+1
-		LDA		_tmp7B8
+		LDA		_catch_player_idxA
 		BCC		loc_6034B
 		ADC		#$4F
 loc_6034B:
-		STA		_tmp7BA
+		STA		_catch_player_idxB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -477,8 +477,8 @@ byte_6039E:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_603A2:
-		LDA		_tmp7B7
-		STA		_tmp7B9
+		LDA		_beam_player_idxA
+		STA		_beam_player_idxB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -863,7 +863,7 @@ loc_605DD:
 		STA		_scr_trds_spr_idx+2
 		RTS
 _nsub_605E8:
-		LDA		_tmp7B9
+		LDA		_beam_player_idxB
 
 ; =============== S U B R O U T I N E =======================================
 sub_605EB:
@@ -905,7 +905,7 @@ locret_60622:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_60623:
-		LDA		_tmp7B9
+		LDA		_beam_player_idxB
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -919,6 +919,7 @@ _nsub_60623:
 		ADC		_tmp0
 		STA		_scr_trds_spr_idx,X
 		RTS
+
 _spr_raw_lib08_02:
 		.BYTE	$04
 		.BYTE	$00,$36,$00,$00
@@ -2055,7 +2056,7 @@ sub_610B2:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_610B9:
-		LDA		_tmp7BA
+		LDA		_catch_player_idxB
 		JMP		sub_605EB
 
 ; =============== S U B R O U T I N E =======================================
@@ -2467,8 +2468,8 @@ locret_61346:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_61347:
-		LDA		_tmp7B8
-		STA		_tmp7BA
+		LDA		_catch_player_idxA
+		STA		_catch_player_idxB
 		RTS
 
 ; =============== S C R I P T ===============================================
@@ -5102,6 +5103,8 @@ _nsub_trd_scr_disable_unref:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
+; TODO: this is ending scenario only routine, why they put it here, unknown
+;
 _nsub_obj_delay_set_from_sarg:
 		JSR		_scr_getc
 		TAX
@@ -5243,7 +5246,7 @@ loc_627B7:
 		PLA
 		TAX
 		PLA
-		JSR		_thread_lib_load_enemy_ex
+		JSR		_thread_lib_load_gen_ex
 		TXA
 		LSR
 		LSR
@@ -5325,7 +5328,7 @@ loc_62822:
 		PLA
 		TAX
 		PLA
-		JMP		_thread_lib_load_enemy_ex
+		JMP		_thread_lib_load_gen_ex
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_obj_sarg_add_imm_test:
@@ -5606,7 +5609,7 @@ _nsub_room_register:
 		ROL
 		ASL
 		ASL
-		ADC		_tmp7B7
+		ADC		_beam_player_idxA
 		STA		_scr_trds_spr_idx+2
 		LDA		_scr_trds_args1+4
 		ASL
@@ -5614,7 +5617,7 @@ _nsub_room_register:
 		ROL
 		ASL
 		ASL
-		ADC		_tmp7B8
+		ADC		_catch_player_idxA
 		STA		_scr_trds_spr_idx+4
 		PLA
 		STA		_tmp0
@@ -5628,7 +5631,7 @@ loc_62A7E:
 		LDA		#$00
 		STA		_ppu_scroll_pos_x
 		STA		_ppu_scroll_pos_y
-		JMP		_nsub_62B4F
+		JMP		_nsub_gen_threads_off_except_cur
 byte_62A87:
 		.BYTE	$10,$10,$10,$F8
 byte_62A8B:
@@ -5749,7 +5752,7 @@ _nsub_obj_spr_idx_set_from_sarg:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62B40:
+_nsub_all_threads_off_except_cur:
 		LDX		#$0D
 		LDA		#$FF
 loc_62B44:
@@ -5762,7 +5765,7 @@ loc_62B4B:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62B4F:
+_nsub_gen_threads_off_except_cur:
 		LDX		#$06
 		LDA		#$FF
 loc_62B53:
@@ -5776,21 +5779,21 @@ loc_62B5A:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62B60:
+_nsub_cur_pos_x_lo_icmp:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_x_pos_lo,X
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62B68:
+_nsub_cur_pos_y_lo_icmp:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_y_pos_lo,X
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62B70:
+_nsub_mtest_bit0:
 		JSR		_scr_getc
 		STA		_ptr06
 		JSR		_scr_getc
@@ -6239,14 +6242,14 @@ _sloc_62DD7:
 _sloc_62DDB:
 		SLOOP_BEGIN		$03
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
+			NARGB		SARG1
 		SDELAY			$01
 		SPR_IDX_SET		1,$00
 		SLOOP_END
 		SARG_ALU		$01,_ADC,$01
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
+			NARGB		SARG1
 		SDELAY			$01
 		SPR_IDX_SET		1,$01
 		SLOOP_END
@@ -6263,14 +6266,14 @@ _sloc_62E02:
 _sloc_62E06:
 		SLOOP_BEGIN		$03
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
+			NARGB		SARG1
 		SDELAY			$01
 		SPR_IDX_SET		1,$02
 		SLOOP_END
 		SARG_ALU		$01,_ADC,$01
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
+			NARGB		SARG1
 		SDELAY			$01
 		SPR_IDX_SET		1,$03
 		SLOOP_END
@@ -6336,7 +6339,7 @@ loc_62E6E:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_thread_lib_load_enemy_ex:
+_thread_lib_load_gen_ex:
 		PHA
 		LDA		#$06
 		STA		_var4
@@ -6925,20 +6928,20 @@ _scmd_lib_lo:
 		CMD_IDX_LO	_scmd04_sjsr
 		CMD_IDX_LO	_scmd05_ret
 		CMD_IDX_LO	_scmd06_delay
-		CMD_IDX_LO	_scmd07_ejsr
-		CMD_IDX_LO	_scmd08_new_script_set
+		CMD_IDX_LO	_scmd07_njsr
+		CMD_IDX_LO	_scmd08_script1_start
 		CMD_IDX_LO	_scmd09_nbg_hndl_set
 		CMD_IDX_LO	_scmd0A_suspend
 		CMD_IDX_LO	_scmd0B_bcs
 		CMD_IDX_LO	_scmd0C_bcc
-		CMD_IDX_LO	_scmd0D_sdisable_self
+		CMD_IDX_LO	_scmd0A_script0_off
 		CMD_IDX_LO	_scmd0E_smem_alu
 		CMD_IDX_LO	_scmd0F_sarg_set
 		CMD_IDX_LO	_scmd10_nbg_hndl_reset
 		CMD_IDX_LO	_scmd11_sjmp_sw
 		CMD_IDX_LO	_scmd12_sjsr_sw
 		CMD_IDX_LO	_scmd13_store8
-		CMD_IDX_LO	_scmd14_sdisable
+		CMD_IDX_LO	_scmd14_script1_off
 		CMD_IDX_LO	_scmd15_sarg_alu
 		CMD_IDX_LO	_scmd16_store16
 		CMD_IDX_LO	_scmd17_sbcs_break
@@ -6951,20 +6954,20 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd04_sjsr
 		CMD_IDX_HI	_scmd05_ret
 		CMD_IDX_HI	_scmd06_delay
-		CMD_IDX_HI	_scmd07_ejsr
-		CMD_IDX_HI	_scmd08_new_script_set
+		CMD_IDX_HI	_scmd07_njsr
+		CMD_IDX_HI	_scmd08_script1_start
 		CMD_IDX_HI	_scmd09_nbg_hndl_set
 		CMD_IDX_HI	_scmd0A_suspend
 		CMD_IDX_HI	_scmd0B_bcs
 		CMD_IDX_HI	_scmd0C_bcc
-		CMD_IDX_HI	_scmd0D_sdisable_self
+		CMD_IDX_HI	_scmd0A_script0_off
 		CMD_IDX_HI	_scmd0E_smem_alu
 		CMD_IDX_HI	_scmd0F_sarg_set
 		CMD_IDX_HI	_scmd10_nbg_hndl_reset
 		CMD_IDX_HI	_scmd11_sjmp_sw
 		CMD_IDX_HI	_scmd12_sjsr_sw
 		CMD_IDX_HI	_scmd13_store8
-		CMD_IDX_HI	_scmd14_sdisable
+		CMD_IDX_HI	_scmd14_script1_off
 		CMD_IDX_HI	_scmd15_sarg_alu
 		CMD_IDX_HI	_scmd16_store16
 		CMD_IDX_HI	_scmd17_sbcs_break
@@ -7354,7 +7357,7 @@ _dcmd15_scrl_move_stop:
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E =======================================
-_scmd07_ejsr:
+_scmd07_njsr:
 		JSR		_scr_getc
 		STA		_ptr06
 		JSR		_scr_getc
@@ -7376,7 +7379,7 @@ _scmd0C_bcc:
 		TAX
 		PLA
 		LSR
-		BCS		__scr_pc_inc
+		BCS		_j_scr_pc_incB
 
 ; =============== S U B R O U T I N E =======================================
 _scr_pc_set:
@@ -7386,7 +7389,7 @@ _scr_pc_set:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-__scr_pc_inc:
+_j_scr_pc_incB:
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E =======================================
@@ -7399,7 +7402,7 @@ _scmd0B_bcs:
 		TAX
 		PLA
 		LSR
-		BCC		__scr_pc_inc
+		BCC		_j_scr_pc_incB
 		BCS		_scr_pc_set
 
 ; =============== S U B R O U T I N E =======================================
@@ -7484,7 +7487,7 @@ _scmd19_njsr_sw:
 ; =============== S U B R O U T I N E =======================================
 ; disables currently executing script for given thread
 ;
-_scmd0D_sdisable_self:
+_scmd0A_script0_off:
 		LDA		_scr_cur_trd_idxw
 		ASL
 		TAX
@@ -7501,7 +7504,7 @@ _scmd0D_sdisable_self:
 ;
 ; TODO: remove redundant param (always 01!) to optimize opcode!
 ;
-_scmd08_new_script_set:
+_scmd08_script1_start:
 		JSR		_scr_getc
 		STA		_var0
 		JSR		_scr_getc
@@ -7531,7 +7534,7 @@ _scmd08_new_script_set:
 ;
 ; TODO: may be reduced in size by removing redundant argument (always 01!)
 ;
-_scmd14_sdisable:
+_scmd14_script1_off:
 		JSR		_scr_getc
 		STA		_tmp0
 		LDA		_scr_cur_trd_idx
@@ -7704,15 +7707,15 @@ _scmd16_store16:
 
 ; =============== S U B R O U T I N E =======================================
 _scmd18_sbcc_break:
-		LDA		_nsub_return_flags ; *--
-		PHA				; *--
-		JSR		_scr_getc	; *--
-		STA		_tmp0		; *--
-		JSR		_scr_getc	; *--
-		TAX				; *--
-		PLA				; *--
-		LSR		; *--
-		BCS		_j_scr_pc_inc	; *--
+		LDA		_nsub_return_flags
+		PHA
+		JSR		_scr_getc
+		STA		_tmp0
+		JSR		_scr_getc
+		TAX
+		PLA
+		LSR
+		BCS		_j_scr_pc_incA
 
 ; =============== S U B R O U T I N E =======================================
 _scr_break:
@@ -7727,7 +7730,7 @@ _scr_break:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_j_scr_pc_inc:
+_j_scr_pc_incA:
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E =======================================
@@ -7740,7 +7743,7 @@ _scmd17_sbcs_break:
 		TAX
 		PLA
 		LSR
-		BCC		_j_scr_pc_inc
+		BCC		_j_scr_pc_incA
 		BCS		_scr_break
 
 ; =============== S U B R O U T I N E =======================================
@@ -7759,8 +7762,9 @@ _scr_pc_inc:
 		INC		_scr_pc+1
 locret_636E6:
 		RTS
+
 _inv_bitmask_unref:
-		.BYTE	$7F,$BF,$DF,$EF,$F7,$FB,$FD,$FE ; *--
+		.BYTE	$7F,$BF,$DF,$EF,$F7,$FB,$FD,$FE
 _bit_mask:
 		.BYTE	$80,$40,$20,$10,$08,$04,$02,$01
 
@@ -7889,10 +7893,21 @@ _jump_ptr_ind:
 		JMP		(_ptr06)
 
 ; =============== S U B R O U T I N E =======================================
+; this is a special thread loading routine to replace currently executing
+; script for given thread with a new one with full reset of the execution
+; flow. after this thread started from the beginning with all parameters
+; reset but still have the same _scr_cur_trd_idx thus using the same data
+; bank
+;
 _cur_thread_reload_param:
 		LDX		_scr_cur_trd_idx
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E =======================================
+; in case we need to reload a script for a particular thread, nit the same one
+; but all other is the same.
+;
 _thread_reload_param_ex:
 		PLA
 		STA		_ptr06
@@ -7960,15 +7975,13 @@ loc_637F5:
 		PLA
 		RTS
 loc_637FF:
-		; *--
 		LDA		_PPU_STATUS
-		BMI		loc_637FF	; *--
+		BMI		loc_637FF
 loc_63804:
-		; *--
 		LDA		_PPU_STATUS
-		BPL		loc_63804	; *--
-		PLA				; *--
-		RTS				; *--
+		BPL		loc_63804
+		PLA
+		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _ppu_vblank_off:
@@ -7988,6 +8001,11 @@ _ppu_vblank_on:
 		JMP		_ppu_set_scroll
 
 ; =============== S U B R O U T I N E =======================================
+; two shortcuts with manual loading of PPU offset goes here.
+; note, there are no common raw/direct _nsub type ruotines for this kind of
+; procedure (like it does for threads loading), so any rectangular areas has
+; to be displayed from custom _nsubs for all particular case.
+;
 _ppu_res_send_ptr:
 		STA		_ptr0A
 		STY		_ptr0A+1
@@ -8004,6 +8022,7 @@ _ppu_res_send_ptr_repeat:
 		JMP		_ppu_res_send_ex
 
 ; =============== S U B R O U T I N E =======================================
+
 _ppu_res_send_param_repeat:
 		STA		_tmp0
 		LDA		#$01
@@ -8022,11 +8041,18 @@ _ppu_res_send_param_repeat_no_ofs:
 		BNE		_ppu_res_send_param_ex
 
 ; =============== S U B R O U T I N E =======================================
+; commonly used automatic routine goes here. a variety of routines above
+; set the various combinations of flags for convinience.
+;
 _ppu_res_send_param:
 		STA		_tmp0
 		LDA		#$00
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E =======================================
+; parametric version of this routine.
+;
 _ppu_res_send_param_ex:
 		STA		_var3
 		STX		_tmp1
@@ -8046,14 +8072,34 @@ _ppu_res_send_param_ex:
 		ADC		#$02
 		STA		_ptr06
 		BCC		loc_6386C
-		INC		_ptr06+1	; *--
+		INC		_ptr06+1
 loc_6386C:
 		LDA		_ptr06+1
 		PHA
 		LDA		_ptr06
 		PHA
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E =======================================
+; common routine for sending data in specific format to PPU. as many of
+; system//library routines here this one includes a lot of special cases
+; which allows to use it in any game mode and you don't have to know if
+; render is on or off (which is the case for many other games)..
+; this routine checking current PPU status and decided how to send the data
+; by self, wether the directly to PPU or via queue buffer.
+; additionally, this routine has a special control flags (_var3) to be more
+; flexible for various types of data. if flag 01 is set, routine switched in
+; repeat mode. the data byte for the whole rect repeated a required number of
+; times. flag 02 disables the PPU offset loading at the beginning of the resource
+; so other code must load it manually beforehead.
+; NOTE: as some other procedures here, it has an option never used in the game.
+; when transferring rectangular screen tilemaps, it check additionally if
+; it's width less than height and then will use procedure to vertical
+; ppu increments, so this is an obvious optimization for speed, because of
+; in this case there are less line feed operations... no rectangular resources
+; in this game has height greater than width...
+;
 _ppu_res_send_ex:
 		LDY		#$00
 		LDA		_var3
@@ -8076,11 +8122,11 @@ loc_63884:
 		CMP		_var2
 		BCC		_vertical_mode
 		LDX		_var2
-loc_63896:
+.res_send_hor_loop:
 		TXA
 		PHA
 		LDA		_ppu_mask_shadow
-		BNE		loc_638CD
+		BNE		.res_send_hor_queue
 		LDA		_ppu_ctrl_shadow
 		PHA
 		JSR		_ppu_nmi_off
@@ -8099,14 +8145,14 @@ loc_638B3:
 		BCS		loc_638C3
 		INC		_ptr0A
 		BNE		loc_638C3
-		INC		_ptr0A+1	; *--
+		INC		_ptr0A+1
 loc_638C3:
 		DEX
 		BNE		loc_638B3
 		PLA
 		JSR		_ppu_ctrl_write
 		JMP		loc_638EC
-loc_638CD:
+.res_send_hor_queue:
 		JSR		_ppu_queue_putw
 		LDX		_var1
 		TXA
@@ -8135,27 +8181,25 @@ loc_638F7:
 		PLA
 		TAX
 		DEX
-		BNE		loc_63896
+		BNE		.res_send_hor_loop
 		LDA		_tmp0
 		LDX		_tmp1
 		LDY		_tmp2
 		RTS
 _vertical_mode:
-		; *--
-		LDA		_ptr08+1
+		LDA		_ptr08+1	; *--
 		ORA		#$80       ; *--
 		STA		_ptr08+1	; *--
 		LDX		_var1		; *--
-loc_6390B:
-		; *--
-		TXA
+.res_send_vert_loop:
+		TXA				; *--
 		PHA				; *--
 		LDA		_ptr0A		; *--
 		PHA				; *--
 		LDA		_ptr0A+1	; *--
 		PHA				; *--
 		LDA		_ppu_mask_shadow ; *--
-		BNE		loc_63951	; *--
+		BNE		.res_send_vert_queue	; *--
 		LDA		_ppu_ctrl_shadow ; *--
 		PHA				; *--
 		JSR		_ppu_nmi_off	; *--
@@ -8169,8 +8213,7 @@ loc_6390B:
 		STA		_PPU_ADDR	; *--
 		LDX		_var2		; *--
 loc_63932:
-		; *--
-		LDA		(_ptr0A),Y
+		LDA		(_ptr0A),Y	; *--
 		STA		_PPU_DATA	; *--
 		LDA		_var3		; *--
 		LSR		; *--
@@ -8182,21 +8225,18 @@ loc_63932:
 		BCC		loc_63947	; *--
 		INC		_ptr0A+1	; *--
 loc_63947:
-		; *--
-		DEX
+		DEX				; *--
 		BNE		loc_63932	; *--
 		PLA				; *--
 		JSR		_ppu_ctrl_write	; *--
 		JMP		loc_63975	; *--
-loc_63951:
-		; *--
-		JSR		_ppu_queue_putw
+.res_send_vert_queue:
+		JSR		_ppu_queue_putw	; *--
 		LDX		_var2		; *--
 		TXA				; *--
 		JSR		_ppu_queue_putc	; *--
 loc_6395A:
-		; *--
-		LDA		(_ptr0A),Y
+		LDA		(_ptr0A),Y	; *--
 		JSR		_ppu_queue_putc	; *--
 		LDA		_var3		; *--
 		LSR		; *--
@@ -8208,18 +8248,15 @@ loc_6395A:
 		BCC		loc_6396F	; *--
 		INC		_ptr0A+1	; *--
 loc_6396F:
-		; *--
-		DEX
+		DEX				; *--
 		BNE		loc_6395A	; *--
 		JSR		_ppu_queue_head_update ; *--
 loc_63975:
-		; *--
-		INC		_ptr08
+		INC		_ptr08		; *--
 		BNE		loc_6397B	; *--
 		INC		_ptr08+1	; *--
 loc_6397B:
-		; *--
-		PLA
+		PLA				; *--
 		STA		_ptr0A+1	; *--
 		PLA				; *--
 		STA		_ptr0A		; *--
@@ -8230,15 +8267,13 @@ loc_6397B:
 		BNE		loc_6398C	; *--
 		INC		_ptr0A+1	; *--
 loc_6398C:
-		; *--
-		PLA
+		PLA				; *--
 		TAX				; *--
 		DEX				; *--
 		BEQ		loc_63994	; *--
-		JMP		loc_6390B	; *--
+		JMP		.res_send_vert_loop	; *--
 loc_63994:
-		; *--
-		LDA		_tmp0
+		LDA		_tmp0		; *--
 		LDX		_tmp1		; *--
 		LDY		_tmp2		; *--
 		RTS				; *--

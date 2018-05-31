@@ -25,13 +25,17 @@ _scr00_intro_title_select:
 		SCASE			_sub03_intro_busterB	; 03
 		SCASE			_sub04_intro_busterC	; 04
 		SCASE			_sub05_intro_busterD	; 05
-		SCASE			_sub06_select_busterA	; 06
-		SCASE			_sub07_select_busterB	; 07
-		SCASE			_sub08_select_busterC	; 08
-		SCASE			_sub09_select_busterD	; 09
-		SCASE			_sub0A_select_busterE	; 0A
+		SCASE			_sub06_select_peter		; 06
+		SCASE			_sub07_select_ray		; 07
+		SCASE			_sub08_select_egon		; 08
+		SCASE			_sub09_select_winston	; 09
+		SCASE			_sub0A_select_louis		; 0A
 		SCASE			_intro_sub0B_title_ghost; 0B
 		SCASE			_intro_sub0C_title_new	; 0C
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
 		NJSR			_nsub_mcmp						; default case for script startup
 			NARGW		_license_screen_display_flag	; check for special flag, set at reset
 			NARGB		$01								; preventing from show license screens
@@ -59,6 +63,10 @@ _scr00_intro_title_select:
 		SJSR			_ssub_pal_fade_in				; and again show it for 1.5 seconds
 		SDELAY			$5A
 		SJSR			_ssub_pal_fade_out
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
 _sloc_title_start:
 		NJSR			_nsub_apu_mus_load				; start title music theme
 			NARGB		$05
@@ -202,12 +210,12 @@ _ssub_title_maskDB_fade_in:
 
 ; =============== S C R I P T ===============================================
 _scr_select_busters_start:
-		SJSR			_ssub_pal_fade_out
+		SJSR			_ssub_pal_fade_out				; TODO: this helper is redundant
 		SJMP			_scr_select_busters
 
 ; =============== S C R I P T ===============================================
 _scr_secret_menu_start:
-		SJSR			_ssub_pal_fade_out
+		SJSR			_ssub_pal_fade_out				; TODO: this too, why not load directly?
 		SJMP			_scr_secret_menu
 
 _chain_title_anim_scripts_data:
@@ -290,9 +298,9 @@ locret_8539:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_title_attr_select:
-		JSR		_scr_getc
-		BNE		loc_8545
-		JSR		_ppu_res_send_param
+		JSR		_scr_getc					; TODO: if assign new _nsub_ppu_res_send_param
+		BNE		loc_8545					; routine, all this stuff may be called from
+		JSR		_ppu_res_send_param			; script directly using script commands...
 		.WORD	_attr_title0
 		RTS
 loc_8545:
@@ -300,6 +308,8 @@ loc_8545:
 		.WORD	_attr_title1
 		RTS
 
+; NOTE: there is no point in sending attrs in rectangular format, we may send it as raw 64x1 line as well (up to 127 allowed)
+;
 _attr_title0:
 		.WORD	$23C0
 		.BYTE	$20,$02
@@ -310,6 +320,7 @@ _attr_title1:
 		.BYTE	$20,$02
 		.BYTE	$AA,$0A,$0A,$0A,$0A,$0A,$0A,$AA,$AA,$00,$00,$00,$00,$00,$0F,$AA,$AA,$00,$C0,$F0,$F0,$30,$00,$AA,$AA,$00,$00,$00,$10,$51,$00,$AA
 		.BYTE	$AA,$C0,$F5,$F5,$F5,$F5,$31,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
+
 _spr_raw_lib00_00:
 		.BYTE	$0C
 		.BYTE	$F0,$D4,$02,$10
@@ -341,17 +352,22 @@ _spr_raw_lib00_01:
 
 ; =============== S C R I P T ===============================================
 _sub01_intro_slime:
-		SSCRIPT1_SET	_scr_8642	; run additionally parallel script for
+		SSCRIPT1_SET	_scr_intro_slime_anim	; run additionall parallel script for
 		POS_Y_DELTA_SET 6,$00,$01		; this object, while main script just
 		POS_Y_DELTA_SET 0,$80,$00		; set the moving parameters and then
 		SDELAY			$C8				; wait before stop
 		SSTOP
 
+; NOTE: don't know why they decided to use secondary script for some kind of
+; work, since there is possible to do that in regular script form using loops
+; which is actually used in many other times using loops/delays and delayed
+; commands... probably this looks simplier.
+;
 ; =============== S C R I P T ===============================================
-_scr_8642:
+_scr_intro_slime_anim:
 		SPR_IDX_SET		6,$02			; secondary slime script for sprite
-		SPR_IDX_INC		6				; sprite animation. when main script
-		SJMP			_scr_8642		; stops, this will disable as well
+		SPR_IDX_INC		6				; animation. when main script
+		SJMP			_scr_intro_slime_anim	; stops, this will disable as well
 
 _spr_raw_lib00_02:
 		.BYTE	$04
@@ -380,19 +396,28 @@ _sloc_intro_busters_delay:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ===============================================
+; all intro busters animations are the same difference only in initial sprite index
+; and an appearance delay, every single buster script also set the starting position
+;
 _sloc_intro_busters_no_delay:
-		SPR_IDX_INC		0
+		SPR_IDX_INC		0					; +1 (5)
 		POS_MOVE_STOP	0
 		SDELAY			$10
 		POS_Y_DELTA_SET 0,$80,$00
-		SLOOP_BEGIN		$06
-		SPR_IDX_INC		6
-		SPR_IDX_DEC		6
-		SPR_IDX_ADD_IMM 6,$02
-		SPR_IDX_ADD_IMM 6,$FE
+		SLOOP_BEGIN		$06					; loop 6-5-7-5... period
+		SPR_IDX_INC		6					; +1 (6)
+		SPR_IDX_DEC		6					; -1 (5)
+		SPR_IDX_ADD_IMM 6,$02				; +2 (7)
+		SPR_IDX_ADD_IMM 6,$FE				; -2 (5)
 		SLOOP_END
 		SSTOP
 
+; NOTE: even if all these sprites are set in libraries 08 and 09, they copied here
+; as well. also an ending libraries contains more copies... this is fine for
+; not care about actual sprite data locations or not care about optimizations
+; (at least there are a lot of free space anyway), however, this may be optimized
+; as well
+;
 _spr_raw_lib00_04:
 		.BYTE	$04
 		.BYTE	$00,$5E,$40,$F8
@@ -698,22 +723,22 @@ _spr_raw_lib00_33:
 
 ; =============== S C R I P T ===============================================
 _intro_sub0B_title_ghost:
-		POS_X_SET		0,$80,$00
-		POS_Y_SET		0,$68,$00
-		SLOOP_BEGIN		$05
-		SPR_IDX_SET		0,$46
+		POS_X_SET		0,$80,$00			; animation loop for small ghost
+		POS_Y_SET		0,$68,$00			; showing "victory" on the second
+		SLOOP_BEGIN		$05					; text portion of the title screen
+		SPR_IDX_SET		0,$46				; spr 46 start, repeat 6 times
 		SDELAY			$20
-		SPR_IDX_INC		6
-		SPR_IDX_INC		6
-		SPR_IDX_INC		6
-		SPR_IDX_INC		0
+		SPR_IDX_INC		6					; +1 (47)
+		SPR_IDX_INC		6					; +1 (48)
+		SPR_IDX_INC		6					; +1 (49)
+		SPR_IDX_INC		0					; +1 (4A)
 		SDELAY			$10
-		SPR_IDX_INC		0
+		SPR_IDX_INC		0					; +1 (4B)
 		SDELAY			$20
-		SPR_IDX_DEC		7
-		SPR_IDX_DEC		6
-		SPR_IDX_DEC		6
-		SPR_IDX_DEC		6
+		SPR_IDX_DEC		7					; -1 (4A)
+		SPR_IDX_DEC		6					; -1 (49)
+		SPR_IDX_DEC		6					; -1 (48)
+		SPR_IDX_DEC		6					; -1 (47)
 		SLOOP_END
 		SSTOP
 
@@ -806,10 +831,10 @@ _pal_new_blink_unused:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_pal_patch_load:
-		JSR		_scr_getc
-		STA		_ptr06
-		JSR		_scr_getc
-		STA		_ptr06+1
+		JSR		_scr_getc					; this is custom palette blink routine used
+		STA		_ptr06						; only for this place... in other cases they
+		JSR		_scr_getc					; used common pal fade _nsub routine with
+		STA		_ptr06+1					; mask arguments...
 		JSR		_scr_getc
 		TAX
 		JSR		_scr_getc
@@ -843,132 +868,147 @@ _spr_raw_lib00_4C:
 		.BYTE	$F0,$6D,$01,$E0
 
 ; =============== S C R I P T ===============================================
+; this script replaces the main thread's 00 script at slot 00 when you press
+; START at the title.
+;
 _scr_select_busters:
-		NJSR			_nsub_62B40
-		NJSR			_nsub_mmc1_mirror_horizontal
+		NJSR			_nsub_all_threads_off_except_cur; disable all other thread leftovers
+		NJSR			_nsub_mmc1_mirror_horizontal	; the rest is usual screen preparations
 		NJSR			_nsub_far_prg0_tlm_lib_unpack
 			NARGB		_tlm2_busterselect_idx
 		NJSR			_nsub_mmc1_mirror_vertical
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_8B8A
+			NARGW		_pal_select_busters
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$06
-		STORE8			_tmp7B7,$FF
-		STORE8			_tmp7B8,$FF
-		STORE8			_cur_room_x_pageA,$00
-		STORE8			_cur_room_x_pageB,$00
-		POS_X_SET		0,$00,$01
+		STORE8			_beam_player_idxA,$FF			; no players selected yet, reset
+		STORE8			_catch_player_idxA,$FF
+		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
+		STORE8			_cur_room_x_pageB,$00			; not by its ingame meanings
+		POS_X_SET		0,$00,$01						; main offset for screen objects here
+; NOTE: here script loads the selection screen objects, each object loaded from library
+; and derived the current library index 00, so all following scripts will load with
+; _scr00_intro_title_select script at start but will use the rest of its internal SWITCH
+; case table indexes: 06-0A. current script still running at slot 00.
+;
 		NJSR			_nsub_sarg01_load_data_ofs
 			NARGW		_select_buster_chain_scripts
+; NOTE: this routine mainly used in ending sequence to fetch continuosly object
+; for every single staff screen. here just some kind of hacky reuse of it... wouldn't
+; here be easier to set one single _nsub routine with offset to data in argument or even
+; with all data after it? maybe it is easier to merge some code to have two sets
+; of such routines...
 		SLOOP_BEGIN		$05
 		NJSR			_nsub_chain_thread_lib_load_enemy
 		SLOOP_END
-		SJSR			_ssub_pal_fade_in
-		NJSR			_nsub_apu_mus_load
+		SJSR			_ssub_pal_fade_in				; finally preparations is done,
+		NJSR			_nsub_apu_mus_load				; show the screen and play the music
 			NARGB		$01
-		SARG_SET		SARG0,$00
+		SARG_SET		SARG0,$00						; init tmp index
 _sloc_8B3D:
 		SDELAY			$01
-		NJSR			_nsub_62B70
-			NARGB		$A6,$07
-		SBCC			_sloc_8B3D
-		NJSR			_nsub_8BC8
+		NJSR			_nsub_mtest_bit0				; animated objects are working now,
+			NARGW		_cur_room_x_pageA				; will wait for it's over and flag raized
+		SBCC			_sloc_8B3D						; if set, we'll start input handling
+		NJSR			_nsub_select_buster_input		; loop until selection is complete
 		SBCC			_sloc_8B3D
 _sloc_8B4D:
-		SDELAY			$01
-		NJSR			_nsub_62B70
-			NARGB		$A6,$07
+		SDELAY			$01								; now the same for second player
+		NJSR			_nsub_mtest_bit0				; wait for animations in over again
+			NARGW		_cur_room_x_pageA				; and run input handler
 		SBCC			_sloc_8B4D
-		NJSR			_nsub_8BC8
+		NJSR			_nsub_select_buster_input
 		SBCC			_sloc_8B4D
 _sloc_8B5D:
-		SDELAY			$01
-		NJSR			_nsub_62B70
-			NARGB		$A8,$07
-		SBCC			_sloc_8B5D
-		SDELAY			$5A
-		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask
+		SDELAY			$01								; when both players selected, wait
+		NJSR			_nsub_mtest_bit0				; for animation is over again, this
+			NARGW		_cur_room_x_pageB				; and pole slide animation is started
+		SBCC			_sloc_8B5D						;(_cur_room_x_pageB = 1 is set then)
+		SDELAY			$5A								; main script just has to wait
+		SLOOP_BEGIN		$04								; and then fade out the screen
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; asyncronously.
 			NARGB		$FF
 		SDELAY			$08
 		SLOOP_END
-		NJSR			_nsub_8BAA
+		NJSR			_nsub_players_idx_init			; final initializations of game vars
 		SSTOP
 
 _select_buster_chain_scripts:
-		.BYTE	_sub06_select_busterA_idx+1,	$00,$F8,$00
-		.BYTE	_sub07_select_busterB_idx+1,	$18,$F8,$00
-		.BYTE	_sub08_select_busterC_idx+1,	$30,$F8,$00
-		.BYTE	_sub09_select_busterD_idx+1,	$48,$F8,$00
-		.BYTE	_sub0A_select_busterE_idx+1,	$E0,$40,$00
-byte_8B8A:
+		.BYTE	_sub06_select_peter_idx+1,	$00,$F8,$00
+		.BYTE	_sub07_select_ray_idx+1,	$18,$F8,$00
+		.BYTE	_sub08_select_egon_idx+1,	$30,$F8,$00
+		.BYTE	_sub09_select_winston_idx+1,$48,$F8,$00
+		.BYTE	_sub0A_select_louis_idx+1,	$E0,$40,$00
+_pal_select_busters:
 		.BYTE	$0F,$00,$16,$07,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$30,$0F,$0F
 		.BYTE	$0F,$36,$1C,$0F,$0F,$0F,$0F,$0F,$0F,$30,$0F,$0F,$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8BAA:
-		LDY		_tmp7B7
+_nsub_players_idx_init:
+		LDY		_beam_player_idxA
 		LDA		byte_8BC3,Y
-		STA		_tmp7B7
-		STA		_tmp7B9
-		LDY		_tmp7B8
+		STA		_beam_player_idxA
+		STA		_beam_player_idxB
+		LDY		_catch_player_idxA
 		LDA		byte_8BC3,Y
-		STA		_tmp7B8
-		STA		_tmp7BA
+		STA		_catch_player_idxA
+		STA		_catch_player_idxB
 		RTS
 byte_8BC3:
 		.BYTE	$00,$10,$20,$30,$40
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8BC8:
+_nsub_select_buster_input:
 		LDX		_scr_cur_trd_idx
-		LDA		_pad0_pressed
-		AND		#$01
+		LDA		_pad0_pressed				; test for L/R buttons press
+		AND		#PAD_R
 		BEQ		loc_8BE6
 		LDA		#$0B
 		JSR		_far_prg6_apu_snd_load
 loc_8BD5:
-		INC		_scr_trds_args0,X
+		INC		_scr_trds_args0,X			; increment current selection index
 		LDA		_scr_trds_args0,X
 		CMP		#$05
 		BCC		loc_8BE1
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8BE1:
-		CMP		_tmp7B7
-		BEQ		loc_8BD5
+		CMP		_beam_player_idxA			; skip if first player already selected
+		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
 		LDA		_pad0_pressed
-		AND		#$02
+		AND		#PAD_L
 		BEQ		loc_8C00
 		LDA		#$0B
 		JSR		_far_prg6_apu_snd_load
 loc_8BF1:
-		DEC		_scr_trds_args0,X
+		DEC		_scr_trds_args0,X			; same but for decrement
 		BPL		loc_8BF9
 		LDA		#$04
 		STA		_scr_trds_args0,X
 loc_8BF9:
 		LDA		_scr_trds_args0,X
-		CMP		_tmp7B7
+		CMP		_beam_player_idxA
 		BEQ		loc_8BF1
 loc_8C00:
-		LDA		_pad0_pressed
-		AND		#$80
+; TODO: very annoying, title accepts only START, select busters only A
+; maybe fix it with allow START to be input here a well
+		LDA		_pad0_pressed				; select with A
+		AND		#PAD_A
 		BEQ		loc_8C36
 		LDA		#$0C
-		JSR		_far_prg6_apu_snd_load
+		JSR		_far_prg6_apu_snd_load		; init one of two players indexes
 		LDA		_scr_trds_args0,X
-		LDY		_tmp7B7
+		LDY		_beam_player_idxA
 		BPL		loc_8C17
-		STA		_tmp7B7
+		STA		_beam_player_idxA
 		BMI		loc_8C1A
 loc_8C17:
-		STA		_tmp7B8
+		STA		_catch_player_idxA
 loc_8C1A:
 		LDA		#$FF
-		STA		_scr_trds_spr_idx,X
-		LDA		#$00
+		STA		_scr_trds_spr_idx,X			; disable obj name sprite, jump to
+		LDA		#$00						; next object
 		STA		_cur_room_x_pageA
 loc_8C23:
 		INC		_scr_trds_args0,X
@@ -978,13 +1018,13 @@ loc_8C23:
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8C2F:
-		CMP		_tmp7B7
+		CMP		_beam_player_idxA
 		BEQ		loc_8C23
-		SEC
-		RTS
+		SEC									; when selection is done, set carry to
+		RTS									; signal the main code to do next part
 loc_8C36:
-		LDY		_scr_trds_args0,X
-		LDA		byte_8C51,Y
+		LDY		_scr_trds_args0,X			; display the name sprite for currently
+		LDA		byte_8C51,Y					; highlighted player
 		STA		_scr_trds_x_pos_lo,X
 		LDA		byte_8C56,Y
 		STA		_scr_trds_y_pos_lo,X
@@ -1001,6 +1041,7 @@ byte_8C51:
 		.BYTE	$68,$80,$98,$B0,$E0
 byte_8C56:
 		.BYTE	$70,$70,$70,$70,$B0
+
 _spr_raw_lib00_40:
 		.BYTE	$05
 		.BYTE	$F4,$ED,$02,$0C
@@ -1041,159 +1082,177 @@ _spr_raw_lib00_45:
 		.BYTE	$00,$EE,$40,$00
 
 ; =============== S C R I P T ===============================================
-_sub06_select_busterA:
+; PETER
+_sub06_select_peter:
 		SARG_SET		SARG0,$00
-		SARG_SET		SARG1,$08
-		SPR_IDX_SET		0,$09
+		SARG_SET		SARG1,$08				; set default left-oriented sprite for this object
+		SPR_IDX_SET		0,$09					; set current anim walk start sprite
 		SJSR			_ssub_select_busters
 		SUSPEND
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_select_busters:
-		POS_X_DELTA_SET 0,$00,$FC
-		SDELAY			$20
-		SPR_IDX_ADD_IMM 3,$FE
-		POS_X_DELTA_SET 0,$00,$FE
-		SDELAY			$03
+		POS_X_DELTA_SET 0,$00,$FC				; first animate the entry of 4 busters
+		SDELAY			$20						; horizontally left without walk anim
+		SPR_IDX_ADD_IMM 3,$FE					; turn face to the screen while slowdown
+		POS_X_DELTA_SET 0,$00,$FE				; step by step in 14 frames
+		SDELAY			$03						;
 		POS_X_DELTA_SET 0,$00,$FF
 		SDELAY			$04
 		POS_X_DELTA_SET 0,$80,$FF
 		SDELAY			$03
 		POS_X_DELTA_SET 0,$E0,$FF
 		SDELAY			$04
-		POS_MOVE_STOP	0
-		SPR_IDX_ADD_IMM 0,$FE
-		SDELAY			$0F
+		POS_MOVE_STOP	0						; stop move
+		SPR_IDX_ADD_IMM 0,$FE					; change sprite to step forward
+		SDELAY			$0F						; and move vertically down a little
 		POS_Y_DELTA_SET 0,$00,$01
 		SDELAY			$04
-		SPR_IDX_INC		4
+		SPR_IDX_INC		4						; return standing anim
 		SPR_IDX_DEC		0
-		POS_MOVE_STOP	0
-		SLOOP_BEGIN		$02
+		POS_MOVE_STOP	0						; stop again
+		SLOOP_BEGIN		$02						; and then walk a little at the same pos
 		SDELAY			$04
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 4,$FE
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		0
 		SLOOP_END
-		STORE8			_cur_room_x_pageA,$01
+		STORE8			_cur_room_x_pageA,$01	; now enable selection input
 _sloc_8D0C:
-		SDELAY			$01
-		NJSR			_nsub_8DDD
-		SBCC			_sloc_8D0C
-		NJSR			_nsub_8DE6
-		SBCS			_sloc_8D29
+		SDELAY			$01						; common portion for any object
+		NJSR			_nsub_is_beam_player_selected
+		SBCC			_sloc_8D0C				; wait if select is done
+		NJSR			_nsub_is_cur_buster_select_for_beam_player
+		SBCS			_sloc_beam_player_selected	; then test if this object selected
 _sloc_8D1A:
-		SDELAY			$01
-		NJSR			_nsub_8DF3
+		SDELAY			$01						; for both players one by one
+		NJSR			_nsub_is_catch_player_selected
 		SBCC			_sloc_8D1A
-		NJSR			_nsub_8DFC
-		SBCS			_sloc_8D88
+		NJSR			_nsub_is_cur_buster_select_for_catch_player
+		SBCS			_sloc_catch_player_selected
 		SUSPEND
-_sloc_8D29:
-		SJSR			_ssub_8DC2
+_sloc_beam_player_selected:						; here is common beginning for step out
+		SJSR			_ssub_buster_selected_step_out	; of selected regular busters
 		SPR_IDX_ADD_IMM 0,$03
-_sloc_8D2E:
-		POS_X_DELTA_SET 0,$00,$FF
-		SSCRIPT1_SET	_scr_8DD2
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+; here is common walk to pole anim for selected beam player
+_scr_beam_player_walk_common:
+		POS_X_DELTA_SET 0,$00,$FF				; move left init
+		SSCRIPT1_SET	_scr_buster_walk_left_anim	; load secondary script for walk anim
 _sloc_8D35:
 		SDELAY			$01
-		NJSR			_nsub_62B60
+		NJSR			_nsub_cur_pos_x_lo_icmp	; move left to x=50
 			NARGB		$50
 		SBCC			_sloc_8D35
-		SSCRIPT1_OFF
+		SSCRIPT1_OFF							; stop animation
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
-		POS_MOVE_STOP	0
-		STORE8			_cur_room_x_pageA,$01
+			NARGB		SARG1					; get sprite index for stand anim loaded
+		POS_MOVE_STOP	0						; at the thread start in SARG1
+		STORE8			_cur_room_x_pageA,$01	; raise anim busy flag
 _sloc_8D49:
-		SDELAY			$01
-		NJSR			_nsub_62B70
-			NARGB		$A8,$07
+		SDELAY			$01						; first selected player must wait until
+		NJSR			_nsub_mtest_bit0		; second player is step aside
+			NARGW		_cur_room_x_pageB		; when this occurs, the flag riased
 		SBCC			_sloc_8D49
-		POS_X_DELTA_SET 0,$00,$FE
-		POS_Y_DELTA_SET 0,$00,$FE
+		POS_X_DELTA_SET 0,$00,$FE				; finally start the pole jump up animation
+		POS_Y_DELTA_SET 0,$00,$FE				; move up left
 		SDELAY			$0C
 		POS_MOVE_STOP	0
-		SCRL_Y_MOVE_SET 0,$00,$02
-_sloc_8D5F:
-		POS_Y_DELTA_SET 0,$00,$02
-		SPR_IDX_ADD_IMM 0,$03
+		SCRL_Y_MOVE_SET 0,$00,$02				; adjust scroll pos
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_nsub_buster_slide_down:
+		POS_Y_DELTA_SET 0,$00,$02				; then setup constant scroll move down
+		SPR_IDX_ADD_IMM 0,$03					; busters jump up on the pole by linear
+		SDELAY			$05						; path, not ballistic. just touch the pole
+		SPR_IDX_INC		0						; then and go down
 		SDELAY			$05
-		SPR_IDX_INC		0
-		SDELAY			$05
-		SPR_IDX_ADD_IMM 0,$03
-		SDELAY			$05
-		SPR_IDX_SET		0,$FF
-		SDELAY			$19
-		SPR_IDX_SET		0,$45
-		SDELAY			$05
-		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
-		SPR_IDX_ADD_IMM 0,$03
+		SPR_IDX_ADD_IMM 0,$03					; here is the trick to hide object while
+		SDELAY			$05						; sliding throught the floor. after a while
+		SPR_IDX_SET		0,$FF					; it disables the sprite but object continues
+		SDELAY			$19						; to move down. when he about to appear below
+		SPR_IDX_SET		0,$45					; draw small dummy sprite representing FOOT
+		SDELAY			$05						; show it for some time
+		NJSR			_nsub_obj_spr_idx_set_from_sarg	; then load an actual sprite
+			NARGB		SARG1					; and continue to animate it... very tricky
+		SPR_IDX_ADD_IMM 0,$03					; but no need to make additional clipping!
+; NOTE: this looks very funny in slo-mo when only the ass appears from below and move for some
+; pixels down alone lol. then the whole sprite appears.
 _sloc_8D7B:
-		SDELAY			$08
-		SLOOP_BEGIN		$03
+		SDELAY			$08						; continue sliding till the end of second page
+		SLOOP_BEGIN		$03						; the main script will control the timing
 		SPR_IDX_INC		0
 		SDELAY			$08
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$FD
 		SJMP			_sloc_8D7B
-_sloc_8D88:
-		SJSR			_ssub_8DC2
+
+; =============== S C R I P T ===============================================
+_sloc_catch_player_selected:
+		SJSR			_ssub_buster_selected_step_out
 		SPR_IDX_ADD_IMM 0,$03
-_sloc_8D8D:
-		POS_X_DELTA_SET 0,$00,$FF
-		SSCRIPT1_SET	_scr_8DD2
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ===============================================
+_scr_catch_player_walk_common:
+		POS_X_DELTA_SET 0,$00,$FF				; same start as for catch player, but...
+		SSCRIPT1_SET	_scr_buster_walk_left_anim
 _sloc_8D94:
-		NJSR			_nsub_62B60
-			NARGB		$68
-		SBCS			_sloc_8DA0
-		SDELAY			$01
+		NJSR			_nsub_cur_pos_x_lo_icmp	; he must stop earlier, at x=68
+			NARGB		$68						; TODO: for some reason, the structure of this
+		SBCS			_sloc_8DA0				; loop uses different SDELAY layout lol thus
+		SDELAY			$01						; need one more branch, very odd
 		SJMP			_sloc_8D94
 _sloc_8DA0:
-		STORE8			_cur_room_x_pageB,$01
+		STORE8			_cur_room_x_pageB,$01	; ok, second player is ready, start to slide down
 _sloc_8DA4:
 		SDELAY			$01
-		NJSR			_nsub_62B60
-			NARGB		$50
+		NJSR			_nsub_cur_pos_x_lo_icmp	; while first player is jumping up, he need
+			NARGB		$50						; to reach the same position x=50 first
 		SBCC			_sloc_8DA4
-		SSCRIPT1_OFF
+		SSCRIPT1_OFF							; now walk is over, start to jump up
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$01
+			NARGB		SARG1
 		POS_MOVE_STOP	0
-		SDELAY			$02
+		SDELAY			$02						; set the same move direction, animate
 		POS_X_DELTA_SET 0,$00,$FE
 		POS_Y_DELTA_SET 0,$00,$FE
 		SDELAY			$0C
-		POS_MOVE_STOP	0
-		SJMP			_sloc_8D5F
+		POS_MOVE_STOP	0						; stop on the pole, then jump on common code
+		SJMP			_nsub_buster_slide_down
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_8DC2:
-		POS_Y_DELTA_SET 0,$00,$01
-		SLOOP_BEGIN		$02
+_ssub_buster_selected_step_out:
+		POS_Y_DELTA_SET 0,$00,$01				; every buster must step out of the line
+		SLOOP_BEGIN		$02						; setup y speed and walk anim, run
 		SDELAY			$04
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 0,$FE
 		SLOOP_END
-		POS_MOVE_STOP	0
+		POS_MOVE_STOP	0						; all animations uses frame based timings
 		SRET
 
 ; =============== S C R I P T ===============================================
-_scr_8DD2:
-		SDELAY			$04
+_scr_buster_walk_left_anim:
+		SDELAY			$04						; secondary thread for constant walking animation
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 0,$FE
-		SJMP			_scr_8DD2
+		SJMP			_scr_buster_walk_left_anim
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8DDD:
-		LDA		_tmp7B7
+_nsub_is_beam_player_selected:
+		LDA		_beam_player_idxA				; names are selfexplanatory here and below
 		BPL		loc_8DE4
 		CLC
 		RTS
@@ -1202,9 +1261,9 @@ loc_8DE4:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8DE6:
+_nsub_is_cur_buster_select_for_beam_player:
 		LDX		_scr_cur_trd_idx
-		LDA		_tmp7B7
+		LDA		_beam_player_idxA
 		CMP		_scr_trds_args0,X
 		BEQ		loc_8DF1
 		CLC
@@ -1214,8 +1273,8 @@ loc_8DF1:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8DF3:
-		LDA		_tmp7B8
+_nsub_is_catch_player_selected:
+		LDA		_catch_player_idxA
 		BPL		loc_8DFA
 		CLC
 		RTS
@@ -1224,9 +1283,9 @@ loc_8DFA:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8DFC:
+_nsub_is_cur_buster_select_for_catch_player:
 		LDX		_scr_cur_trd_idx
-		LDA		_tmp7B8
+		LDA		_catch_player_idxA
 		CMP		_scr_trds_args0,X
 		BEQ		loc_8E07
 		CLC
@@ -1236,62 +1295,66 @@ loc_8E07:
 		RTS
 
 ; =============== S C R I P T ===============================================
-_sub07_select_busterB:
+; RAY
+_sub07_select_ray:
 		SARG_SET		SARG0,$01
-		SARG_SET		SARG1,$2C
+		SARG_SET		SARG1,$2C		; final sprite index for object as well
 		SPR_IDX_SET		0,$2D
 		SJMP			_ssub_select_busters
 
 ; =============== S C R I P T ===============================================
-_sub08_select_busterC:
+; EGON
+_sub08_select_egon:
 		SARG_SET		SARG0,$02
-		SARG_SET		SARG1,$14
+		SARG_SET		SARG1,$14		; the same for all busters here
 		SPR_IDX_SET		0,$15
 		SJMP			_ssub_select_busters
 
 ; =============== S C R I P T ===============================================
-_sub09_select_busterD:
+; WINSTON
+_sub09_select_winston:
 		SARG_SET		SARG0,$03
 		SARG_SET		SARG1,$20
 		SPR_IDX_SET		0,$21
 		SJMP			_ssub_select_busters
 
 ; =============== S C R I P T ===============================================
-_sub0A_select_busterE:
-		SARG_SET		SARG0,$04
-		SARG_SET		SARG1,$38
+; LOUIS
+_sub0A_select_louis:
+		SARG_SET		SARG0,$04			; this object has no animation on start
+		SARG_SET		SARG1,$38			; so it have it's own script handler
 		SPR_IDX_SET		0,$34
 _sloc_8E32:
-		SDELAY			$01
-		NJSR			_nsub_8DDD
-		SBCC			_sloc_8E32
-		NJSR			_nsub_8DE6
+		SDELAY			$01					; wait for beam player selected in main thread
+		NJSR			_nsub_is_beam_player_selected
+		SBCC			_sloc_8E32			; then there are two options
+		NJSR			_nsub_is_cur_buster_select_for_beam_player
 		SBCS			_sloc_8E4F
 _sloc_8E40:
-		SDELAY			$01
-		NJSR			_nsub_8DF3
-		SBCC			_sloc_8E40
-		NJSR			_nsub_8DFC
-		SBCS			_sloc_8E55
-		SUSPEND
-_sloc_8E4F:
-		SJSR			_ssub_8E5B
-		SJMP			_sloc_8D2E
-_sloc_8E55:
-		SJSR			_ssub_8E5B
-		SJMP			_sloc_8D8D
+		SDELAY			$01					; here goes if buster not selected as beam player
+		NJSR			_nsub_is_catch_player_selected
+		SBCC			_sloc_8E40			; then we just wait for chatch player selection
+		NJSR			_nsub_is_cur_buster_select_for_catch_player
+		SBCS			_sloc_8E55			; again two options
+		SUSPEND								; suspend, if buster not selected for anything
+_sloc_8E4F:									; here goes if buster were selected for beam player
+		SJSR			_ssub_louis_selected_base_anim
+		SJMP			_scr_beam_player_walk_common
+_sloc_8E55:									; here goest if buster were selected for catch player
+		SJSR			_ssub_louis_selected_base_anim
+		SJMP			_scr_catch_player_walk_common
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_8E5B:
-		POS_X_DELTA_SET 0,$00,$FF
-		SLOOP_BEGIN		$02
+_ssub_louis_selected_base_anim:
+		POS_X_DELTA_SET 0,$00,$FF			; first part of louis path common for any selection
+		SLOOP_BEGIN		$02					; move left,
 		SPR_IDX_SET		4,$38
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		POS_Y_DELTA_SET 0,$00,$FF
+		POS_Y_DELTA_SET 0,$00,$FF			; move up,
 		SLOOP_BEGIN		$02
 		SPR_IDX_SET		4,$35
 		SPR_IDX_INC		4
@@ -1299,7 +1362,7 @@ _ssub_8E5B:
 		SPR_IDX_ADD_IMM 4,$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		SPR_IDX_SET		0,$38
+		SPR_IDX_SET		0,$38				; prepare to move left to finish
 		SRET
 
 _spr_raw_lib00_34:
@@ -1379,40 +1442,40 @@ _spr_raw_lib00_3F:
 
 ; =============== S C R I P T ===============================================
 _scr_secret_menu:
-		NJSR			_nsub_secret_menu_init
-		NJSR			_nsub_62B40
-		NJSR			_nsub_apu_mus_load
+		NJSR			_nsub_secret_menu_init			; init menu variables
+		NJSR			_nsub_all_threads_off_except_cur; kill all leftover threads
+		NJSR			_nsub_apu_mus_load				; music stop
 			NARGB		$FF
-		NJSR			_nsub_far_prg0_tlm_lib_unpack
+		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack menu tilemap
 			NARGB		_tlm9_secret_menu_idx
-		NJSR			_nsub_8FED
-		NJSR			_nsub_mmc1_chr1_set
+		NJSR			_nsum_menu_option_attr_highlight; set highlight to default option
+		NJSR			_nsub_mmc1_chr1_set				; CHR setup
 			NARGB		$05
-		NJSR			_nsub_bg_pal_load
-			NARGW		byte_8F70
-		SJSR			_ssub_pal_fade_in
-		NBG_HNDL_SET	_nbgsub_8F80
+		NJSR			_nsub_bg_pal_load				; also palette
+			NARGW		_pal_secret_menu
+		SJSR			_ssub_pal_fade_in				; show screen
+		NBG_HNDL_SET	_nbgsub_secret_menu_exit_wait	; load native bg input
 _sloc_8F5C:
-		SDELAY			$01
-		NJSR			_nsub_secret_menu_UD_input
-		NJSR			_nsub_secret_menu_LR_input
-		NJSR			_nsub_91AF
+		SDELAY			$01								; go main menu loop
+		NJSR			_nsub_secret_menu_UD_input		; input separated in three subs
+		NJSR			_nsub_secret_menu_LR_input		; for hor/vert/AB buttons
+		NJSR			_nsub_secret_menu_AB_input
 		SJMP			_sloc_8F5C
 
 ; =============== S C R I P T ===============================================
-_scr_8F6A:
+_scr_title_restart:
 		SJSR			_ssub_pal_fade_out
 		SJMP			_sloc_title_start
 
-byte_8F70:
+_pal_secret_menu:
 		.BYTE	$0F,$11,$11,$11,$0F,$30,$30,$30,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_8F80:
-		LDA		_pad0_pressed
-		AND		#$10
+_nbgsub_secret_menu_exit_wait:
+		LDA		_pad0_pressed				; background native sub to wait
+		AND		#PAD_START					; if START is pressed
 		BEQ		locret_8FAA
-		LDX		_menu_controls_idx
+		LDX		_menu_controls_idx			; apply changes to the game vars
 		LDA		_ab_controls_,X
 		STA		_control_jump_button_code
 		LDA		_ba_controls_,X
@@ -1420,26 +1483,26 @@ _nbgsub_8F80:
 		LDA		_menu_difficulty_idx
 		STA		_difficulty
 		LDA		#$FF
-		JSR		_far_prg6_apu_mus_load
+		JSR		_far_prg6_apu_mus_load		; if sound test used, shut all sounds
 		LDA		#$FF
 		JSR		_far_prg6_apu_snd_load
-		JSR		_cur_thread_reload_param
-		.WORD	_scr_8F6A
+		JSR		_cur_thread_reload_param	; load intro script again starting
+		.WORD	_scr_title_restart			; directly from title screen
 locret_8FAA:
 		RTS
 
 _ab_controls_:
-		.BYTE	$80,$40
+		.BYTE	PAD_A,PAD_B
 _ba_controls_:
-		.BYTE	$40,$80
+		.BYTE	PAD_B,PAD_A
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_secret_menu_init:
 		LDX		#$00
-		STX		_cur_room_doors_cnt
+		STX		_cur_room_doors_cnt			; this var used here as a menu index
 		STX		_menu_controls_idx
 		STX		_sound_test_mus_idx
-		STX		_sound_test_ssnd_idx
+		STX		_sound_test_snd_idx
 		INX
 		STX		_menu_difficulty_idx
 		RTS
@@ -1447,7 +1510,7 @@ _nsub_secret_menu_init:
 ; =============== S U B R O U T I N E =======================================
 _nsub_secret_menu_UD_input:
 		LDA		_pad0_pressed
-		AND		#$08
+		AND		#PAD_U
 		BEQ		loc_8FD4
 		LDA		_cur_room_doors_cnt
 		SEC
@@ -1457,7 +1520,7 @@ _nsub_secret_menu_UD_input:
 		BNE		loc_8FE6
 loc_8FD4:
 		LDA		_pad0_pressed
-		AND		#$04
+		AND		#PAD_D
 		BEQ		locret_8FEC
 		LDA		_cur_room_doors_cnt
 		CLC
@@ -1467,72 +1530,69 @@ loc_8FD4:
 		LDA		#$00
 loc_8FE6:
 		STA		_cur_room_doors_cnt
-		JMP		_nsub_8FED
+		JMP		_nsum_menu_option_attr_highlight
 locret_8FEC:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_8FED:
+_nsum_menu_option_attr_highlight:
 		JSR		_ppu_res_send_param_repeat
-		.WORD	word_9004
+		.WORD	_res_attr_clear
 		JSR		_wait_for_nmi
 		LDX		_cur_room_doors_cnt
-		LDA		off_9009,X
+		LDA		_attr_option_lib,X
 		LDY		off_900D,X
 		JSR		_ppu_res_send_ptr_repeat
 		JMP		_wait_for_nmi
 
-word_9004:
+; NOTE: weird, this should clear attrs for nt0, but starts 8 bytes later
+; so will erase first 8 bytes of nt1 as well. why?
+_res_attr_clear:
 		.WORD	$23C8
-		.BYTE	$20,$02
-		.BYTE	$00
-off_9009:
-		.BYTE	<[word_9011]
-		.BYTE	<[word_9016]
-		.BYTE	<[word_901B]
-		.BYTE	<[word_9020]
+		.BYTE	$20,$02,$00
+_attr_option_lib:
+		.BYTE	<[_res_attr_option0]
+		.BYTE	<[_res_attr_option1]
+		.BYTE	<[_res_attr_option2]
+		.BYTE	<[_res_attr_option3]
 off_900D:
-		.BYTE	>[word_9011]
-		.BYTE	>[word_9016]
-		.BYTE	>[word_901B]
-		.BYTE	>[word_9020]
-word_9011:
+		.BYTE	>[_res_attr_option0]
+		.BYTE	>[_res_attr_option1]
+		.BYTE	>[_res_attr_option2]
+		.BYTE	>[_res_attr_option3]
+_res_attr_option0:
 		.WORD	$23C8
-		.BYTE	$08,$01
-		.BYTE	$55
-word_9016:
+		.BYTE	$08,$01,$55
+_res_attr_option1:
 		.WORD	$23D0
-		.BYTE	$18,$01
-		.BYTE	$55
-word_901B:
+		.BYTE	$18,$01,$55
+_res_attr_option2:
 		.WORD	$23E8
-		.BYTE	$08,$01
-		.BYTE	$05
-word_9020:
+		.BYTE	$08,$01,$05
+_res_attr_option3:
 		.WORD	$23E8
-		.BYTE	$08,$01
-		.BYTE	$50
+		.BYTE	$08,$01,$50
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_secret_menu_LR_input:
 		LDX		_cur_room_doors_cnt
 		LDA		_pad0_pressed
-		AND		#$02
+		AND		#PAD_L
 		BEQ		loc_903B
 		LDA		_menu_controls_idx,X
 		SEC
 		SBC		#$01
 		BPL		loc_9050
-		LDA		byte_9057,X
+		LDA		_menu_controls_max_val_list,X
 		BNE		loc_9050
 loc_903B:
 		LDA		_pad0_pressed
-		AND		#$01
+		AND		#PAD_R
 		BEQ		locret_9056
 		LDA		_menu_controls_idx,X
 		CLC
 		ADC		#$01
-		CMP		byte_9057,X
+		CMP		_menu_controls_max_val_list,X
 		BCC		loc_9050
 		BEQ		loc_9050
 		LDA		#$00
@@ -1541,7 +1601,7 @@ loc_9050:
 		JSR		_menu_update_draw
 locret_9056:
 		RTS
-byte_9057:
+_menu_controls_max_val_list:
 		.BYTE	$01,$03,$0C,$23
 
 ; =============== S U B R O U T I N E =======================================
@@ -1575,14 +1635,8 @@ loc_907B:
 		.WORD	_tlm_ba_controls
 		RTS
 
-_tlm_ab_controls:
-		.WORD	$20EA
-		.BYTE	$0E,$01
-		.BYTE	"A-BEAM  B-TRAP"
-_tlm_ba_controls:
-		.WORD	$20EA
-		.BYTE	$0E,$01
-		.BYTE	"B-BEAM  A-TRAP"
+		TXT		$20EA,"A-BEAM  B-TRAP",	_tlm_ab_controls
+		TXT		$20EA,"B-BEAM  A-TRAP",	_tlm_ba_controls
 
 ; =============== S U B R O U T I N E =======================================
 _difficult_draw:
@@ -1609,22 +1663,12 @@ off_90CD:
 		.BYTE	>[word_90DB]
 		.BYTE	>[word_90E5]
 		.BYTE	>[word_90EF]
-word_90D1:
-		.WORD	$216A
-		.BYTE	$06,$01
-		.BYTE	"EASY  "
-word_90DB:
-		.WORD	$216A
-		.BYTE	$06,$01
-		.BYTE	"NORMAL"
-word_90E5:
-		.WORD	$216A
-		.BYTE	$06,$01
-		.BYTE	"HARD  "
-word_90EF:
-		.WORD	$216A
-		.BYTE	$06,$01
-		.BYTE	"PRO   "
+
+		TXT		$216A,"EASY  ",	word_90D1
+		TXT		$216A,"NORMAL",	word_90DB
+		TXT		$216A,"HARD  ",	word_90E5
+		TXT		$216A,"PRO   ",	word_90EF
+
 off_90F9:
 		.BYTE	<[word_9101]
 		.BYTE	<[word_9106]
@@ -1635,22 +1679,12 @@ off_90FD:
 		.BYTE	>[word_9106]
 		.BYTE	>[word_910B]
 		.BYTE	>[word_9110]
-word_9101:
-		.WORD	$21B4
-		.BYTE	$01,$01
-		.BYTE	"4"
-word_9106:
-		.WORD	$21B4
-		.BYTE	$01,$01
-		.BYTE	"3"
-word_910B:
-		.WORD	$21B4
-		.BYTE	$01,$01
-		.BYTE	"2"
-word_9110:
-		.WORD	$21B4
-		.BYTE	$01,$01
-		.BYTE	"1"
+
+		TXT		$21B4,"4",	word_9101
+		TXT		$21B4,"3",	word_9106
+		TXT		$21B4,"2",	word_910B
+		TXT		$21B4,"1",	word_9110
+
 off_9115:
 		.BYTE	<[word_911D]
 		.BYTE	<[word_913A]
@@ -1705,7 +1739,7 @@ _sound_test_mus_draw:
 
 ; =============== S U B R O U T I N E =======================================
 _sound_test_se_draw:
-		LDA		_sound_test_ssnd_idx
+		LDA		_sound_test_snd_idx
 		LDX		#$00
 		JSR		_bin2dec
 		LDX		#$07
@@ -1713,11 +1747,11 @@ _sound_test_se_draw:
 		JMP		_printfd
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_91AF:
-		LDA		_pad0_pressed
-		AND		#$80
+_nsub_secret_menu_AB_input:
+		LDA		_pad0_pressed				; buttons used if sound test options
+		AND		#PAD_A						; are selected
 		BEQ		loc_91D1
-		LDA		_cur_room_doors_cnt
+		LDA		_cur_room_doors_cnt			; A starts the sounds
 		CMP		#$02
 		BNE		loc_91C2
 		LDA		_sound_test_mus_idx
@@ -1727,11 +1761,11 @@ loc_91C2:
 		BNE		locret_91EC
 		LDA		#$FF
 		JSR		_far_prg6_apu_snd_load
-		LDA		_sound_test_ssnd_idx
+		LDA		_sound_test_snd_idx
 		JMP		_far_prg6_apu_snd_load
 loc_91D1:
-		LDA		_pad0_pressed
-		AND		#$40
+		LDA		_pad0_pressed				; B stops them
+		AND		#PAD_B
 		BEQ		locret_91EC
 		LDA		_cur_room_doors_cnt
 		CMP		#$02
@@ -1747,6 +1781,8 @@ locret_91EC:
 		RTS
 
 		SECTION_END	"SCR0 SECRET MENU CODE AND DATA"
+
+		SECTION_START
 
 _spr_raw_lib00:
 		.WORD	_spr_raw_lib00_00
@@ -1827,6 +1863,8 @@ _spr_raw_lib00:
 		.WORD	_spr_raw_lib00_4B
 		.WORD	_spr_raw_lib00_4C
 
+		SECTION_END	"RAW LIB00 SPRITES LIST"
+
 		SECTION_START
 
 ; =============== S C R I P T ===============================================
@@ -1834,212 +1872,252 @@ _scr07_ending:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$16
-		SCASE			_scr07_ending_sub01
-		SCASE			_sjmp_case_97DD
-		SCASE			_sjmp_case_98D0
-		SCASE			_sjmp_case_9914
-		SCASE			_sjmp_case_99DB
-		SCASE			_sjmp_case_9A58
-		SCASE			_sjmp_case_9AD8
-		SCASE			_sjmp_case_9BAC
-		SCASE			_sjmp_case_A008
-		SCASE			_sjmp_case_A05B
-		SCASE			_sjmp_case_A0AB
-		SCASE			_sjmp_case_A1B7
-		SCASE			_sjmp_case_A1EA
-		SCASE			_sjmp_case_A510
-		SCASE			_sjmp_case_A54B
-		SCASE			_sjmp_case_A5DB
-		SCASE			_sjmp_case_A5F5
-		SCASE			_sjmp_case_A63A
-		SCASE			_sjmp_case_A67F
-		SCASE			_sjmp_case_A6C4
-		SCASE			_sjmp_case_A782
-		SCASE			_sjmp_case_A2E5
+		SCASE			_scr_ending_sub01
+		SCASE			_scr_ending_sub02
+		SCASE			_scr_ending_sub03
+		SCASE			_scr_ending_sub04
+		SCASE			_scr_ending_sub05
+		SCASE			_scr_ending_sub06
+		SCASE			_scr_ending_sub07
+		SCASE			_scr_ending_sub08
+		SCASE			_scr_ending_sub09
+		SCASE			_scr_ending_sub0A
+		SCASE			_scr_ending_sub0B
+		SCASE			_scr_ending_sub0C
+		SCASE			_scr_ending_sub0D
+		SCASE			_scr_ending_sub0E
+		SCASE			_scr_ending_sub0F
+		SCASE			_scr_ending_sub10
+		SCASE			_scr_ending_sub11
+		SCASE			_scr_ending_sub12
+		SCASE			_scr_ending_sub13
+		SCASE			_scr_ending_sub14
+		SCASE			_scr_ending_sub15
+		SCASE			_scr_ending_sub16
+
+; !FALLTRHOUGH!
+
+; =============== S C R I P T ===============================================
 		STORE8			_scr_trds_out_of_screen_test,$00	; default
-		SDELAY			$5A
-		NJSR			_nsub_mmc1_chr1_set
+		SDELAY			$5A									; delay before start
+		NJSR			_nsub_mmc1_chr1_set					; setup CHR for BG
 			NARGB		$09
-		NJSR			_nsub_scroll_page_set
+		NJSR			_nsub_scroll_page_set				; setup NT page
 			NARGB		$00
-		NJSR			_nsub_far_prg0_tlm_lib_unpack
-			NARGB		_tlm7_staff_idx
+		NJSR			_nsub_far_prg0_tlm_lib_unpack		; unpack starr screen
+			NARGB		_tlm7_staff_idx						; similar to title curtains
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_9367
-		NJSR			_nsub_apu_mus_load
+			NARGW		_pal_ending
+		NJSR			_nsub_apu_mus_load					; misc setups.. whatever
 			NARGB		$05
-		SDELAY			$64
-		SJSR			_ssub_pal_fade_in
-		POS_X_SET		0,$80,$00
+		SDELAY			$64									; more delay to let music begin
+		SJSR			_ssub_pal_fade_in					; show screen
+		POS_X_SET		0,$80,$00							; set base offset for main object
 		POS_Y_SET		0,$80,$00
-		NJSR			_nsub_sarg01_load_data_ofs
-			NARGW		_script_chain_data2
+		NJSR			_nsub_sarg01_load_data_ofs			; load scenario data offset
+			NARGW		_ending_scenario_data
 _sloc_92E5:
-		NJSR			_nsub_9474
+		NJSR			_nsub_ending_scenario_data_fetch	; play it continuosly
 		SJSR_SW			$04
-		SCASE			_sjsr_case_92F5
-		SCASE			_sjsr_case_92F9
-		SCASE			_sjsr_case_9304
-		SCASE			_sjsr_case_932D
+		SCASE			_sjsr_scenario_player_sub0_thread_start
+		SCASE			_sjsr_scenario_player_sub1_delay
+		SCASE			_sjsr_scenario_player_sub2_text_draw
+		SCASE			_sjsr_scenario_player_sub3_scores_draw
 		SJMP			_sloc_92E5
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_92F5:
-		NJSR			_nsub_chain_thread_lib_load_enemy
+; default option for all non-zero
+_sjsr_scenario_player_sub0_thread_start:
+		NJSR			_nsub_chain_thread_lib_load_enemy	; fetch and load new thread
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_92F9:
-		NJSR			_nsub_9492
-		SLOOP_BEGIN		$10
-		NJSR			_nsub_obj_delay_set_from_sarg
-			NARGB		$02
+; set delay for ARG*16 frames
+_sjsr_scenario_player_sub1_delay:
+		NJSR			_nsub_next_scenario_byte_sarg2_store; fetch byte from scenario data
+		SLOOP_BEGIN		$10									; put it to SARG2
+		NJSR			_nsub_obj_delay_set_from_sarg		; then write it to delay...
+			NARGB		SARG2								; 16 times for every value
 		SLOOP_END
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_9304:
-		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask
+_sjsr_scenario_player_sub2_text_draw:
+		SLOOP_BEGIN		$04									; fade out palette for window
+		NJSR			_nsub_pal_fade_req_dec_by_mask		; only, keep curtains shown
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
 		SARG_SET		SARG2,$00
 		SLOOP_BEGIN		$12
-		NJSR			_nsub_9498
-		SDELAY			$01
+		NJSR			_nsub_window_line_clear				; clear frame window line by line
+		SDELAY			$01									; $18x$12 area
 		SLOOP_END
-		NJSR			_nsub_94CF
+		NJSR			_nsub_scenario_txt_lib_ptr_load		; fetch current screen text lib ptr
 _sloc_931B:
-		SDELAY			$01
-		NJSR			_nsub_94DA
+		SDELAY			$01									; draw line by line the text until
+		NJSR			_nsub_scenario_txt_lib_line_draw	; end of strings
 		SBCC			_sloc_931B
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask
+		NJSR			_nsub_pal_fade_req_inc_by_mask		; fade in again to show it
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_932D:
-		SLOOP_BEGIN		$15
+; last finishes command, shows the final scores and wait for START to
+; return to the main game.
+;
+_sjsr_scenario_player_sub3_scores_draw:
+		SLOOP_BEGIN		$15									; long delay $15x$3C = 21 sec
 		SDELAY			$3C
 		SLOOP_END
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask
+		NJSR			_nsub_pal_fade_req_dec_by_mask		; fade out window
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
-		SARG_SET		SARG2,$00
+		SARG_SET		SARG2,$00							; clear window
 		SLOOP_BEGIN		$12
-		NJSR			_nsub_9498
+		NJSR			_nsub_window_line_clear
 		SDELAY			$01
 		SLOOP_END
-		NJSR			_nsub_bg_pal_load
-			NARGW		byte_9387
+		NJSR			_nsub_bg_pal_load					; screen setup
+			NARGW		_pal_ending_scores
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$1C
-		NJSR			_nsub_941F
+		NJSR			_nsub_ending_scores_draw			; sraw hi-scores
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask
+		NJSR			_nsub_pal_fade_req_inc_by_mask		; show screen
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
-		NBG_HNDL_SET	_nbgsub_9413
+		NBG_HNDL_SET	_nbgsub_ending_scores_exit			; load native bg input handler
 		SUSPEND
 
 ; =============== S C R I P T ===============================================
-_scr_935F:
-		SJSR			_ssub_pal_fade_out
-		STORE8			_game_flags,$00
-		SSTOP
+_scr_ending_close:
+		SJSR			_ssub_pal_fade_out					; fade out the screen
+		STORE8			_game_flags,$00						; then set main loop flag to
+		SSTOP												; jump to main entry
 
-byte_9367:
+_pal_ending:
 		.BYTE	$0F,$20,$15,$29,$0F,$20,$01,$29,$0F,$21,$11,$01,$0F,$20,$10,$00
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$37,$27,$17,$0F,$20,$10,$00
-byte_9387:
+_pal_ending_scores:
 		.BYTE	$0F,$20,$20,$20,$0F,$20,$20,$20,$0F,$21,$11,$01,$0F,$20,$20,$20
-_script_chain_data2:
-		.BYTE	$01,$AB,$13,$00,$80,$0A
-		.WORD	byte_9402
-		.BYTE	$07,$00,$80,$1A,$81
-		.WORD	off_94FD
-		.BYTE	$03,$80,$10,$00,$04,$7F,$0C,$00,$80,$1E,$81
-		.WORD	off_9506
-		.BYTE	$05,$80,$08,$00,$06,$80,$10,$00,$07,$80,$0C,$00,$80,$20,$81
-		.WORD	off_950F
-		.BYTE	$80,$20,$81
-		.WORD	off_951A
-		.BYTE	$08,$88,$C0,$00,$09,$98,$10,$00,$0A,$68,$10,$00,$80,$20,$81
-		.WORD	off_951F
-		.BYTE	$80,$20,$81
-		.WORD	off_9524
-		.BYTE	$0B,$78,$10,$00,$80,$06,$0D,$78,$18,$00,$80,$20,$81
-		.WORD	off_9533
-		.BYTE	$80,$20,$16,$00,$00,$00,$80,$08,$0E,$A8,$08,$00,$0F,$58,$08,$00
-		.BYTE	$11,$88,$28,$00
-byte_9402:
-		.BYTE	$12,$78,$28,$00,$13,$78,$28,$00,$14,$88,$28,$00,$15,$00,$E0,$00
-		.BYTE	$82
+
+		MAC	ECMD_THRED
+		.BYTE	{1}_idx+1,{2},{3},{4}
+		ENDM
+
+		MAC	ECMD_DELAY
+		.BYTE	[_sjsr_scenario_player_sub1_delay_idx-1]|$80
+		.BYTE	{1}
+		ENDM
+
+		MAC	ECMD_PRINT
+		.BYTE	[_sjsr_scenario_player_sub2_text_draw_idx-1]|$80
+		.WORD	{1}
+		ENDM
+
+		MAC	ECMD_WAIT
+		.BYTE	[_sjsr_scenario_player_sub3_scores_draw_idx-1]|$80
+		ENDM
+
+_ending_scenario_data:
+		ECMD_THRED	_scr_ending_sub01,$AB,$13,$00
+		ECMD_DELAY	$0A
+		ECMD_THRED	_scr_ending_sub02,$94,$07,$00
+		ECMD_DELAY	$1A
+		ECMD_PRINT	_staff_txt0
+		ECMD_THRED	_scr_ending_sub03,$80,$10,$00
+		ECMD_THRED	_scr_ending_sub04,$7F,$0C,$00
+		ECMD_DELAY	$1E
+		ECMD_PRINT	_staff_txt1
+		ECMD_THRED	_scr_ending_sub05,$80,$08,$00
+		ECMD_THRED	_scr_ending_sub06,$80,$10,$00
+		ECMD_THRED	_scr_ending_sub07,$80,$0C,$00
+		ECMD_DELAY	$20
+		ECMD_PRINT	_staff_txt2
+		ECMD_DELAY	$20
+		ECMD_PRINT	_staff_txt3
+		ECMD_THRED	_scr_ending_sub08,$88,$C0,$00
+		ECMD_THRED	_scr_ending_sub09,$98,$10,$00
+		ECMD_THRED	_scr_ending_sub0A,$68,$10,$00
+		ECMD_DELAY	$20
+		ECMD_PRINT	_staff_txt4
+		ECMD_DELAY	$20
+		ECMD_PRINT	_staff_txt5
+		ECMD_THRED	_scr_ending_sub0B,$78,$10,$00
+		ECMD_DELAY	$06
+		ECMD_THRED	_scr_ending_sub0D,$78,$18,$00
+		ECMD_DELAY	$20
+		ECMD_PRINT	_staff_txt6
+		ECMD_DELAY	$20
+		ECMD_THRED	_scr_ending_sub16,$00,$00,$00
+		ECMD_DELAY	$08
+		ECMD_THRED	_scr_ending_sub0E,$A8,$08,$00
+		ECMD_THRED	_scr_ending_sub0F,$58,$08,$00
+		ECMD_THRED	_scr_ending_sub11,$88,$28,$00
+		ECMD_THRED	_scr_ending_sub12,$78,$28,$00
+		ECMD_THRED	_scr_ending_sub13,$78,$28,$00
+		ECMD_THRED	_scr_ending_sub14,$88,$28,$00
+		ECMD_THRED	_scr_ending_sub15,$00,$E0,$00
+		ECMD_WAIT
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_9413:
-		LDA		_pad0_pressed
-		AND		#$10
+_nbgsub_ending_scores_exit:
+		LDA		_pad0_pressed				; wait if START is pressed
+		AND		#PAD_START
 		BEQ		locret_941E
-		JSR		_cur_thread_reload_param
-		.WORD	_scr_935F
+		JSR		_cur_thread_reload_param	; load another script to restart game
+		.WORD	_scr_ending_close
 locret_941E:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_941F:
-		LDA		#$FF
+_nsub_ending_scores_draw:
+		LDA		#$FF						; disable lives bonus vars
 		STA		_scores_to_next_live
 		STA		_scores_to_next_live+1
-		LDA		_lives
+		LDA		_lives						; if you finish the game with more
 		BEQ		loc_9436
 loc_942C:
-		LDA		#$64
+		LDA		#$64						; add 100x scores for every life
 		JSR		_scores_add
 		DEC		_lives
 		BNE		loc_942C
 loc_9436:
-		JSR		_ppu_res_send_param
+		JSR		_ppu_res_send_param			; draw text resources
 		.WORD	_res_top_score
 		JSR		_ppu_res_send_param
 		.WORD	_res_score
 		LDX		#$11
 		LDY		#$07
-		JSR		_printf_hi_scores
+		JSR		_printf_hi_scores			; print actual scores
 		LDX		#$0F
 		LDY		#$0F
 		JMP		_printf_scores
 
-_res_top_score:
-		.WORD	$20E7
-		.BYTE	$11,$01
-		.BYTE	"TOP SCORE      00"
-_res_score:
-		.WORD	$21E9
-		.BYTE	$0D,$01
-		.BYTE	"SCORE      00"
+		TXT		$20E7,"TOP SCORE      00",	_res_top_score
+		TXT		$21E9,  "SCORE      00",	_res_score
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_9474:
+_nsub_ending_scenario_data_fetch:
 		LDA		_scr_trds_args0
 		STA		_ptr06
 		LDA		_scr_trds_args1
 		STA		_ptr06+1
 		LDY		#$00
-		LDA		(_ptr06),Y
-		BMI		loc_9484
-		TYA
+		LDA		(_ptr06),Y				; any value in this script below 80 is
+		BMI		loc_9484				; thread start data, fetches with sub0
+		TYA								; of the player
 		RTS
 loc_9484:
-		AND		#$7F
-		CLC
+		AND		#$7F					; any other values are other subs calls
+		CLC								; sub_idx = (cmd & 0x7F) + 1
 		ADC		#$01
 		PHA
 		INC		_scr_trds_args0
@@ -2050,13 +2128,13 @@ loc_9490:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_9492:
-		JSR		sub_94BC
+_nsub_next_scenario_byte_sarg2_store:
+		JSR		_next_scenario_byte_get
 		STA		_scr_trds_args2
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_9498:
+_nsub_window_line_clear:
 		LDA		#$20
 		STA		_tmp_buf+4
 		LDX		_scr_cur_trd_idx
@@ -2076,7 +2154,7 @@ _nsub_9498:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_94BC:
+_next_scenario_byte_get:
 		LDA		_scr_trds_args0
 		STA		_ptr06
 		LDA		_scr_trds_args1
@@ -2085,20 +2163,20 @@ sub_94BC:
 		LDA		(_ptr06),Y
 		INC		_scr_trds_args0
 		BNE		locret_94CE
-		INC		_scr_trds_args1	; *--
+		INC		_scr_trds_args1
 locret_94CE:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_94CF:
-		JSR		sub_94BC
+_nsub_scenario_txt_lib_ptr_load:
+		JSR		_next_scenario_byte_get
 		STA		_lvl_room_lib_ptr
-		JSR		sub_94BC
+		JSR		_next_scenario_byte_get
 		STA		_lvl_room_lib_ptr+1
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_94DA:
+_nsub_scenario_txt_lib_line_draw:
 		LDY		#$00
 		LDA		(_lvl_room_lib_ptr),Y
 		STA		_tmp2
@@ -2122,197 +2200,92 @@ loc_94FB:
 		SEC
 		RTS
 
-off_94FD:
-		.BYTE	>[_res_executive_producer]
-		.BYTE	<[_res_executive_producer]
-		.BYTE	>[_res_tsuyoshi_ikeda]
-		.BYTE	<[_res_tsuyoshi_ikeda]
-		.BYTE	>[_res_producer]
-		.BYTE	<[_res_producer]
-		.BYTE	>[_res_miko_ikeda]
-		.BYTE	<[_res_miko_ikeda]
+		MAC		STAFF
+		.BYTE	>[{1}]
+		.BYTE	<[{1}]
+		ENDM
+
+_staff_txt0:
+		STAFF	_res_executive_producer
+		STAFF	_res_tsuyoshi_ikeda
+		STAFF	_res_producer
+		STAFF	_res_miko_ikeda
 		.BYTE	$00
-off_9506:
-		.BYTE	>[_res_director]
-		.BYTE	<[_res_director]
-		.BYTE	>[_res_gsx_suga]
-		.BYTE	<[_res_gsx_suga]
-		.BYTE	>[_res_assistant_director]
-		.BYTE	<[_res_assistant_director]
-		.BYTE	>[_res_osamu_kobiyama]
-		.BYTE	<[_res_osamu_kobiyama]
+_staff_txt1:
+		STAFF	_res_director
+		STAFF	_res_gsx_suga
+		STAFF	_res_assistant_director
+		STAFF	_res_osamu_kobiyama
 		.BYTE	$00
-off_950F:
-		.BYTE	>[_res_designer]
-		.BYTE	<[_res_designer]
-		.BYTE	>[_res_shigeru_hashiguchi]
-		.BYTE	<[_res_shigeru_hashiguchi]
-		.BYTE	>[_res_tsuyoshi_wakayama]
-		.BYTE	<[_res_tsuyoshi_wakayama]
-		.BYTE	>[_res_programmer]
-		.BYTE	<[_res_programmer]
-		.BYTE	>[_res_gsx_suga_0]
-		.BYTE	<[_res_gsx_suga_0]
+_staff_txt2:
+		STAFF	_res_designer
+		STAFF	_res_shigeru_hashiguchi
+		STAFF	_res_tsuyoshi_wakayama
+		STAFF	_res_programmer
+		STAFF	_res_gsx_suga_0
 		.BYTE	$00
-off_951A:
-		.BYTE	>[_res_sound_creator]
-		.BYTE	<[_res_sound_creator]
-		.BYTE	>[_res_jun_isikawa]
-		.BYTE	<[_res_jun_isikawa]
+_staff_txt3:
+		STAFF	_res_sound_creator
+		STAFF	_res_jun_isikawa
 		.BYTE	$00
-off_951F:
-		.BYTE	>[_res_technical_supervisor]
-		.BYTE	<[_res_technical_supervisor]
-		.BYTE	>[_res_satoru_iwate]
-		.BYTE	<[_res_satoru_iwate]
+_staff_txt4:
+		STAFF	_res_technical_supervisor
+		STAFF	_res_satoru_iwate
 		.BYTE	$00
-off_9524:
-		.BYTE	>[_res_special_thanks]
-		.BYTE	<[_res_special_thanks]
-		.BYTE	>[_res_makoto_kanai]
-		.BYTE	<[_res_makoto_kanai]
-		.BYTE	>[_res_satoshi_ishida]
-		.BYTE	<[_res_satoshi_ishida]
-		.BYTE	>[_res_hitoshi_kikkawa]
-		.BYTE	<[_res_hitoshi_kikkawa]
-		.BYTE	>[_res_takashi_saito]
-		.BYTE	<[_res_takashi_saito]
-		.BYTE	>[_res_satoshi_mitsuhara]
-		.BYTE	<[_res_satoshi_mitsuhara]
-		.BYTE	>[_res_mitsuru_kakuta]
-		.BYTE	<[_res_mitsuru_kakuta]
+_staff_txt5:
+		STAFF	_res_special_thanks
+		STAFF	_res_makoto_kanai
+		STAFF	_res_satoshi_ishida
+		STAFF	_res_hitoshi_kikkawa
+		STAFF	_res_takashi_saito
+		STAFF	_res_satoshi_mitsuhara
+		STAFF	_res_mitsuru_kakuta
 		.BYTE	$00
-off_9533:
-		.BYTE	>[_res_and]
-		.BYTE	<[_res_and]
-		.BYTE	>[_res_all_test_players]
-		.BYTE	<[_res_all_test_players]
-		.BYTE	>[_res_and_0]
-		.BYTE	<[_res_and_0]
-		.BYTE	>[_res_you_too]
-		.BYTE	<[_res_you_too]
-		.BYTE	>[_res_by_hal_laboratory]
-		.BYTE	<[_res_by_hal_laboratory]
+_staff_txt6:
+		STAFF	_res_and
+		STAFF	_res_all_test_players
+		STAFF	_res_and_0
+		STAFF	_res_you_too
+		STAFF	_res_by_hal_laboratory
 		.BYTE	$00
-_res_executive_producer:
-		.WORD	$2065
-		.BYTE	$12,$01
-		.BYTE	"EXECUTIVE PRODUCER"
-_res_tsuyoshi_ikeda:
-		.WORD	$20AD
-		.BYTE	$0E,$01
-		.BYTE	"TSUYOSHI IKEDA"
-_res_producer:
-		.WORD	$2125
-		.BYTE	$08,$01
-		.BYTE	"PRODUCER"
-_res_miko_ikeda:
-		.WORD	$2170
-		.BYTE	$0B,$01
-		.BYTE	"MIKIO IKEDA"
-_res_director:
-		.WORD	$2065
-		.BYTE	$08,$01
-		.BYTE	"DIRECTOR"
-_res_gsx_suga:
-		.WORD	$20B3
-		.BYTE	$08,$01
-		.BYTE	"GSX SUGA"
-_res_assistant_director:
-		.WORD	$2125
-		.BYTE	$12,$01
-		.BYTE	"ASSISTANT DIRECTOR"
-_res_osamu_kobiyama:
-		.WORD	$216D
-		.BYTE	$0E,$01
-		.BYTE	"OSAMU KOBIYAMA"
-_res_designer:
-		.WORD	$2065
-		.BYTE	$08,$01
-		.BYTE	"DESIGNER"
-_res_shigeru_hashiguchi:
-		.WORD	$20A9
-		.BYTE	$12,$01
-		.BYTE	"SHIGERU HASHIGUCHI"
-_res_tsuyoshi_wakayama:
-		.WORD	$20E9
-		.BYTE	$11,$01
-		.BYTE	"TSUYOSHI WAKAYAMA"
-_res_programmer:
-		.WORD	$2165
-		.BYTE	$0A,$01
-		.BYTE	"PROGRAMMER"
-_res_gsx_suga_0:
-		.WORD	$21B3
-		.BYTE	$08,$01
-		.BYTE	"GSX SUGA"
-_res_sound_creator:
-		.WORD	$2065
-		.BYTE	$0D,$01
-		.BYTE	"SOUND CREATOR"
-_res_jun_isikawa:
-		.WORD	$20AF
-		.BYTE	$0C,$01
-		.BYTE	"JUN ISHIKAWA"
-_res_technical_supervisor:
-		.WORD	$2065
-		.BYTE	$14,$01
-		.BYTE	"TECHNICAL SUPERVISOR"
-_res_satoru_iwate:
-		.WORD	$20AF
-		.BYTE	$0C,$01
-		.BYTE	"SATORU IWATA"
-_res_special_thanks:
-		.WORD	$2065
-		.BYTE	$0E,$01
-		.BYTE	"SPECIAL THANKS"
-_res_makoto_kanai:
-		.WORD	$20AB
-		.BYTE	$0C,$01
-		.BYTE	"MAKOTO KANAI"
-_res_satoshi_ishida:
-		.WORD	$20EA
-		.BYTE	$0E,$01
-		.BYTE	"SATOSHI ISHIDA"
-_res_hitoshi_kikkawa:
-		.WORD	$212A
-		.BYTE	$0F,$01
-		.BYTE	"HITOSHI KIKKAWA"
-_res_takashi_saito:
-		.WORD	$216A
-		.BYTE	$0D,$01
-		.BYTE	"TAKASHI SAITO"
-_res_satoshi_mitsuhara:
-		.WORD	$21AA
-		.BYTE	$11,$01
-		.BYTE	"SATOSHI MITSUHARA"
-_res_mitsuru_kakuta:
-		.WORD	$21EA
-		.BYTE	$0E,$01
-		.BYTE	"MITSURU KAKUTA"
-_res_and:
-		.WORD	$208E
-		.BYTE	$03,$01
-		.BYTE	"AND"
+
+		TXT		$2065,"EXECUTIVE PRODUCER",	_res_executive_producer
+		TXT		$20AD,"TSUYOSHI IKEDA",	_res_tsuyoshi_ikeda
+		TXT		$2125,"PRODUCER",	_res_producer
+		TXT		$2170,"MIKIO IKEDA",	_res_miko_ikeda
+		TXT		$2065,"DIRECTOR",	_res_director
+		TXT		$20B3,"GSX SUGA",	_res_gsx_suga
+		TXT		$2125,"ASSISTANT DIRECTOR",	_res_assistant_director
+		TXT		$216D,"OSAMU KOBIYAMA",	_res_osamu_kobiyama
+		TXT		$2065,"DESIGNER",	_res_designer
+		TXT		$20A9,"SHIGERU HASHIGUCHI",	_res_shigeru_hashiguchi
+		TXT		$20E9,"TSUYOSHI WAKAYAMA",	_res_tsuyoshi_wakayama
+		TXT		$2165,"PROGRAMMER",	_res_programmer
+		TXT		$21B3,"GSX SUGA",	_res_gsx_suga_0
+		TXT		$2065,"SOUND CREATOR",	_res_sound_creator
+		TXT		$20AF,"JUN ISHIKAWA",	_res_jun_isikawa
+		TXT		$2065,"TECHNICAL SUPERVISOR",	_res_technical_supervisor
+		TXT		$20AF,"SATORU IWATA",	_res_satoru_iwate
+		TXT		$2065,"SPECIAL THANKS",	_res_special_thanks
+		TXT		$20AB,"MAKOTO KANAI",	_res_makoto_kanai
+		TXT		$20EA,"SATOSHI ISHIDA",	_res_satoshi_ishida
+		TXT		$212A,"HITOSHI KIKKAWA",	_res_hitoshi_kikkawa
+		TXT		$216A,"TAKASHI SAITO",	_res_takashi_saito
+		TXT		$21AA,"SATOSHI MITSUHARA",	_res_satoshi_mitsuhara
+		TXT		$21EA,"MITSURU KAKUTA",	_res_mitsuru_kakuta
+		TXT		$208E,"AND",	_res_and
+; NOTE: so sad, dasm can treat "" operators but can't disable "," inside
+; this will cause the macros error until now (tried on 2014 year build)
 _res_all_test_players:
 		.WORD	$20E8
 		.BYTE	$11,$01
 		.BYTE	"ALL TEST PLAYERS,"
-_res_and_0:
-		.WORD	$214E
-		.BYTE	$03,$01
-		.BYTE	"AND"
-_res_you_too:
-		.WORD	$21AC
-		.BYTE	$08,$01
-		.BYTE	"YOU TOO/"
-_res_by_hal_laboratory:
-		.WORD	$2267
-		.BYTE	$11,$01
-		.BYTE	"BY HAL LABORATORY"
+		TXT		$214E,"AND",	_res_and_0
+		TXT		$21AC,"YOU TOO/",	_res_you_too
+		TXT		$2267,"BY HAL LABORATORY",	_res_by_hal_laboratory
 
 ; =============== S C R I P T ===============================================
-_scr07_ending_sub01:
+_scr_ending_sub01:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$19
 		POS_X_DELTA_SET 0,$00,$01
@@ -2398,7 +2371,7 @@ _spr_raw_lib07_06:
 		.BYTE	$F0,$F4,$22,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_97DD:
+_scr_ending_sub02:
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		0,$08
@@ -2491,7 +2464,7 @@ _spr_raw_lib07_0D:
 		.BYTE	$E8,$C4,$03,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_98D0:
+_scr_ending_sub03:
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
 			NARGW		byte_9910
@@ -2533,7 +2506,7 @@ byte_9910:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_9914:
+_scr_ending_sub04:
 		POS_X_DELTA_SET 0,$00,$FF
 		SPR_IDX_SET		0,$0E
 		SDELAY			$78
@@ -2608,7 +2581,7 @@ _spr_raw_lib07_13:
 		.BYTE	$F0,$DA,$62,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_99DB:
+_scr_ending_sub05:
 		SDELAY			$60
 		POS_X_DELTA_SET 0,$40,$01
 		SLOOP_BEGIN		$0C
@@ -2672,7 +2645,7 @@ _spr_raw_lib07_52:
 		.BYTE	$F4,$10,$60,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_9A58:
+_scr_ending_sub06:
 		SDELAY			$70
 		POS_X_DELTA_SET 0,$40,$01
 		SLOOP_BEGIN		$0C
@@ -2737,7 +2710,7 @@ _spr_raw_lib07_55:
 		.BYTE	$F4,$02,$20,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_9AD8:
+_scr_ending_sub07:
 		SDELAY			$50
 		SJSR			_ssub_9B0B
 		POS_MOVE_STOP	0
@@ -2830,7 +2803,7 @@ _spr_raw_lib07_5D:
 		.BYTE	$F0,$BA,$22,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_9BAC:
+_scr_ending_sub08:
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$07
 			NARGW		byte_9C20
@@ -2906,6 +2879,7 @@ _ssub_9C15:
 
 byte_9C20:
 		.BYTE	$0F,$36,$2B,$0F
+
 _spr_res_lib07_00:
 		.BYTE	$01
 		.WORD	_spr_res_lib07_00_A
@@ -3233,7 +3207,7 @@ _spr_res_lib07_12_A:
 		.BYTE	$F8,$EA,$23,$FC
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A008:
+_scr_ending_sub09:
 		POS_X_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		6,$2F
@@ -3280,7 +3254,7 @@ _spr_raw_lib07_5E:
 		.BYTE	$F5,$5E,$23,$FB
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A05B:
+_scr_ending_sub0A:
 		POS_X_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		6,$41
@@ -3325,7 +3299,7 @@ _spr_raw_lib07_5F:
 		.BYTE	$F5,$5E,$23,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A0AB:
+_scr_ending_sub0B:
 		POS_X_DELTA_SET 0,$40,$FF
 		SLOOP_BEGIN		$0E
 		SPR_IDX_SET		7,$60
@@ -3341,7 +3315,10 @@ _sjmp_case_A0AB:
 		POS_Y_DELTA_SET 6,$00,$06
 		POS_MOVE_STOP	0
 		NJSR			_nsub_new_thread_start
-			NARGB		$07,$00,$00,$0C,$00
+			NARGB		_scr07_ending_idx
+			NARGB		$00,$00
+			NARGB		_scr_ending_sub0C_idx+1
+			NARGB		$00
 		SPR_IDX_SET		0,$65
 		SDELAY			$20
 		SLOOP_BEGIN		$02
@@ -3436,7 +3413,7 @@ _spr_raw_lib07_68:
 		.BYTE	$F0,$3B,$23,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A1B7:
+_scr_ending_sub0C:
 		SPR_IDX_SET		0,$69
 		POS_X_DELTA_SET 6,$00,$02
 		POS_X_DELTA_SET 0,$C0,$00
@@ -3463,7 +3440,7 @@ _spr_raw_lib07_69:
 		.BYTE	$F8,$AB,$23,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A1EA:
+_scr_ending_sub0D:
 		POS_X_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$05
 		SPR_IDX_SET		6,$4D
@@ -3571,7 +3548,7 @@ _spr_raw_lib07_70:
 		.BYTE	$F0,$30,$20,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A2E5:
+_scr_ending_sub16:
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_dec_by_mask
 			NARGB		$D0
@@ -3583,7 +3560,7 @@ _sjmp_case_A2E5:
 			NARGW		_tlm_ending_logo
 		SDELAY			$01
 		SLOOP_END
-		NJSR			_nsub_A316
+		NJSR			_nsub_ending_logo_attr_load
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$14
 		NJSR			_nsub_mmc1_chr1_set
@@ -3599,11 +3576,12 @@ _sjmp_case_A2E5:
 		SSTOP
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_A316:
+_nsub_ending_logo_attr_load:
 		JSR		_ppu_res_send_param
-		.WORD	word_A31C
+		.WORD	_attr_ending_logo
 		RTS
-word_A31C:
+
+_attr_ending_logo:
 		.WORD	$23C0
 		.BYTE	$20,$02
 		.BYTE	$AA,$FA,$FA,$FA,$FA,$FA,$FA,$AA,$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
@@ -3632,7 +3610,7 @@ _tlm_ending_logo:
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A510:
+_scr_ending_sub0E:
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$06
 		SPR_IDX_SET		6,$74
@@ -3647,7 +3625,10 @@ _sjmp_case_A510:
 		POS_X_DELTA_SET 6,$C0,$00
 		POS_MOVE_STOP	0
 		NJSR			_nsub_new_thread_start
-			NARGB		$07,$00,$00,$10,$00
+			NARGB		_scr07_ending_idx
+			NARGB		$00,$00
+			NARGB		_scr_ending_sub10_idx+1
+			NARGB		$00
 		SDELAY			$F0
 		POS_X_DELTA_SET 0,$40,$FF
 		SPR_IDX_SET		6,$7A
@@ -3668,7 +3649,7 @@ byte_A547:
 		.BYTE	$0F,$10,$05,$0F
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A54B:
+_scr_ending_sub0F:
 		POS_X_DELTA_SET 0,$80,$FF
 		SLOOP_BEGIN		$06
 		SPR_IDX_SET		6,$AD
@@ -3733,7 +3714,7 @@ _spr_raw_lib07_AF:
 		.BYTE	$F1,$92,$00,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A5DB:
+_scr_ending_sub10:
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$78,$00
 		SPR_IDX_SET		0,$B3
@@ -3749,7 +3730,7 @@ _spr_raw_lib07_B3:
 		.BYTE	$FC,$6E,$41,$FD
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A5F5:
+_scr_ending_sub11:
 		SDELAY			$06
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$07
@@ -3788,7 +3769,7 @@ _spr_raw_lib07_B4:
 		.BYTE	$F0,$0A,$00,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A63A:
+_scr_ending_sub12:
 		SDELAY			$06
 		POS_X_DELTA_SET 0,$80,$FF
 		SLOOP_BEGIN		$07
@@ -3827,7 +3808,7 @@ _spr_raw_lib07_B5:
 		.BYTE	$F0,$0C,$40,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A67F:
+_scr_ending_sub13:
 		SDELAY			$40
 		POS_X_DELTA_SET 0,$80,$FF
 		SLOOP_BEGIN		$05
@@ -3866,7 +3847,7 @@ _spr_raw_lib07_B6:
 		.BYTE	$F0,$0E,$40,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A6C4:
+_scr_ending_sub14:
 		SDELAY			$40
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$05
@@ -3951,18 +3932,18 @@ _spr_raw_lib07_BB:
 		.BYTE	$F8,$4C,$80,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_A782:
+_scr_ending_sub15:
 		SPR_IDX_SET		0,$BC
 _sloc_A784:
 		SARG_SET		SARG0,$00
 		SLOOP_BEGIN		$0C
-		NJSR			_nsub_A792
+		NJSR			_nsub_end_spr_pal_anim
 		SDELAY			$01
 		SLOOP_END
 		SJMP			_sloc_A784
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_A792:
+_nsub_end_spr_pal_anim:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		INC		_scr_trds_args0,X
@@ -3995,6 +3976,9 @@ _spr_raw_lib07_BC:
 		.BYTE	$00,$9E,$03,$E8
 		.BYTE	$00,$8E,$03,$E0
 		.BYTE	$F0,$8C,$03,$E0
+; NOTE: here is the rest of ending sprites, many of them copy the regular players
+; sprites and may of them not used in the ending at all...
+;
 _spr_raw_lib07_14:
 		.BYTE	$04		; *--
 		.BYTE	$00,$36,$20,$00	; *--
@@ -4596,6 +4580,9 @@ _tlm_lib_unpack:
 		JSR		_ppu_nmi_on
 		JMP		_ppu_vblank_on
 
+; TODO: all tilemaps are starting from the same position... may be optimized here
+; and redundant bytes removed.
+;
 _tlm_pak_lib:
 		TLM_PAK	_tlm0_title_screen,$2000
 		TLM_PAK	_tlm1_score,$2000
@@ -4609,24 +4596,28 @@ _tlm_pak_lib:
 		TLM_PAK	_tlm9_secret_menu,$2000
 
 ; =============== S U B R O U T I N E =======================================
+; since this is a HAL game, they used similar packer routine
+; as in Kirby later on... the same LZ/RLE mix algo with a lot of
+; various options
+;
 _tlm_unpack:
-		LDA		_ptr0A
-		STA		_var2
+		LDA		_ptr0A						; store destination offset
+		STA		_var2						; temp vars
 		LDA		_ptr0A+1
 		STA		_var3
-loc_AE02:
-		LDY		#$00
-		LDA		(_ptr06),Y
+.unpack_loop:
+		LDY		#$00						; fetch cmd here
+		LDA		(_ptr06),Y					; stop byte is $FF
 		CMP		#$FF
-		BNE		loc_AE0B
+		BNE		.cmd_parse					; exit or go to command parse
 		RTS
-loc_AE0B:
-		AND		#$E0
-		CMP		#$E0
-		BNE		loc_AE2D
-		LDA		(_ptr06),Y
-		ASL
-		ASL
+.cmd_parse:
+		AND		#$E0						; code format: xxxccccc, where
+		CMP		#$E0						; x - cmd index
+		BNE		.short_cmd					; c - counter
+		LDA		(_ptr06),Y					; x = 111 (E0) - special case
+		ASL									; format changes: 111xxxcc cccccccc
+		ASL									; coounter always less than value by 1
 		ASL
 		AND		#$E0
 		PHA
@@ -4641,8 +4632,8 @@ loc_AE0B:
 		BNE		loc_AE2B
 		INC		_ptr08+1
 loc_AE2B:
-		BNE		loc_AE3C
-loc_AE2D:
+		BNE		.cmd_continue
+.short_cmd:
 		PHA
 		LDA		(_ptr06),Y
 		INY
@@ -4652,84 +4643,84 @@ loc_AE2D:
 		STA		_ptr08
 		LDA		#$00
 		STA		_ptr08+1
-loc_AE3C:
+.cmd_continue:
 		PLA
-		BPL		loc_AE42
-		JMP		loc_AECC
-loc_AE42:
-		LDX		_ptr0A+1
+		BPL		.cmds_00_20_40_60			; here entry for commands 0xx
+		JMP		.cmds_80_A0_C0				; here entry for commands 1xx
+.cmds_00_20_40_60:
+		LDX		_ptr0A+1					; for all commands, set cur ppu addr
 		STX		_PPU_ADDR
 		LDX		_ptr0A
 		STX		_PPU_ADDR
-		LDX		_ptr08+1
-		STX		_var4
-		LDX		_ptr08
-		BNE		loc_AE56
-		DEC		_var4
+		LDX		_ptr08+1					; for optimization, low nibble of 16bit
+		STX		_var4						; counter loaded in X register, high
+		LDX		_ptr08						; nibble in _var4, if X=0 at the beginning
+		BNE		loc_AE56					; decrement high nibble because X-1 in loop
+		DEC		_var4						; will cause one more 256 cycles loop below
 loc_AE56:
 		CMP		#$20
-		BEQ		loc_AE8D
+		BEQ		.cmd20
 		CMP		#$40
-		BEQ		loc_AE9D
+		BEQ		.cmd40
 		CMP		#$60
-		BEQ		loc_AEB9
+		BEQ		.cmd60
 loc_AE62:
-		LDA		(_ptr06),Y
-		INY
-		BNE		loc_AE69
-		INC		_ptr06+1	; *--
+		LDA		(_ptr06),Y					; cmd00, copy a number of
+		INY									; following bytes
+		BNE		loc_AE69					; adjust _ptr06 when switching to another page
+		INC		_ptr06+1
 loc_AE69:
-		STA		_PPU_DATA
-		DEX
-		BNE		loc_AE62
+		STA		_PPU_DATA					; first use X as fast counter
+		DEX									; then decrement high nibble and
+		BNE		loc_AE62					; repeat until high nibble is zero
 		DEC		_var4
 		BPL		loc_AE62
-loc_AE73:
-		TYA
-		CLC
+.unpack_adjust_ptrs:
+		TYA									; update data pointer by adding last
+		CLC									; used Y value
 		ADC		_ptr06
 		STA		_ptr06
 		BCC		loc_AE7D
 		INC		_ptr06+1
 loc_AE7D:
-		LDA		_ptr0A
-		CLC
-		ADC		_ptr08
+		LDA		_ptr0A						; also increment ppu offset by number
+		CLC									; of bytes read. now we ready to get another
+		ADC		_ptr08						; command
 		STA		_ptr0A
 		LDA		_ptr0A+1
 		ADC		_ptr08+1
 		STA		_ptr0A+1
-		JMP		loc_AE02
-loc_AE8D:
-		LDA		(_ptr06),Y
-		INY
+		JMP		.unpack_loop
+.cmd20:
+		LDA		(_ptr06),Y					; cmd20, repeat a number of
+		INY									; following bytes
 loc_AE90:
 		STA		_PPU_DATA
 		DEX
 		BNE		loc_AE90
 		DEC		_var4
 		BPL		loc_AE90
-		JMP		loc_AE73
-loc_AE9D:
-		LDA		(_ptr06),Y
-		INY
+		JMP		.unpack_adjust_ptrs			; adjust ptrs as for cmd00
+.cmd40:
+		LDA		(_ptr06),Y					; cmd40, copy a number of
+		INY									; following words
 		STA		_PPU_DATA
 		LDA		(_ptr06),Y
 		DEY
 		STA		_PPU_DATA
 		DEX
-		BNE		loc_AE9D
+		BNE		.cmd40
 		DEC		_var4
-		BPL		loc_AE9D
+		BPL		.cmd40
 		INY
 		INY
 		ASL		_ptr08
 		ROL		_ptr08+1
-		JMP		loc_AE73
-loc_AEB9:
-		LDA		(_ptr06),Y
-		INY
-loc_AEBC:
+		JMP		.unpack_adjust_ptrs
+.cmd60:
+		LDA		(_ptr06),Y					; cmd60, send the arithm progression
+		INY									; starting from next byte value
+loc_AEBC:									; up to counter bytes (01 02 03 04... etc)
 		STA		_PPU_DATA
 		CLC
 		ADC		#$01
@@ -4737,11 +4728,11 @@ loc_AEBC:
 		BNE		loc_AEBC
 		DEC		_var4
 		BPL		loc_AEBC
-		JMP		loc_AE73
-loc_AECC:
-		PHA
-		LDA		(_ptr06),Y
-		INY
+		JMP		.unpack_adjust_ptrs
+.cmds_80_A0_C0:
+		PHA									; for all these cmds there are two
+		LDA		(_ptr06),Y					; bytes of relative offset goes first
+		INY									; adding to starting position of ppu ofs
 		STA		_var1
 		LDA		(_ptr06),Y
 		INY
@@ -4763,39 +4754,39 @@ loc_AEEA:
 		DEC		_ptr08+1
 loc_AEF0:
 		PLA
-		CMP		#$80
-		BEQ		loc_AEFD
+		CMP		#$80						; TODO: may be optimized as well
+		BEQ		.cmd80
 		CMP		#$A0
-		BEQ		loc_AF0F
+		BEQ		.cmdA0
 		CMP		#$C0
-		BEQ		loc_AF24
-loc_AEFD:
-		JSR		sub_AF34
-		JSR		sub_AF3F
-		JSR		sub_AF56
+		BEQ		.cmdC0
+.cmd80:
+		JSR		_hi_cmd_cnt_init			; cmd80, copy given number of bytes from
+		JSR		_hi_cmd_ppu_byte_read_reverse; ppu ram (offset following) to current
+		JSR		_hi_cmd_ppu_data_writeback	; ppu write offset in reverse order!
 		INC		_var1
 		DEC		_ptr08+1
-		BPL		loc_AEFD
-		JMP		loc_AE02
-loc_AF0F:
-		JSR		sub_AF34
-		JSR		sub_AF3F
-		JSR		sub_AF79
-		JSR		sub_AF56
+		BPL		.cmd80
+		JMP		.unpack_loop
+.cmdA0:
+		JSR		_hi_cmd_cnt_init			; cmdA0, read ppu data already written,
+		JSR		_hi_cmd_ppu_byte_read_reverse; reverse bit order of all bytes read
+		JSR		_hi_cmd_invert_data			; then write it back in reverse order
+		JSR		_hi_cmd_ppu_data_writeback
 		INC		_var1
 		DEC		_ptr08+1
-		BPL		loc_AF0F
-		JMP		loc_AE02
-loc_AF24:
-		JSR		sub_AF34
-		JSR		sub_AF8F
-		JSR		sub_AF56
+		BPL		.cmdA0
+		JMP		.unpack_loop
+.cmdC0:
+		JSR		_hi_cmd_cnt_init			; cmdC0, read ppu data already written,
+		JSR		_hi_cmd_ppu_byte_read		; and write back in original order
+		JSR		_hi_cmd_ppu_data_writeback
 		DEC		_ptr08+1
-		BPL		loc_AF24
-		JMP		loc_AE02
+		BPL		.cmdC0
+		JMP		.unpack_loop
 
 ; =============== S U B R O U T I N E =======================================
-sub_AF34:
+_hi_cmd_cnt_init:
 		LDX		_ptr08
 		LDA		_ptr08+1
 		BEQ		loc_AF3C
@@ -4805,7 +4796,7 @@ loc_AF3C:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_AF3F:
+_hi_cmd_ppu_byte_read_reverse:
 		LDA		_var1
 		STA		_PPU_ADDR
 		LDA		_var0
@@ -4819,7 +4810,7 @@ loc_AF4C:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_AF56:
+_hi_cmd_ppu_data_writeback:
 		LDX		_tmp1
 		LDA		_ptr0A+1
 		STA		_PPU_ADDR
@@ -4841,7 +4832,7 @@ locret_AF78:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_AF79:
+_hi_cmd_invert_data:
 		LDX		_tmp1
 loc_AF7B:
 		LDA		_ppu_queue_data,X
@@ -4858,7 +4849,7 @@ loc_AF82:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_AF8F:
+_hi_cmd_ppu_byte_read:
 		STX		_var4
 		DEC		_var4
 		LDA		_var0

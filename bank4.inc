@@ -1700,7 +1700,7 @@ _scr21_train_ghost:
 		NJSR			_nsub_380D2
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$02
+			NARGB		SARG2
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
@@ -1711,7 +1711,7 @@ _scr21_train_ghost:
 _sjmp_case_38EF6:
 		NBG_HNDL_SET	_nbgsub_38F85
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$02
+			NARGB		SARG2
 _sloc_38EFD:
 		SLOOP_BEGIN		$0A
 		SJSR			_ssub_38F2A
@@ -1776,7 +1776,7 @@ _sloc_38F57:
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_38F71:
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$02
+			NARGB		SARG2
 		SDELAY			$01
 		SPR_IDX_INC		1
 		SRET
@@ -2749,7 +2749,7 @@ _sjsr_case_39706:
 _sloc_39709:
 		SPR_IDX_SET		0,$CC
 		SJSR			_ssub_39746
-		NJSR			_nsub_62B68
+		NJSR			_nsub_cur_pos_y_lo_icmp
 			NARGB		$50
 		SBCC			_sloc_39709
 		SRET
@@ -2758,7 +2758,7 @@ _sjsr_case_39716:
 _sloc_39719:
 		SPR_IDX_SET		0,$CD
 		SJSR			_ssub_39746
-		NJSR			_nsub_62B60
+		NJSR			_nsub_cur_pos_x_lo_icmp
 			NARGB		$B0
 		SBCS			_sloc_39719
 		SRET
@@ -2767,7 +2767,7 @@ _sjsr_case_39726:
 _sloc_39729:
 		SPR_IDX_SET		0,$CE
 		SJSR			_ssub_39746
-		NJSR			_nsub_62B68
+		NJSR			_nsub_cur_pos_y_lo_icmp
 			NARGB		$A0
 		SBCS			_sloc_39729
 		SRET
@@ -2776,7 +2776,7 @@ _sjsr_case_39736:
 _sloc_39739:
 		SPR_IDX_SET		0,$CF
 		SJSR			_ssub_39746
-		NJSR			_nsub_62B60
+		NJSR			_nsub_cur_pos_x_lo_icmp
 			NARGB		$50
 		SBCC			_sloc_39739
 		SRET

@@ -386,7 +386,7 @@ _menu_difficulty_idx:
 		.BYTE	0
 _sound_test_mus_idx:
 		.BYTE	0
-_sound_test_ssnd_idx:
+_sound_test_snd_idx:
 		.BYTE	0
 _unused_var_0:
 		.BYTE	0,0,0
@@ -444,13 +444,13 @@ _sub_room_idx:
 		.BYTE	0
 _tmp7B6:
 		.BYTE	0
-_tmp7B7:
+_beam_player_idxA:
 		.BYTE	0
-_tmp7B8:
+_catch_player_idxA:
 		.BYTE	0
-_tmp7B9:
+_beam_player_idxB:
 		.BYTE	0
-_tmp7BA:
+_catch_player_idxB:
 		.BYTE	0
 _tmp7BB:
 		.BYTE	0

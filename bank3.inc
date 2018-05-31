@@ -21,7 +21,7 @@ _sloc_2C014:
 			NARGB		$00
 		SBCC			_sloc_2C014
 		STORE8			_cur_room_x_pageB,$00
-		NJSR			_nsub_62B4F
+		NJSR			_nsub_gen_threads_off_except_cur
 		SJSR			_ssub_62E33
 
 ; FALLTHROUGH!
@@ -824,7 +824,7 @@ _nbgsub_2C70D:
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C72B
 		PHA
-		JSR		_nsub_62B4F
+		JSR		_nsub_gen_threads_off_except_cur
 		LDA		#$19
 		STA		_scores_obj_value
 		PLA
@@ -2670,7 +2670,7 @@ _sjmp_case_2D81B:
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		2,$FF
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		$02
+			NARGB		SARG2
 		SDELAY			$02
 		SLOOP_END
 		NJSR			_nsub_apu_snd_load
@@ -2856,7 +2856,7 @@ byte_2D9B8:
 
 ; =============== S C R I P T ===============================================
 _scr_2D9BC:
-		NJSR			_nsub_62B4F
+		NJSR			_nsub_gen_threads_off_except_cur
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
 			NARGW		byte_2D9B4
@@ -2914,7 +2914,7 @@ _scr_2D9BC:
 		SDELAY			$08
 		SLOOP_END
 		STORE8			_game_flags,$80
-		NJSR			_nsub_62B40
+		NJSR			_nsub_all_threads_off_except_cur
 		SSTOP
 
 ; =============== S U B R O U T I N E =======================================

@@ -57,6 +57,15 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
 
+	MAC	TXT
+{3}		SET		.
+		.WORD	{1}
+		.BYTE	[{3}TXT_END-{3}TXT_START],$01
+{3}TXT_START	SET	.
+		.BYTE	{2}
+{3}TXT_END		SET	.
+	ENDM
+
 _NON	EQU	-1
 
 	MAC	OBJ_SET
@@ -146,8 +155,17 @@ _NON	EQU	-1
 	ENDM
 
 	MAC	NJSR
-		.BYTE	_scmd07_ejsr_idx
+		.BYTE	_scmd07_njsr_idx
 		.WORD	{1}
+	ENDM
+
+	; maybe this will be little bit confusing, but at least
+	; take less text lines...
+	;
+	MAC	NJSRB
+		.BYTE	_scmd07_njsr_idx
+		.WORD	{1}
+		.BYTE	{2}
 	ENDM
 
 	MAC	NARGI
@@ -163,7 +181,7 @@ _NON	EQU	-1
 	ENDM
 
 	MAC	SSCRIPT1_SET
-		.BYTE	_scmd08_new_script_set_idx
+		.BYTE	_scmd08_script1_start_idx
 		.BYTE	$01
 		.WORD	{1}
 	ENDM
@@ -188,7 +206,7 @@ _NON	EQU	-1
 	ENDM
 
 	MAC	SSCRIPT0_OFF
-		.BYTE	_scmd0D_sdisable_self_idx
+		.BYTE	_scmd0A_script0_off_idx
 	ENDM
 
 	MAC	SMEM_ALU
@@ -234,7 +252,7 @@ _SW_START	SET	.
 	ENDM
 
 	MAC	SSCRIPT1_OFF
-		.BYTE	_scmd14_sdisable_idx
+		.BYTE	_scmd14_script1_off_idx
 		.BYTE	$01
 	ENDM
 
@@ -263,7 +281,7 @@ _ADC	EQU	$02
 ;		.WORD	{1}
 ;	ENDM
 
-	MAC	NJSR	_SW
+	MAC	NJSR_SW
 		.BYTE	_scmd19_njsr_sw_idx
 	ENDM
 
