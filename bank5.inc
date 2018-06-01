@@ -30,13 +30,17 @@ _lvl4_objects_list:
 		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$88,$03,$80,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$D8,$03,$00,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$B8,$03,$80,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$04,_NON
 		.BYTE	$FF,$01,$04
 		OBJ_SET	_scr26_sword_ninja,					$58,$05,$B8,$03,_NON,_NON,_NON
 		OBJ_SET	_scr27_shuriken_ninja,				$B8,$05,$68,$03,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$05,_NON
+; REGION, removed in the EU version
 		.BYTE	$FF,$01,$03
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$05,_NON
+; -
 		.BYTE	$FF,$01,$05
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$03,$48,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$D8,$03,$A0,$03,_NON,_NON,_NON
@@ -59,12 +63,14 @@ _lvl4_objects_list:
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$01,$68,$05,_NON,_NON,_NON
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$C8,$01,$48,$05,_NON,_NON,_NON
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$01,$98,$05,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$08,_NON
 		.BYTE	$FF,$01,$08
 		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$A8,$01,$98,$06,_NON,_NON,_NON
 		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$48,$01,$68,$06,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$07,_NON
 		.BYTE	$FF,$01,$07
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$09,_NON
 		.BYTE	$FF,$01,$09
 		OBJ_SET	_scr1A_lvl1_boss_judges,			$88,$00,$48,$05,$01,_NON,_NON
@@ -110,16 +116,20 @@ _lvl4_objects_list:
 		.BYTE	$FF,$02
 		OBJ_SET	_scr28_pink_goo,					$78,$01,$78,$01,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$58,$01,$48,$01,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$10,_NON
 		.BYTE	$FF,$01,$10
 		OBJ_SET	_scr26_sword_ninja,					$88,$01,$C8,$00,_NON,_NON,_NON
 		OBJ_SET	_scr26_sword_ninja,					$58,$01,$88,$00,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0F,_NON
 		.BYTE	$FF,$01,$0F
+;-
 		OBJ_SET	_scr28_pink_goo,					$F8,$01,$58,$01,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$68,$02,$88,$01,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$98,$02,$58,$01,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$D8,$02,$B8,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$11,_NON
 		.BYTE	$FF,$01,$11
 		OBJ_SET	_scr14_fast_moving_slime,			$98,$03,$B8,$01,_NON,_NON,_NON
@@ -140,11 +150,15 @@ _lvl4_objects_list:
 		OBJ_SET	_scr28_pink_goo,					$C8,$04,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$88,$04,$B8,$02,_NON,_NON,_NON
+; REGION, added in the EU version
+;		OBJ_SET	_scr28_pink_goo,					$88,$04,$48,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr28_pink_goo,					$C8,$04,$88,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$48,$04,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$C8,$04,$88,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$38,$04,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$C8,$04,$B8,$02,_NON,_NON,_NON
@@ -154,6 +168,7 @@ _lvl4_objects_list:
 		OBJ_SET	_scr28_pink_goo,					$48,$04,$B8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$48,$04,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$88,$04,$78,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$13,_NON
 		.BYTE	$FF,$01,$13
 		.BYTE	$FF,$02
@@ -163,8 +178,10 @@ _lvl4_objects_list:
 		OBJ_SET	_scr21_train_ghost,					$48,$04,$A8,$01,$03,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$D8,$04,$58,$01,$04,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$68,$04,$98,$01,$05,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$D8,$04,$B8,$01,$01,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$48,$04,$A8,$01,$04,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$14,_NON
 		.BYTE	$FF,$01,$14
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$15,_NON
@@ -825,26 +842,43 @@ byte_4659D:
 		.BYTE	$00,$03,$1C,$14,$14,$19,$03,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl3_objects_list:
 		.BYTE	$FF,$02
+; REGION, changed in the EU version
 		OBJ_SET	_scr29_sewer_worm,					$88,$01,$A8,$05,_NON,_NON,_NON
+;		OBJ_SET	_scr29_sewer_worm,					$88,$01,$88,$05,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr29_sewer_worm,					$98,$01,$98,$05,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$C8,$01,$B8,$05,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$B8,$01,$78,$05,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
 		.BYTE	$FF,$01,$02
+; REGION, changed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$02,$58,$04,_NON,_NON,_NON
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$02,$A8,$04,_NON,_NON,_NON
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$48,$03,$B8,$04,_NON,_NON,_NON
+;		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$02,$48,$04,_NON,_NON,_NON
+;		OBJ_SET	_scr2C_fast_throw_forward_slime,	$18,$03,$B8,$04,_NON,_NON,_NON
+;		OBJ_SET	_scr2C_fast_throw_forward_slime,	$48,$03,$98,$04,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$48,$03,$50,$04,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$01,_NON
 		.BYTE	$FF,$01,$01
 		.BYTE	$FF,$02
 		OBJ_SET	_scr29_sewer_worm,					$38,$01,$88,$04,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$88,$01,$58,$04,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr29_sewer_worm,					$78,$01,$68,$03,_NON,_NON,_NON
+;		OBJ_SET	_scr29_sewer_worm,					$98,$01,$58,$03,_NON,_NON,_NON
+;
 		OBJ_SET	_scr29_sewer_worm,					$48,$01,$98,$03,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr29_sewer_worm,					$B8,$01,$58,$03,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
 		OBJ_SET	_scr29_sewer_worm,					$28,$01,$A8,$02,_NON,_NON,_NON
@@ -858,8 +892,13 @@ _lvl3_objects_list:
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$B8,$00,$08,$04,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$C8,$00,$48,$04,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$68,$00,$28,$04,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$00,$B8,$04,_NON,_NON,_NON
+;		OBJ_SET	_scr2C_fast_throw_forward_slime,	$80,$00,$B8,$04,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$98,$00,$B8,$04,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr0D_money_bag,					$80,$00,$B0,$04,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
@@ -884,7 +923,9 @@ _lvl3_objects_list:
 		OBJ_SET	_scr29_sewer_worm,					$68,$00,$A8,$01,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$98,$00,$98,$01,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$88,$00,$88,$01,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr29_sewer_worm,					$58,$00,$A8,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$06,_NON
 		.BYTE	$FF,$01,$06
 		.BYTE	$FF,$02
@@ -896,7 +937,9 @@ _lvl3_objects_list:
 		OBJ_SET	_scr2D_rotator,						$C8,$02,$B8,$01,_NON,_NON,_NON
 		OBJ_SET	_scr2D_rotator,						$78,$02,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr2D_rotator,						$B8,$02,$A8,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$02,$38,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr0D_money_bag,					$30,$02,$20,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$07,_NON
 		.BYTE	$FF,$01,$07
@@ -905,8 +948,13 @@ _lvl3_objects_list:
 		OBJ_SET	_scr29_sewer_worm,					$58,$02,$A8,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2D_rotator,						$D8,$02,$98,$03,_NON,_NON,_NON
 		OBJ_SET	_scr29_sewer_worm,					$E8,$02,$A8,$03,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr2B_still_throw_ballistic_slime,	$9C,$03,$98,$03,_NON,_NON,_NON
+;		OBJ_SET	_scr2D_rotator,						$98,$03,$98,$03,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr2D_rotator,						$88,$03,$78,$03,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr29_sewer_worm,					$A8,$03,$48,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2D_rotator,						$D8,$03,$C0,$03,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$A0,$03,$78,$03,$01,_NON,_NON
@@ -914,15 +962,30 @@ _lvl3_objects_list:
 		.BYTE	$FF,$01,$08
 		.BYTE	$FF,$02
 		OBJ_SET	_scr2D_rotator,						$98,$03,$30,$02,_NON,_NON,_NON
+; REGION, added in the EU version
+;		OBJ_SET	_scr2C_fast_throw_forward_slime,	$88,$03,$60,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr29_sewer_worm,					$88,$03,$88,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$03,$B0,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr29_sewer_worm,					$98,$03,$A8,$01,_NON,_NON,_NON
 		OBJ_SET	_scr2D_rotator,						$98,$03,$08,$02,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$68,$03,$60,$01,_NON,_NON,_NON
+;		OBJ_SET	_scr2C_fast_throw_forward_slime,	$58,$03,$B0,$02,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr2C_fast_throw_forward_slime,	$A8,$03,$60,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr2D_rotator,						$B8,$03,$58,$01,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr2D_rotator,						$28,$03,$70,$01,_NON,_NON,_NON
+;		OBJ_SET	_scr2D_rotator,						$28,$03,$40,$01,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr29_sewer_worm,					$28,$03,$38,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr0D_money_bag,					$90,$03,$60,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$09,_NON
 		.BYTE	$FF,$01,$09

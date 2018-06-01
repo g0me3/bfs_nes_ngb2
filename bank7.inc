@@ -5,7 +5,6 @@
 
 ;		INCBIN "..\copyrights.txt"
 
-
 ; =============== S U B R O U T I N E =======================================
 RESET:
 		INC		RESET
@@ -8949,14 +8948,9 @@ off_63D21:
 		.BYTE	>[_spr_raw_lib08_49]
 		.BYTE	>[_spr_raw_lib08_4A]
 		.BYTE	>[_spr_raw_lib08_4B]
-_unused:
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;	*--
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 
-		ORG [[.+$3F] & $FFC0]
+;		ORG [[.+$3F] & $FFC0]
+		ORG		$FD80
 _pcm0:
 		.BYTE	$55,$55,$55,$95,$AA,$2A,$95,$E0,$7F,$FC,$C0,$F1,$03,$28,$FE,$FF ;	pcm data
 		.BYTE	$FF,$F1,$5F,$3F,$00,$00,$00,$00,$00,$00,$08,$80,$C0,$F1,$FF,$C7
@@ -8969,7 +8963,8 @@ _pcm0:
 _pcm0_size	EQU [[.-_pcm0]>>4]
 _pcm0_addr	EQU [[_pcm0-$C000]>>6]
 
-		ORG [[.+$3F] & $FFC0]
+;		ORG [[.+$3F] & $FFC0]
+		ORG		$FE00
 _pcm1:
 		.BYTE	$00,$68,$68,$00,$68,$68,$68,$68,$73,$00,$68,$68,$00,$68,$68,$68 ;	pcm data
 		.BYTE	$68,$68,$68,$68,$68,$68,$68,$00,$68,$68,$00,$68,$68,$73,$00,$68

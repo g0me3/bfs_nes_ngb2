@@ -199,7 +199,10 @@ _lvl_doors_data03:
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data03:
+; REGION, changed in the EU version
 		.BYTE	$17,$18,$18,$18,$14,$13,$00
+;		.BYTE	$17,$14,$18,$13,$00
+; -
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_141E4:
@@ -1154,7 +1157,10 @@ _lvl_doors_data19:
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data19:
+; REGION, changed in the EU version
 		.BYTE	$28,$26,$26,$00
+;		.BYTE	$28,$28,$26,$00
+; -
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14AA7:
@@ -2130,7 +2136,10 @@ _lvl_doors_data2F:
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data2F:
+; REGION, changed in the EU version
 		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$2C,$00
+;		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$00
+; -
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_153E1:
@@ -2165,7 +2174,10 @@ _lvl_doors_data30:
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
 _prize_sequence_data30:
+; REGION, changed in the EU version
 		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$2B,$00
+;		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$00
+; -
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1543A:
@@ -2468,8 +2480,10 @@ _sjmp_case_156FB:
 		STORE8			_cur_room_sequence_idx,$04
 		NJSR			_nsub_628FA
 			NARGB		$02,$05,$03
+; REGION, removed in the EU version
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
+; -
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_room_doors_data37
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data37
@@ -2616,8 +2630,10 @@ _sjmp_case_15843:
 		STORE8			_cur_room_sequence_idx,$08
 		NJSR			_nsub_628FA
 			NARGB		$02,$01,$06
+; REGION, removed in the EU version
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$12
+; -
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3B
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3B
@@ -2916,8 +2932,10 @@ _sjmp_case_15AFB:
 		STORE8			_cur_room_sequence_idx,$10
 		NJSR			_nsub_628FA
 			NARGB		$02,$01,$00
+; REGION, removed in the EU version
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
+; -
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data43
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data43
@@ -4995,24 +5013,37 @@ _lvl0_objects_list:
 		.BYTE	$FF,$01,$03
 		.BYTE	$FF,$02
 		OBJ_SET	_scr17_runner,						$A8,$03,$C0,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr18_chain_saw,					$C8,$03,$70,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr18_chain_saw,					$50,$03,$40,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr18_chain_saw,					$10,$03,$60,$02,_NON,_NON,_NON
+; -
+; REGION, changed in the EU version
 		OBJ_SET	_scr13_slow_moving_slime,			$70,$02,$A0,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr13_slow_moving_slime,			$90,$02,$A0,$02,_NON,_NON,_NON
+;
 		OBJ_SET	_scr14_fast_moving_slime,			$D0,$02,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$02,$50,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$04,_NON
 		.BYTE	$FF,$01,$04
 		OBJ_SET	_scr19_toilet_snake,				$78,$01,$50,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr13_slow_moving_slime,			$C8,$01,$68,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$03,_NON
 		.BYTE	$FF,$01,$03
 		OBJ_SET	_scr13_slow_moving_slime,			$60,$02,$70,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr14_fast_moving_slime,			$A0,$02,$70,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$00,_NON
 		.BYTE	$FF,$01,$00
 		OBJ_SET	_scr13_slow_moving_slime,			$98,$02,$A8,$03,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr14_fast_moving_slime,			$78,$02,$98,$03,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr17_runner,						$80,$02,$48,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$01,_NON
 		.BYTE	$FF,$01,$01
@@ -5030,16 +5061,23 @@ _lvl0_objects_list:
 		.BYTE	$FF,$01,$00
 		OBJ_SET	_scr18_chain_saw,					$78,$02,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr18_chain_saw,					$B8,$02,$88,$03,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr18_chain_saw,					$88,$02,$98,$03,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		.BYTE	$FF,$01,$03
 		OBJ_SET	_scr17_runner,						$48,$02,$C8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr14_fast_moving_slime,			$A8,$02,$88,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr17_runner,						$C8,$02,$C8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr14_fast_moving_slime,			$58,$02,$68,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 		.BYTE	$FF,$01,$06
 		.BYTE	$FF,$02
+; REGION, added in the EU version
+;		.BYTE	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
+; -
 		.BYTE	$FF,$01,$05
 		OBJ_SET	_scr1B_court_chair,					$78,$02,$78,$01,$00,_NON,_NON
 		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,$01,_NON,_NON

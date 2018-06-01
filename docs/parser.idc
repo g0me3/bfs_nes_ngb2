@@ -27,7 +27,6 @@ static ngb2_get_native_sub_args(addr) {
 			(addr==0xE85D)||
 			(addr==0xE8D1)||
 			(addr==0xEB1E)||
-			(addr==0xEB70)||
 			(addr==0xEBB1)||
 			(0)
 			)					ret = 0;	// 2b args
@@ -69,6 +68,7 @@ static ngb2_get_native_sub_args(addr) {
 			(addr==0xE6D9)||
 			(addr==0xE6E5)||
 			(addr==0xE7EE)||
+			(addr==0xEB70)||
 			(addr==0xEAA7)||
 			(addr==0xED12)||
 			(0)
@@ -282,14 +282,14 @@ static make_offset_custom_b(ea, bank, exec, cmt) {
 
 static ngb2_opcode_name(cmd) {
 	auto ret = "";
-	if(cmd==0x00) {		ret = "STOP            ";	// no args
+	if(cmd==0x00) {		  ret = "SSTOP           ";	// no args
 	} else if(cmd==0x01) {ret = "SLOOP_BEGIN     ";	// 1b arg
 	} else if(cmd==0x02) {ret = "SLOOP_END       ";	// no args
 	} else if(cmd==0x03) {ret = "SJMP            ";	// ofs arg, no exec
 	} else if(cmd==0x04) {ret = "SJSR            ";	// ofs arg, no exec
 	} else if(cmd==0x05) {ret = "SRET            ";	// no args
 	} else if(cmd==0x06) {ret = "SDELAY          ";	// 1b arg
-	} else if(cmd==0x07) {ret = "NJSR            ";	// ofs arg, [custom args!] exec
+	} else if(cmd==0x07) {ret = "NJSR            ";	// ofs arg
 	} else if(cmd==0x08) {ret = "SRUN            ";	// 1b, ofs, no exec
 	} else if(cmd==0x09) {ret = "NBG_HNDL_SET    ";	// ofs, no exec
 	} else if(cmd==0x0A) {ret = "SUSPEND         ";	// no args
@@ -307,7 +307,7 @@ static ngb2_opcode_name(cmd) {
 	} else if(cmd==0x16) {ret = "STORE16         ";	// ofs, 2b arg
 	} else if(cmd==0x17) {ret = "SBCS_BREAK      ";	// ofs arg, no exec
 	} else if(cmd==0x18) {ret = "SBCC_BREAK      ";	// ofs arg, no exec UNUSED
-	} else if(cmd==0x19) {ret = "NJSR_SW         ";	// 1b arg [tbl size], ofs tbl x size, exec UNUSED
+	} else if(cmd==0x19) {ret = "NJSR_SW         ";	// 1b arg [tbl size]
 // ..
 	} else if(cmd==0x20) {ret = "SPR_IDX_SET     ";	// 1b arg
 	} else if(cmd==0x21) {ret = "POS_X_SET       ";	// 2b args
@@ -331,7 +331,7 @@ static ngb2_opcode_name(cmd) {
 	} else if(cmd==0x33) {ret = "BYTE_D6_ADD     ";	// 1b arg  UNUSED
 	} else if(cmd==0x34) {ret = "POS_MOVE_STOP   ";	// no args
 	} else if(cmd==0x35) {ret = "SCRL_MOVE_STOP  ";	// no args
-	} else 			   ret = form("UNK%02X         ",cmd);
+	} else 			 ret = form("UNK%02X         ",cmd);
 
 	return ret;
 }
@@ -417,7 +417,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				ea = make_data_array(ea, 4, form("%s$%02X,%s,$%02X",cmd_opc,Byte(ea+1),ngb2_get_alu_name(Byte(ea+2)),Byte(ea+3)));
 			} else if((cmd==0x0E)) {	// ofs arg, 2b args, ALU
 				tmp1 = ngb2_get_address_name(ea+1,bank);
-				ea = make_data_array(ea, 1, form("%s%s,%s,$02X",cmd_opc,tmp1,ngb2_get_alu_name(Byte(ea+3)),Byte(ea+4)));
+				ea = make_data_array(ea, 1, form("%s%s,%s,$%02X",cmd_opc,tmp1,ngb2_get_alu_name(Byte(ea+3)),Byte(ea+4)));
 				ea = make_offset_custom(ea, 0, ""); 				// no exec
 				ea = make_data_array(ea, 2, "");
 			} else if((cmd==0x16)) {	// ofs arg, 2b args
@@ -458,7 +458,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				while((tmp2<tmp1)&&!stop) {
 					tmp0 = Word(ea)+MK_FP(AskSelector(bank+1), 0);
 					tmp3 = ngb2_select_name(tmp0, "byte_","unk_","_sjmp_case_%X");
-					ea = make_offset_custom(ea, 0, form("CASE    %s",tmp3));
+					ea = make_offset_custom(ea, 0, form("SCASE    %s",tmp3));
 // -------- recursive exec!!
 					if(tmp0>=ea) {
 						if((lvl_bank=ngb2_opcode(tmp0,tab+" ",lvl_bank))==0xBADC0DE)
@@ -481,7 +481,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				while((tmp2<tmp1)&&!stop) {
 					tmp0 = Word(ea)+MK_FP(AskSelector(bank+1), 0);
 					tmp3 = ngb2_select_name(tmp0, "byte_","unk_","_sjsr_case_%X");
-					ea = make_offset_custom(ea, 0, form("CASE    %s",tmp3));
+					ea = make_offset_custom(ea, 0, form("SCASE    %s",tmp3));
 // -------- recursive exec!!
 					if((lvl_bank=ngb2_opcode(tmp0,tab+" ",lvl_bank))==0xBADC0DE) {
 						stop = 1;
@@ -497,7 +497,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				while(tmp2<tmp1) {
 					tmp0 = Word(ea)+MK_FP(AskSelector(bank+1), 0);
 					ngb2_select_name(tmp0, "loc_","sub_","_ncase_%X");
-					ea = make_offset_custom(ea, 1, form("CASE    %s",tmp3));
+					ea = make_offset_custom(ea, 1, form("SCASE    %s",tmp3));
 					tmp2++;
 				}
 			} else if((cmd==0x08)) {	// 1b arg, ofs
@@ -637,7 +637,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 					tmp1 = Byte(ea);
 					ea = make_data_array(ea, 1, "");
 					for(tmp0=0; tmp0<tmp1; tmp0++) {
-						ea = make_data_array(ea, 3, form("DATA    $%02X,$%02X,$%02X",Byte(ea),Byte(ea+1),Byte(ea+2)));
+						ea = make_data_array(ea, 3, form("NARGB    $%02X,$%02X,$%02X",Byte(ea),Byte(ea+1),Byte(ea+2)));
 					}
 				} else if(tmp3==9) {
 					ea = make_data_array(ea, 3, "");
@@ -645,19 +645,19 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 					tmp1 = Byte(ea);
 					ea = make_data_array(ea, 1, "");
 					for(tmp0=0; tmp0<tmp1; tmp0++) {
-						ea = make_data_array(ea, 4, form("DATA    $%02X,$%02X,$%02X,$%02X",Byte(ea),Byte(ea+1),Byte(ea+2),Byte(ea+3)));
+						ea = make_data_array(ea, 4, form("NARGB    $%02X,$%02X,$%02X,$%02X",Byte(ea),Byte(ea+1),Byte(ea+2),Byte(ea+3)));
 					}
 				} else if(tmp3==11) {
 					tmp1 = ngb2_get_address_name(ea,lvl_bank);
-					ea = make_offset_custom_b(ea, lvl_bank, 0, form("DATA    %s",tmp1));
+					ea = make_offset_custom_b(ea, lvl_bank, 0, form("NARGB    %s",tmp1));
 					tmp1 = ngb2_get_address_name(ea,lvl_bank);
-					ea = make_offset_custom_b(ea, lvl_bank, 0, form("DATA    %s",tmp1));
+					ea = make_offset_custom_b(ea, lvl_bank, 0, form("NARGB    %s",tmp1));
 					tmp1 = ngb2_get_address_name(ea,lvl_bank);
-					ea = make_offset_custom_b(ea, lvl_bank, 0, form("DATA    %s",tmp1));
+					ea = make_offset_custom_b(ea, lvl_bank, 0, form("NARGB    %s",tmp1));
 					tmp1 = ngb2_get_address_name(ea,lvl_bank);
-					ea = make_offset_custom_b(ea, lvl_bank, 0, form("DATA    %s",tmp1));
+					ea = make_offset_custom_b(ea, lvl_bank, 0, form("NARGB    %s",tmp1));
 					tmp1 = ngb2_get_address_name(ea,lvl_bank);
-					ea = make_offset_custom_b(ea, lvl_bank, 0, form("DATA    %s",tmp1));
+					ea = make_offset_custom_b(ea, lvl_bank, 0, form("NARGB    %s",tmp1));
 				} else {
 					Message("%s >unknown NATIVE SUB $%04X at 0x%08x \n", tab, tmp2, ea);
 					ea=ea-3;
@@ -698,20 +698,20 @@ static ngb2_apu_selection(void) {
 
 static ngb2_apu_name(cmd) {
 	auto ret = "";
-	if(cmd==0xFF) {			ret = "STOP        ";	// no
-	} else if(cmd==0xE0) {	ret = "CMDE0       ";	// 2b
-	} else if(cmd==0xE1) {	ret = "CMDE1       ";	// 1b
-	} else if(cmd==0xE2) {	ret = "CMDE2       ";	// 2b
-	} else if(cmd==0xE3) {	ret = "CMDE3       ";	// 1b
+	if(cmd==0xFF) {			ret = "ASTOP       ";	// no
+	} else if(cmd==0xE0) {	ret = "ACMDE0      ";	// 2b
+	} else if(cmd==0xE1) {	ret = "ACMDE1      ";	// 1b
+	} else if(cmd==0xE2) {	ret = "ACMDE2      ";	// 2b
+	} else if(cmd==0xE3) {	ret = "ACMDE3      ";	// 1b
 
-	} else if(cmd==0xF0) {	ret = "CMDF0       ";	// 1b
-	} else if(cmd==0xF1) {	ret = "CMDF1       ";	// 1b
-	} else if(cmd==0xF2) {	ret = "CMDF2       ";	// 1b
-	} else if(cmd==0xF3) {	ret = "CMDF3       ";	// 1b
-	} else if(cmd==0xF4) {	ret = "CMDF4       ";	// 1b
-	} else if(cmd==0xF5) {	ret = "CMDF5       ";	// 1b
-	} else if(cmd==0xF6) {	ret = "CMDF6       ";	// 1b
-	} else if(cmd==0xF7) {	ret = "CMDF7       ";	// 1b
+	} else if(cmd==0xF0) {	ret = "ACMDF0      ";	// 1b
+	} else if(cmd==0xF1) {	ret = "ACMDF1      ";	// 1b
+	} else if(cmd==0xF2) {	ret = "ACMDF2      ";	// 1b
+	} else if(cmd==0xF3) {	ret = "ACMDF3      ";	// 1b
+	} else if(cmd==0xF4) {	ret = "ACMDF4      ";	// 1b
+	} else if(cmd==0xF5) {	ret = "ACMDF5      ";	// 1b
+	} else if(cmd==0xF6) {	ret = "ACMDF6      ";	// 1b
+	} else if(cmd==0xF7) {	ret = "ACMDF7      ";	// 1b
 
 	} else if(cmd==0xF8) {	ret = "AJMP        ";	// ofs
 	} else if(cmd==0xFA) {	ret = "AJSR        ";	// ofs
@@ -738,16 +738,16 @@ static ngb2_apu(ea) {
 				ea++;
 			}
 			if(tmp0>0) {
-				ea = make_data_array(tmp1, tmp0, "DATA");
+				ea = make_data_array(tmp1, tmp0, "ADATA");
 				cmd = Byte(ea);
 			}
 			if((cmd&0xE0)==0xC0) {
-				ea = make_data_array(ea, 2, "DATAEX");
+				ea = make_data_array(ea, 2, "ADATAEX");
 				cmd = Byte(ea);
 			}
 
 			cmd_opc = ngb2_apu_name(cmd);
-			if((cmd==0xFB)||(cmd==0xFF)) {	// RET/STOP
+			if((cmd==0xFB)||(cmd==0xFF)) {	// RET/SSTOP
 				ea = make_data_array(ea, 1, cmd_opc);
 				stop = 1;
 				// stop here

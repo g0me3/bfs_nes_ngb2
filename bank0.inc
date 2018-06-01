@@ -258,6 +258,7 @@ _tlm_title_logo:
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$73,$EF,$28,$38,$FF,$FF,$FF,$FC,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$66,$29,$39,$54,$64,$ED,$FD,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
+; REGION, "HAL lab." changed in the US proto version
 _tlm_title_text:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -4960,6 +4961,7 @@ _tlm5_kanji_unused:
 		.BYTE	$76,$25,$00,$0C,$D6,$0E,$1E,$2E,$3E,$4E,$6E,$7E,$8E,$9E,$AE,$BE
 		.BYTE	$CE,$27,$00,$05,$07,$17,$27,$37,$67,$77,$25,$00,$09,$D7,$D7,$E7
 		.BYTE	$0F,$00,$2F,$6F,$7F,$8F,$9F,$E5,$C5,$00,$FF
+; REGION, typo fixed partially in the EU version
 _tlm6_copyrights:
 		.BYTE	$E4,$48,$FF,$0D,$47,$48,$4F,$53,$54,$42,$55,$53,$54,$FF,$5B,$FF
 		.BYTE	$54,$4D,$E4,$2E,$FF,$13,$4D,$4F,$56,$49,$45,$FF,$5C,$31,$39,$38

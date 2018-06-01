@@ -5,16 +5,26 @@
 
 _lvl1_objects_list:
 		.BYTE	$FF,$02
+; REGION, changed in the EU version
 		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$98,$06,_NON,_NON,_NON
+;		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$90,$06,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$68,$06,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
 		OBJ_SET	_scr1E_pick_axe_miner,				$50,$00,$88,$05,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr1E_pick_axe_miner,				$A0,$00,$98,$05,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$C0,$00,$08,$05,_NON,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$38,$00,$D0,$04,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr1E_pick_axe_miner,				$88,$00,$28,$05,_NON,_NON,_NON
+; -
+; REGION, changed in the EU version
 		OBJ_SET	_scr1E_pick_axe_miner,				$98,$00,$C0,$04,_NON,_NON,_NON
+;		OBJ_SET	_scr1E_pick_axe_miner,				$B8,$00,$C0,$04,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$C0,$00,$48,$04,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$02,_NON
 		.BYTE	$FF,$01,$02
@@ -28,13 +38,18 @@ _lvl1_objects_list:
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$04,_NON
 		.BYTE	$FF,$01,$04
 		OBJ_SET	_scr20_trolley_miner,				$18,$01,$28,$05,$40,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$78,$01,$78,$04,$40,_NON,_NON
+; -
 		OBJ_SET	_scr20_trolley_miner,				$F8,$01,$A8,$04,$C0,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$38,$01,$78,$05,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$88,$01,$20,$05,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$80,$01,$D0,$04,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$38,$01,$68,$04,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$E8,$01,$A8,$05,$C0,_NON,_NON
+;		OBJ_SET	_scr20_trolley_miner,				$58,$01,$A8,$04,$00,_NON,_NON
+;
 		OBJ_SET	_scr1D_air_hammer_miner,			$98,$01,$98,$04,_NON,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$50,$01,$38,$04,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$01,$50,$04,$01,_NON,_NON
@@ -43,7 +58,9 @@ _lvl1_objects_list:
 		.BYTE	$FF,$02
 		OBJ_SET	_scr20_trolley_miner,				$68,$01,$78,$03,$00,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$01,$60,$03,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$B8,$01,$08,$03,$80,_NON,_NON
+; -
 		OBJ_SET	_scr1D_air_hammer_miner,			$30,$01,$20,$03,_NON,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$98,$01,$98,$02,_NON,_NON,_NON
 		OBJ_SET	_scr20_trolley_miner,				$68,$01,$78,$02,$80,_NON,_NON
@@ -57,13 +74,18 @@ _lvl1_objects_list:
 		OBJ_SET	_scr1F_hammer_miner,				$78,$02,$B0,$02,_NON,_NON,_NON
 		OBJ_SET	_scr1F_hammer_miner,				$10,$03,$80,$02,_NON,_NON,_NON
 		OBJ_SET	_scr20_trolley_miner,				$98,$03,$98,$02,$C0,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$38,$03,$88,$02,$40,_NON,_NON
+; -
 		OBJ_SET	_scr1F_hammer_miner,				$78,$03,$50,$02,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$60,$02,$70,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$07,_NON
 		.BYTE	$FF,$01,$07
 		.BYTE	$FF,$02
+; REGION, changed in the EU version
 		OBJ_SET	_scr1F_hammer_miner,				$58,$04,$48,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr1F_hammer_miner,				$58,$04,$68,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$B8,$04,$68,$02,_NON,_NON,_NON
 		OBJ_SET	_scr20_trolley_miner,				$A8,$04,$C8,$02,$00,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$C8,$04,$C0,$02,_NON,_NON,_NON
@@ -72,11 +94,15 @@ _lvl1_objects_list:
 		.BYTE	$FF,$01,$08
 		OBJ_SET	_scr20_trolley_miner,				$68,$04,$B8,$01,$00,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$D0,$04,$98,$01,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$B8,$04,$68,$01,$80,_NON,_NON
+; -
 		OBJ_SET	_scr1F_hammer_miner,				$40,$04,$60,$01,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$80,$04,$00,$01,_NON,_NON,_NON
 		OBJ_SET	_scr1F_hammer_miner,				$40,$04,$90,$00,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$B8,$04,$88,$00,$00,_NON,_NON
+; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$80,$04,$38,$00,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$B8,$04,$68,$00,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$04,$58,$00,$01,_NON,_NON
@@ -87,20 +113,34 @@ _lvl1_objects_list:
 		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$01,_NON,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$90,$05,$98,$01,$00,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$70,$05,$08,$02,$01,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$80,$05,$40,$02,$02,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$70,$05,$98,$02,$01,_NON,_NON
+;		OBJ_SET	_scr21_train_ghost,					$80,$05,$40,$02,$03,_NON,_NON
+;		OBJ_SET	_scr21_train_ghost,					$70,$05,$98,$02,$02,_NON,_NON
+;
+; REGION, removed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$80,$05,$60,$02,$00,_NON,_NON
+; -
 		.BYTE	$FF,$01,$0B
 		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$03,_NON,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$98,$04,$03,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$68,$03,$04,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$94,$05,$98,$03,$03,_NON,_NON
+;		OBJ_SET	_scr21_train_ghost,					$94,$05,$98,$03,$02,_NON,_NON
+; -
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$38,$04,$05,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$80,$05,$A8,$03,$03,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$80,$05,$88,$04,$05,_NON,_NON
+; -
 		OBJ_SET	_scr21_train_ghost,					$94,$05,$68,$04,$04,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$C8,$03,$03,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$94,$05,$08,$04,$05,_NON,_NON
+;		OBJ_SET	_scr21_train_ghost,					$94,$05,$08,$04,$01,_NON,_NON
+; -
 		.BYTE	$FF,$01,$0C
 		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$05,_NON,_NON,_NON
 		OBJ_SET	_scr22_lvl2_boss_train_slime,		$80,$05,$90,$05,_NON,_NON,_NON
@@ -506,11 +546,18 @@ byte_21574:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$CD,$CD,$40,$2A,$2A,$2A,$2A,$2A,$2A
 _lvl2_objects_list:
 		.BYTE	$FF,$02
+; REGION, changed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$D8,$00,$48,$01,_NON,_NON,_NON
+;		OBJ_SET	_scr28_pink_goo,					$F0,$00,$48,$01,_NON,_NON,_NON
+; -
+; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$D8,$00,$78,$01,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$D8,$00,$A8,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr28_pink_goo,					$90,$01,$88,$01,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$08,$01,$98,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		.BYTE	$FF,$01,$01
 		OBJ_SET	_scr28_pink_goo,					$58,$01,$78,$00,_NON,_NON,_NON
@@ -527,25 +574,38 @@ _lvl2_objects_list:
 		OBJ_SET	_scr28_pink_goo,					$98,$02,$C8,$00,_NON,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$48,$02,$A0,$01,$C0,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$70,$02,$60,$01,$00,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$A8,$02,$A8,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr0D_money_bag,					$B0,$02,$B0,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$03,_NON
 		.BYTE	$FF,$01,$03
 		OBJ_SET	_scr28_pink_goo,					$A8,$02,$68,$02,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$B8,$02,$98,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr28_pink_goo,					$58,$02,$A8,$02,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr26_sword_ninja,					$38,$03,$A8,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr28_pink_goo,					$38,$03,$A8,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr28_pink_goo,					$98,$03,$A8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$C8,$03,$68,$02,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$04,_NON
 		.BYTE	$FF,$01,$04
+; REGION, changed in the EU version
 		OBJ_SET	_scr2A_morning_star_troll,			$88,$03,$48,$00,_NON,_NON,_NON
+;		OBJ_SET	_scr2A_morning_star_troll,			$A0,$03,$48,$00,_NON,_NON,_NON
+;
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 		.BYTE	$FF,$01,$05
 		.BYTE	$FF,$02
 		OBJ_SET	_scr26_sword_ninja,					$88,$05,$80,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$78,$05,$A8,$01,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr26_sword_ninja,					$88,$05,$88,$00,_NON,_NON,_NON
+;		OBJ_SET	_scr28_pink_goo,					$88,$05,$88,$00,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr0D_money_bag,					$40,$05,$68,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$06,_NON
 		.BYTE	$FF,$01,$06
@@ -553,9 +613,15 @@ _lvl2_objects_list:
 		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$05,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$04,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$04,$60,$02,$00,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr26_sword_ninja,					$78,$04,$60,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr25_stinging_wing_elephant,		$78,$04,$60,$02,$00,_NON,_NON
+; -
 		OBJ_SET	_scr25_stinging_wing_elephant,		$42,$04,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$80,$04,$90,$02,_NON,_NON,_NON
+; REGION, added in the EU version
+;		OBJ_SET	_scr26_sword_ninja,					$90,$04,$A0,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$07,_NON
 		.BYTE	$FF,$01,$07
 		OBJ_SET	_scr2A_morning_star_troll,			$60,$04,$48,$00,_NON,_NON,_NON
@@ -569,16 +635,26 @@ _lvl2_objects_list:
 		OBJ_SET	_scr0D_money_bag,					$58,$06,$A0,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$09,_NON
 		.BYTE	$FF,$01,$09
+; REGION, changed in the EU version
 		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$A8,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr28_pink_goo,					$88,$06,$A8,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr28_pink_goo,					$28,$07,$A8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$D8,$06,$B8,$02,_NON,_NON,_NON
+; REGION, changed in the EU version
 		OBJ_SET	_scr27_shuriken_ninja,				$A8,$06,$98,$02,_NON,_NON,_NON
 		OBJ_SET	_scr27_shuriken_ninja,				$88,$07,$98,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr28_pink_goo,					$A8,$06,$98,$02,_NON,_NON,_NON
+;		OBJ_SET	_scr28_pink_goo,					$88,$07,$98,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr28_pink_goo,					$C8,$07,$B8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$98,$02,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0A,_NON
 		.BYTE	$FF,$01,$0A
 		OBJ_SET	_scr23_halloween,					$80,$07,$80,$01,_NON,_NON,_NON
+; REGION, added in the EU version
+;		OBJ_SET	_scr23_halloween,					$58,$07,$B0,$01,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr2A_morning_star_troll,			$60,$07,$48,$00,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$78,$07,$98,$00,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$B0,$07,$48,$00,_NON,_NON,_NON
@@ -603,7 +679,9 @@ _lvl2_objects_list:
 		.BYTE	$FF,$01,$0D
 		OBJ_SET	_scr2A_morning_star_troll,			$60,$00,$78,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$B8,$00,$48,$03,_NON,_NON,_NON
+; REGION, removed in the EU version
 		OBJ_SET	_scr2A_morning_star_troll,			$88,$00,$48,$03,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr23_halloween,					$48,$00,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0E,_NON
 		.BYTE	$FF,$01,$0E
