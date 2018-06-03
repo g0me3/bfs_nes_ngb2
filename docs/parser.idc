@@ -5,21 +5,22 @@
 // NEW GHOSTBUSTERS II
 // ---------------------------------
 
-//#define AUTO
-#define DEBUG
+#define AUTO
+//#define MANUAL
 //#define VERBOSE1
 //#define VERBOSE2
 //#define VERBOSE3
 
-#define REGION_US
-#define REGION_EU
-#define REGION_JP
+#define REGION_US	01
+#define REGION_EU	02
+#define REGION_JP	03
 
 #define REGION REGION_JP
+//#define REGION	REGION_EU
 
 static ngb2_get_native_sub_args(addr) {
 	auto ret;
-#ifdef REGION==REGION_JP
+#if REGION==REGION_JP
 	if	   (
 			(addr==0x826F)||
 			(addr==0xE61D)||
@@ -242,9 +243,451 @@ static ngb2_get_native_sub_args(addr) {
 			)					ret = 11;	// 1b + 4bxN args
 	else						ret = -1;
 #endif
-#ifdef REGION==REGION_EU
+#if REGION==REGION_EU
+	if	   (
+			(addr==0x826F)||
+			(addr==0xE61E)||
+			(addr==0xE73E)||
+			(addr==0xE85E)||
+			(addr==0xE8D2)||
+			(addr==0xEB1F)||
+			(addr==0xEBB2)||
+			(0)
+			)					ret = 0;	// 2b args
+	else if(
+			(addr==0xEB7F)||
+			(0)
+			)					ret = 1;	// ofs, 1b args
+	else if(
+			(addr==0x853A)||
+			(addr==0x8ADF)||
+			(addr==0x92BB)||
+			(addr==0x92CC)||
+			(addr==0x92D8)||
+			(addr==0x92E4)||
+			(addr==0xE63D)||
+			(addr==0xE662)||
+			(addr==0xE684)||
+			(addr==0xE692)||
+			(addr==0xE6A5)||
+			(addr==0xE6F2)||
+			(addr==0xE711)||
+			(addr==0xE75C)||
+			(addr==0xE776)||
+			(addr==0xE788)||
+			(addr==0xE78E)||
+			(addr==0xE87A)||
+			(addr==0xEAED)||
+			(addr==0xEB2B)||
+			(addr==0xEB61)||
+			(addr==0xEB69)||
+			(addr==0xEBD1)||
+			(0)
+
+			)					ret = 2;	// 1b arg
+	else if(
+			(addr==0x91BF)||
+			(addr==0xA30D)||
+			(addr==0xE6CE)||
+			(addr==0xE6DA)||
+			(addr==0xE6E6)||
+			(addr==0xE7EF)||
+			(addr==0xEB71)||
+			(addr==0xEAA8)||
+			(addr==0xED13)||
+			(0)
+			)					ret = 3;	// ofs arg
+	else if(
+			(addr==0xE79A)||
+			(0)
+			)					ret = 4;	// 5b args
+	else if(
+			(addr==0x80D2)||
+			(addr==0x83E7)||
+			(addr==0x8481)||
+			(addr==0x890E)||
+			(addr==0x8952)||
+			(addr==0x8AF6)||
+			(addr==0x8B1B)||
+			(addr==0x8B4F)||
+			(addr==0x8BAA)||
+			(addr==0x8BC8)||
+			(addr==0x8C5B)||
+			(addr==0x8DDD)||
+			(addr==0x8DE6)||
+			(addr==0x8DF3)||
+			(addr==0x8DFC)||
+			(addr==0x8FAF)||
+			(addr==0x8FB5)||
+			(addr==0x8FC2)||
+			(addr==0x8FED)||
+			(addr==0x9025)||
+			(addr==0x90E6)||
+			(addr==0x9199)||
+			(addr==0x919F)||
+			(addr==0x91A6)||
+			(addr==0x91A8)||
+			(addr==0x91AF)||
+			(addr==0x91B1)||
+			(addr==0x91F2)||
+			(addr==0x9215)||
+			(addr==0x9229)||
+			(addr==0x923D)||
+			(addr==0x9257)||
+			(addr==0x926C)||
+			(addr==0x9282)||
+			(addr==0x941F)||
+			(addr==0x9474)||
+			(addr==0x9492)||
+			(addr==0x9498)||
+			(addr==0x94CF)||
+			(addr==0x94DA)||
+			(addr==0x9848)||
+			(addr==0x9A70)||
+			(addr==0x9A7D)||
+			(addr==0x9DA9)||
+			(addr==0x9E2B)||
+			(addr==0x9E3A)||
+			(addr==0x9E57)||
+			(addr==0x9F3D)||
+			(addr==0xA026)||
+			(addr==0xA186)||
+			(addr==0xA1E3)||
+			(addr==0xA203)||
+			(addr==0xA242)||
+			(addr==0xA316)||
+			(addr==0xA32C)||
+			(addr==0xA394)||
+			(addr==0xA3FE)||
+			(addr==0xA434)||
+			(addr==0xA449)||
+			(addr==0xA43F)||
+			(addr==0xA4CE)||
+			(addr==0xA4D7)||
+			(addr==0xA53B)||
+			(addr==0xA54A)||
+			(addr==0xA573)||
+			(addr==0xA5F2)||
+			(addr==0xA5FB)||
+			(addr==0xA62E)||
+			(addr==0xA639)||
+			(addr==0xA66D)||
+			(addr==0xA678)||
+			(addr==0xA6B4)||
+			(addr==0xA6BF)||
+			(addr==0xA6FB)||
+			(addr==0xA726)||
+			(addr==0xA731)||
+			(addr==0xA74D)||
+			(addr==0xA777)||
+			(addr==0xA792)||
+			(addr==0xA797)||
+			(addr==0xA7A8)||
+			(addr==0xA79C)||
+			(addr==0xA80A)||
+			(addr==0xA813)||
+			(addr==0xA845)||
+			(addr==0xA84E)||
+			(addr==0xA884)||
+			(addr==0xA88F)||
+			(addr==0xA903)||
+			(addr==0xA90C)||
+			(addr==0xA974)||
+			(addr==0xB2B1)||
+			(addr==0xBAF9)||
+			(addr==0xBBF3)||
+			(addr==0xC3A3)||
+			(addr==0xC3AA)||
+			(addr==0xC4CE)||
+			(addr==0xC5E9)||
+			(addr==0xC624)||
+			(addr==0xCCE1)||
+			(addr==0xCD28)||
+			(addr==0xCEF2)||
+			(addr==0xD0BA)||
+			(addr==0xD348)||
+			(addr==0xD3C6)||
+			(addr==0xD3F2)||
+			(addr==0xD3F8)||
+			(addr==0xD3FD)||
+			(addr==0xD41B)||
+			(addr==0xD422)||
+			(addr==0xD42A)||
+			(addr==0xDD7C)||
+			(addr==0xE561)||
+			(addr==0xE58A)||
+			(addr==0xE77C)||
+			(addr==0xE781)||
+			(addr==0xE7FC)||
+			(addr==0xEAB7)||
+			(addr==0xEABF)||
+			(addr==0xEB41)||
+			(addr==0xEB50)||
+			(addr==0xEB96)||
+			(addr==0xEBAA)||
+			(addr==0xEBE6)||
+			(addr==0xEBFE)||
+			(addr==0xEC0C)||
+			(addr==0xEC1F)||
+			(addr==0xEC3A)||
+			(addr==0xEC4A)||
+			(addr==0xEC7B)||
+			(addr==0xECB1)||
+			(addr==0xECBB)||
+			(addr==0xECC5)||
+			(addr==0xECD4)||
+			(addr==0xECE9)||
+			(addr==0xECF4)||
+			(0)
+			)					ret = 5;	// no args
+	else if(
+			(addr==0x8A9E)||
+			(0)
+			)					ret = 6;	// ofs, 2b args
+	else if(
+			(addr==0xE6B8)||
+			(0)
+			)					ret = 7;	// 1b, ofs args
+	else if(
+			(addr==0xE9D0)||
+			(0)
+			)					ret = 8;	// 1b + 3bxN args
+	else if(
+			(addr==0xE8FB)||
+			(0)
+			)					ret = 9;	// 3b args
+	else if(
+			(addr==0xE94C)||
+			(0)
+			)					ret = 10;	// 1b + 4bxN args
+	else if(
+			(addr==0xE886)||
+			(0)
+			)					ret = 11;	// 1b + 4bxN args
+	else						ret = -1;
 #endif
-#ifdef REGION==REGION_US
+#if REGION==REGION_US
+	if	   (
+			(addr==0x826F)||
+			(addr==0xE61D)||
+			(addr==0xE73D)||
+			(addr==0xE85D)||
+			(addr==0xE8D1)||
+			(addr==0xEB1E)||
+			(addr==0xEBB1)||
+			(0)
+			)					ret = 0;	// 2b args
+	else if(
+			(addr==0xEB7E)||
+			(0)
+			)					ret = 1;	// ofs, 1b args
+	else if(
+			(addr==0x853A)||
+			(addr==0x8ADF)||
+			(addr==0x92BB)||
+			(addr==0x92CC)||
+			(addr==0x92D8)||
+			(addr==0x92E4)||
+			(addr==0xE63C)||
+			(addr==0xE661)||
+			(addr==0xE683)||
+			(addr==0xE691)||
+			(addr==0xE6A4)||
+			(addr==0xE6F1)||
+			(addr==0xE710)||
+			(addr==0xE75B)||
+			(addr==0xE775)||
+			(addr==0xE787)||
+			(addr==0xE78D)||
+			(addr==0xE879)||
+			(addr==0xEAEC)||
+			(addr==0xEB2A)||
+			(addr==0xEB60)||
+			(addr==0xEB68)||
+			(addr==0xEBD0)||
+			(0)
+
+			)					ret = 2;	// 1b arg
+	else if(
+			(addr==0x91BF)||
+			(addr==0xA31D)||
+			(addr==0xE6CD)||
+			(addr==0xE6D9)||
+			(addr==0xE6E5)||
+			(addr==0xE7EE)||
+			(addr==0xEB70)||
+			(addr==0xEAA7)||
+			(addr==0xED12)||
+			(0)
+			)					ret = 3;	// ofs arg
+	else if(
+			(addr==0xE799)||
+			(0)
+			)					ret = 4;	// 5b args
+	else if(
+			(addr==0x80D2)||
+			(addr==0x83E7)||
+			(addr==0x8481)||
+			(addr==0x890E)||
+			(addr==0x8952)||
+			(addr==0x8AF6)||
+			(addr==0x8B1B)||
+			(addr==0x8B4F)||
+			(addr==0x8BAA)||
+			(addr==0x8BC8)||
+			(addr==0x8C5B)||
+			(addr==0x8DDD)||
+			(addr==0x8DE6)||
+			(addr==0x8DF3)||
+			(addr==0x8DFC)||
+			(addr==0x8FAF)||
+			(addr==0x8FB5)||
+			(addr==0x8FC2)||
+			(addr==0x8FED)||
+			(addr==0x9025)||
+			(addr==0x90E6)||
+			(addr==0x9199)||
+			(addr==0x919F)||
+			(addr==0x91A6)||
+			(addr==0x91A8)||
+			(addr==0x91AF)||
+			(addr==0x91B1)||
+			(addr==0x91F2)||
+			(addr==0x9215)||
+			(addr==0x9229)||
+			(addr==0x923D)||
+			(addr==0x9257)||
+			(addr==0x926C)||
+			(addr==0x9282)||
+			(addr==0x941F)||
+			(addr==0x9474)||
+			(addr==0x9492)||
+			(addr==0x9498)||
+			(addr==0x94CF)||
+			(addr==0x94DA)||
+			(addr==0x9848)||
+			(addr==0x9A70)||
+			(addr==0x9A7D)||
+			(addr==0x9DA9)||
+			(addr==0x9E3B)||
+			(addr==0x9E4A)||
+			(addr==0x9E67)||
+			(addr==0x9F3D)||
+			(addr==0xA036)||
+			(addr==0xA196)||
+			(addr==0xA1F3)||
+			(addr==0xA213)||
+			(addr==0xA242)||
+			(addr==0xA316)||
+			(addr==0xA33C)||
+			(addr==0xA3A4)||
+			(addr==0xA3FE)||
+			(addr==0xA444)||
+			(addr==0xA449)||
+			(addr==0xA44F)||
+			(addr==0xA4DE)||
+			(addr==0xA4E7)||
+			(addr==0xA53B)||
+			(addr==0xA55A)||
+			(addr==0xA583)||
+			(addr==0xA602)||
+			(addr==0xA60B)||
+			(addr==0xA63E)||
+			(addr==0xA649)||
+			(addr==0xA67D)||
+			(addr==0xA688)||
+			(addr==0xA6C4)||
+			(addr==0xA6CF)||
+			(addr==0xA70B)||
+			(addr==0xA736)||
+			(addr==0xA741)||
+			(addr==0xA74D)||
+			(addr==0xA787)||
+			(addr==0xA792)||
+			(addr==0xA797)||
+			(addr==0xA7A8)||
+			(addr==0xA7AC)||
+			(addr==0xA81A)||
+			(addr==0xA823)||
+			(addr==0xA855)||
+			(addr==0xA85E)||
+			(addr==0xA894)||
+			(addr==0xA89F)||
+			(addr==0xA913)||
+			(addr==0xA91C)||
+			(addr==0xA984)||
+			(addr==0xB2B1)||
+			(addr==0xBAF9)||
+			(addr==0xBBF3)||
+			(addr==0xC3A2)||
+			(addr==0xC3A9)||
+			(addr==0xC4CD)||
+			(addr==0xC5E8)||
+			(addr==0xC623)||
+			(addr==0xCCE0)||
+			(addr==0xCD27)||
+			(addr==0xCEF1)||
+			(addr==0xD0B9)||
+			(addr==0xD347)||
+			(addr==0xD3C5)||
+			(addr==0xD3F1)||
+			(addr==0xD3F7)||
+			(addr==0xD3FC)||
+			(addr==0xD41A)||
+			(addr==0xD421)||
+			(addr==0xD429)||
+			(addr==0xDD7B)||
+			(addr==0xE560)||
+			(addr==0xE589)||
+			(addr==0xE77B)||
+			(addr==0xE780)||
+			(addr==0xE7FB)||
+			(addr==0xEAB6)||
+			(addr==0xEABE)||
+			(addr==0xEB40)||
+			(addr==0xEB4F)||
+			(addr==0xEB95)||
+			(addr==0xEBA9)||
+			(addr==0xEBE5)||
+			(addr==0xEBFD)||
+			(addr==0xEC0B)||
+			(addr==0xEC1E)||
+			(addr==0xEC39)||
+			(addr==0xEC49)||
+			(addr==0xEC7A)||
+			(addr==0xECB0)||
+			(addr==0xECBA)||
+			(addr==0xECC4)||
+			(addr==0xECD3)||
+			(addr==0xECE8)||
+			(addr==0xECF3)||
+			(0)
+			)					ret = 5;	// no args
+	else if(
+			(addr==0x8A9E)||
+			(0)
+			)					ret = 6;	// ofs, 2b args
+	else if(
+			(addr==0xE6B7)||
+			(0)
+			)					ret = 7;	// 1b, ofs args
+	else if(
+			(addr==0xE9CF)||
+			(0)
+			)					ret = 8;	// 1b + 3bxN args
+	else if(
+			(addr==0xE8FA)||
+			(0)
+			)					ret = 9;	// 3b args
+	else if(
+			(addr==0xE94B)||
+			(0)
+			)					ret = 10;	// 1b + 4bxN args
+	else if(
+			(addr==0xE885)||
+			(0)
+			)					ret = 11;	// 1b + 4bxN args
+	else						ret = -1;
 #endif
 	return ret;
 }
@@ -339,7 +782,6 @@ static ngb2_opcode_name(cmd) {
 static ngb2_select_name(tmp0,def0,def1,ren) {
 	if((Name(tmp0)=="")||(strstr(Name(tmp0),def0)==0)||(strstr(Name(tmp0),def1)==0)) {
 		MakeNameEx(tmp0,form(ren,tmp0),SN_CHECK|SN_NOWARN);
-		Wait();
 	} else
 	return Name(tmp0);
 }
@@ -379,7 +821,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 	Message("%sblock BEGINS at 0x%08x\n", tab, ea);
 #endif
 
-#ifndef DEBUG
+#ifndef MANUAL
 	while(stop==0)
 #endif
 	{
@@ -423,7 +865,12 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 			} else if((cmd==0x16)) {	// ofs arg, 2b args
 				tmp0 = Word(ea+1);
 				tmp1 = ngb2_get_address_name(ea+1,bank);
+#if REGION==REGION_JP
 				if((tmp0==0xE6)||(tmp0==0xE4)||(tmp0==0xEA)) {
+#endif
+#if REGION==REGION_EU
+				if((tmp0==0xE7)||(tmp0==0xE5)||(tmp0==0xEB)) {
+#endif
 					tmp2 = ngb2_get_address_name(ea+3,lvl_bank);
 #ifdef VERBOSE3
 					Message("%s#ptr%02X set to bank %d at 0x%08x\n", tab, tmp0, lvl_bank, ea);
@@ -433,7 +880,12 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 					tmp2 = ngb2_get_address_name(ea+3,bank);
 				ea = make_data_array(ea, 1, form("%s%s,%s",cmd_opc,tmp1,tmp2));
 				ea = make_offset_custom(ea, 0, ""); 				// no exec
+#if REGION==REGION_JP
 				if((tmp0==0xE6)||(tmp0==0xE4)||(tmp0==0xEA))
+#endif
+#if REGION==REGION_EU
+				if((tmp0==0xE7)||(tmp0==0xE5)||(tmp0==0xEB))
+#endif
 					ea = make_offset_custom_b(ea, lvl_bank, 0, ""); // no exec
 				else
 					ea = make_offset_custom(ea, 0, ""); 			// no exec
@@ -449,7 +901,12 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				ea = make_offset_custom(ea, 0, ""); 				// no exec
 				ea = make_data_array(ea, 1, "");
 			} else if((cmd==0x11)) {	// script jmp switch
+#if REGION==REGION_JP
 				if(ea==0x15732)	// bugfix for switch with incorrect number of elements
+#endif
+#if REGION==REGION_EU
+				if(ea==0x2172A)	// bugfix for switch with incorrect number of elements
+#endif
 					tmp1 = 1;
 				else
 					tmp1 = Byte(ea+1);
@@ -496,7 +953,7 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				tmp2=0;
 				while(tmp2<tmp1) {
 					tmp0 = Word(ea)+MK_FP(AskSelector(bank+1), 0);
-					ngb2_select_name(tmp0, "loc_","sub_","_ncase_%X");
+					tmp3 = ngb2_select_name(tmp0, "loc_","sub_","_ncase_%X");
 					ea = make_offset_custom(ea, 1, form("SCASE    %s",tmp3));
 					tmp2++;
 				}
@@ -607,7 +1064,12 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 					ea = make_data_array(ea, 1, "");
 				} else if(tmp3==3) {
 					// special case for scrip resource
+#if REGION==REGION_JP
 					if(Word(ea-2)==0xA31D) {
+#endif
+#if REGION==REGION_EU
+					if(Word(ea-2)==0xA30D) {
+#endif
 //						Message("test at 0x%08x\n",ea);
 						tmp0=Word(ea);
 						if(tmp0 < 0xC000)
@@ -674,15 +1136,19 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 #ifdef VERBOSE1
 	Message("%sblock ENDS at 0x%08x\n", tab, ea);
 #endif
+#ifdef MANUAL
+	return ea;
+#else
 	if(error)
 		return 0xBADC0DE;
 	else
 		return lvl_bank;
+#endif
 }
 
 static ngb2_script_selection(void) {
 	auto ea;
-#ifdef DEBUG
+#ifdef MANUAL
 	Jump(ngb2_opcode(ScreenEA(),"",-2));
 #else
 	Message("MANUAL DECOMPILATION START at 0x%08x\n", ea);
@@ -692,6 +1158,37 @@ static ngb2_script_selection(void) {
 }
 
 ///*
+static ngb2_apu_auto(mus_tbl_ea, music_tbl_len, mode) {
+	auto i, j, mus_ea, chnl_ea, chnl_cnt, mus_pref;
+	auto base = MK_FP(AskSelector(GetReg(mus_tbl_ea,"ds")), 0);
+
+	for(i=0;i<music_tbl_len;i++) {
+		auto tmp0 = mus_tbl_ea+(i<<1);
+		make_offset_custom(tmp0, 0, "");
+		mus_ea = Word(tmp0)+base;
+		if(mode==0) {
+			if(i<0xD)
+				MakeNameEx(mus_ea, form("_mus%X", i), SN_CHECK|SN_NOWARN);
+			else
+				MakeNameEx(mus_ea, form("_snd%02X", i), SN_CHECK|SN_NOWARN);
+			mus_pref = Name(mus_ea);
+			chnl_cnt = Byte(mus_ea);
+			mus_ea = make_data_array(mus_ea, 1, "");
+			for(j=0;j<chnl_cnt;j++) {
+				chnl_ea = Word(mus_ea)+base;
+				MakeNameEx(chnl_ea, form("%s_%c", mus_pref, 0x41+j), SN_CHECK|SN_NOWARN);
+//				ngb2_apu(chnl_ea);
+				mus_ea = make_offset_custom(mus_ea, 0, "");
+				mus_ea = make_data_array(mus_ea, 1, "");
+				Wait();
+			}
+		} else if (mode==1) {
+			MakeNameEx(mus_ea, form("_sample%02X", i), SN_CHECK|SN_NOWARN);
+			ngb2_apu(mus_ea);
+		}
+	}
+}
+
 static ngb2_apu_selection(void) {
 	Jump(ngb2_apu(ScreenEA()));
 }
@@ -731,21 +1228,13 @@ static ngb2_apu(ea) {
 	tmp2 = ea;
 	do {
 		if(ea != BADADDR) {
-			tmp0 = 0;
-			tmp1 = ea;
-			while((cmd = Byte(ea)) < 0xC0) {
-				tmp0++;
-				ea++;
+			while((cmd = Byte(ea)) < 0xE0) {
+				if((cmd&0xE0)==0xC0) {
+					ea = make_data_array(ea, 2, form("ADATAEX     $%02X,$%02X",Byte(ea),Byte(ea+1)));
+				} else {
+					ea = make_data_array(ea, 1, form("ADATA       $%02X",Byte(ea)));
+				}
 			}
-			if(tmp0>0) {
-				ea = make_data_array(tmp1, tmp0, "ADATA");
-				cmd = Byte(ea);
-			}
-			if((cmd&0xE0)==0xC0) {
-				ea = make_data_array(ea, 2, "ADATAEX");
-				cmd = Byte(ea);
-			}
-
 			cmd_opc = ngb2_apu_name(cmd);
 			if((cmd==0xFB)||(cmd==0xFF)) {	// RET/SSTOP
 				ea = make_data_array(ea, 1, cmd_opc);
@@ -758,9 +1247,13 @@ static ngb2_apu(ea) {
 			} else if((cmd==0xE0)||(cmd==0xE2)) {	// 2b args
 				ea = make_data_array(ea, 3, form("%s$%02X,$%02X",cmd_opc,Byte(ea+1),Byte(ea+2)));
 			} else if((cmd==0xF8)||(cmd==0xFA)) {	// ofs
-				tmp2 = Word(ea+1);
-				tmp1 = ngb2_get_address_name(ea+1,bank);
-				tmp0 = tmp2+MK_FP(AskSelector(bank+1), 0);
+//				tmp1 = ngb2_get_address_name(ea+1,bank);
+				tmp0 = Word(ea+1)+MK_FP(AskSelector(bank+1), 0);
+				if(cmd==0xF8)
+					MakeNameEx(tmp0, form("_aloc_%X", tmp0), SN_CHECK|SN_NOWARN);
+				else
+					MakeNameEx(tmp0, form("_asub_%X", tmp0), SN_CHECK|SN_NOWARN);
+				tmp1 = Name(tmp0);
 				ea = make_data_array(ea, 1, form("%s%s",cmd_opc,tmp1));
 				ea = make_offset_custom(ea, 0, "");	// no exec
 				if(cmd==0xF8) {
@@ -786,7 +1279,12 @@ static ngb2_apu(ea) {
 static ngb2_enemy_data_parse(void) {
 	auto ea = ScreenEA(), cmd, tmp0, size = 0, stop=0;
 	auto bank = GetReg(ea,"ds")-1;
+#if REGION==REGION_JP
 	auto flags_ea = 0x63B85;
+#endif
+#if REGION==REGION_EU
+	auto flags_ea = 0xB7B58;
+#endif
 	while (!stop) {
 		cmd=Byte(ea);
 		if(cmd&0x80) {
@@ -813,6 +1311,8 @@ static ngb2_enemy_data_parse(void) {
 static main(void) {
 #ifdef AUTO
 	Message("AUTO DECOMPILATION START\n");
+
+#if REGION==REGION_JP
 	ngb2_opcode(0x00008000,"",-2);	// _scr0
 	ngb2_opcode(0x0000801F,"",-2);	// _scr0/SW A
 	ngb2_opcode(0x00008140,"",-2);	// _scr0/select buster
@@ -1001,11 +1501,215 @@ static main(void) {
 	ngb2_opcode(0x00060FEE,"",-2);	// _scr_60FEE
 	ngb2_opcode(0x0006134E,"",-2);	// _scrB
 	ngb2_opcode(0x00061365,"",-2);	// _scr_61365
+#endif
+
+#if REGION==REGION_EU
+	ngb2_opcode(0x00008000,"",-2);	// _scr0
+	ngb2_opcode(0x0000801F,"",-2);	// _scr0/SW A
+	ngb2_opcode(0x00008140,"",-2);	// _scr0/select buster
+	ngb2_opcode(0x00008146,"",-2);	// _scr0/secret menu
+	ngb2_opcode(0x00008A7B,"",-2);	// _scr0/unref
+	ngb2_opcode(0x00008D29,"",-2);	// _scr0/unreachable sloc -1
+	ngb2_opcode(0x00008D88,"",-2);	// _scr0/unreachable sloc A
+	ngb2_opcode(0x00008DA0,"",-2);	// _scr0/unreachable sloc B
+	ngb2_opcode(0x00008E4F,"",-2);	// _scr0/unreachable sloc Ba
+	ngb2_opcode(0x00008E55,"",-2);	// _scr0/unreachable sloc C
+	ngb2_opcode(0x00008F6A,"",-2);	// _scr0/skip to title
+	ngb2_opcode(0x00009287,"",-2);	// _scr7
+	ngb2_opcode(0x000092BA,"",-2);	// _scr7/SW A
+	ngb2_opcode(0x0000935F,"",-2);	// _scr_935F
+
+	ngb2_opcode(0x00020000,"",-2);	// _scr1
+	ngb2_opcode(0x00020229,"",-2);	// _scr1/SW back A
+	ngb2_opcode(0x0002037D,"",-2);	// _scr2
+	ngb2_opcode(0x0002080F,"",-2);	// _scr3
+	ngb2_opcode(0x0002117E,"",-2);	// _scr4
+	ngb2_opcode(0x0002156F,"",-2);	// _scr5
+	ngb2_opcode(0x00021D34,"",-2);	// _scr6
+	ngb2_opcode(0x00021F46,"",-2);	// _scr_15F56
+	ngb2_opcode(0x00022101,"",-2);	// _scr_16111
+	ngb2_opcode(0x00022152,"",-2);	// _scr_16111/unreachable sloc A
+	ngb2_opcode(0x00022247,"",-2);	// _scrC
+	ngb2_opcode(0x00022935,"",-2);	// _scrD
+
+	ngb2_opcode(0x00050000,"",-2);	// _scr1A
+	ngb2_opcode(0x00050009,"",-2);	// _scr1A/unreachable sloc A
+	ngb2_opcode(0x00050014,"",-2);	// _scr1A/unreachable sloc B
+	ngb2_opcode(0x0005006C,"",-2);	// _scr_2C06C
+	ngb2_opcode(0x00050089,"",-2);	// _scr_2C089
+	ngb2_opcode(0x000500BF,"",-2);	// _scr_2C0BF
+	ngb2_opcode(0x000500C5,"",-2);	// _scr_2C0C5
+	ngb2_opcode(0x00050160,"",-2);	// _scr_/SW UP A
+	ngb2_opcode(0x0005017C,"",-2);	// _scr_/SW UP B
+	ngb2_opcode(0x00050198,"",-2);	// _scr_/SW UP C
+	ngb2_opcode(0x000501CE,"",-2);	// _scr_2C1CE
+	ngb2_opcode(0x00050228,"",-2);	// _scr_/unreachable SW
+	ngb2_opcode(0x00050233,"",-2);	// _scr_2C233
+	ngb2_opcode(0x00050649,"",-2);	// _scr22
+	ngb2_opcode(0x00050658,"",-2);	// _scr22/SW UP A
+	ngb2_opcode(0x00050698,"",-2);	// _scr_2C698
+	ngb2_opcode(0x000506D0,"",-2);	// _scr_2C6D0
+	ngb2_opcode(0x000506D9,"",-2);	// _scr_2C6D9
+	ngb2_opcode(0x00050982,"",-2);	// _scr2E
+	ngb2_opcode(0x0005098D,"",-2);	// _scr2E/unreachable SW
+	ngb2_opcode(0x00050A40,"",-2);	// _scr_2CA40
+	ngb2_opcode(0x00050A66,"",-2);	// _scr_2CA40/unreachable sloc A
+	ngb2_opcode(0x00050A9B,"",-2);	// _scr_2CA9B
+	ngb2_opcode(0x00050AA1,"",-2);	// _scr_2CAA1
+	ngb2_opcode(0x00050F0B,"",-2);	// _scr_2CAA1/unreachable SW A
+	ngb2_opcode(0x00050F6B,"",-2);	// _scr_2CAA1/unreachable SW B
+	ngb2_opcode(0x00050F89,"",-2);	// _scr_2CAA1/unreachable sloc A
+	ngb2_opcode(0x00050FD9,"",-2);	// _scr_2CAA1/unreachable sloc B
+	ngb2_opcode(0x00050FE3,"",-2);	// _scr_2CAA1/unreachable sloc C
+	ngb2_opcode(0x00051002,"",-2);	// _scr_2CAA1/unreachable sloc D
+	ngb2_opcode(0x0005102E,"",-2);	// _scr_2CAA1/unreachable sloc E
+	ngb2_opcode(0x0005105C,"",-2);	// _scr_2CAA1/unreachable sloc F
+	ngb2_opcode(0x0005108A,"",-2);	// _scr_2CAA1/unreachable sloc G
+	ngb2_opcode(0x000510B8,"",-2);	// _scr_2CAA1/unreachable sloc H
+	ngb2_opcode(0x00051103,"",-2);	// _scr_2CAA1/unreachable sloc I
+	ngb2_opcode(0x000510D6,"",-2);	// _scr_2D0D6
+	ngb2_opcode(0x00051122,"",-2);	// _scr_2D122
+	ngb2_opcode(0x00051139,"",-2);	// _scr_2D139
+	ngb2_opcode(0x00050EFC,"",-2);	// _scr2F
+	ngb2_opcode(0x000518C8,"",-2);	// _scr30
+	ngb2_opcode(0x000518D7,"",-2);	// _scr30/unreachable SW A
+	ngb2_opcode(0x000519A1,"",-2);	// _scr30/unreachable SW B
+	ngb2_opcode(0x000519BC,"",-2);	// _scr_2D9BC
+
+	ngb2_opcode(0x00068000,"",-2);	// _scr13
+	ngb2_opcode(0x00068068,"",-2);	// _scr_38068
+	ngb2_opcode(0x00068096,"",-2);	// _scr_38096
+	ngb2_opcode(0x0006809C,"",-2);	// _scr_3809C
+	ngb2_opcode(0x00068237,"",-2);	// _scr14
+	ngb2_opcode(0x00068282,"",-2);	// _scr_38382
+	ngb2_opcode(0x000682C3,"",-2);	// _scr15
+	ngb2_opcode(0x000682CC,"",-2);	// _scr15/unreachable SW A
+	ngb2_opcode(0x000682EB,"",-2);	// _scr_382EB
+	ngb2_opcode(0x00068353,"",-2);	// _scr16
+	ngb2_opcode(0x0006835C,"",-2);	// _scr16/unreachable SW A
+	ngb2_opcode(0x00068381,"",-2);	// _scr_38381
+	ngb2_opcode(0x00068435,"",-2);	// _scr1B
+	ngb2_opcode(0x000685B2,"",-2);	// _scr1D
+	ngb2_opcode(0x000685D4,"",-2);	// _scr_385D4
+	ngb2_opcode(0x000685F6,"",-2);	// _scr_385F6
+	ngb2_opcode(0x000685FC,"",-2);	// _scr_385FC
+	ngb2_opcode(0x000686DF,"",-2);	// _scr1E
+	ngb2_opcode(0x0006873C,"",-2);	// _scr_3873C
+	ngb2_opcode(0x00068966,"",-2);	// _scr1F
+	ngb2_opcode(0x000689C3,"",-2);	// _scr_389C3
+	ngb2_opcode(0x00068C2D,"",-2);	// _scrE
+	ngb2_opcode(0x00068C46,"",-2);	// _scrE/unreachable sloc A
+	ngb2_opcode(0x00068D13,"",-2);	// _scr20
+	ngb2_opcode(0x00068D2C,"",-2);	// _scr20/unreachable sloc A
+	ngb2_opcode(0x00068D3D,"",-2);	// _scr_38D4B/SW UP
+	ngb2_opcode(0x00068D4B,"",-2);	// _scr_38D4B
+	ngb2_opcode(0x00068ED9,"",-2);	// _scr21
+	ngb2_opcode(0x00068EE2,"",-2);	// _scr21/unreachable SW
+	ngb2_opcode(0x00068F51,"",-2);	// _scr_38F51
+	ngb2_opcode(0x00068F79,"",-2);	// _scr_38F79
+	ngb2_opcode(0x00068F7F,"",-2);	// _scr_38F7F
+	ngb2_opcode(0x000690FD,"",-2);	// _scr2B
+	ngb2_opcode(0x00069106,"",-2);	// _scr2B/unreachable SW A
+	ngb2_opcode(0x00069132,"",-2);	// _scr_39132
+	ngb2_opcode(0x0006925F,"",-2);	// _scr2C
+	ngb2_opcode(0x00069268,"",-2);	// _scr2C/unreachable SW A
+	ngb2_opcode(0x000692BE,"",-2);	// _scr_392BE
+	ngb2_opcode(0x00069452,"",-2);	// _scr23
+	ngb2_opcode(0x000694A8,"",-2);	// _scr_394A8
+	ngb2_opcode(0x000696E2,"",-2);	// _scr24
+	ngb2_opcode(0x0006974F,"",-2);	// _scr24/unreachable SW A
+	ngb2_opcode(0x000699D1,"",-2);	// _scr25
+	ngb2_opcode(0x000699DA,"",-2);	// _scr25/unreachable SW A
+	ngb2_opcode(0x00069A04,"",-2);	// _scr_39A04
+	ngb2_opcode(0x00069CCE,"",-2);	// _scr26
+	ngb2_opcode(0x00069D43,"",-2);	// _scr_39D43
+	ngb2_opcode(0x00069F96,"",-2);	// _scr27
+	ngb2_opcode(0x00069F9F,"",-2);	// _scr27/unreachable SW A
+	ngb2_opcode(0x00069FEE,"",-2);	// _scr_39FEE
+	ngb2_opcode(0x0006A155,"",-2);	// _scr28
+	ngb2_opcode(0x0006A1E4,"",-2);	// _scr_3A1E4
+	ngb2_opcode(0x0006A2D0,"",-2);	// _scr29
+	ngb2_opcode(0x0006A2D9,"",-2);	// _scr29/unreachable SW A
+	ngb2_opcode(0x0006A32B,"",-2);	// _scr29/SW UP A
+	ngb2_opcode(0x0006A340,"",-2);	// _scr_3A340
+	ngb2_opcode(0x0006A362,"",-2);	// _scr_3A362
+	ngb2_opcode(0x0006A386,"",-2);	// _scr_3A386
+	ngb2_opcode(0x0006A38C,"",-2);	// _scr_3A38C
+	ngb2_opcode(0x0006A392,"",-2);	// _scr_3A392
+	ngb2_opcode(0x0006A398,"",-2);	// _scr_3A398
+	ngb2_opcode(0x0006A551,"",-2);	// _scr2D
+	ngb2_opcode(0x0006A720,"",-2);	// _scrF
+	ngb2_opcode(0x0006A729,"",-2);	// _scrF/unreachable SW A
+	ngb2_opcode(0x0006A777,"",-2);	// _scr10
+	ngb2_opcode(0x0006A8FF,"",-2);	// _scr17
+	ngb2_opcode(0x0006A909,"",-2);	// _scr_3A909
+	ngb2_opcode(0x0006A918,"",-2);	// _scr_3A909/unreachable SW A
+	ngb2_opcode(0x0006A978,"",-2);	// _scr_3A978
+	ngb2_opcode(0x0006A9AD,"",-2);	// _scr_3A9AD
+	ngb2_opcode(0x0006A9A7,"",-2);	// _scr_3A9A7
+	ngb2_opcode(0x0006A5B5,"",-2);	// _scr_3A5B5
+	ngb2_opcode(0x0006A5D7,"",-2);	// _scr_3A5D7
+	ngb2_opcode(0x0006A5DD,"",-2);	// _scr_3A5DD
+	ngb2_opcode(0x0006AC39,"",-2);	// _scr18
+	ngb2_opcode(0x0006ACB4,"",-2);	// _scr_3ACB4
+	ngb2_opcode(0x0006ACDE,"",-2);	// _scr_3ACDE
+	ngb2_opcode(0x0006ACE4,"",-2);	// _scr_3ACE4
+	ngb2_opcode(0x0006AFDB,"",-2);	// _scr19
+	ngb2_opcode(0x0006B01D,"",-2);	// _scr_3B01D
+	ngb2_opcode(0x0006B03F,"",-2);	// _scr_3B03F
+	ngb2_opcode(0x0006B045,"",-2);	// _scr_3B045
+	ngb2_opcode(0x0006B204,"",-2);	// _scr2A
+	ngb2_opcode(0x0006B20D,"",-2);	// _scr2A/unreachable SW A
+	ngb2_opcode(0x0006B255,"",-2);	// _scr_3B255
+	ngb2_opcode(0x0006B275,"",-2);	// _scr_3B275
+	ngb2_opcode(0x0006B27B,"",-2);	// _scr_3B27B
+	ngb2_opcode(0x0006B600,"",-2);	// _scr1C
+	ngb2_opcode(0x0006B60D,"",-2);	// _scr1C/unreachable SW A
+	ngb2_opcode(0x0006B65D,"",-2);	// _scr_3B65D
+	ngb2_opcode(0x0006B687,"",-2);	// _scr_3B687
+	ngb2_opcode(0x0006B68D,"",-2);	// _scr_3B68D
+	ngb2_opcode(0x0006B693,"",-2);	// _scr_3B693
+	ngb2_opcode(0x0006B755,"",-2);	// _scr_3B755
+	ngb2_opcode(0x0006BA93,"",-2);	// _scr_3BA93
+	ngb2_opcode(0x0006BABD,"",-2);	// _scr_3BABD
+	ngb2_opcode(0x0006BAC3,"",-2);	// _scr_3BAC3
+	ngb2_opcode(0x0006BB89,"",-2);	// _scr11
+	ngb2_opcode(0x0006BB94,"",-2);	// _scr11/unreachable SW A
+
+	ngb2_opcode(0x000B41F8,"",-2);	// _scr12
+	ngb2_opcode(0x000B427F,"",-2);	// _scr8
+	ngb2_opcode(0x000B429C,"",-2);	// _scr8/unreachable sloc A
+	ngb2_opcode(0x000B42A0,"",-2);	// _scr_hit_anim
+	ngb2_opcode(0x000B42CC,"",-2);	// _scr_602CB
+	ngb2_opcode(0x000B42DC,"",-2);	// _scr_602DB
+	ngb2_opcode(0x000B42EF,"",-2);	// _scr_602EE
+	ngb2_opcode(0x000B4307,"",-2);	// _scr_60306
+	ngb2_opcode(0x000B4C83,"",-2);	// _scr9
+	ngb2_opcode(0x000B4C92,"",-2);	// _scr_60C91
+	ngb2_opcode(0x000B4FB4,"",-2);	// _scrA
+	ngb2_opcode(0x000B4FCC,"",-2);	// _scr_60FCB
+	ngb2_opcode(0x000B4FDC,"",-2);	// _scr_60FDB
+	ngb2_opcode(0x000B4FEF,"",-2);	// _scr_60FEE
+	ngb2_opcode(0x000B534F,"",-2);	// _scrB
+	ngb2_opcode(0x000B5366,"",-2);	// _scr_61365
+#endif
 
 	Message("AUTO DECOMPILATION END\n");
 #else
 	AddHotkey("Shift-O", "ngb2_script_selection");
 #endif
+
+#ifdef AUTO
+#if REGION==REGION_JP
+	ngb2_apu_auto(0x5342D,49,0);
+	ngb2_apu_auto(0x53345,92,1);
+#endif
+#if REGION==REGION_EU
+	ngb2_apu_auto(0x9B4B0,49,0);
+	ngb2_apu_auto(0x9B398,92,1);
+#endif
+#endif
+
 	AddHotkey("Shift-I", "ngb2_apu_selection");
 //	AddHotkey("Shift-I", "ngb2_enemy_data_parse");
 }

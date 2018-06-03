@@ -35,7 +35,10 @@ loc_60020:
 		LDA		#$30
 		STA		_ppu_ctrl_shadow
 		STA		_PPU_CTRL
+; REGION, the US proto version enables the left tile colums for both BG and SPRITES
 		LDA		#$18
+;		LDA		#$1E
+; -
 		STA		_ppu_mask_req
 		STA		_PPU_MASK
 		LDA		#$00
@@ -1745,8 +1748,15 @@ loc_60DE8:
 loc_60E12:
 		LSR		_var0
 		BCC		loc_60E3D
+; REGION, missing in the US proto version, this is a BUG fix for sprite
+; glitches when clipping out sprites does not write X position in RAM
+; buffer, not initialized it will contain a previous random garbage.
+; so clipped sprite may appear randomly.
+; this is also an evidence that the US proto were early version of the game
+; (later EU version is based on it)
 		LDA		#$00
 		STA		_ppu_spr_buf+3,Y
+; -
 		LDA		_scr_trds_y_pos_lo+3
 		CLC
 		ADC		byte_60E71,X
@@ -6634,8 +6644,10 @@ loc_63032:
 		INY
 		LDX		_spr_buf_pos
 loc_6306F:
+; REGION, this also missing in the US proto version
 		LDA		#$00
 		STA		_ppu_spr_buf+3,X
+; -
 		LDA		(_ptr08),Y
 		CLC
 		ADC		_tmp2
@@ -7842,8 +7854,10 @@ _spr_clip_insert:
 loc_6373A:
 		DEC		_tmp2
 		LDX		_spr_buf_pos
+; REGION, this also missing in the US proto version
 		LDA		#$00
 		STA		_ppu_spr_buf+3,X
+; -
 		TAY
 		LDA		(_ptr08),Y
 		STA		_var0

@@ -258,7 +258,6 @@ _tlm_title_logo:
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$73,$EF,$28,$38,$FF,$FF,$FF,$FC,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$66,$29,$39,$54,$64,$ED,$FD,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-; REGION, "HAL lab." changed in the US proto version
 _tlm_title_text:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -277,7 +276,10 @@ _tlm_title_text:
 		.BYTE	$FF,$FF,$FF,$FF,$50,$55,$53,$48,$FF,$53,$54,$41,$52,$54,$FF,$42,$55,$54,$54,$4F,$4E,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+; REGION, "HAL lab." changed in the US proto version
 		.BYTE	$20,$20,$20,$20,$42,$59,$20,$48,$41,$4C,$20,$4C,$41,$42,$4F,$52,$41,$54,$4F,$52,$59,$20,$20,$20
+;		.BYTE	$FF,$FF,$FF,$42,$59,$FF,$48,$41,$4C,$FF,$41,$4D,$45,$52,$49,$43,$41,$2C,$49,$4E,$43,$2E,$FF,$FF
+; -
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_title_input:
@@ -4887,13 +4889,19 @@ _tlm4_score_unused:
 _tlm5_kanji_unused:
 		INCBIN	"..\tlm\tlm5.pak"
 _tlm6_copyrights:
-		INCBIN	"..\tlm\tlm6_jp.pak"
 ; REGION, typo fixed partially in the EU version, however, only one, not the second one lol
+		INCBIN	"..\tlm\tlm6_jp.pak"
 ;		INCBIN	"..\tlm\tlm6_eu.pak"
+; REGION, same typos as in the JP version, HAL lab changed to HAL america
+;		INCBIN	"..\tlm\tlm6_us.pak"
+; -
 _tlm7_staff:
 		INCBIN	"..\tlm\tlm7.pak"
 _tlm8_HAL:
-		INCBIN	"..\tlm\tlm8.pak"
+; REGION, different type of HAL logo for US region
+		INCBIN	"..\tlm\tlm8_halA.pak"
+;		INCBIN	"..\tlm\tlm8_halB.pak"
+; -
 _tlm9_secret_menu:
 		INCBIN	"..\tlm\tlm9.pak"
 
