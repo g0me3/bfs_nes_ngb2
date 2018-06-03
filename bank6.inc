@@ -6851,7 +6851,7 @@ _sample4B:
 		.WORD	_sample4B
 		.BYTE	$FF		; ASTOP
 _sample4E:
-		.BYTE	-$7D,-$B3,-$FE,-$7E,-$B5,-$FC,-$B6,-$FC,-$B7,-$FA	; ADATA
+		.BYTE	$83,$4D,$02,$82,$4B,$04,$4A,$04,$49,$06	; ADATA
 byte_532D7:
 		.BYTE	$22,$02,$2E,$02,$2E,$02,$22,$02
 		.BYTE	$F8		; AJMP	byte_532D7

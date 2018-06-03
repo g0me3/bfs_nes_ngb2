@@ -3423,7 +3423,7 @@ _pause_menu_anim:
 		ADC		_tmp0
 		LDX		#$90
 		LDY		#$B8
-		JMP		sub_6371B
+		JMP		_spr_clip_pause_player_insert
 off_15F18:
 		.WORD	_nsub_16444
 		.WORD	_nsub_164DE

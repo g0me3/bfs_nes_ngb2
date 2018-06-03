@@ -1,0 +1,1 @@
+for %%f in (*.pak) do ngb2dec %%f %%~nf.unp

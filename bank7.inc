@@ -5,6 +5,9 @@
 
 ;		INCBIN "..\copyrights.txt"
 
+; REGION: for some reason, EU version has this byte added here
+;		.BYTE	$FF
+
 ; =============== S U B R O U T I N E =======================================
 RESET:
 		INC		RESET
@@ -6620,6 +6623,10 @@ loc_63032:
 		INY
 		LDA		(_ptr06),Y
 		STA		_ptr08+1
+; REGION: replaced in the EU version, using the clipped version of the
+; sprite insert routine. this fixes the original japanese version BUG
+; when object clipped with the left corner of the screen appears at the
+; right side.
 		DEC		_tmp2
 		LDY		#$00
 		LDA		(_ptr08),Y
@@ -6652,6 +6659,12 @@ loc_6306F:
 		DEC		_var0
 		BNE		loc_6306F
 		STX		_spr_buf_pos
+; -
+;		LDA		#$00
+;		STA		_tmpD8
+;		STA		_tmpD9
+;		JSR		_spr_clip_insert_ex
+; -
 locret_6309C:
 		RTS
 loc_6309D:
@@ -7797,23 +7810,31 @@ loc_6370F:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_6371B:
+_spr_clip_pause_player_insert:
 		STA		_tmp0
 		TYA
 		PHA
 		LDY		_tmp0
-		LDA		off_63D0D,Y
+		LDA		_spr_pause_player_lib_lo,Y
 		STA		_ptr08
-		LDA		off_63D21,Y
+		LDA		_spr_pause_player_lib_hi,Y
 		STA		_ptr08+1
 		PLA
 		TAY
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
 _spr_clip_insert:
 		STX		_tmp1
 		STY		_tmp2
+
+; REGION: replaced in the US version, linked with optmized portion of the code above.
 		TYA
+; =============== S U B R O U T I N E =======================================
+;_spr_clip_insert_ex:
+;		LDA		_tmp2
+; -
 		BNE		loc_6373A
 		LDA		_tmpD9
 		EOR		#$01
@@ -8126,9 +8147,13 @@ loc_63884:
 		PHA
 		LDA		_ppu_mask_shadow
 		BNE		.res_send_hor_queue
+; REGION, replaced in the EU version
 		LDA		_ppu_ctrl_shadow
 		PHA
 		JSR		_ppu_nmi_off
+;		LDA		#$01
+;		STA		_ppu_forbid_flag
+; -
 		LDA		_ppu_ctrl_shadow
 		STA		_PPU_CTRL
 		LDA		_ptr08+1
@@ -8148,8 +8173,12 @@ loc_638B3:
 loc_638C3:
 		DEX
 		BNE		loc_638B3
+; REGION, replaced in the EU version
 		PLA
 		JSR		_ppu_ctrl_write
+;		LDA		#$00
+;		STA		_ppu_forbid_flag
+; -
 		JMP		loc_638EC
 .res_send_hor_queue:
 		JSR		_ppu_queue_putw
@@ -8199,9 +8228,13 @@ _vertical_mode:
 		PHA				; *--
 		LDA		_ppu_mask_shadow ; *--
 		BNE		.res_send_vert_queue	; *--
+; REGION, replaced in the EU version
 		LDA		_ppu_ctrl_shadow ; *--
 		PHA				; *--
 		JSR		_ppu_nmi_off	; *--
+;		LDA		#$01
+;		STA		_ppu_forbid_flag
+; -
 		LDA		_ppu_ctrl_shadow ; *--
 		ORA		#$04		; *--
 		STA		_PPU_CTRL	; *--
@@ -8226,8 +8259,12 @@ loc_63932:
 loc_63947:
 		DEX				; *--
 		BNE		loc_63932	; *--
+; REGION, replaced in the EU version
 		PLA				; *--
 		JSR		_ppu_ctrl_write	; *--
+;		LDA		#$00
+;		STA		_ppu_forbid_flag
+; -
 		JMP		loc_63975	; *--
 .res_send_vert_queue:
 		JSR		_ppu_queue_putw	; *--
@@ -8434,8 +8471,13 @@ NMI:
 		STA		_PPU_OAM_ADDR
 		LDA		#$02
 		STA		_PPU_OAM_DMA
+; REGION, added in EU version
+;		LDA		_ppu_forbid_flag
+;		BNE
+; -
 		JSR		_ppu_dequeue
 		JSR		_ppu_set_scroll
+;loc_63AA1:
 		INC		_nmi_flag
 		INC		_nmi_counter
 		JSR		_get_input
@@ -8906,7 +8948,7 @@ _spr_res_lib_hi:
 		.BYTE	>[_spr_res_lib1A]	; *--
 		.BYTE	>[_spr_res_lib1A]
 
-off_63D0D:
+_spr_pause_player_lib_lo:
 		.BYTE	<[_spr_raw_lib08_0A]
 		.BYTE	<[_spr_raw_lib08_09]
 		.BYTE	<[_spr_raw_lib08_0A]
@@ -8927,7 +8969,7 @@ off_63D0D:
 		.BYTE	<[_spr_raw_lib08_49]
 		.BYTE	<[_spr_raw_lib08_4A]
 		.BYTE	<[_spr_raw_lib08_4B]
-off_63D21:
+_spr_pause_player_lib_hi:
 		.BYTE	>[_spr_raw_lib08_0A]
 		.BYTE	>[_spr_raw_lib08_09]
 		.BYTE	>[_spr_raw_lib08_0A]

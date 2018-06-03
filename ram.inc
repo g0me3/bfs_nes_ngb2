@@ -75,6 +75,9 @@ _apu_play_delayed_req:
 		.BYTE	0
 _prg_bank:
 		.BYTE	0
+; REGION, new var added in the EU version
+;_ppu_forbid_flag:
+;		.BYTE	0
 _ppu_queue_head:
 		.BYTE	0
 _ppu_queue_tail:
