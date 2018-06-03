@@ -15,8 +15,9 @@
 #define REGION_EU	02
 #define REGION_JP	03
 
-#define REGION REGION_JP
-//#define REGION	REGION_EU
+//#define REGION REGION_JP
+#define REGION REGION_EU
+//#define REGION REGION_US
 
 static ngb2_get_native_sub_args(addr) {
 	auto ret;
@@ -469,16 +470,16 @@ static ngb2_get_native_sub_args(addr) {
 #if REGION==REGION_US
 	if	   (
 			(addr==0x826F)||
-			(addr==0xE61D)||
-			(addr==0xE73D)||
-			(addr==0xE85D)||
-			(addr==0xE8D1)||
-			(addr==0xEB1E)||
-			(addr==0xEBB1)||
+			(addr==0xE618)||
+			(addr==0xE738)||
+			(addr==0xE858)||
+			(addr==0xE8CC)||
+			(addr==0xEB19)||
+			(addr==0xEBAC)||
 			(0)
 			)					ret = 0;	// 2b args
 	else if(
-			(addr==0xEB7E)||
+			(addr==0xEB79)||
 			(0)
 			)					ret = 1;	// ofs, 1b args
 	else if(
@@ -488,40 +489,40 @@ static ngb2_get_native_sub_args(addr) {
 			(addr==0x92CC)||
 			(addr==0x92D8)||
 			(addr==0x92E4)||
-			(addr==0xE63C)||
-			(addr==0xE661)||
-			(addr==0xE683)||
-			(addr==0xE691)||
-			(addr==0xE6A4)||
-			(addr==0xE6F1)||
-			(addr==0xE710)||
-			(addr==0xE75B)||
-			(addr==0xE775)||
-			(addr==0xE787)||
-			(addr==0xE78D)||
-			(addr==0xE879)||
-			(addr==0xEAEC)||
-			(addr==0xEB2A)||
-			(addr==0xEB60)||
-			(addr==0xEB68)||
-			(addr==0xEBD0)||
+			(addr==0xE637)||
+			(addr==0xE65C)||
+			(addr==0xE67E)||
+			(addr==0xE68C)||
+			(addr==0xE69F)||
+			(addr==0xE6EC)||
+			(addr==0xE70B)||
+			(addr==0xE756)||
+			(addr==0xE770)||
+			(addr==0xE782)||
+			(addr==0xE788)||
+			(addr==0xE874)||
+			(addr==0xEAE7)||
+			(addr==0xEB25)||
+			(addr==0xEB5B)||
+			(addr==0xEB63)||
+			(addr==0xEBCB)||
 			(0)
 
 			)					ret = 2;	// 1b arg
 	else if(
 			(addr==0x91BF)||
-			(addr==0xA31D)||
-			(addr==0xE6CD)||
-			(addr==0xE6D9)||
-			(addr==0xE6E5)||
-			(addr==0xE7EE)||
-			(addr==0xEB70)||
-			(addr==0xEAA7)||
-			(addr==0xED12)||
+			(addr==0xA30D)||
+			(addr==0xE6C8)||
+			(addr==0xE6D4)||
+			(addr==0xE6E0)||
+			(addr==0xE7E9)||
+			(addr==0xEB6B)||
+			(addr==0xEAA2)||
+			(addr==0xED0D)||
 			(0)
 			)					ret = 3;	// ofs arg
 	else if(
-			(addr==0xE799)||
+			(addr==0xE794)||
 			(0)
 			)					ret = 4;	// 5b args
 	else if(
@@ -569,53 +570,53 @@ static ngb2_get_native_sub_args(addr) {
 			(addr==0x9A70)||
 			(addr==0x9A7D)||
 			(addr==0x9DA9)||
-			(addr==0x9E3B)||
-			(addr==0x9E4A)||
-			(addr==0x9E67)||
+			(addr==0x9E2B)||
+			(addr==0x9E3A)||
+			(addr==0x9E57)||
 			(addr==0x9F3D)||
-			(addr==0xA036)||
-			(addr==0xA196)||
-			(addr==0xA1F3)||
-			(addr==0xA213)||
+			(addr==0xA026)||
+			(addr==0xA186)||
+			(addr==0xA1E3)||
+			(addr==0xA203)||
 			(addr==0xA242)||
-			(addr==0xA316)||
-			(addr==0xA33C)||
-			(addr==0xA3A4)||
+			(addr==0xA318)||
+			(addr==0xA32C)||
+			(addr==0xA394)||
 			(addr==0xA3FE)||
-			(addr==0xA444)||
+			(addr==0xA434)||
 			(addr==0xA449)||
-			(addr==0xA44F)||
-			(addr==0xA4DE)||
-			(addr==0xA4E7)||
+			(addr==0xA43F)||
+			(addr==0xA4CE)||
+			(addr==0xA4D7)||
 			(addr==0xA53B)||
-			(addr==0xA55A)||
-			(addr==0xA583)||
-			(addr==0xA602)||
-			(addr==0xA60B)||
-			(addr==0xA63E)||
-			(addr==0xA649)||
-			(addr==0xA67D)||
-			(addr==0xA688)||
-			(addr==0xA6C4)||
-			(addr==0xA6CF)||
-			(addr==0xA70B)||
-			(addr==0xA736)||
-			(addr==0xA741)||
+			(addr==0xA54A)||
+			(addr==0xA573)||
+			(addr==0xA5F2)||
+			(addr==0xA5FB)||
+			(addr==0xA62E)||
+			(addr==0xA639)||
+			(addr==0xA66D)||
+			(addr==0xA678)||
+			(addr==0xA6B4)||
+			(addr==0xA6BF)||
+			(addr==0xA6FB)||
+			(addr==0xA726)||
+			(addr==0xA731)||
 			(addr==0xA74D)||
-			(addr==0xA787)||
-			(addr==0xA792)||
+			(addr==0xA777)||
+			(addr==0xA794)||
 			(addr==0xA797)||
 			(addr==0xA7A8)||
-			(addr==0xA7AC)||
-			(addr==0xA81A)||
-			(addr==0xA823)||
-			(addr==0xA855)||
-			(addr==0xA85E)||
-			(addr==0xA894)||
-			(addr==0xA89F)||
-			(addr==0xA913)||
-			(addr==0xA91C)||
-			(addr==0xA984)||
+			(addr==0xA79C)||
+			(addr==0xA80A)||
+			(addr==0xA813)||
+			(addr==0xA845)||
+			(addr==0xA84E)||
+			(addr==0xA884)||
+			(addr==0xA88F)||
+			(addr==0xA903)||
+			(addr==0xA90C)||
+			(addr==0xA974)||
 			(addr==0xB2B1)||
 			(addr==0xBAF9)||
 			(addr==0xBBF3)||
@@ -626,41 +627,41 @@ static ngb2_get_native_sub_args(addr) {
 			(addr==0xC623)||
 			(addr==0xCCE0)||
 			(addr==0xCD27)||
-			(addr==0xCEF1)||
-			(addr==0xD0B9)||
-			(addr==0xD347)||
-			(addr==0xD3C5)||
-			(addr==0xD3F1)||
+			(addr==0xCEEC)||
+			(addr==0xD0B4)||
+			(addr==0xD342)||
+			(addr==0xD3C0)||
+			(addr==0xD3EC)||
+			(addr==0xD3F2)||
 			(addr==0xD3F7)||
-			(addr==0xD3FC)||
-			(addr==0xD41A)||
-			(addr==0xD421)||
-			(addr==0xD429)||
-			(addr==0xDD7B)||
-			(addr==0xE560)||
-			(addr==0xE589)||
+			(addr==0xD415)||
+			(addr==0xD41C)||
+			(addr==0xD424)||
+			(addr==0xDD76)||
+			(addr==0xE55B)||
+			(addr==0xE584)||
+			(addr==0xE776)||
 			(addr==0xE77B)||
-			(addr==0xE780)||
-			(addr==0xE7FB)||
-			(addr==0xEAB6)||
-			(addr==0xEABE)||
-			(addr==0xEB40)||
-			(addr==0xEB4F)||
-			(addr==0xEB95)||
-			(addr==0xEBA9)||
-			(addr==0xEBE5)||
-			(addr==0xEBFD)||
-			(addr==0xEC0B)||
-			(addr==0xEC1E)||
-			(addr==0xEC39)||
-			(addr==0xEC49)||
-			(addr==0xEC7A)||
-			(addr==0xECB0)||
-			(addr==0xECBA)||
-			(addr==0xECC4)||
-			(addr==0xECD3)||
-			(addr==0xECE8)||
-			(addr==0xECF3)||
+			(addr==0xE7F6)||
+			(addr==0xEAB1)||
+			(addr==0xEAB9)||
+			(addr==0xEB3B)||
+			(addr==0xEB4A)||
+			(addr==0xEB90)||
+			(addr==0xEBA4)||
+			(addr==0xEBE0)||
+			(addr==0xEBF8)||
+			(addr==0xEC06)||
+			(addr==0xEC19)||
+			(addr==0xEC34)||
+			(addr==0xEC44)||
+			(addr==0xEC75)||
+			(addr==0xECAB)||
+			(addr==0xECB5)||
+			(addr==0xECBF)||
+			(addr==0xECCE)||
+			(addr==0xECE3)||
+			(addr==0xECEE)||
 			(0)
 			)					ret = 5;	// no args
 	else if(
@@ -668,23 +669,23 @@ static ngb2_get_native_sub_args(addr) {
 			(0)
 			)					ret = 6;	// ofs, 2b args
 	else if(
-			(addr==0xE6B7)||
+			(addr==0xE6B2)||
 			(0)
 			)					ret = 7;	// 1b, ofs args
 	else if(
-			(addr==0xE9CF)||
+			(addr==0xE9CA)||
 			(0)
 			)					ret = 8;	// 1b + 3bxN args
 	else if(
-			(addr==0xE8FA)||
+			(addr==0xE8F5)||
 			(0)
 			)					ret = 9;	// 3b args
 	else if(
-			(addr==0xE94B)||
+			(addr==0xE946)||
 			(0)
 			)					ret = 10;	// 1b + 4bxN args
 	else if(
-			(addr==0xE885)||
+			(addr==0xE880)||
 			(0)
 			)					ret = 11;	// 1b + 4bxN args
 	else						ret = -1;
@@ -871,6 +872,9 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 #if REGION==REGION_EU
 				if((tmp0==0xE7)||(tmp0==0xE5)||(tmp0==0xEB)) {
 #endif
+#if REGION==REGION_US
+				if((tmp0==0xE6)||(tmp0==0xE4)||(tmp0==0xEA)) {
+#endif
 					tmp2 = ngb2_get_address_name(ea+3,lvl_bank);
 #ifdef VERBOSE3
 					Message("%s#ptr%02X set to bank %d at 0x%08x\n", tab, tmp0, lvl_bank, ea);
@@ -885,6 +889,9 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 #endif
 #if REGION==REGION_EU
 				if((tmp0==0xE7)||(tmp0==0xE5)||(tmp0==0xEB))
+#endif
+#if REGION==REGION_US
+				if((tmp0==0xE6)||(tmp0==0xE4)||(tmp0==0xEA))
 #endif
 					ea = make_offset_custom_b(ea, lvl_bank, 0, ""); // no exec
 				else
@@ -905,6 +912,9 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 				if(ea==0x15732)	// bugfix for switch with incorrect number of elements
 #endif
 #if REGION==REGION_EU
+				if(ea==0x2172A)	// bugfix for switch with incorrect number of elements
+#endif
+#if REGION==REGION_US
 				if(ea==0x2172A)	// bugfix for switch with incorrect number of elements
 #endif
 					tmp1 = 1;
@@ -1070,6 +1080,9 @@ static ngb2_opcode(ea,tab,lvl_bank) {
 #if REGION==REGION_EU
 					if(Word(ea-2)==0xA30D) {
 #endif
+#if REGION==REGION_US
+					if(Word(ea-2)==0xA30D) {
+#endif
 //						Message("test at 0x%08x\n",ea);
 						tmp0=Word(ea);
 						if(tmp0 < 0xC000)
@@ -1177,7 +1190,7 @@ static ngb2_apu_auto(mus_tbl_ea, music_tbl_len, mode) {
 			for(j=0;j<chnl_cnt;j++) {
 				chnl_ea = Word(mus_ea)+base;
 				MakeNameEx(chnl_ea, form("%s_%c", mus_pref, 0x41+j), SN_CHECK|SN_NOWARN);
-//				ngb2_apu(chnl_ea);
+				ngb2_apu(chnl_ea);
 				mus_ea = make_offset_custom(mus_ea, 0, "");
 				mus_ea = make_data_array(mus_ea, 1, "");
 				Wait();
@@ -1284,6 +1297,9 @@ static ngb2_enemy_data_parse(void) {
 #endif
 #if REGION==REGION_EU
 	auto flags_ea = 0xB7B58;
+#endif
+#if REGION==REGION_US
+	auto flags_ea = 0xB7B77;
 #endif
 	while (!stop) {
 		cmd=Byte(ea);
@@ -1694,6 +1710,198 @@ static main(void) {
 	ngb2_opcode(0x000B5366,"",-2);	// _scr_61365
 #endif
 
+#if REGION==REGION_US
+	ngb2_opcode(0x00008000,"",-2);	// _scr0
+	ngb2_opcode(0x0000801F,"",-2);	// _scr0/SW A
+	ngb2_opcode(0x00008140,"",-2);	// _scr0/select buster
+	ngb2_opcode(0x00008146,"",-2);	// _scr0/secret menu
+	ngb2_opcode(0x00008A7B,"",-2);	// _scr0/unref
+	ngb2_opcode(0x00008D29,"",-2);	// _scr0/unreachable sloc -1
+	ngb2_opcode(0x00008D88,"",-2);	// _scr0/unreachable sloc A
+	ngb2_opcode(0x00008DA0,"",-2);	// _scr0/unreachable sloc B
+	ngb2_opcode(0x00008E4F,"",-2);	// _scr0/unreachable sloc Ba
+	ngb2_opcode(0x00008E55,"",-2);	// _scr0/unreachable sloc C
+	ngb2_opcode(0x00008F6A,"",-2);	// _scr0/skip to title
+
+	ngb2_opcode(0x00009287,"",-2);	// _scr7
+	ngb2_opcode(0x000092BA,"",-2);	// _scr7/SW A
+	ngb2_opcode(0x0000935F,"",-2);	// _scr_935F
+
+	ngb2_opcode(0x00020000,"",-2);	// _scr1
+	ngb2_opcode(0x00020229,"",-2);	// _scr1/SW back A
+	ngb2_opcode(0x0002037D,"",-2);	// _scr2
+	ngb2_opcode(0x0002080F,"",-2);	// _scr3
+	ngb2_opcode(0x0002117E,"",-2);	// _scr4
+	ngb2_opcode(0x0002156F,"",-2);	// _scr5
+	ngb2_opcode(0x00021D34,"",-2);	// _scr6
+	ngb2_opcode(0x00021F46,"",-2);	// _scr_15F56
+	ngb2_opcode(0x00022101,"",-2);	// _scr_16111
+	ngb2_opcode(0x00022152,"",-2);	// _scr_16111/unreachable sloc A
+	ngb2_opcode(0x00022247,"",-2);	// _scrC
+	ngb2_opcode(0x00022935,"",-2);	// _scrD
+
+	ngb2_opcode(0x00050000,"",-2);	// _scr1A
+	ngb2_opcode(0x00050009,"",-2);	// _scr1A/unreachable sloc A
+	ngb2_opcode(0x00050014,"",-2);	// _scr1A/unreachable sloc B
+	ngb2_opcode(0x0005006C,"",-2);	// _scr_2C06C
+	ngb2_opcode(0x00050089,"",-2);	// _scr_2C089
+	ngb2_opcode(0x000500BF,"",-2);	// _scr_2C0BF
+	ngb2_opcode(0x000500C5,"",-2);	// _scr_2C0C5
+	ngb2_opcode(0x00050160,"",-2);	// _scr_/SW UP A
+	ngb2_opcode(0x0005017C,"",-2);	// _scr_/SW UP B
+	ngb2_opcode(0x00050198,"",-2);	// _scr_/SW UP C
+	ngb2_opcode(0x000501CE,"",-2);	// _scr_2C1CE
+	ngb2_opcode(0x00050228,"",-2);	// _scr_/unreachable SW
+	ngb2_opcode(0x00050233,"",-2);	// _scr_2C233
+	ngb2_opcode(0x00050649,"",-2);	// _scr22
+	ngb2_opcode(0x00050658,"",-2);	// _scr22/SW UP A
+	ngb2_opcode(0x00050698,"",-2);	// _scr_2C698
+	ngb2_opcode(0x000506D0,"",-2);	// _scr_2C6D0
+	ngb2_opcode(0x000506D9,"",-2);	// _scr_2C6D9
+	ngb2_opcode(0x00050982,"",-2);	// _scr2E
+	ngb2_opcode(0x0005098D,"",-2);	// _scr2E/unreachable SW
+	ngb2_opcode(0x00050A40,"",-2);	// _scr_2CA40
+	ngb2_opcode(0x00050A66,"",-2);	// _scr_2CA40/unreachable sloc A
+	ngb2_opcode(0x00050A9B,"",-2);	// _scr_2CA9B
+	ngb2_opcode(0x00050AA1,"",-2);	// _scr_2CAA1
+	ngb2_opcode(0x00050F0B,"",-2);	// _scr_2CAA1/unreachable SW A
+	ngb2_opcode(0x00050F6B,"",-2);	// _scr_2CAA1/unreachable SW B
+	ngb2_opcode(0x00050F89,"",-2);	// _scr_2CAA1/unreachable sloc A
+	ngb2_opcode(0x00050FD9,"",-2);	// _scr_2CAA1/unreachable sloc B
+	ngb2_opcode(0x00050FE3,"",-2);	// _scr_2CAA1/unreachable sloc C
+	ngb2_opcode(0x00051002,"",-2);	// _scr_2CAA1/unreachable sloc D
+	ngb2_opcode(0x0005102E,"",-2);	// _scr_2CAA1/unreachable sloc E
+	ngb2_opcode(0x0005105C,"",-2);	// _scr_2CAA1/unreachable sloc F
+	ngb2_opcode(0x0005108A,"",-2);	// _scr_2CAA1/unreachable sloc G
+	ngb2_opcode(0x000510B8,"",-2);	// _scr_2CAA1/unreachable sloc H
+	ngb2_opcode(0x00051103,"",-2);	// _scr_2CAA1/unreachable sloc I
+	ngb2_opcode(0x000510D6,"",-2);	// _scr_2D0D6
+	ngb2_opcode(0x00051122,"",-2);	// _scr_2D122
+	ngb2_opcode(0x00051139,"",-2);	// _scr_2D139
+	ngb2_opcode(0x00050EFC,"",-2);	// _scr2F
+	ngb2_opcode(0x000518C8,"",-2);	// _scr30
+	ngb2_opcode(0x000518D7,"",-2);	// _scr30/unreachable SW A
+	ngb2_opcode(0x000519A1,"",-2);	// _scr30/unreachable SW B
+	ngb2_opcode(0x000519BC,"",-2);	// _scr_2D9BC
+
+	ngb2_opcode(0x00068000,"",-2);	// _scr13
+	ngb2_opcode(0x00068068,"",-2);	// _scr_38068
+	ngb2_opcode(0x00068096,"",-2);	// _scr_38096
+	ngb2_opcode(0x0006809C,"",-2);	// _scr_3809C
+	ngb2_opcode(0x00068237,"",-2);	// _scr14
+	ngb2_opcode(0x00068282,"",-2);	// _scr_38382
+	ngb2_opcode(0x000682C3,"",-2);	// _scr15
+	ngb2_opcode(0x000682CC,"",-2);	// _scr15/unreachable SW A
+	ngb2_opcode(0x000682EB,"",-2);	// _scr_382EB
+	ngb2_opcode(0x00068353,"",-2);	// _scr16
+	ngb2_opcode(0x0006835C,"",-2);	// _scr16/unreachable SW A
+	ngb2_opcode(0x00068381,"",-2);	// _scr_38381
+	ngb2_opcode(0x00068435,"",-2);	// _scr1B
+	ngb2_opcode(0x000685B2,"",-2);	// _scr1D
+	ngb2_opcode(0x000685D4,"",-2);	// _scr_385D4
+	ngb2_opcode(0x000685F6,"",-2);	// _scr_385F6
+	ngb2_opcode(0x000685FC,"",-2);	// _scr_385FC
+	ngb2_opcode(0x000686DF,"",-2);	// _scr1E
+	ngb2_opcode(0x0006873C,"",-2);	// _scr_3873C
+	ngb2_opcode(0x00068966,"",-2);	// _scr1F
+	ngb2_opcode(0x000689C3,"",-2);	// _scr_389C3
+	ngb2_opcode(0x00068C2D,"",-2);	// _scrE
+	ngb2_opcode(0x00068C46,"",-2);	// _scrE/unreachable sloc A
+	ngb2_opcode(0x00068D13,"",-2);	// _scr20
+	ngb2_opcode(0x00068D2C,"",-2);	// _scr20/unreachable sloc A
+	ngb2_opcode(0x00068D3D,"",-2);	// _scr_38D4B/SW UP
+	ngb2_opcode(0x00068D4B,"",-2);	// _scr_38D4B
+	ngb2_opcode(0x00068ED9,"",-2);	// _scr21
+	ngb2_opcode(0x00068EE2,"",-2);	// _scr21/unreachable SW
+	ngb2_opcode(0x00068F51,"",-2);	// _scr_38F51
+	ngb2_opcode(0x00068F79,"",-2);	// _scr_38F79
+	ngb2_opcode(0x00068F7F,"",-2);	// _scr_38F7F
+	ngb2_opcode(0x000690FD,"",-2);	// _scr2B
+	ngb2_opcode(0x00069106,"",-2);	// _scr2B/unreachable SW A
+	ngb2_opcode(0x00069132,"",-2);	// _scr_39132
+	ngb2_opcode(0x0006925F,"",-2);	// _scr2C
+	ngb2_opcode(0x00069268,"",-2);	// _scr2C/unreachable SW A
+	ngb2_opcode(0x000692BE,"",-2);	// _scr_392BE
+	ngb2_opcode(0x00069452,"",-2);	// _scr23
+	ngb2_opcode(0x000694A8,"",-2);	// _scr_394A8
+	ngb2_opcode(0x000696E2,"",-2);	// _scr24
+	ngb2_opcode(0x0006974F,"",-2);	// _scr24/unreachable SW A
+	ngb2_opcode(0x000699D1,"",-2);	// _scr25
+	ngb2_opcode(0x000699DA,"",-2);	// _scr25/unreachable SW A
+	ngb2_opcode(0x00069A04,"",-2);	// _scr_39A04
+	ngb2_opcode(0x00069CCE,"",-2);	// _scr26
+	ngb2_opcode(0x00069D43,"",-2);	// _scr_39D43
+	ngb2_opcode(0x00069F96,"",-2);	// _scr27
+	ngb2_opcode(0x00069F9F,"",-2);	// _scr27/unreachable SW A
+	ngb2_opcode(0x00069FEE,"",-2);	// _scr_39FEE
+	ngb2_opcode(0x0006A155,"",-2);	// _scr28
+	ngb2_opcode(0x0006A1E4,"",-2);	// _scr_3A1E4
+	ngb2_opcode(0x0006A2D0,"",-2);	// _scr29
+	ngb2_opcode(0x0006A2D9,"",-2);	// _scr29/unreachable SW A
+	ngb2_opcode(0x0006A32B,"",-2);	// _scr29/SW UP A
+	ngb2_opcode(0x0006A340,"",-2);	// _scr_3A340
+	ngb2_opcode(0x0006A362,"",-2);	// _scr_3A362
+	ngb2_opcode(0x0006A386,"",-2);	// _scr_3A386
+	ngb2_opcode(0x0006A38C,"",-2);	// _scr_3A38C
+	ngb2_opcode(0x0006A392,"",-2);	// _scr_3A392
+	ngb2_opcode(0x0006A398,"",-2);	// _scr_3A398
+	ngb2_opcode(0x0006A551,"",-2);	// _scr2D
+	ngb2_opcode(0x0006A720,"",-2);	// _scrF
+	ngb2_opcode(0x0006A729,"",-2);	// _scrF/unreachable SW A
+	ngb2_opcode(0x0006A777,"",-2);	// _scr10
+	ngb2_opcode(0x0006A8FF,"",-2);	// _scr17
+	ngb2_opcode(0x0006A909,"",-2);	// _scr_3A909
+	ngb2_opcode(0x0006A918,"",-2);	// _scr_3A909/unreachable SW A
+	ngb2_opcode(0x0006A978,"",-2);	// _scr_3A978
+	ngb2_opcode(0x0006A9AD,"",-2);	// _scr_3A9AD
+	ngb2_opcode(0x0006A9A7,"",-2);	// _scr_3A9A7
+	ngb2_opcode(0x0006A5B5,"",-2);	// _scr_3A5B5
+	ngb2_opcode(0x0006A5D7,"",-2);	// _scr_3A5D7
+	ngb2_opcode(0x0006A5DD,"",-2);	// _scr_3A5DD
+	ngb2_opcode(0x0006AC39,"",-2);	// _scr18
+	ngb2_opcode(0x0006ACB4,"",-2);	// _scr_3ACB4
+	ngb2_opcode(0x0006ACDE,"",-2);	// _scr_3ACDE
+	ngb2_opcode(0x0006ACE4,"",-2);	// _scr_3ACE4
+	ngb2_opcode(0x0006AFDB,"",-2);	// _scr19
+	ngb2_opcode(0x0006B01D,"",-2);	// _scr_3B01D
+	ngb2_opcode(0x0006B03F,"",-2);	// _scr_3B03F
+	ngb2_opcode(0x0006B045,"",-2);	// _scr_3B045
+	ngb2_opcode(0x0006B204,"",-2);	// _scr2A
+	ngb2_opcode(0x0006B20D,"",-2);	// _scr2A/unreachable SW A
+	ngb2_opcode(0x0006B255,"",-2);	// _scr_3B255
+	ngb2_opcode(0x0006B275,"",-2);	// _scr_3B275
+	ngb2_opcode(0x0006B27B,"",-2);	// _scr_3B27B
+	ngb2_opcode(0x0006B600,"",-2);	// _scr1C
+	ngb2_opcode(0x0006B60D,"",-2);	// _scr1C/unreachable SW A
+	ngb2_opcode(0x0006B65D,"",-2);	// _scr_3B65D
+	ngb2_opcode(0x0006B687,"",-2);	// _scr_3B687
+	ngb2_opcode(0x0006B68D,"",-2);	// _scr_3B68D
+	ngb2_opcode(0x0006B693,"",-2);	// _scr_3B693
+	ngb2_opcode(0x0006B755,"",-2);	// _scr_3B755
+	ngb2_opcode(0x0006BA93,"",-2);	// _scr_3BA93
+	ngb2_opcode(0x0006BABD,"",-2);	// _scr_3BABD
+	ngb2_opcode(0x0006BAC3,"",-2);	// _scr_3BAC3
+	ngb2_opcode(0x0006BB89,"",-2);	// _scr11
+	ngb2_opcode(0x0006BB94,"",-2);	// _scr11/unreachable SW A
+
+	ngb2_opcode(0x000B41F7,"",-2);	// _scr12
+	ngb2_opcode(0x000B427E,"",-2);	// _scr8
+	ngb2_opcode(0x000B429B,"",-2);	// _scr8/unreachable sloc A
+	ngb2_opcode(0x000B429F,"",-2);	// _scr_hit_anim
+	ngb2_opcode(0x000B42CB,"",-2);	// _scr_602CB
+	ngb2_opcode(0x000B42DB,"",-2);	// _scr_602DB
+	ngb2_opcode(0x000B42EE,"",-2);	// _scr_602EE
+	ngb2_opcode(0x000B4306,"",-2);	// _scr_60306
+	ngb2_opcode(0x000B4C82,"",-2);	// _scr9
+	ngb2_opcode(0x000B4C91,"",-2);	// _scr_60C91
+	ngb2_opcode(0x000B4FAE,"",-2);	// _scrA
+	ngb2_opcode(0x000B4FC6,"",-2);	// _scr_60FCB
+	ngb2_opcode(0x000B4FD6,"",-2);	// _scr_60FDB
+	ngb2_opcode(0x000B4FE9,"",-2);	// _scr_60FEE
+	ngb2_opcode(0x000B5349,"",-2);	// _scrB
+	ngb2_opcode(0x000B5360,"",-2);	// _scr_61365
+#endif
+
 	Message("AUTO DECOMPILATION END\n");
 #else
 	AddHotkey("Shift-O", "ngb2_script_selection");
@@ -1707,6 +1915,10 @@ static main(void) {
 #if REGION==REGION_EU
 	ngb2_apu_auto(0x9B4B0,49,0);
 	ngb2_apu_auto(0x9B398,92,1);
+#endif
+#if REGION==REGION_US
+	ngb2_apu_auto(0x9B42D,49,0);
+	ngb2_apu_auto(0x9B345,92,1);
 #endif
 #endif
 
