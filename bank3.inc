@@ -49,13 +49,13 @@ _sjmp_case_2C029:
 			NARGB		$00
 		POS_X_MOVE	0,$C0
 		POS_Y_MOVE		0,$40
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2C0CB
 		SARG_SET		SARG1,$80
 _sloc_2C054:
 		NBG_HNDL_SET	_nbgsub_2C0D7
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2C0CF
 		NJSR			_nsub_6273D
@@ -94,7 +94,7 @@ _scr_2C089:
 		SBCS_BREAK	_sloc_2C054
 		SLOOP_END
 		SARG_SET		SARG0,$02
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2C0D3
 _sloc_2C0A1:
@@ -208,7 +208,7 @@ locret_2C147:
 ; =============== S C R I P T ===============================================
 _sjmp_case_2C148:
 		NBG_HNDL_SET	_nbgsub_2C23F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2C0CF
 		SARG_SET		SARG0,$00
@@ -285,7 +285,7 @@ _scr_2C1CE:
 		SBCS_BREAK	_sloc_2C1EF
 		SLOOP_END
 		SARG_SET		SARG0,$02
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2C0D3
 _sloc_2C1E6:
@@ -316,7 +316,7 @@ _sjmp_case_2C204:
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
 		SDELAY			$3C
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2C0CF
 		SSCRIPT1_SET	_scr_2C1C2
@@ -707,7 +707,7 @@ _scr22_lvl2_boss_train_slime:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_2C658:
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2C6F3
 		NBG_HNDL_SET	_nbgsub_2C6F7
@@ -982,7 +982,7 @@ _sjmp_case_2C8D1:
 		NJSR			_nsub_62CF3
 		SDELAY			$5A
 		NJSR			_nsub_2C90E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$02
 			NARGW		byte_2C90A
 		SDELAY			$50
@@ -1092,7 +1092,7 @@ _scr2E_lvl4_boss_dragons:
 		SCASE			_sjmp_case_2C9AE
 		SCASE			_sjmp_case_2CE6C
 		SJSR			_ssub_62E33
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2CAA7
 		NJSR			_nsub_mmc1_chr0_set
@@ -1201,14 +1201,14 @@ _scr_2CA40:
 		SSTOP
 _sloc_2CA66:
 		SARG_SET		SARG0,$02
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2CAAB
 _sloc_2CA6F:
 		SJSR			_ssub_2CA91
 		NJSR			_nsub_62BFD
 		SBCC			_sloc_2CA6F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2CAA7
 _sloc_2CA7E:
@@ -1735,7 +1735,7 @@ _sloc_2CF51:
 			NARGW		_sloc_2CFE3
 		SDELAY			$28
 		SSCRIPT1_OFF
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2D15C
 
@@ -1775,11 +1775,11 @@ _sloc_2CF89:
 
 ; =============== S C R I P T ===============================================
 _scr_2CFA1:
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2D160
 		SDELAY			$02
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2D15C
 		SDELAY			$02
@@ -2912,11 +2912,11 @@ _scr_lvl6_boss_vega_blinker:
 			NARGB		SARG0,$00
 		SJMP_SW			$01
 		SCASE			_scr_lvl6_boss_vega_blinker
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2D9B8
 		SDELAY			$01
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2D9B4
 		SDELAY			$01
@@ -2929,7 +2929,7 @@ byte_2D9B8:
 ; =============== S C R I P T ===============================================
 _scr_lvl6_boss_vega_death:
 		NJSR			_nsub_gen_threads_off_except_cur
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2D9B4
 		SPR_IDX_SET		0,$C1
@@ -3665,7 +3665,7 @@ _spr_res_lib1A:
 		.WORD	_spr_res_lib1A_05
 		.WORD	_spr_res_lib1A_06
 		.WORD	_spr_res_lib1A_07
-_lvl5_objects_list:
+_lvl6_objects_list:
 		.BYTE	$FF,$02
 		OBJ_SET	_scr0F_candle,$80,$00,$5C,$03,_NON,_NON,_NON
 		OBJ_SET	_scr0F_candle,$80,$00,$5C,$02,_NON,_NON,_NON
@@ -3675,7 +3675,7 @@ _lvl5_objects_list:
 _lvl_collisions_07:
 		.BYTE	$A1,$78,$A1,$7F,$E1,$7F,$41,$43,$01,$43,$01,$00,$FB,$FF,$EF,$F0
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$E0,$37,$00,$FF,$03,$FE,$03,$F0
-_lvl5_macroA_tbl:
+_lvl6_macroA_tbl:
 		.BYTE	$FF,$7E,$7F,$7E,$7F,$7E,$7F,$7F,$7E,$7F,$7F,$7C,$7C,$7F,$7C,$7C
 		.BYTE	$7F,$7C,$13,$15,$17,$33,$35,$37,$7D,$7D,$C2,$53,$55,$57,$68,$69
 		.BYTE	$7E,$0F,$5F,$7E,$4B,$4D,$CA,$EA,$CC,$EC,$30,$7E,$52,$FF,$20,$22
@@ -3691,7 +3691,7 @@ _lvl5_macroA_tbl:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl5_macroB_tbl:
+_lvl6_macroB_tbl:
 		.BYTE	$FF,$7E,$7F,$7E,$7F,$7F,$7F,$7E,$7F,$7E,$7C,$7F,$7F,$7C,$7C,$7C
 		.BYTE	$7F,$7C,$23,$25,$27,$43,$45,$47,$03,$05,$07,$7D,$7D,$C2,$78,$79
 		.BYTE	$7E,$3B,$3D,$7E,$5B,$5D,$DA,$FA,$DC,$FC,$30,$42,$7E,$21,$FF,$21
@@ -3707,7 +3707,7 @@ _lvl5_macroB_tbl:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl5_macroC_tbl:
+_lvl6_macroC_tbl:
 		.BYTE	$FF,$7E,$7E,$7F,$7E,$7F,$7F,$7F,$7E,$7F,$7F,$7C,$7C,$7C,$7F,$7C
 		.BYTE	$7C,$7F,$14,$16,$18,$34,$36,$38,$7D,$7D,$7D,$54,$56,$58,$68,$7E
 		.BYTE	$0E,$5E,$7E,$4A,$4C,$7E,$CB,$EB,$7D,$7D,$7E,$7E,$7E,$FF,$20,$FF
@@ -3723,7 +3723,7 @@ _lvl5_macroC_tbl:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl5_macroD_tbl:
+_lvl6_macroD_tbl:
 		.BYTE	$FF,$7E,$7E,$7F,$7F,$7F,$7E,$7F,$7F,$7E,$7C,$7F,$7C,$7C,$7C,$7F
 		.BYTE	$7C,$7F,$24,$26,$28,$44,$46,$48,$04,$06,$08,$7D,$7D,$7D,$78,$7E
 		.BYTE	$3A,$3C,$7E,$5A,$5C,$7E,$DB,$FB,$7D,$7D,$7E,$7E,$7E,$21,$FF,$21
@@ -3739,7 +3739,7 @@ _lvl5_macroD_tbl:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl5_macroE_tbl:
+_lvl6_macroE_tbl:
 		.BYTE	$00,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
 		.BYTE	$03,$03,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$00,$00
 		.BYTE	$03,$03,$03,$03,$03,$03,$01,$01,$01,$01,$00,$00,$00,$00,$00,$00
@@ -3755,7 +3755,7 @@ _lvl5_macroE_tbl:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl5_room_lib:
+_lvl6_rooms_lib:
 		.WORD	byte_2E627
 		.WORD	$0000		; *--
 		.WORD	$0000		; *--

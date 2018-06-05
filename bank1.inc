@@ -4,59 +4,63 @@
 		BANK_START $01
 
 ; =============== S C R I P T ===============================================
+; base level handler with some set of common operations as well as set
+; a specific options for every particular room
+; all level handlers have mostly the same structure.
 _scr01_lvl1_handler:
-		NJSR			_nsub_sub_rom_idx_calc
-		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
-		SJSR_SW	$04
-		SCASE			_sjsr_case_142CD
-		SCASE			_sjsr_case_142CD
-		SCASE			_sjsr_case_142CD
-		SCASE			_sjsr_case_142E2
-		NJSR			_nsub_room_register
-			NARGB		$04
+		NJSR			_nsub_get_checkpoint_tmp_idx	; here is the beginning of the stage
+		NJSR			_nsub_read_mem					; we start from here either if begin the stage
+			NARGW		_tmp_idx						; or continue after game over
+		SJSR_SW	$04										;
+		SCASE			_lvl1_checkpoint012_init		; entering level from checkpoints need to
+		SCASE			_lvl1_checkpoint012_init		; reinit the current stage from given position
+		SCASE			_lvl1_checkpoint012_init		; so we have here so much cases how many
+		SCASE			_lvl1_checkpoint3_init			; checkpoints have particular stage
+		NJSR			_nsub_players_room_start_pos_init	; when room is entered, set the starting position
+			NARGB		$04								; of players based on checkpoint index
 			NARGB		$4E,$71,$00
 			NARGB		$79,$46,$03
 			NARGB		$39,$6E,$03
 			NARGB		$6E,$34,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
-		SJMP_SW			$04
-		SCASE			_sjmp_case_14031
-		SCASE			_sjmp_case_14155
-		SCASE			_sjmp_case_1409B
-		SCASE			_sjmp_case_1426B
+			NARGW		_tmp_idx						; and finally go to main room handler, according
+		SJMP_SW			$04								; also to a starting checkpoint position
+		SCASE			_lvl1_room0_handler				; see, four checkpoints started from room0
+		SCASE			_lvl1_room3_handler				; room3, room1 and room 6 accordingly.
+		SCASE			_lvl1_room1_handler
+		SCASE			_lvl1_room6_handler
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14031:
-		STORE8			_cur_room_sequence_idx,$00
-		NJSR			_nsub_628FA
-			NARGB		$00,$02,$03
-		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data00
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data00
-		SJSR			_ssub_62DB1
+_lvl1_room0_handler:
+		STORE8			_cur_lvl_room_idx,$00			; when entering the actual level, set current room
+		NJSR			_nsub_room_draw					; sequence index to inform object manager where to
+			NARGB		$00,$02,$03						; start to fetch objects data. next draw the room
+		NJSR			_nsub_room_doors_handler_and_data_init	; and load the doors handlers.
+			NARGW		_lvl1_room0_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room0_prize_seq	; init prize sequence data as well
+		SJSR			_ssub_room_entry_pal_fade_in	; and finally fade in to start the game
 _sloc_14048:
-		SDELAY			$01
-		NJSR			_nsub_6294B
-			NARGB		$03
-			NARGB		$F8,$01,$88,$03
-			NARGB		$00,$04,$B0,$03
-			NARGB		$80,$02,$08,$03
+		SDELAY			$01								; the handler now did all its work, now he just
+		NJSR			_nsub_players_room_exit_test	; constantly check the players positions to check
+			NARGB		$03								; if they got to the exit, return door's idx if test pass
+			NARGB		$F8,$01,$88,$03					; NOTE: doors and exit points are separate entities.
+			NARGB		$00,$04,$B0,$03					; doors only blocks the exits which usually always
+			NARGB		$80,$02,$08,$03					; active, but doors may be open only in particular conditions
 		SBCC			_sloc_14048
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out	; now we have a new door in _tmp_idx so we could select
+		NJSR			_nsub_players_room_start_pos_init	; player positions for the next room
 			NARGB		$03
 			NARGB		$3C,$6E,$03
 			NARGB		$82,$74,$01
 			NARGB		$4E,$5A,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx						; and go to selected room handler
 		SJMP_SW			$03
-		SCASE			_sjmp_case_1409B
-		SCASE			_sjmp_case_140E9
-		SCASE			_sjmp_case_14155
-_lvl_doors_data00:
+		SCASE			_lvl1_room1_handler
+		SCASE			_lvl1_room2_handler
+		SCASE			_lvl1_room3_handler
+
+_lvl1_room0_doors:
 		.BYTE	$02,$80,$03,$D0,$00
 		.WORD	_room_door_always_closed
 		.BYTE	$02,$10,$03,$80,$01
@@ -66,75 +70,77 @@ _lvl_doors_data00:
 		.BYTE	$03,$E0,$03,$B0,$01
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data00:
+_lvl1_room0_prize_seq:
 		.BYTE	$17,$13,$13,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1409B:
-		STORE8			_cur_room_sequence_idx,$01
-		NJSR			_nsub_628FA
+_lvl1_room1_handler:
+		STORE8			_cur_lvl_room_idx,$01			; all work for all roms mostly the same
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data01
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data01
-		SJSR			_ssub_62DB1
+			NARGW		_lvl1_room1_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room1_prize_seq
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_140B2:
-		SDELAY			$01
-		NJSR			_nsub_6294B
+		SDELAY			$01								; only one exit from this room here
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$00,$02,$88,$03
 		SBCC			_sloc_140B2
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
-			NARGB		$01
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init	; so one exit point as well, and
+			NARGB		$01								; one destination room, return back to room0
 			NARGB		$42,$6E,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
-		SJMP_SW			$01
-		SCASE			_sjmp_case_14031
-_lvl_doors_data01:
+			NARGW		_tmp_idx						; TODO: single switch cases are redundant, regular
+		SJMP_SW			$01								; SJMR would be just enough
+		SCASE			_lvl1_room0_handler
+
+_lvl1_room1_doors:
 		.BYTE	$01,$E0,$03,$80,$01
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$F0,$03,$80,$01
 		.WORD	_room_door_always_open
 		.BYTE	$FF
-_prize_sequence_data01:
+_lvl1_room1_prize_seq:
 		.BYTE	$15,$16,$14,$14,$14,$16,$16,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_140E9:
-		STORE8			_cur_room_sequence_idx,$02
-		NJSR			_nsub_628FA
+_lvl1_room2_handler:
+		STORE8			_cur_lvl_room_idx,$02
+		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$02
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0D
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data02
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data02
-		SJSR			_ssub_62DB1
+			NARGW		_lvl1_room2_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room2_prize_seq
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14104:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$03,$B0,$03
 			NARGB		$F8,$03,$40,$02
 		SBCC			_sloc_14104
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_pal_patch_fade
-			NARGB		$06
-			NARGW		byte_14354
-		NJSR			_nsub_mmc1_chr0_set
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_patch_pal_load			; sometimes
+			NARGB		$06								; we need to fix sprites palette as
+			NARGW		_lvl1_room01234_pal+$18			; well as change sprites CHR bank
+		NJSR			_nsub_mmc1_chr0_set				; because there are other enemies will appear
 			NARGB		$04
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$7C,$74,$03
 			NARGB		$7C,$46,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14031
-		SCASE			_sjmp_case_14155
-_lvl_doors_data02:
+		SCASE			_lvl1_room0_handler
+		SCASE			_lvl1_room3_handler
+
+_lvl1_room2_doors:
 		.BYTE	$04,$10,$03,$B0,$01
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$C0,$03,$90,$00
@@ -144,49 +150,50 @@ _lvl_doors_data02:
 		.BYTE	$04,$10,$02,$40,$01
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data02:
+_lvl1_room2_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14155:
-		STORE8			_cur_room_sequence_idx,$03
-		NJSR			_nsub_628FA
+_lvl1_room3_handler:
+		STORE8			_cur_lvl_room_idx,$03
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data03
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data03
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$04
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$02
+			NARGW		_lvl1_room3_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room3_prize_seq
+		NJSR			_nsub_mmc1_chr0_set			; if you return back from room6 you
+			NARGB		$04							; need to restore back CHR banks and palettes
+		NJSR			_nsub_mmc1_chr1_set			; TODO: already set in init routines,
+			NARGB		$02							; remove redundancy
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_1433C
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_00
-		SJSR			_ssub_62DB1
+			NARGW		_lvl1_room01234_pal
+		STORE16			_lvl_collisions_ptr,_lvl1_room01234_collisions
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1417E:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$04
 			NARGB		$80,$02,$F8,$02
 			NARGB		$00,$04,$40,$02
 			NARGB		$F8,$01,$C0,$02
 			NARGB		$80,$02,$08,$02
 		SBCC			_sloc_1417E
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$04
 			NARGB		$4E,$62,$02
 			NARGB		$82,$46,$01
 			NARGB		$3C,$56,$03
 			NARGB		$6E,$38,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$04
-		SCASE			_sjmp_case_14031
-		SCASE			_sjmp_case_140E9
-		SCASE			_sjmp_case_141E4
-		SCASE			_sjmp_case_1426B
-_lvl_doors_data03:
+		SCASE			_lvl1_room0_handler
+		SCASE			_lvl1_room2_handler
+		SCASE			_lvl1_room4_handler
+		SCASE			_lvl1_room6_handler
+
+_lvl1_room3_doors:
 		.BYTE	$03,$E0,$02,$40,$01
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$70,$02,$B0,$00
@@ -198,196 +205,201 @@ _lvl_doors_data03:
 		.BYTE	$02,$80,$02,$20,$00
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data03:
+_lvl1_room3_prize_seq:
 ; REGION, changed in the EU version
 		.BYTE	$17,$18,$18,$18,$14,$13,$00
 ;		.BYTE	$17,$14,$18,$13,$00
 ; -
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_141E4:
-		STORE8			_cur_room_sequence_idx,$04
-		NJSR			_nsub_628FA
+_lvl1_room4_handler:
+		STORE8			_cur_lvl_room_idx,$04
+		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data04
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data04
-		SJSR			_ssub_62DB1
+			NARGW		_lvl1_room4_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room4_prize_seq
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_141FB:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$00,$02,$C0,$02
 		SBCC			_sloc_141FB
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$42,$56,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_14155
-_lvl_doors_data04:
+		SCASE			_lvl1_room3_handler
+
+_lvl1_room4_doors:
 		.BYTE	$01,$E0,$02,$C0,$01
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$70,$02,$90,$00
 		.WORD	_room_door_always_open
 		.BYTE	$FF
-_prize_sequence_data04:
+_lvl1_room4_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1422B:
-		STORE8			_cur_room_sequence_idx,$05
-		NJSR			_nsub_628FA
+_lvl1_room5_handler:
+		STORE8			_cur_lvl_room_idx,$05
+		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data05
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data05
-		SJSR			_ssub_62DB1
+			NARGW		_lvl1_room5_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room5_prize_seq
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14242:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$02,$B8,$01
 		SBCC			_sloc_14242
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$6E,$22,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1426B
-_lvl_doors_data05:
+		SCASE			_lvl1_room6_handler
+
+_lvl1_room5_doors:
 		.BYTE	$02,$80,$01,$A0,$00
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data05:
+_lvl1_room5_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1426B:
-		STORE8			_cur_room_sequence_idx,$06
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$07
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$03
-		NJSR			_nsub_full_pal_load
-			NARGW		byte_1435C
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_01
-		NJSR			_nsub_628FA
+_lvl1_room6_handler:
+		STORE8			_cur_lvl_room_idx,$06
+		NJSR			_nsub_mmc1_chr0_set			; this is a corridor before the court
+			NARGB		$07							; room, here we need to change CHR and pal
+		NJSR			_nsub_mmc1_chr1_set			; also there is another bg collision table
+			NARGB		$03							; TODO: already coded in init routine, merge
+		NJSR			_nsub_full_pal_load			; code to remove redundancy
+			NARGW		_lvl1_room56_pal
+		STORE16			_lvl_collisions_ptr,_lvl1_room56_collisions
+		NJSR			_nsub_room_draw
 			NARGB		$02,$03,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data06
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data06
-		SJSR			_ssub_62DB1
+			NARGW		_lvl1_room6_doors
+		STORE16			_room_prize_sequence_ptr,_lvl1_room6_prize_seq
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14294:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$03,$18,$01
 			NARGB		$80,$03,$E8,$01
 		SBCC			_sloc_14294
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$4E,$32,$00
 			NARGB		$4E,$42,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_1422B
-		SCASE			_sjmp_case_14155
-_lvl_doors_data06:
+		SCASE			_lvl1_room5_handler			; we can exith this corridor back or continue
+		SCASE			_lvl1_room3_handler			; to the main boss
+
+_lvl1_room6_doors:
 		.BYTE	$03,$80,$01,$30,$00
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$80,$01,$D0,$00
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data06:
+_lvl1_room6_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_142CD:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$04
+_lvl1_checkpoint012_init:
+		NJSR			_nsub_mmc1_chr0_set			; TODO; merge initializator for room handlers
+			NARGB		$04							; to remove redundancy
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$02
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_1433C
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_00
-		SJMP			_sloc_142F4
+			NARGW		_lvl1_room01234_pal
+		STORE16			_lvl_collisions_ptr,_lvl1_room01234_collisions
+		SJMP			_lvl1_common_init
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_142E2:
+_lvl1_checkpoint3_init:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$03
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_1435C
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_01
+			NARGW		_lvl1_room56_pal
+		STORE16			_lvl_collisions_ptr,_lvl1_room56_collisions
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sloc_142F4:
-		STORE8			_lvl_data_prg_bank,$01
-		NJSR			_nsub_lvl_data_ptrs_load
-			NARGW		_lvl0_macroA_tbl
-			NARGW		_lvl0_macroB_tbl
-			NARGW		_lvl0_macroC_tbl
-			NARGW		_lvl0_macroD_tbl
-			NARGW		_lvl0_attrs_tbl
-		STORE16			_lvl_room_lib_ptr,_lvl_room_lib00
-		NJSR			_nsub_apu_mus_load
+_lvl1_common_init:
+		STORE8			_lvl_data_prg_bank,$01		; common initialization for whole level, all levels
+		NJSR			_nsub_lvl_data_ptrs_load	; does the same initializers.
+			NARGW		_lvl1_macroA_tbl			; here set macro/attrs data for level draw,
+			NARGW		_lvl1_macroB_tbl			; level layouts and room data library
+			NARGW		_lvl1_macroC_tbl
+			NARGW		_lvl1_macroD_tbl
+			NARGW		_lvl1_attrs_tbl
+		STORE16			_lvl_rooms_lib_ptr,_lvl1_rooms_lib
+		NJSR			_nsub_apu_mus_load			; begin background music
 			NARGB		$00
-		NJSR			_nsub_ingame_collision_watch_start
-		NJSR			_nsub_ingame_player_control_start
-		NBG_HNDL_SET	_j_nbgsub_1437C
-		SSCRIPT1_SET	_scr_14324
-		STORE16			_lvl_objects_ptr,_lvl0_objects_list
-		NJSR			_nsub_lvl_room_objects_init
+		NJSR			_nsub_beam_player_handler_start	; start players control script 08, for beamer
+		NJSR			_nsub_catch_player_handler_start; and 0A for catcher
+		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler	; also set the room object handler as a native bg sub
+		SSCRIPT1_SET	_scr_ingame_pause_handler	; secondary script of current level thread set to pause handler
+		STORE16			_lvl_objects_ptr,_lvl1_objects_list	; finally init objects list pointer
+		NJSR			_nsub_lvl_room_objects_init	; and initialize objects offset according to last checkpoint
 		SRET
 
 ; =============== S C R I P T ===============================================
-_scr_14324:
-		SDELAY			$01
-		NJSR			_nsub_15E4A
-		SBCC			_scr_14324
-		NJSR			_nsub_apu_snd_load_safe
+_scr_ingame_pause_handler:
+		SDELAY			$01							; common pause handler for all levels
+		NJSR			_nsub_ingame_start_input_test	; just wait for START is pressed
+		SBCC			_scr_ingame_pause_handler	; and then play pause sound
+		NJSR			_nsub_apu_snd_load_safe		; and run pause native handler
 			NARGB		$03
-		SJSR			_ssub_62DC9
-		NJSR			_nsub_pause_menu_handler
-		SJSR			_ssub_62DB5
-		SJMP			_scr_14324
+		SJSR			_ssub_room_exit_pal_fade_out_ex	; when exit, loop back to wait for input
+		NJSR			_nsub_ingame_pause_handler
+		SJSR			_ssub_room_entry_pal_fade_in_ex
+		SJMP			_scr_ingame_pause_handler
 
-byte_1433C:
+_lvl1_room01234_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$1A,$17,$0F,$37,$27,$17,$0F,$30,$05,$17
-		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
-byte_14354:
-		.BYTE	$0F,$36,$2B,$0F,$0F,$10,$17,$07
-byte_1435C:
+		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$2B,$0F,$0F,$10,$17,$07
+_lvl1_room56_pal:
 		.BYTE	$0F,$30,$17,$07,$0F,$30,$05,$07,$0F,$10,$17,$07,$0F,$30,$10,$00
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$31,$25,$0F,$0F,$10,$17,$07
 
 ; =============== S U B R O U T I N E =======================================
-_j_nbgsub_1437C:
-		JMP		_lvl_room_objects_handler
+; TOSO, the native bg subs may include various background work, mostly palette
+; rotations... but here is only objects handlers, so it may replaced with
+; direct handler call instead of _j_ routine for remove redundancy.
+;
+_j_nbgsub_lvl_room_objects_handler:
+		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
 _scr02_lvl2_handler:
-		NJSR			_nsub_sub_rom_idx_calc
-		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+		NJSR			_nsub_get_checkpoint_tmp_idx	; same as for lvl1
+		NJSR			_nsub_read_mem					; now we have 4 checkpoints here
+			NARGW		_tmp_idx
 		SJSR_SW	$05
-		SCASE			_sjsr_case_14753
-		SCASE			_sjsr_case_14753
-		SCASE			_sjsr_case_14753
-		SCASE			_sjsr_case_14753
-		SCASE			_sjsr_case_14763
-		NJSR			_nsub_room_register
+		SCASE			_lvl2_checkpoint0123_init
+		SCASE			_lvl2_checkpoint0123_init
+		SCASE			_lvl2_checkpoint0123_init
+		SCASE			_lvl2_checkpoint0123_init
+		SCASE			_lvl2_checkpoint4_init
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$05
 			NARGB		$06,$D1,$01
 			NARGB		$2E,$D9,$00
@@ -395,37 +407,38 @@ _scr02_lvl2_handler:
 			NARGB		$83,$46,$01
 			NARGB		$A3,$06,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$05
-		SCASE			_sjmp_case_143B7
-		SCASE			_sjmp_case_1447E
-		SCASE			_sjmp_case_14514
-		SCASE			_sjmp_case_145A4
-		SCASE			_sjmp_case_1462C
+		SCASE			_lvl2_room0_handler
+		SCASE			_lvl2_room3_handler
+		SCASE			_lvl2_room5_handler
+		SCASE			_lvl2_room7_handler
+		SCASE			_lvl2_room9_handler
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_143B7:
-		STORE8			_cur_room_sequence_idx,$00
-		NJSR			_nsub_628FA
+_lvl2_room0_handler:
+		STORE8			_cur_lvl_room_idx,$00
+		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$06
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data07
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data07
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_143CE:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$00,$08,$06
 		SBCC			_sloc_143CE
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$0E,$B9,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_143F7
+		SCASE			_lvl2_room1_handler
+
 _lvl_doors_data07:
 		.BYTE	$00,$80,$06,$10,$02
 		.WORD	_room_door_gen_clear_open
@@ -434,28 +447,28 @@ _prize_sequence_data07:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_143F7:
-		STORE8			_cur_room_sequence_idx,$01
-		NJSR			_nsub_628FA
+_lvl2_room1_handler:
+		STORE8			_cur_lvl_room_idx,$01
+		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data08
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data08
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1440E:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$78,$00,$08,$04
 		SBCC			_sloc_1440E
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$0E,$73,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_14437
+		SCASE			_lvl2_room2_handler
 _lvl_doors_data08:
 		.BYTE	$00,$80,$04,$20,$02
 		.WORD	_room_door_gen_clear_open
@@ -464,28 +477,28 @@ _prize_sequence_data08:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14437:
-		STORE8			_cur_room_sequence_idx,$02
-		NJSR			_nsub_628FA
+_lvl2_room2_handler:
+		STORE8			_cur_lvl_room_idx,$02
+		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data09
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data09
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1444E:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$78,$00,$08,$03
 		SBCC			_sloc_1444E
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$2E,$D9,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1447E
+		SCASE			_lvl2_room3_handler
 _lvl_doors_data09:
 		.BYTE	$00,$80,$03,$10,$02
 		.WORD	_room_door_gen_clear_open
@@ -496,28 +509,28 @@ _prize_sequence_data09:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1447E:
-		STORE8			_cur_room_sequence_idx,$03
-		NJSR			_nsub_628FA
+_lvl2_room3_handler:
+		STORE8			_cur_lvl_room_idx,$03
+		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$06
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data0A
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0A
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14495:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$01,$08,$06
 		SBCC			_sloc_14495
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$2E,$B9,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_144BE
+		SCASE			_lvl2_room4_handler
 _lvl_doors_data0A:
 		.BYTE	$01,$80,$06,$20,$02
 		.WORD	_room_door_gen_clear_open
@@ -526,31 +539,31 @@ _prize_sequence_data0A:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_144BE:
-		STORE8			_cur_room_sequence_idx,$04
-		NJSR			_nsub_628FA
+_lvl2_room4_handler:
+		STORE8			_cur_lvl_room_idx,$04
+		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data0B
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0B
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_144D5:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$B0,$01,$08,$04
 			NARGB		$50,$01,$08,$04
 		SBCC			_sloc_144D5
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$2E,$79,$00
 			NARGB		$2E,$B9,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14514
-		SCASE			_sjmp_case_144BE
+		SCASE			_lvl2_room5_handler
+		SCASE			_lvl2_room4_handler
 _lvl_doors_data0B:
 		.BYTE	$01,$B0,$04,$20,$02
 		.WORD	_room_door_gen_clear_open
@@ -561,28 +574,28 @@ _prize_sequence_data0B:
 		.BYTE	$1D,$1D,$20,$1D,$1D,$1E,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14514:
-		STORE8			_cur_room_sequence_idx,$05
-		NJSR			_nsub_628FA
+_lvl2_room5_handler:
+		STORE8			_cur_lvl_room_idx,$05
+		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data0C
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0C
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1452B:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$F8,$01,$40,$02
 		SBCC			_sloc_1452B
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$45,$46,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1455A
+		SCASE			_lvl2_room6_handler
 _lvl_doors_data0C:
 		.BYTE	$01,$E0,$02,$40,$03
 		.WORD	_room_door_gen_clear_open
@@ -591,28 +604,28 @@ _prize_sequence_data0C:
 		.BYTE	$20,$1D,$1E,$20,$1D,$1E,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1455A:
-		STORE8			_cur_room_sequence_idx,$06
-		NJSR			_nsub_628FA
+_lvl2_room6_handler:
+		STORE8			_cur_lvl_room_idx,$06
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data0D
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0D
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14571:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$F8,$03,$40,$02
 		SBCC			_sloc_14571
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$83,$46,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_145A4
+		SCASE			_lvl2_room7_handler
 _lvl_doors_data0D:
 		.BYTE	$03,$E0,$02,$40,$03
 		.WORD	_room_door_gen_clear_open
@@ -623,28 +636,28 @@ _prize_sequence_data0D:
 		.BYTE	$20,$20,$1F,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_145A4:
-		STORE8			_cur_room_sequence_idx,$07
-		NJSR			_nsub_628FA
+_lvl2_room7_handler:
+		STORE8			_cur_lvl_room_idx,$07
+		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data0E
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0E
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_145BB:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$04,$08,$02
 		SBCC			_sloc_145BB
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$8E,$39,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_145E8
+		SCASE			_lvl2_room8_handler
 _lvl_doors_data0E:
 		.BYTE	$04,$80,$02,$20,$02
 		.WORD	_room_door_gen_clear_open
@@ -653,28 +666,28 @@ _prize_sequence_data0E:
 		.BYTE	$1E,$1F,$1E,$20,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_145E8:
-		STORE8			_cur_room_sequence_idx,$08
-		NJSR			_nsub_628FA
+_lvl2_room8_handler:
+		STORE8			_cur_lvl_room_idx,$08
+		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data0F
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0F
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_145FF:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$00,$05,$48,$00
 		SBCC			_sloc_145FF
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$A3,$06,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1462C
+		SCASE			_lvl2_room9_handler
 _lvl_doors_data0F:
 		.BYTE	$04,$E0,$00,$40,$03
 		.WORD	_room_door_gen_clear_open
@@ -683,31 +696,31 @@ _prize_sequence_data0F:
 		.BYTE	$1E,$1F,$1D,$20,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1462C:
-		STORE8			_cur_room_sequence_idx,$09
+_lvl2_room9_handler:
+		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$0B
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_02
-		NJSR			_nsub_628FA
+		NJSR			_nsub_room_draw
 			NARGB		$02,$05,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data10
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data10
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1464C:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$05,$D8,$00
 		SBCC			_sloc_1464C
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$AE,$26,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_14675
+		SCASE			_lvl2_roomA_handler
 _lvl_doors_data10:
 		.BYTE	$05,$80,$00,$D0,$04
 		.WORD	_room_door_gen_clear_open
@@ -716,9 +729,9 @@ _prize_sequence_data10:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14675:
-		STORE8			_cur_room_sequence_idx,$0A
-		NJSR			_nsub_628FA
+_lvl2_roomA_handler:
+		STORE8			_cur_lvl_room_idx,$0A
+		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$01
 		NJSR			_nsub_bg_pal_load
 			NARGW		byte_147C5
@@ -727,21 +740,21 @@ _sjmp_case_14675:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data11
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data11
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14698:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$05,$E8,$02
 		SBCC			_sloc_14698
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$AE,$66,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_146C8
+		SCASE			_lvl2_roomB_handler
 _lvl_doors_data11:
 		.BYTE	$05,$80,$01,$20,$04
 		.WORD	_room_door_always_closed
@@ -752,28 +765,28 @@ _prize_sequence_data11:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_146C8:
-		STORE8			_cur_room_sequence_idx,$0B
-		NJSR			_nsub_628FA
+_lvl2_roomB_handler:
+		STORE8			_cur_lvl_room_idx,$0B
+		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data12
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data12
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_146DF:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$78,$05,$E8,$04
 		SBCC			_sloc_146DF
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$AE,$A6,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1470F
+		SCASE			_lvl2_roomC_handler
 _lvl_doors_data12:
 		.BYTE	$05,$80,$03,$20,$04
 		.WORD	_room_door_always_closed
@@ -784,15 +797,15 @@ _prize_sequence_data12:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1470F:
-		STORE8			_cur_room_sequence_idx,$0C
-		NJSR			_nsub_628FA
+_lvl2_roomC_handler:
+		STORE8			_cur_lvl_room_idx,$0C
+		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$05
 		STORE8			_cur_room_x_pageB,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data13
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data13
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 		SUSPEND
 _lvl_doors_data13:
 		.BYTE	$05,$80,$05,$20,$04
@@ -815,45 +828,50 @@ _scr_14734:
 		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJMP			_scr_14324
+		SJMP			_scr_ingame_pause_handler
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_14753:
+_lvl2_checkpoint0123_init:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$0A
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_03
-		SJMP			_sloc_14770
+		SJMP			_lvl2_rooms_init
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_14763:
+_lvl2_checkpoint4_init:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$0B
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_02
-_sloc_14770:
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_lvl2_rooms_init:
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_147A5
+			NARGW		_lvl2_rooms_pal
 		STORE8			_lvl_data_prg_bank,$02
-		NJSR			_nsub_lvl_data_ptrs_load
-			NARGW		_lvl1_macroA_tbl
-			NARGW		_lvl1_macroB_tbl
-			NARGW		_lvl1_macroC_tbl
-			NARGW		_lvl1_macroD_tbl
-			NARGW		_lvl1_attrs_tbl
-		STORE16			_lvl_room_lib_ptr,_lvl_room_lib01
+		NJSR			_nsub_lvl_data_ptrs_load	; TODO, same routine always, and same additional
+			NARGW		_lvl2_macroA_tbl			; rooms lib ptr settings, why not to include it
+			NARGW		_lvl2_macroB_tbl			; in this subroutine as well as soon as
+			NARGW		_lvl2_macroC_tbl			; it used always.
+			NARGW		_lvl2_macroD_tbl
+			NARGW		_lvl2_attrs_tbl
+		STORE16			_lvl_rooms_lib_ptr,_lvl2_rooms_lib
 		NJSR			_nsub_apu_mus_load
 			NARGB		$06
-		NJSR			_nsub_ingame_collision_watch_start
-		NJSR			_nsub_ingame_player_control_start
-		SSCRIPT1_SET	_scr_14324
-		NBG_HNDL_SET	_nbgsub_1480E
-		STORE16			_lvl_objects_ptr,_lvl1_objects_list
+		NJSR			_nsub_beam_player_handler_start
+		NJSR			_nsub_catch_player_handler_start
+		SSCRIPT1_SET	_scr_ingame_pause_handler
+		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_3
+		STORE16			_lvl_objects_ptr,_lvl2_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
-byte_147A5:
+
+_lvl2_rooms_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$10,$00,$07,$0F,$10,$00,$08,$0F,$10,$00,$17
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$10,$00,$0F,$0F,$36,$27,$0F
 byte_147C5:
@@ -861,7 +879,9 @@ byte_147C5:
 _unused_2:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$2B,$0F,$0F,$10,$17,$07 ;	*--
 byte_147E5:
-		.BYTE	$0F,$0F,$07,$0F,$0F,$07,$0F,$0F,$0F,$0F,$0F,$07
+		.BYTE	$0F,$0F,$07,$0F
+		.BYTE	$0F,$07,$0F,$0F
+		.BYTE	$0F,$0F,$0F,$07
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_147F1:
@@ -882,19 +902,21 @@ loc_147FC:
 		TAX
 		PLA
 		LDY		#$02
-		JSR		_pal_patch_fade
+		JSR		_patch_pal_load
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_1480E:
-		JMP		_lvl_room_objects_handler
+_j_nbgsub_lvl_room_objects_handler_3:
+		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
 _scr03_lvl3_handler:
-		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJSR			_ssub_15117
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$07
 			NARGB		$0E,$34,$00
 			NARGB		$4E,$06,$02
@@ -904,7 +926,7 @@ _scr03_lvl3_handler:
 			NARGB		$4E,$66,$02
 			NARGB		$AE,$66,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$07
 		SCASE			_sjmp_case_1484A
 		SCASE			_sjmp_case_148E1
@@ -916,25 +938,25 @@ _scr03_lvl3_handler:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1484A:
-		STORE8			_cur_room_sequence_idx,$00
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$00
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data14
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data14
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14861:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$80,$01,$08,$01
 		SBCC			_sloc_14861
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$2E,$18,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_14891
 _lvl_doors_data14:
@@ -948,27 +970,27 @@ _prize_sequence_data14:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14891:
-		STORE8			_cur_room_sequence_idx,$01
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$01
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data15
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data15
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_148A8:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$00,$08,$00
 			NARGB		$80,$01,$F8,$00
 		SBCC			_sloc_148A8
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$4E,$02,$02
 			NARGB		$2E,$22,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_148E1
 		SCASE			_sjmp_case_1484A
@@ -983,27 +1005,27 @@ _prize_sequence_data15:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_148E1:
-		STORE8			_cur_room_sequence_idx,$02
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$02
+		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data16
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data16
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_148F8:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$02,$F8,$01
 			NARGB		$80,$02,$08,$00
 		SBCC			_sloc_148F8
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$44,$42,$02
 			NARGB		$0E,$02,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14952
 		SCASE			_sjmp_case_14891
@@ -1026,27 +1048,27 @@ _prize_sequence_data16:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14952:
-		STORE8			_cur_room_sequence_idx,$03
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$03
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data17
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data17
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14969:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$D0,$03,$08,$02
 			NARGB		$30,$02,$08,$02
 		SBCC			_sloc_14969
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$78,$38,$00
 			NARGB		$44,$38,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_149BE
 		SCASE			_sjmp_case_148E1
@@ -1069,8 +1091,8 @@ _prize_sequence_data17:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_149BE:
-		STORE8			_cur_room_sequence_idx,$04
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$04
+		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
@@ -1079,26 +1101,26 @@ _sjmp_case_149BE:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data18
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_149E3:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$03,$08,$00
 			NARGB		$D0,$03,$F8,$01
 		SBCC			_sloc_149E3
-		SJSR			_ssub_62DC5
+		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$AE,$02,$02
 			NARGB		$78,$42,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14A2E
 		SCASE			_sjmp_case_14952
@@ -1117,32 +1139,32 @@ _prize_sequence_data18:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14A2E:
-		STORE8			_cur_room_sequence_idx,$05
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$05
+		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data19
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data19
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15175
-		SJSR			_ssub_62DB1
+			NARGW		byte_15159+$1C
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14A4F:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$D0,$05,$F8,$01
 			NARGB		$80,$05,$08,$00
 		SBCC			_sloc_14A4F
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$B8,$42,$02
 			NARGB		$6E,$02,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14AA7
 		SCASE			_sjmp_case_149BE
@@ -1168,27 +1190,27 @@ _prize_sequence_data19:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14AA7:
-		STORE8			_cur_room_sequence_idx,$06
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$06
+		NJSR			_nsub_room_draw
 			NARGB		$00,$04,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data1A
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1A
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14ABE:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$04,$08,$02
 			NARGB		$D0,$05,$08,$02
 		SBCC			_sloc_14ABE
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$84,$38,$00
 			NARGB		$B8,$38,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14B13
 		SCASE			_sjmp_case_14A2E
@@ -1211,12 +1233,12 @@ _prize_sequence_data1A:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14B13:
-		STORE8			_cur_room_sequence_idx,$07
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$07
+		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1224,23 +1246,23 @@ _sjmp_case_14B13:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1B
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14B38:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$04,$08,$00
 			NARGB		$30,$04,$F8,$01
 		SBCC			_sloc_14B38
-		SJSR			_ssub_62DC5
+		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$CE,$02,$02
 			NARGB		$84,$42,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14B83
 		SCASE			_sjmp_case_14AA7
@@ -1259,32 +1281,32 @@ _prize_sequence_data1B:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14B83:
-		STORE8			_cur_room_sequence_idx,$08
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$08
+		NJSR			_nsub_room_draw
 			NARGB		$01,$06,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15175
+			NARGW		byte_15159+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data1C
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1C
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14BA4:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$06,$F8,$01
 			NARGB		$80,$06,$08,$00
 		SBCC			_sloc_14BA4
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$C4,$42,$02
 			NARGB		$8E,$02,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14BFC
 		SCASE			_sjmp_case_14B13
@@ -1307,27 +1329,27 @@ _prize_sequence_data1C:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14BFC:
-		STORE8			_cur_room_sequence_idx,$09
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$09
+		NJSR			_nsub_room_draw
 			NARGB		$00,$06,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data1D
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1D
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14C13:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$D0,$07,$08,$02
 			NARGB		$30,$06,$08,$02
 		SBCC			_sloc_14C13
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$F8,$38,$00
 			NARGB		$C4,$38,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14C68
 		SCASE			_sjmp_case_14B83
@@ -1350,12 +1372,12 @@ _prize_sequence_data1D:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14C68:
-		STORE8			_cur_room_sequence_idx,$0A
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0A
+		NJSR			_nsub_room_draw
 			NARGB		$01,$07,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1363,23 +1385,23 @@ _sjmp_case_14C68:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1E
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14C8D:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$07,$08,$00
 			NARGB		$C0,$07,$F8,$01
 		SBCC			_sloc_14C8D
-		SJSR			_ssub_62DC5
+		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$2E,$62,$02
 			NARGB		$F8,$42,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14CD8
 		SCASE			_sjmp_case_14BFC
@@ -1398,32 +1420,32 @@ _prize_sequence_data1E:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14CD8:
-		STORE8			_cur_room_sequence_idx,$0B
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0B
+		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15175
+			NARGW		byte_15159+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data1F
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1F
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14CF9:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$D0,$01,$F8,$04
 			NARGB		$80,$01,$08,$03
 		SBCC			_sloc_14CF9
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$38,$A2,$02
 			NARGB		$EE,$02,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14D4E
 		SCASE			_sjmp_case_14C68
@@ -1446,27 +1468,27 @@ _prize_sequence_data1F:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14D4E:
-		STORE8			_cur_room_sequence_idx,$0C
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0C
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data20
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data20
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14D65:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$00,$08,$05
 			NARGB		$D0,$01,$08,$05
 		SBCC			_sloc_14D65
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$04,$98,$00
 			NARGB		$38,$98,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14DBF
 		SCASE			_sjmp_case_14CD8
@@ -1489,12 +1511,12 @@ _prize_sequence_data20:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14DBF:
-		STORE8			_cur_room_sequence_idx,$0D
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0D
+		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1502,23 +1524,23 @@ _sjmp_case_14DBF:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data21
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14DE4:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$00,$08,$03
 			NARGB		$30,$00,$F8,$04
 		SBCC			_sloc_14DE4
-		SJSR			_ssub_62DC5
+		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$4E,$62,$02
 			NARGB		$04,$A2,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14E2F
 		SCASE			_sjmp_case_14D4E
@@ -1537,32 +1559,32 @@ _prize_sequence_data21:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14E2F:
-		STORE8			_cur_room_sequence_idx,$0E
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0E
+		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15175
+			NARGW		byte_15159+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data22
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data22
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14E50:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$02,$F8,$04
 			NARGB		$80,$02,$08,$03
 		SBCC			_sloc_14E50
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$44,$A2,$02
 			NARGB		$0E,$62,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14EAD
 		SCASE			_sjmp_case_14DBF
@@ -1585,27 +1607,27 @@ _prize_sequence_data22:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14EAD:
-		STORE8			_cur_room_sequence_idx,$0F
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0F
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data23
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data23
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14EC4:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$D0,$03,$08,$05
 			NARGB		$30,$02,$08,$05
 		SBCC			_sloc_14EC4
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$78,$98,$00
 			NARGB		$44,$98,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14F19
 		SCASE			_sjmp_case_14E2F
@@ -1628,12 +1650,12 @@ _prize_sequence_data23:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14F19:
-		STORE8			_cur_room_sequence_idx,$10
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$10
+		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -1641,23 +1663,23 @@ _sjmp_case_14F19:
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data24
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14F3E:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$80,$03,$08,$03
 			NARGB		$C0,$03,$F8,$04
 		SBCC			_sloc_14F3E
-		SJSR			_ssub_62DC5
+		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$AE,$62,$02
 			NARGB		$78,$A2,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14F89
 		SCASE			_sjmp_case_14EAD
@@ -1676,32 +1698,32 @@ _prize_sequence_data24:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14F89:
-		STORE8			_cur_room_sequence_idx,$14
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$14
+		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data25
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data25
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14FAA:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$D0,$05,$F8,$04
 			NARGB		$80,$05,$08,$03
 		SBCC			_sloc_14FAA
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$B8,$A2,$02
 			NARGB		$6E,$62,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_14FFF
 		SCASE			_sjmp_case_14F19
@@ -1724,27 +1746,27 @@ _prize_sequence_data25:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_14FFF:
-		STORE8			_cur_room_sequence_idx,$15
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$15
+		NJSR			_nsub_room_draw
 			NARGB		$00,$04,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data26
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data26
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15016:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$04,$08,$05
 			NARGB		$D0,$05,$08,$05
 		SBCC			_sloc_15016
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$84,$98,$00
 			NARGB		$B8,$98,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_1506B
 		SCASE			_sjmp_case_14F89
@@ -1767,29 +1789,29 @@ _prize_sequence_data26:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1506B:
-		STORE8			_cur_room_sequence_idx,$16
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$16
+		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data27
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data27
 		NJSR			_nsub_apu_mus_load
 			NARGB		$01
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15086:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$30,$04,$08,$03
 			NARGB		$30,$04,$F8,$04
 		SBCC			_sloc_15086
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$06,$56,$01
 			NARGB		$84,$A2,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_150CD
 		SCASE			_sjmp_case_14FFF
@@ -1808,30 +1830,30 @@ _prize_sequence_data27:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_150CD:
-		STORE8			_cur_room_sequence_idx,$17
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$17
+		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data28
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data28
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15175
-		SJSR			_ssub_62DB1
+			NARGW		byte_15159+$1C
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_150EE:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$30,$00,$F8,$02
 		SBCC			_sloc_150EE
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$84,$63,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_1506B
 _lvl_doors_data28:
@@ -1844,13 +1866,13 @@ _prize_sequence_data28:
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15117:
 		STORE8			_lvl_data_prg_bank,$02
-		STORE16			_lvl_room_lib_ptr,_lvl2_room_lib
+		STORE16			_lvl_rooms_lib_ptr,_lvl3_rooms_lib
 		NJSR			_nsub_lvl_data_ptrs_load
-			NARGW		_lvl2_macroA_tbl
-			NARGW		_lvl2_macroB_tbl
-			NARGW		_lvl2_macroC_tbl
-			NARGW		_lvl2_macroD_tbl
-			NARGW		_lvl2_attrs_tbl
+			NARGW		_lvl3_macroA_tbl
+			NARGW		_lvl3_macroB_tbl
+			NARGW		_lvl3_macroC_tbl
+			NARGW		_lvl3_macroD_tbl
+			NARGW		_lvl3_attrs_tbl
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_04
 		NJSR			_nsub_full_pal_load
 			NARGW		byte_15159
@@ -1860,32 +1882,30 @@ _ssub_15117:
 			NARGB		$10
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
-		NBG_HNDL_SET	_j_nbgsub_1437C_0
-		NJSR			_nsub_ingame_collision_watch_start
-		NJSR			_nsub_ingame_player_control_start
-		SSCRIPT1_SET	_scr_14324
-		STORE16			_lvl_objects_ptr,_lvl2_objects_list
+		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_0
+		NJSR			_nsub_beam_player_handler_start
+		NJSR			_nsub_catch_player_handler_start
+		SSCRIPT1_SET	_scr_ingame_pause_handler
+		STORE16			_lvl_objects_ptr,_lvl3_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
 byte_15159:
 		.BYTE	$0F,$30,$10,$00,$0F,$19,$10,$17,$0F,$37,$27,$17,$0F,$30,$10,$1A
-		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$37,$27,$17
-byte_15175:
-		.BYTE	$0F,$36,$25,$0F
+		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$37,$27,$17,$0F,$36,$25,$0F
 byte_15179:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_j_nbgsub_1437C_0:
-		JMP		_lvl_room_objects_handler
+_j_nbgsub_lvl_room_objects_handler_0:
+		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
 _scr04_lvl4_handler:
-		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJSR			_ssub_154D2
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$06
 			NARGB		$26,$AE,$01
 			NARGB		$3A,$90,$03
@@ -1894,7 +1914,7 @@ _scr04_lvl4_handler:
 			NARGB		$51,$27,$02
 			NARGB		$79,$54,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$06
 		SCASE			_sjmp_case_151B4
 		SCASE			_sjmp_case_151F4
@@ -1905,25 +1925,25 @@ _scr04_lvl4_handler:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_151B4:
-		STORE8			_cur_room_sequence_idx,$00
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$00
+		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data29
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data29
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_151CB:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$98,$01,$08,$05
 		SBCC			_sloc_151CB
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$32,$97,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_151F4
 _lvl_doors_data29:
@@ -1935,27 +1955,27 @@ _prize_sequence_data29:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_151F4:
-		STORE8			_cur_room_sequence_idx,$01
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$01
+		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data2A
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2A
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1520B:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$01,$A8,$04
 			NARGB		$B0,$01,$08,$03
 		SBCC			_sloc_1520B
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$43,$92,$01
 			NARGB		$34,$57,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_1524B
 		SCASE			_sjmp_case_1528B
@@ -1972,25 +1992,25 @@ _prize_sequence_data2A:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1524B:
-		STORE8			_cur_room_sequence_idx,$02
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$02
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data2B
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2B
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15262:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$00,$02,$98,$04
 		SBCC			_sloc_15262
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$3C,$92,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_151F4
 _lvl_doors_data2B:
@@ -2002,29 +2022,29 @@ _prize_sequence_data2B:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1528B:
-		STORE8			_cur_room_sequence_idx,$03
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$03
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data2C
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2C
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_152A2:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$03
 			NARGB		$B0,$01,$F0,$02
 			NARGB		$48,$00,$F0,$02
 			NARGB		$50,$00,$08,$02
 		SBCC			_sloc_152A2
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$03
 			NARGB		$34,$63,$02
 			NARGB		$08,$63,$02
 			NARGB		$08,$37,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$03
 		SCASE			_sjmp_case_151F4
 		SCASE			_sjmp_case_152EB
@@ -2042,25 +2062,25 @@ _prize_sequence_data2C:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_152EB:
-		STORE8			_cur_room_sequence_idx,$04
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$04
+		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data2D
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2D
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15302:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$50,$00,$08,$03
 		SBCC			_sloc_15302
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$08,$57,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_1528B
 _lvl_doors_data2D:
@@ -2072,27 +2092,27 @@ _prize_sequence_data2D:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15331:
-		STORE8			_cur_room_sequence_idx,$05
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$05
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data2E
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2E
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15348:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$50,$00,$F0,$01
 			NARGB		$F8,$01,$28,$01
 		SBCC			_sloc_15348
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$08,$43,$02
 			NARGB		$44,$24,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_1528B
 		SCASE			_sjmp_case_15388
@@ -2109,27 +2129,27 @@ _prize_sequence_data2E:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15388:
-		STORE8			_cur_room_sequence_idx,$06
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$06
+		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data2F
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2F
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1539F:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$00,$02,$30,$01
 			NARGB		$60,$02,$F0,$02
 		SBCC			_sloc_1539F
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$3C,$24,$03
 			NARGB		$4A,$63,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15331
 		SCASE			_sjmp_case_153E1
@@ -2147,27 +2167,27 @@ _prize_sequence_data2F:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_153E1:
-		STORE8			_cur_room_sequence_idx,$07
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$07
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data30
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data30
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_153F8:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$60,$02,$08,$03
 			NARGB		$C0,$03,$08,$03
 		SBCC			_sloc_153F8
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$4A,$57,$00
 			NARGB		$76,$57,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15388
 		SCASE			_sjmp_case_1543A
@@ -2185,27 +2205,27 @@ _prize_sequence_data30:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1543A:
-		STORE8			_cur_room_sequence_idx,$08
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$08
+		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data31
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data31
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15451:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$C0,$03,$F0,$02
 			NARGB		$28,$03,$08,$01
 		SBCC			_sloc_15451
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$76,$64,$02
 			NARGB		$63,$17,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_153E1
 		SCASE			_sjmp_case_15492
@@ -2220,25 +2240,25 @@ _prize_sequence_data31:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15492:
-		STORE8			_cur_room_sequence_idx,$09
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$09
+		NJSR			_nsub_room_draw
 			NARGB		$02,$03,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data32
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data32
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_154A9:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$18,$03,$F0,$00
 		SBCC			_sloc_154A9
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$63,$23,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_1543A
 _lvl_doors_data32:
@@ -2252,12 +2272,12 @@ _prize_sequence_data32:
 _ssub_154D2:
 		STORE8			_lvl_data_prg_bank,$05
 		NJSR			_nsub_lvl_data_ptrs_load
-			NARGW		_lvl3_macroA_tbl
-			NARGW		_lvl3_macroB_tbl
-			NARGW		_lvl3_macroC_tbl
-			NARGW		_lvl3_macroD_tbl
-			NARGW		_lvl3_attrs_tbl
-		STORE16			_lvl_room_lib_ptr,_lvl3_room_lib
+			NARGW		_lvl4_macroA_tbl
+			NARGW		_lvl4_macroB_tbl
+			NARGW		_lvl4_macroC_tbl
+			NARGW		_lvl4_macroD_tbl
+			NARGW		_lvl4_attrs_tbl
+		STORE16			_lvl_rooms_lib_ptr,_lvl4_rooms_lib
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_05
 		NJSR			_nsub_full_pal_load
 			NARGW		byte_15514
@@ -2268,10 +2288,10 @@ _ssub_154D2:
 		NJSR			_nsub_apu_mus_load
 			NARGB		$08
 		NBG_HNDL_SET	_nbgsub_15534
-		NJSR			_nsub_ingame_collision_watch_start
-		NJSR			_nsub_ingame_player_control_start
-		SSCRIPT1_SET	_scr_14324
-		STORE16			_lvl_objects_ptr,_lvl3_objects_list
+		NJSR			_nsub_beam_player_handler_start
+		NJSR			_nsub_catch_player_handler_start
+		SSCRIPT1_SET	_scr_ingame_pause_handler
+		STORE16			_lvl_objects_ptr,_lvl4_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
 byte_15514:
@@ -2293,7 +2313,7 @@ _nbgsub_15534:
 		TAX
 		PLA
 		LDY		#$03
-		JSR		_pal_patch_fade
+		JSR		_patch_pal_load
 		INC		_scr_trds_args0
 		LDA		_scr_trds_args0
 		CMP		#$06
@@ -2301,18 +2321,23 @@ _nbgsub_15534:
 		LDA		#$00
 		STA		_scr_trds_args0
 loc_15558:
-		JMP		_lvl_room_objects_handler
+		JMP		_nbgsub_lvl_room_objects_handler
+
 byte_1555B:
-		.BYTE	$0F,$07,$15,$05,$0F,$05,$07,$15,$0F,$15,$05,$07,$0F,$07,$16,$05
-		.BYTE	$0F,$05,$07,$16,$0F,$16,$05,$07
+		.BYTE	$0F,$07,$15,$05
+		.BYTE	$0F,$05,$07,$15
+		.BYTE	$0F,$15,$05,$07
+		.BYTE	$0F,$07,$16,$05
+		.BYTE	$0F,$05,$07,$16
+		.BYTE	$0F,$16,$05,$07
 
 ; =============== S C R I P T ===============================================
 _scr05_lvl5_handler:
-		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJSR			_ssub_15CDB
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$05
 			NARGB		$4D,$D4,$00
 			NARGB		$98,$92,$02
@@ -2320,7 +2345,7 @@ _scr05_lvl5_handler:
 			NARGB		$23,$29,$02
 			NARGB		$94,$34,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$05
 		SCASE			_sjmp_case_155A2
 		SCASE			_sjmp_case_15691
@@ -2330,25 +2355,25 @@ _scr05_lvl5_handler:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_155A2:
-		STORE8			_cur_room_sequence_idx,$00
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$00
+		NJSR			_nsub_room_draw
 			NARGB		$02,$02,$06
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data33
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data33
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_155B9:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$40,$02,$08,$06
 		SBCC			_sloc_155B9
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$46,$B9,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_155E9
 _lvl_doors_data33:
@@ -2362,29 +2387,29 @@ _prize_sequence_data33:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_155E9:
-		STORE8			_cur_room_sequence_idx,$01
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$01
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$05
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data34
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data34
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15604:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$03,$50,$05
 			NARGB		$40,$02,$F8,$05
 		SBCC			_sloc_15604
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$83,$A7,$01
 			NARGB		$46,$C3,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_1563D
 		SCASE			_sjmp_case_155A2
@@ -2399,29 +2424,29 @@ _prize_sequence_data34:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1563D:
-		STORE8			_cur_room_sequence_idx,$02
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$02
+		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data35
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data35
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0D
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15658:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$A8,$04,$08,$05
 			NARGB		$00,$04,$48,$05
 		SBCC			_sloc_15658
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$94,$99,$00
 			NARGB		$7C,$A7,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15691
 		SCASE			_sjmp_case_155E9
@@ -2436,34 +2461,34 @@ _prize_sequence_data35:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15691:
-		STORE8			_cur_room_sequence_idx,$03
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$03
+		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data36
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data36
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		byte_15D35
-		SJSR			_ssub_62DB1
+			NARGW		byte_15D1D+$18
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_156B2:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$03
 			NARGB		$00,$04,$50,$03
 			NARGB		$F8,$04,$50,$03
 			NARGB		$B0,$04,$F8,$04
 		SBCC			_sloc_156B2
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$03
 			NARGB		$7C,$67,$03
 			NARGB		$A3,$67,$01
 			NARGB		$94,$A3,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$03
 		SCASE			_sjmp_case_1573F
 		SCASE			_sjmp_case_156FB
@@ -2481,8 +2506,8 @@ _prize_sequence_data36:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_156FB:
-		STORE8			_cur_room_sequence_idx,$04
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$04
+		NJSR			_nsub_room_draw
 			NARGB		$02,$05,$03
 ; REGION, removed in the EU version
 		NJSR			_nsub_mmc1_chr0_set
@@ -2491,19 +2516,19 @@ _sjmp_case_156FB:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_room_doors_data37
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data37
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15716:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$00,$05,$50,$03
 		SBCC			_sloc_15716
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$9C,$67,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 ; NOTE: SJMP_SW		 here has only single case entry, but counter here is $02
 ; this not cause any bugs, but incorrect.
 ; FIXME
@@ -2519,29 +2544,29 @@ _prize_sequence_data37:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_1573F:
-		STORE8			_cur_room_sequence_idx,$05
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$05
+		NJSR			_nsub_room_draw
 			NARGB		$02,$03,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$12
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data38
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data38
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1575A:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$03,$50,$03
 			NARGB		$B0,$03,$F8,$03
 		SBCC			_sloc_1575A
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$83,$67,$01
 			NARGB		$74,$83,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15691
 		SCASE			_sjmp_case_15793
@@ -2556,27 +2581,27 @@ _prize_sequence_data38:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15793:
-		STORE8			_cur_room_sequence_idx,$06
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$06
+		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data39
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data39
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_157AA:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$B0,$03,$08,$04
 			NARGB		$00,$02,$50,$04
 		SBCC			_sloc_157AA
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$74,$79,$00
 			NARGB		$3C,$87,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_1573F
 		SCASE			_sjmp_case_157E3
@@ -2591,29 +2616,29 @@ _prize_sequence_data39:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_157E3:
-		STORE8			_cur_room_sequence_idx,$07
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$07
+		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3A
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3A
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_157FA:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$03
 			NARGB		$F8,$01,$50,$04
 			NARGB		$B0,$01,$F8,$05
 			NARGB		$00,$01,$A0,$05
 		SBCC			_sloc_157FA
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$03
 			NARGB		$43,$87,$01
 			NARGB		$34,$C3,$02
 			NARGB		$1C,$B1,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$03
 		SCASE			_sjmp_case_15793
 		SCASE			_sjmp_case_15843
@@ -2631,8 +2656,8 @@ _prize_sequence_data3A:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15843:
-		STORE8			_cur_room_sequence_idx,$08
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$08
+		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$06
 ; REGION, removed in the EU version
 		NJSR			_nsub_mmc1_chr0_set
@@ -2641,19 +2666,19 @@ _sjmp_case_15843:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3B
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3B
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1585E:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$B0,$01,$08,$06
 		SBCC			_sloc_1585E
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$34,$B9,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_157E3
 _lvl_doors_data3B:
@@ -2665,29 +2690,29 @@ _prize_sequence_data3B:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15887:
-		STORE8			_cur_room_sequence_idx,$09
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$09
+		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$05
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3C
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3C
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_158A2:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$00,$A0,$05
 			NARGB		$40,$00,$08,$05
 		SBCC			_sloc_158A2
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$23,$B1,$01
 			NARGB		$06,$99,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_157E3
 		SCASE			_sjmp_case_158DB
@@ -2702,8 +2727,8 @@ _prize_sequence_data3C:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_158DB:
-		STORE8			_cur_room_sequence_idx,$0A
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0A
+		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
@@ -2712,21 +2737,21 @@ _sjmp_case_158DB:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3D
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3D
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_158FB:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$40,$00,$F8,$04
 			NARGB		$F8,$00,$50,$03
 		SBCC			_sloc_158FB
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$06,$A3,$02
 			NARGB		$23,$67,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15887
 		SCASE			_sjmp_case_15934
@@ -2741,27 +2766,27 @@ _prize_sequence_data3D:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15934:
-		STORE8			_cur_room_sequence_idx,$0B
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0B
+		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3E
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3E
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1594B:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$01,$A0,$03
 			NARGB		$00,$01,$50,$03
 		SBCC			_sloc_1594B
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$43,$71,$01
 			NARGB		$1C,$67,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15984
 		SCASE			_sjmp_case_158DB
@@ -2776,29 +2801,29 @@ _prize_sequence_data3E:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15984:
-		STORE8			_cur_room_sequence_idx,$0C
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0C
+		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$02
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data3F
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3F
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1599F:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$00,$02,$50,$02
 			NARGB		$00,$02,$A0,$03
 		SBCC			_sloc_1599F
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$3C,$47,$03
 			NARGB		$3C,$71,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_159DF
 		SCASE			_sjmp_case_15934
@@ -2813,27 +2838,27 @@ _prize_sequence_data3F:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_159DF:
-		STORE8			_cur_room_sequence_idx,$0D
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0D
+		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data40
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data40
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_159F6:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$40,$00,$08,$02
 			NARGB		$F8,$01,$50,$02
 		SBCC			_sloc_159F6
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$06,$39,$00
 			NARGB		$42,$47,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15A37
 		SCASE			_sjmp_case_15984
@@ -2848,32 +2873,32 @@ _prize_sequence_data40:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15A37:
-		STORE8			_cur_room_sequence_idx,$0E
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0E
+		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15179
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data41
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data41
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15A58:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$00,$50,$01
 			NARGB		$40,$00,$F8,$01
 		SBCC			_sloc_15A58
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$23,$27,$01
 			NARGB		$06,$43,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15A91
 		SCASE			_sjmp_case_159DF
@@ -2888,34 +2913,34 @@ _prize_sequence_data41:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15A91:
-		STORE8			_cur_room_sequence_idx,$0F
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$0F
+		NJSR			_nsub_room_draw
 			NARGB		$00,$01,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15D39
+			NARGW		byte_15D1D+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data42
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data42
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15AB2:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$03
 			NARGB		$F8,$02,$50,$01
 			NARGB		$00,$01,$50,$01
 			NARGB		$70,$01,$08,$01
 		SBCC			_sloc_15AB2
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$03
 			NARGB		$63,$27,$01
 			NARGB		$1C,$27,$03
 			NARGB		$2C,$19,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$03
 		SCASE			_sjmp_case_15B3F
 		SCASE			_sjmp_case_15A37
@@ -2933,8 +2958,8 @@ _prize_sequence_data42:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15AFB:
-		STORE8			_cur_room_sequence_idx,$10
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$10
+		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$00
 ; REGION, removed in the EU version
 		NJSR			_nsub_mmc1_chr0_set
@@ -2943,19 +2968,19 @@ _sjmp_case_15AFB:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data43
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data43
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15B16:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$70,$01,$F8,$00
 		SBCC			_sloc_15B16
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$2C,$23,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_15A91
 _lvl_doors_data43:
@@ -2967,29 +2992,29 @@ _prize_sequence_data43:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15B3F:
-		STORE8			_cur_room_sequence_idx,$11
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$11
+		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$04
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data44
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data44
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15B5A:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$F8,$03,$A0,$02
 			NARGB		$00,$03,$50,$01
 		SBCC			_sloc_15B5A
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$83,$51,$01
 			NARGB		$5C,$27,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15B93
 		SCASE			_sjmp_case_15A91
@@ -3004,29 +3029,29 @@ _prize_sequence_data44:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15B93:
-		STORE8			_cur_room_sequence_idx,$12
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$12
+		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$02
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data45
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data45
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15BAE:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$B0,$04,$08,$02
 			NARGB		$00,$04,$A0,$02
 		SBCC			_sloc_15BAE
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$94,$39,$00
 			NARGB		$7C,$51,$03
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15BE7
 		SCASE			_sjmp_case_15B3F
@@ -3041,32 +3066,32 @@ _prize_sequence_data45:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15BE7:
-		STORE8			_cur_room_sequence_idx,$13
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$13
+		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_15D3D
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data46
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data46
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15C08:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$B0,$04,$08,$01
 			NARGB		$B4,$04,$F8,$01
 		SBCC			_sloc_15C08
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$94,$19,$00
 			NARGB		$94,$43,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15C41
 		SCASE			_sjmp_case_15B93
@@ -3081,32 +3106,32 @@ _prize_sequence_data46:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15C41:
-		STORE8			_cur_room_sequence_idx,$14
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$14
+		NJSR			_nsub_room_draw
 			NARGB		$00,$03,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$18
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15D39
+			NARGW		byte_15D1D+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data47
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data47
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15C62:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$00,$03,$70,$00
 			NARGB		$B0,$04,$F8,$00
 		SBCC			_sloc_15C62
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$5C,$0C,$03
 			NARGB		$94,$23,$02
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15C9B
 		SCASE			_sjmp_case_15BE7
@@ -3121,25 +3146,25 @@ _prize_sequence_data47:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15C9B:
-		STORE8			_cur_room_sequence_idx,$15
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$15
+		NJSR			_nsub_room_draw
 			NARGB		$02,$02,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data48
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data48
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15CB2:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$01
 			NARGB		$F8,$02,$70,$00
 		SBCC			_sloc_15CB2
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$63,$0C,$01
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_15C41
 _lvl_doors_data48:
@@ -3152,13 +3177,13 @@ _prize_sequence_data48:
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_15CDB:
 		STORE8			_lvl_data_prg_bank,$05
-		STORE16			_lvl_room_lib_ptr,_lvl4_room_lib
+		STORE16			_lvl_rooms_lib_ptr,_lvl5_rooms_lib
 		NJSR			_nsub_lvl_data_ptrs_load
-			NARGW		_lvl4_macroA_tbl
-			NARGW		_lvl4_macroB_tbl
-			NARGW		_lvl4_macroC_tbl
-			NARGW		_lvl4_macroD_tbl
-			NARGW		_lvl4_attrs_tbl
+			NARGW		_lvl5_macroA_tbl
+			NARGW		_lvl5_macroB_tbl
+			NARGW		_lvl5_macroC_tbl
+			NARGW		_lvl5_macroD_tbl
+			NARGW		_lvl5_attrs_tbl
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_06
 		NJSR			_nsub_full_pal_load
 			NARGW		byte_15D1D
@@ -3166,66 +3191,62 @@ _ssub_15CDB:
 			NARGB		$0E
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$15
-		NBG_HNDL_SET	_j_nbgsub_1437C_1
+		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_1
 		NJSR			_nsub_apu_mus_load
 			NARGB		$09
-		NJSR			_nsub_ingame_collision_watch_start
-		NJSR			_nsub_ingame_player_control_start
-		SSCRIPT1_SET	_scr_14324
-		STORE16			_lvl_objects_ptr,_lvl4_objects_list
+		NJSR			_nsub_beam_player_handler_start
+		NJSR			_nsub_catch_player_handler_start
+		SSCRIPT1_SET	_scr_ingame_pause_handler
+		STORE16			_lvl_objects_ptr,_lvl5_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
 byte_15D1D:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$01,$0F,$30,$27,$01,$0F,$30,$15,$07
-		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
-byte_15D35:
-		.BYTE	$0F,$36,$26,$0F
-byte_15D39:
-		.BYTE	$0F,$36,$26,$0F
+		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$26,$0F,$0F,$36,$26,$0F
 byte_15D3D:
 		.BYTE	$0F,$36,$27,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_j_nbgsub_1437C_1:
-		JMP		_lvl_room_objects_handler
+_j_nbgsub_lvl_room_objects_handler_1:
+		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S C R I P T ===============================================
 _scr06_lvl6_handler:
-		NJSR			_nsub_sub_rom_idx_calc
+		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJSR			_ssub_15DD6
-		NJSR			_nsub_room_register
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$0E,$73,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_sjmp_case_15D5F
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15D5F:
-		STORE8			_cur_room_sequence_idx,$00
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$00
+		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data49
 		STORE16			_room_prize_sequence_ptr,_prize_sequence_data49
-		SJSR			_ssub_62DB1
+		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15D76:
 		SDELAY			$01
-		NJSR			_nsub_6294B
+		NJSR			_nsub_players_room_exit_test
 			NARGB		$02
 			NARGB		$70,$00,$10,$02
 			NARGB		$90,$00,$10,$02
 		SBCC			_sloc_15D76
-		SJSR			_ssub_62DC5
-		NJSR			_nsub_room_register
+		SJSR			_ssub_room_exit_pal_fade_out
+		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$0E,$36,$00
 			NARGB		$0E,$36,$00
 		NJSR			_nsub_read_mem
-			NARGW		_sub_room_idx
+			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_sjmp_case_15DA1
 		SCASE			_sjmp_case_15DA1
@@ -3236,8 +3257,8 @@ _prize_sequence_data49:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_15DA1:
-		STORE8			_cur_room_sequence_idx,$01
-		NJSR			_nsub_628FA
+		STORE8			_cur_lvl_room_idx,$01
+		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data4A
@@ -3265,12 +3286,12 @@ _prize_sequence_data4A:
 _ssub_15DD6:
 		STORE8			_lvl_data_prg_bank,$03
 		NJSR			_nsub_lvl_data_ptrs_load
-			NARGW		_lvl5_macroA_tbl
-			NARGW		_lvl5_macroB_tbl
-			NARGW		_lvl5_macroC_tbl
-			NARGW		_lvl5_macroD_tbl
-			NARGW		_lvl5_macroE_tbl
-		STORE16			_lvl_room_lib_ptr,_lvl5_room_lib
+			NARGW		_lvl6_macroA_tbl
+			NARGW		_lvl6_macroB_tbl
+			NARGW		_lvl6_macroC_tbl
+			NARGW		_lvl6_macroD_tbl
+			NARGW		_lvl6_macroE_tbl
+		STORE16			_lvl_rooms_lib_ptr,_lvl6_rooms_lib
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_07
 		NJSR			_nsub_full_pal_load
 			NARGW		byte_15E18
@@ -3280,11 +3301,11 @@ _ssub_15DD6:
 			NARGB		$16
 		NJSR			_nsub_apu_mus_load
 			NARGB		$0A
-		NBG_HNDL_SET	_j_nbgsub_1437C_2
-		NJSR			_nsub_ingame_collision_watch_start
-		NJSR			_nsub_ingame_player_control_start
-		SSCRIPT1_SET	_scr_14324
-		STORE16			_lvl_objects_ptr,_lvl5_objects_list
+		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_2
+		NJSR			_nsub_beam_player_handler_start
+		NJSR			_nsub_catch_player_handler_start
+		SSCRIPT1_SET	_scr_ingame_pause_handler
+		STORE16			_lvl_objects_ptr,_lvl6_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
 byte_15E18:
@@ -3292,8 +3313,8 @@ byte_15E18:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$17,$0F,$0F,$36,$25,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_j_nbgsub_1437C_2:
-		JMP		_lvl_room_objects_handler
+_j_nbgsub_lvl_room_objects_handler_2:
+		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_15E3B:
@@ -3306,7 +3327,7 @@ _nsub_15E3B:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_15E4A:
+_nsub_ingame_start_input_test:
 		LDA		_scr_trds_pause_mode
 		BNE		loc_15E56
 		LDA		_pad0_pressed
@@ -3319,7 +3340,7 @@ loc_15E56:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_unref_0:
+_nsub_ingame_select_input_test_unused:
 		LDA		_pad0_pressed
 		AND		#$20
 		BEQ		loc_15E65
@@ -3332,7 +3353,7 @@ loc_15E65:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_pause_menu_handler:
+_nsub_ingame_pause_handler:
 		LDA		#$FF
 		JSR		_far_prg6_apu_mus_load_ex
 		LDA		_ppu_scroll_pos_x
@@ -3630,7 +3651,7 @@ _spr_raw_lib01_18:
 
 ; =============== S C R I P T ===============================================
 _scr_16111:
-		SJSR			_ssub_62DC5
+		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_all_threads_off_except_cur
 		NJSR			_nsub_far_prg0_tlm_lib_unpack
 			NARGB		_tlm3_game_over_idx
@@ -3678,14 +3699,15 @@ _scr_1616A:
 		SBCC			_scr_1616A
 		SJSR			_ssub_pal_fade_out
 		SSTOP
+
 byte_16176:
 		.BYTE	$0F,$30,$15,$03,$0F,$30,$10,$0F,$0F,$37,$27,$17,$0F,$0F,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$31,$12,$0F,$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_game_over_draw:
-		LDA		_lvl_room_checkpoint_idx
-		STA		_lvl_room_cur_idx
+		LDA		_lvl_cur_checkpoint_idx
+		STA		_lvl_last_checkpoint_idx
 		LDA		_hi_scores
 		LDX		_hi_scores+1
 		JSR		_bin2dec
@@ -5003,7 +5025,7 @@ _spr_raw_lib01:
 		.WORD	_spr_raw_lib01_19
 		.WORD	_spr_raw_lib01_1A
 
-_lvl0_objects_list:
+_lvl1_objects_list:
 		.BYTE	$FF,$02
 		OBJ_SET	_scr13_slow_moving_slime,			$30,$02,$88,$03,_NON,_NON,_NON
 		OBJ_SET	_scr13_slow_moving_slime,			$70,$03,$98,$03,_NON,_NON,_NON
@@ -5089,16 +5111,18 @@ _lvl0_objects_list:
 		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,$03,_NON,_NON
 		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,$00,_NON,_NON
 		.BYTE	$FF,$00
-_lvl_collisions_00:
+_lvl1_room01234_collisions:
 		.BYTE	$FF,$FC,$FB,$F3,$03,$DB,$03,$F7,$03,$F8,$0F,$FF,$7E,$FF,$7E,$7F
 		.BYTE	$01,$00,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl_collisions_01:
+; never used, but configured to be usable..
+_lvl1_room56_collisions:
 		.BYTE	$FC,$F7,$F8,$FB,$0C,$CE,$0F,$FF,$0B,$00,$07,$00,$F7,$00,$FB,$02
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+; no refrences at all.
 _unused_11:
 		.BYTE	$7F,$CE,$F7,$CF,$BC,$2E,$B3,$2C,$00,$00,$00,$04,$FE,$8F,$FC,$EC ;	*--
 		.BYTE	$2F,$E0,$3E,$7F,$F8,$FD,$F4,$FF,$FF,$FF,$00,$03,$00,$00,$00,$00
-_lvl0_macroA_tbl:
+_lvl1_macroA_tbl:
 		.BYTE	$FF,$11,$12,$13,$05,$06,$08,$09,$1A,$00,$20,$22,$26,$28,$10,$24
 		.BYTE	$00,$01,$02,$03,$15,$10,$00,$1A,$0A,$00,$20,$42,$46,$48,$09,$09
 		.BYTE	$1F,$1C,$00,$55,$55,$6D,$FF,$1C,$15,$0E,$10,$2D,$2F,$2F,$6B,$26
@@ -5114,7 +5138,7 @@ _lvl0_macroA_tbl:
 		.BYTE	$60,$70,$05,$19,$05,$05,$00,$10,$10,$15,$0E,$3E,$00,$0D,$09,$97
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$60,$70
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl0_macroB_tbl:
+_lvl1_macroB_tbl:
 		.BYTE	$FF,$00,$00,$05,$05,$16,$18,$00,$1A,$00,$30,$32,$36,$38,$4B,$34
 		.BYTE	$00,$FF,$FF,$FF,$15,$FF,$00,$0A,$1A,$00,$30,$52,$56,$58,$FF,$00
 		.BYTE	$1F,$15,$00,$55,$55,$7D,$15,$15,$15,$FF,$1F,$2D,$2D,$2D,$7B,$46
@@ -5130,7 +5154,7 @@ _lvl0_macroB_tbl:
 		.BYTE	$7D,$FF,$05,$05,$05,$05,$00,$4B,$0E,$15,$1E,$15,$09,$87,$00,$05
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$7D,$00
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl0_macroC_tbl:
+_lvl1_macroC_tbl:
 		.BYTE	$FF,$10,$13,$14,$05,$07,$15,$10,$1B,$1F,$21,$23,$27,$29,$10,$25
 		.BYTE	$0C,$10,$03,$04,$15,$10,$05,$1B,$0B,$05,$41,$43,$47,$49,$10,$FF
 		.BYTE	$1F,$1D,$55,$55,$6C,$6E,$15,$1C,$44,$0F,$10,$2D,$2E,$2D,$05,$29
@@ -5146,7 +5170,7 @@ _lvl0_macroC_tbl:
 		.BYTE	$60,$70,$1E,$05,$05,$19,$05,$10,$10,$15,$0F,$3F,$0C,$0D,$97,$97
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$7D,$7D
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl0_macroD_tbl:
+_lvl1_macroD_tbl:
 		.BYTE	$FF,$4A,$05,$05,$05,$17,$15,$4A,$1B,$1F,$31,$33,$37,$39,$4C,$35
 		.BYTE	$05,$FF,$FF,$FF,$15,$FF,$05,$0B,$1B,$54,$51,$53,$57,$59,$FF,$4A
 		.BYTE	$1F,$15,$55,$55,$7C,$7E,$FF,$15,$15,$FF,$1F,$2D,$2D,$2D,$05,$49
@@ -5162,7 +5186,7 @@ _lvl0_macroD_tbl:
 		.BYTE	$7D,$FF,$05,$05,$19,$05,$19,$0E,$0F,$2E,$1F,$2F,$87,$87,$54,$05
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$7D,$7D
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-_lvl0_attrs_tbl:
+_lvl1_attrs_tbl:
 		.BYTE	$00,$00,$00,$03,$00,$01,$03,$00,$00,$00,$02,$02,$02,$02,$00,$03
 		.BYTE	$00,$00,$00,$00,$03,$00,$00,$00,$00,$00,$02,$02,$02,$02,$00,$00
 		.BYTE	$00,$03,$00,$00,$00,$00,$02,$03,$03,$02,$00,$03,$03,$03,$03,$02
@@ -5178,7 +5202,7 @@ _lvl0_attrs_tbl:
 		.BYTE	$03,$03,$00,$00,$00,$00,$00,$00,$00,$01,$02,$01,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl_room_lib00:
+_lvl1_rooms_lib:
 		.WORD	$0000		; *--
 		.WORD	$0000		; *--
 		.WORD	byte_17062

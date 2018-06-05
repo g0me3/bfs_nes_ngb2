@@ -115,7 +115,7 @@ _GAME_ENTRY:
 		LDA		#$00
 		STA		_level
 		LDA		#$01
-		STA		_lvl_room_cur_idx
+		STA		_lvl_last_checkpoint_idx
 _MAIN_GAME_LOOP:
 		LDA		#$00
 		STA		_mmc1_busy
@@ -135,7 +135,7 @@ _MAIN_GAME_LOOP:
 		STA		_lives
 loc_60112:
 		LDA		#$00
-		STA		_lvl_room_checkpoint_idx
+		STA		_lvl_cur_checkpoint_idx
 		JSR		_scr_trds_list_reset
 		LDX		_level
 		LDA		_lvl_scripts_list,X
@@ -154,7 +154,7 @@ loc_60123:
 		LDA		_game_flags
 		BPL		loc_6015A
 		LDA		#$01
-		STA		_lvl_room_cur_idx
+		STA		_lvl_last_checkpoint_idx
 		INC		_level
 		LDA		_level
 		CMP		#$07
@@ -273,7 +273,7 @@ _sloc_601FA:
 _nbgsub_60205:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args2,X
-		CMP		_cur_room_sequence_idx
+		CMP		_cur_lvl_room_idx
 		BEQ		loc_6020F
 		RTS
 loc_6020F:
@@ -3353,10 +3353,10 @@ _lvl_room_ofs_calc:
 		ORA		_tmp_var0
 		ASL
 		TAY
-		LDA		(_lvl_room_lib_ptr),Y
+		LDA		(_lvl_rooms_lib_ptr),Y
 		STA		_ptr06
 		INY
-		LDA		(_lvl_room_lib_ptr),Y
+		LDA		(_lvl_rooms_lib_ptr),Y
 		STA		_ptr06+1
 		PLA
 		TAY
@@ -3862,7 +3862,7 @@ loc_61CD4:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_lvl_room_objects_handler:
+_nbgsub_lvl_room_objects_handler:
 		LDA		_prg_cur_bank
 		PHA
 		LDA		_lvl_data_prg_bank
@@ -3885,7 +3885,7 @@ loc_61CF6:
 		BNE		loc_61D0D
 		INY
 		LDA		(_lvl_objects_ptr),Y
-		CMP		_cur_room_sequence_idx
+		CMP		_cur_lvl_room_idx
 		BNE		_ld1_exit
 		LDA		_pal_fade_req_list
 		BMI		_ld1_exit
@@ -3895,7 +3895,7 @@ loc_61CF6:
 loc_61D0D:
 		CMP		#$02
 		BNE		_assert_error
-		INC		_lvl_room_checkpoint_idx
+		INC		_lvl_cur_checkpoint_idx
 		BNE		loc_61D6A
 _assert_error:
 		JMP		_assert_error
@@ -3962,6 +3962,9 @@ _ld1_exit:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E =======================================
+; look for a beginning of the object data section corresponding to current
+; check point index.
+;
 _nsub_lvl_room_objects_init:
 		LDA		_prg_cur_bank
 		PHA
@@ -3981,7 +3984,7 @@ loc_61D85:
 loc_61D96:
 		CMP		#$02
 		BNE		loc_61D9F
-		INC		_lvl_room_checkpoint_idx
+		INC		_lvl_cur_checkpoint_idx
 		BNE		loc_61DBD
 loc_61D9F:
 		JMP		loc_61D9F
@@ -4015,8 +4018,8 @@ loc_61DBD:
 		BCC		loc_61DC8
 		INC		_lvl_objects_ptr+1
 loc_61DC8:
-		LDA		_lvl_room_checkpoint_idx
-		CMP		_lvl_room_cur_idx
+		LDA		_lvl_cur_checkpoint_idx
+		CMP		_lvl_last_checkpoint_idx
 		BCC		loc_61D85
 		PLA
 		STA		_prg_cur_bank
@@ -4432,7 +4435,7 @@ loc_62063:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_pal_patch_fade:
+_patch_pal_load:
 		STA		_ptr06
 		STX		_ptr06+1
 		TYA
@@ -5045,19 +5048,19 @@ loc_626B1:
 		JMP		_full_pal_fade
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_pal_patch_fade:
-		JSR		_scr_getc
+_nsub_patch_pal_load:
+		JSR		_scr_getc	; -> Y
 		PHA
-		JSR		_scr_getc
+		JSR		_scr_getc	; -> tmp0
 		PHA
-		JSR		_scr_getc
+		JSR		_scr_getc	; -> X
 		TAX
 		PLA
 		STA		_tmp0
 		PLA
 		TAY
 		LDA		_tmp0
-		JMP		_pal_patch_fade
+		JMP		_patch_pal_load
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_bg_pal_load:
@@ -5428,13 +5431,15 @@ _nsub_628D1:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_628FA:
+_nsub_room_draw:
 		JSR		_scr_getc
 		STA		_tmp7BE
 		JSR		_scr_getc
 		STA		_tmp7BE+1
 		JSR		_scr_getc
 		STA		_tmp7C0
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
 sub_6290C:
@@ -5467,7 +5472,7 @@ loc_62948:
 		JMP		_ppu_vblank_on
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_6294B:
+_nsub_players_room_exit_test:
 		JSR		_scr_getc
 		STA		_var0
 		LDA		#$00
@@ -5540,17 +5545,17 @@ loc_629BA:
 		INC		_scr_pc+1
 loc_629C8:
 		LDA		_var3
-		STA		_sub_room_idx
+		STA		_tmp_idx
 		SEC
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_room_register:
+_nsub_players_room_start_pos_init:
 		JSR		_scr_getc
 		PHA
-		LDA		_sub_room_idx
+		LDA		_tmp_idx
 		ASL
-		ADC		_sub_room_idx
+		ADC		_tmp_idx
 		TAY
 		INY
 		LDA		#$00
@@ -5668,10 +5673,10 @@ _nsub_read_mem:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_sub_rom_idx_calc:
-		LDX		_lvl_room_cur_idx
+_nsub_get_checkpoint_tmp_idx:
+		LDX		_lvl_last_checkpoint_idx
 		DEX
-		STX		_sub_room_idx
+		STX		_tmp_idx
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -5927,7 +5932,7 @@ loc_62C18:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_ingame_collision_watch_start:
+_nsub_beam_player_handler_start:
 		JSR		sub_62C2E
 		LDA		#$02
 		STA		_var4
@@ -5947,7 +5952,7 @@ sub_62C2E:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_ingame_player_control_start:
+_nsub_catch_player_handler_start:
 		JSR		sub_62C2E
 		LDA		#$04
 		STA		_var4
@@ -6211,14 +6216,14 @@ _ssub_pal_fade_out:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_62DB1:
+_ssub_room_entry_pal_fade_in:
 		NJSR			_nsub_full_pal_fade_set
 			NARGB		$FC
 
 ; FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_62DB5:
+_ssub_room_entry_pal_fade_in_ex:
 		SDELAY			$01
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_inc_by_mask
@@ -6229,14 +6234,14 @@ _ssub_62DB5:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_62DC5:
+_ssub_room_exit_pal_fade_out:
 		NJSR			_nsub_full_pal_fade_set
 			NARGB		$00
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_62DC9:
+_ssub_room_exit_pal_fade_out_ex:
 		STORE8			_scr_trds_pause_mode,$01
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_dec_by_mask
@@ -6244,6 +6249,8 @@ _ssub_62DC9:
 		SDELAY			$03
 		SLOOP_END
 		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sloc_62DD7:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$02
@@ -6268,6 +6275,8 @@ _sloc_62DF7:
 		NJSR			_nsub_prize_sequence_test
 		NJSR			_nsub_62B95
 		SRET
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sloc_62E02:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$02

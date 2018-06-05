@@ -174,7 +174,7 @@ _lvl_macroD_ptr:
 		.BYTE	0,0
 _lvl_attrs_ptr:
 		.BYTE	0,0
-_lvl_room_lib_ptr:
+_lvl_rooms_lib_ptr:
 		.BYTE	0,0
 _lvl_collisions_ptr:
 		.BYTE	0,0
@@ -443,7 +443,7 @@ _tmp7B2:
 		.BYTE	0
 _tmp7B3:
 		.BYTE	0,0
-_sub_room_idx:
+_tmp_idx:
 		.BYTE	0
 _tmp7B6:
 		.BYTE	0
@@ -465,11 +465,11 @@ _tmp7BE:
 		.BYTE	0,0
 _tmp7C0:
 		.BYTE	0
-_cur_room_sequence_idx:
+_cur_lvl_room_idx:
 		.BYTE	0
-_lvl_room_checkpoint_idx:
+_lvl_cur_checkpoint_idx:
 		.BYTE	0
-_lvl_room_cur_idx:
+_lvl_last_checkpoint_idx:
 		.BYTE	0
 _tmp7C4:
 		.BYTE	0

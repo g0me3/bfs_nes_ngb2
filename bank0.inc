@@ -802,7 +802,7 @@ _intro_sub0C_title_new:
 _sloc_8A65:
 		SARG_SET		SARG0,$00				; init tmp counter var
 		SLOOP_BEGIN		$06
-		NJSR			_nsub_pal_patch_load	; read pal byte from selected array
+		NJSR			_nsub_pal_patch_blink	; read pal byte from selected array
 			NARGW		_pal_new_blink			; with index SARG0, put it on
 			NARGB		$16,SARG0				; selected position of palette buffer (16),
 		SARG_ALU		SARG0,_ADC,$01			; then blit it and increment idx
@@ -819,7 +819,7 @@ _sloc_8A65:
 _intro_sub0C_title_new_unref:
 		SARG_SET		SARG1,$00
 		SLOOP_BEGIN		$06
-		NJSR			_nsub_pal_patch_load
+		NJSR			_nsub_pal_patch_blink
 			NARGW		_pal_new_blink_unused
 			NARGB		$17,SARG1
 		SARG_ALU		SARG1,_ADC,$01
@@ -833,7 +833,7 @@ _pal_new_blink_unused:
 		.BYTE	$0F,$10,$20,$30,$20,$10,$01
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_pal_patch_load:
+_nsub_pal_patch_blink:
 		JSR		_scr_getc					; this is custom palette blink routine used
 		STA		_ptr06						; only for this place... in other cases they
 		JSR		_scr_getc					; used common pal fade _nsub routine with
@@ -2173,29 +2173,29 @@ locret_94CE:
 ; =============== S U B R O U T I N E =======================================
 _nsub_scenario_txt_lib_ptr_load:
 		JSR		_next_scenario_byte_get
-		STA		_lvl_room_lib_ptr
+		STA		_lvl_rooms_lib_ptr
 		JSR		_next_scenario_byte_get
-		STA		_lvl_room_lib_ptr+1
+		STA		_lvl_rooms_lib_ptr+1
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_scenario_txt_lib_line_draw:
 		LDY		#$00
-		LDA		(_lvl_room_lib_ptr),Y
+		LDA		(_lvl_rooms_lib_ptr),Y
 		STA		_tmp2
 		INY
-		LDA		(_lvl_room_lib_ptr),Y
+		LDA		(_lvl_rooms_lib_ptr),Y
 		LDY		_tmp2
 		JSR		_ppu_res_send_ptr
-		LDA		_lvl_room_lib_ptr
+		LDA		_lvl_rooms_lib_ptr
 		CLC
 		ADC		#$02
-		STA		_lvl_room_lib_ptr
+		STA		_lvl_rooms_lib_ptr
 		BCC		loc_94F3
-		INC		_lvl_room_lib_ptr+1
+		INC		_lvl_rooms_lib_ptr+1
 loc_94F3:
 		LDY		#$00
-		LDA		(_lvl_room_lib_ptr),Y
+		LDA		(_lvl_rooms_lib_ptr),Y
 		BEQ		loc_94FB
 		CLC
 		RTS
@@ -2468,7 +2468,7 @@ _spr_raw_lib07_0D:
 
 ; =============== S C R I P T ===============================================
 _scr_ending_sub03:
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_9910
 		NJSR			_nsub_mmc1_chr0_set
@@ -2807,7 +2807,7 @@ _spr_raw_lib07_5D:
 
 ; =============== S C R I P T ===============================================
 _scr_ending_sub08:
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_9C20
 		NJSR			_nsub_mmc1_chr0_set
@@ -3568,7 +3568,7 @@ _scr_ending_sub16:
 			NARGB		$14
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$00
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$03
 			NARGW		byte_A547
 		SLOOP_BEGIN		$04
@@ -3959,7 +3959,7 @@ _nsub_end_spr_pal_anim:
 		TAX
 		PLA
 		LDY		#$07
-		JMP		_pal_patch_fade
+		JMP		_patch_pal_load
 byte_A7A8:
 		.BYTE	$0F,$31,$0F,$35,$0F,$31,$0F,$25,$0F,$31,$00,$15,$0F,$31,$00,$05
 		.BYTE	$0F,$31,$10,$15,$0F,$31,$10,$25,$0F,$31,$20,$35,$0F,$31,$20,$25

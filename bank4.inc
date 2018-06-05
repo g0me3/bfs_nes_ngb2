@@ -6429,7 +6429,7 @@ _scr1C_girl_and_floaters:
 		SCASE			_sjmp_case_3B71F
 		SCASE			_sjmp_case_3B9C4
 		SCASE			_sjmp_case_3BA43
-		NJSR			_nsub_pal_patch_fade
+		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_3B6D6
 		SARG_SET		SARG1,$00
