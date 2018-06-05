@@ -1,685 +1,625 @@
 
 		.BYTE	$05
-		.WORD	_mus5_A
-		.BYTE	$0C
-		.WORD	_mus5_B
-		.BYTE	$08
-		.WORD	_mus5_C
-		.BYTE	$0C
-		.WORD	_mus5_D
-		.BYTE	$00
-		.WORD	_mus5_E
-		.BYTE	$04
+		CHNL_PTR	NOISE,_mus5_A
+		CHNL_PTR	TRIAN,_mus5_B
+		CHNL_PTR	NOISE,_mus5_C
+		CHNL_PTR	SQUA0,_mus5_D
+		CHNL_PTR	SQUA1,_mus5_E
 _mus5_A:
-		.BYTE	$F2,$0B		; ACMDF2      $0B
-		.BYTE	$FA		; AJSR	_asub_9947B
-		.WORD	_asub_9947B
-		.BYTE	$FA		; AJSR	_asub_993F3
-		.WORD	_asub_993F3
-		.BYTE	$FA		; AJSR	_asub_99405
-		.WORD	_asub_99405
-		.BYTE	$FA		; AJSR	_asub_993F3
-		.WORD	_asub_993F3
-		.BYTE	$FA		; AJSR	_asub_99464
-		.WORD	_asub_99464
+		ACMDF2		$0B
+		AJSR		_asub_9947B
+		AJSR		_asub_993F3
+		AJSR		_asub_99405
+		AJSR		_asub_993F3
+		AJSR		_asub_99464
 _aloc_993CB:
-		.BYTE	$FA		; AJSR	_asub_993F3
-		.WORD	_asub_993F3
-		.BYTE	$FA		; AJSR	_asub_99405
-		.WORD	_asub_99405
-		.BYTE	$FA		; AJSR	_asub_993F3
-		.WORD	_asub_993F3
-		.BYTE	$FA		; AJSR	_asub_99417
-		.WORD	_asub_99417
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_993F3
-		.WORD	_asub_993F3
-		.BYTE	$FA		; AJSR	_asub_99405
-		.WORD	_asub_99405
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_993F3
-		.WORD	_asub_993F3
-		.BYTE	$FA		; AJSR	_asub_99417
-		.WORD	_asub_99417
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$FA		; AJSR	_asub_9942D
-		.WORD	_asub_9942D
-		.BYTE	$FA		; AJSR	_asub_99445
-		.WORD	_asub_99445
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F8		; AJMP	_aloc_993CB
-		.WORD	_aloc_993CB
-		.BYTE	$FF		; ASTOP
+		AJSR		_asub_993F3
+		AJSR		_asub_99405
+		AJSR		_asub_993F3
+		AJSR		_asub_99417
+		ALOOP_START	$03
+		AJSR		_asub_993F3
+		AJSR		_asub_99405
+		ALOOP_END
+		AJSR		_asub_993F3
+		AJSR		_asub_99417
+		ALOOP_START	$04
+		AJSR		_asub_9942D
+		AJSR		_asub_99445
+		ALOOP_END
+		AJMP		_aloc_993CB
+		ASTOP
 _asub_993F3:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$BF		; ADATA	$BF
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATA		$BF
+		ADMC		_pcm1
+		ADATA		$BE
+		ADMC		_pcm0A
+		ADATA		$7F
+		ADATA		$7F
+		ADMC		_pcm1
+		ADATA		$BE
+		ARET
 _asub_99405:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$BF		; ADATA	$BF
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATA		$7F
+		ADATA		$7F
+		ADMC		_pcm1
+		ADATA		$BE
+		ADMC		_pcm0A
+		ADATA		$BF
+		ADMC		_pcm1
+		ADATA		$BE
+		ARET
 _asub_99417:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$5F		; ADATA	$5F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$DF,$11		; ADATAEX     $DF,$11
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$7D		; ADATA	$7D
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATA		$7F
+		ADATA		$5F
+		ADMC		_pcm1
+		ADATA		$BE
+		ADMC		_pcm0A
+		ADATAEX		$DF,$11
+		ADATA		$3F
+		ADMC		_pcm1
+		ADATA		$3F
+		ADATA		$3F
+		ADATA		$7D
+		ARET
 _asub_9942D:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$DF,$12		; ADATAEX     $DF,$12
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BD		; ADATA	$BD
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$BF		; ADATA	$BF
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$DD,$11		; ADATAEX     $DD,$11
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATAEX		$DF,$12
+		ADATA		$3F
+		ADMC		_pcm1
+		ADATA		$BD
+		ADMC		_pcm0A
+		ADATA		$BF
+		ADMC		_pcm1
+		ADATAEX		$DD,$11
+		ADMC		_pcm0A
+		ADATA		$3F
+		ARET
 _asub_99445:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$DF,$11		; ADATAEX     $DF,$11
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$7D		; ADATA	$7D
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$5F		; ADATA	$5F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$5E		; ADATA	$5E
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$3D		; ADATA	$3D
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATAEX		$DF,$11
+		ADATA		$3F
+		ADMC		_pcm1
+		ADATA		$7D
+		ADMC		_pcm0A
+		ADATA		$5F
+		ADMC		_pcm1
+		ADATA		$5E
+		ADATA		$3E
+		ADMC		_pcm0A
+		ADATA		$3F
+		ADMC		_pcm1
+		ADATA		$3F
+		ADATA		$3E
+		ADATA		$3E
+		ADATA		$3D
+		ARET
 _asub_99464:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$BF		; ADATA	$BF
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$BD		; ADATA	$BD
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$5F		; ADATA	$5F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$DF,$02		; ADATAEX     $DF,$02
-		.BYTE	$DF,$04		; ADATAEX     $DF,$04
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$7E		; ADATA	$7E
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATA		$BF
+		ADMC		_pcm1
+		ADATA		$BD
+		ADMC		_pcm0A
+		ADATA		$7F
+		ADATA		$5F
+		ADMC		_pcm1
+		ADATAEX		$DF,$02
+		ADATAEX		$DF,$04
+		ADATA		$3F
+		ADATA		$7E
+		ARET
 _asub_9947B:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$BF		; ADATA	$BF
-		.BYTE	$BF		; ADATA	$BF
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$5F		; ADATA	$5F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$FB		; ARET
+		ADMC		_pcm0A
+		ADATA		$BF
+		ADATA		$BF
+		ADATA		$7F
+		ADATA		$5F
+		ADMC		_pcm1
+		ADATA		$3F
+		ADATA		$3F
+		ADATA		$3E
+		ADATA		$3E
+		ARET
 _mus5_B:
-		.BYTE	$F2,$0B		; ACMDF2      $0B
-		.BYTE	$F5,$1D		; ACMDF5      $1D
-		.BYTE	$F6,$00		; ACMDF6      $00
-		.BYTE	$F0,$0F		; ACMDF0      $0F
-		.BYTE	$D0,$5D		; ADATAEX     $D0,$5D
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_994B5
-		.WORD	_asub_994B5
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_994C4
-		.WORD	_asub_994C4
+		ACMDF2		$0B
+		ACMDF5		$1D
+		ASMPL		_sample00
+		ACMDF0		$0F
+		ADATAEX		$D0,$5D
+		ALOOP_START	$03
+		AJSR		_asub_994B5
+		ALOOP_END
+		AJSR		_asub_994C4
 _aloc_9949D:
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_994B5
-		.WORD	_asub_994B5
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_994C4
-		.WORD	_asub_994C4
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FC,$02		; ALOOP_START $02
-		.BYTE	$F5,$1D		; ACMDF5      $1D
-		.BYTE	$FA		; AJSR	_asub_994D4
-		.WORD	_asub_994D4
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F8		; AJMP	_aloc_9949D
-		.WORD	_aloc_9949D
-		.BYTE	$FF		; ASTOP
+		ALOOP_START	$03
+		ALOOP_START	$03
+		AJSR		_asub_994B5
+		ALOOP_END
+		AJSR		_asub_994C4
+		ALOOP_END
+		ALOOP_START	$02
+		ACMDF5		$1D
+		AJSR		_asub_994D4
+		ALOOP_END
+		AJMP		_aloc_9949D
+		ASTOP
 _asub_994B5:
-		.BYTE	$F4,$B1		; ACMDF4      $B1
-		.BYTE	$74		; ADATA	$74
-		.BYTE	$54		; ADATA	$54
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$38		; ADATA	$38
-		.BYTE	$39		; ADATA	$39
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F4,$C8		; ACMDF4      $C8
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$B9		; ADATA	$B9
-		.BYTE	$FB		; ARET
+		ACMDF4		$B1
+		ADATA		$74
+		ADATA		$54
+		ACMDF4		$00
+		ADATA		$38
+		ADATA		$39
+		ADATA		$3B
+		ADATA		$30
+		ACMDF4		$C8
+		ADATA		$BE
+		ADATA		$B9
+		ARET
 _asub_994C4:
-		.BYTE	$F4,$B1		; ACMDF4      $B1
-		.BYTE	$74		; ADATA	$74
-		.BYTE	$54		; ADATA	$54
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$38		; ADATA	$38
-		.BYTE	$39		; ADATA	$39
-		.BYTE	$F4,$A6		; ACMDF4      $A6
-		.BYTE	$7B		; ADATA	$7B
-		.BYTE	$7E		; ADATA	$7E
-		.BYTE	$5E		; ADATA	$5E
-		.BYTE	$79		; ADATA	$79
-		.BYTE	$59		; ADATA	$59
-		.BYTE	$FB		; ARET
+		ACMDF4		$B1
+		ADATA		$74
+		ADATA		$54
+		ACMDF4		$00
+		ADATA		$38
+		ADATA		$39
+		ACMDF4		$A6
+		ADATA		$7B
+		ADATA		$7E
+		ADATA		$5E
+		ADATA		$79
+		ADATA		$59
+		ARET
 _asub_994D4:
-		.BYTE	$F4,$FF		; ACMDF4      $FF
-		.BYTE	$D4,$2F		; ADATAEX     $D4,$2F
-		.BYTE	$A0		; ADATA	$A0
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$D2,$2F		; ADATAEX     $D2,$2F
-		.BYTE	$DE,$2E		; ADATAEX     $DE,$2E
-		.BYTE	$DD,$2F		; ADATAEX     $DD,$2F
-		.BYTE	$B1		; ADATA	$B1
-		.BYTE	$BC		; ADATA	$BC
-		.BYTE	$C3,$18		; ADATAEX     $C3,$18
-		.BYTE	$BC		; ADATA	$BC
-		.BYTE	$A5		; ADATA	$A5
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$FB		; ARET
+		ACMDF4		$FF
+		ADATAEX		$D4,$2F
+		ADATA		$A0
+		ADATA		$BE
+		ADATAEX		$D2,$2F
+		ADATAEX		$DE,$2E
+		ADATAEX		$DD,$2F
+		ADATA		$B1
+		ADATA		$BC
+		ADATAEX		$C3,$18
+		ADATA		$BC
+		ADATA		$A5
+		ADATA		$BE
+		ARET
 _mus5_C:
-		.BYTE	$F2,$0B		; ACMDF2      $0B
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$FA		; AJSR	_asub_9958F
-		.WORD	_asub_9958F
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_9951C
-		.WORD	_asub_9951C
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_99570
-		.WORD	_asub_99570
+		ACMDF2		$0B
+		ACMDF0		$0D
+		ACMDF4		$00
+		AJSR		_asub_9958F
+		ALOOP_START	$03
+		AJSR		_asub_9951C
+		ALOOP_END
+		AJSR		_asub_99570
 _aloc_994FA:
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_9951C
-		.WORD	_asub_9951C
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_9952F
-		.WORD	_asub_9952F
-		.BYTE	$FC,$07		; ALOOP_START $07
-		.BYTE	$FA		; AJSR	_asub_9951C
-		.WORD	_asub_9951C
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_9952F
-		.WORD	_asub_9952F
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_99543
-		.WORD	_asub_99543
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_9955C
-		.WORD	_asub_9955C
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F8		; AJMP	_aloc_994FA
-		.WORD	_aloc_994FA
-		.BYTE	$FF		; ASTOP
+		ALOOP_START	$03
+		AJSR		_asub_9951C
+		ALOOP_END
+		AJSR		_asub_9952F
+		ALOOP_START	$07
+		AJSR		_asub_9951C
+		ALOOP_END
+		AJSR		_asub_9952F
+		ALOOP_START	$04
+		ALOOP_START	$03
+		AJSR		_asub_99543
+		ALOOP_END
+		AJSR		_asub_9955C
+		ALOOP_END
+		AJMP		_aloc_994FA
+		ASTOP
 _asub_9951C:
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$64		; ADATA	$64
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$44		; ADATA	$44
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$FB		; ARET
+		ASMPL		_sample13
+		ADATA		$65
+		ADATA		$45
+		ASMPL		_sample20
+		ADATA		$64
+		ASMPL		_sample13
+		ADATA		$45
+		ADATA		$65
+		ADATA		$65
+		ASMPL		_sample20
+		ADATA		$44
+		ASMPL		_sample13
+		ADATA		$65
+		ARET
 _asub_9952F:
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$64		; ADATA	$64
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$F6,$19		; ACMDF6      $19
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$46		; ADATA	$46
-		.BYTE	$FB		; ARET
+		ASMPL		_sample13
+		ADATA		$65
+		ADATA		$45
+		ASMPL		_sample20
+		ADATA		$64
+		ASMPL		_sample13
+		ADATA		$45
+		ADATA		$65
+		ADATA		$65
+		ASMPL		_sample19
+		ADATA		$25
+		ADATA		$25
+		ASMPL		_sample20
+		ADATA		$46
+		ARET
 _asub_99543:
-		.BYTE	$F6,$19		; ACMDF6      $19
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$44		; ADATA	$44
-		.BYTE	$F1,$FA		; ACMDF1      $FA
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$F1,$04		; ACMDF1      $04
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$44		; ADATA	$44
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$F1,$FC		; ACMDF1      $FC
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$F1,$04		; ACMDF1      $04
-		.BYTE	$FB		; ARET
+		ASMPL		_sample19
+		ACMDF1		$02
+		ADATA		$44
+		ACMDF1		$FA
+		ASMPL		_sample13
+		ADATA		$25
+		ADATA		$25
+		ACMDF1		$04
+		ASMPL		_sample20
+		ADATA		$44
+		ASMPL		_sample13
+		ACMDF1		$FC
+		ADATA		$25
+		ADATA		$25
+		ACMDF1		$04
+		ARET
 _asub_9955C:
-		.BYTE	$F6,$1B		; ACMDF6      $1B
-		.BYTE	$F1,$FF		; ACMDF1      $FF
-		.BYTE	$64		; ADATA	$64
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$F1,$FD		; ACMDF1      $FD
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$F1,$04		; ACMDF1      $04
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$FB		; ARET
+		ASMPL		_sample1B
+		ACMDF1		$FF
+		ADATA		$64
+		ADATA		$24
+		ASMPL		_sample13
+		ACMDF1		$FD
+		ADATA		$25
+		ACMDF1		$04
+		ASMPL		_sample20
+		ADATA		$24
+		ADATA		$24
+		ADATA		$25
+		ADATA		$24
+		ARET
 _asub_99570:
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$64		; ADATA	$64
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$F6,$19		; ACMDF6      $19
-		.BYTE	$F1,$FD		; ACMDF1      $FD
-		.BYTE	$C6,$02		; ADATAEX     $C6,$02
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$C6,$04		; ADATAEX     $C6,$04
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$26		; ADATA	$26
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$66		; ADATA	$66
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$FB		; ARET
+		ASMPL		_sample13
+		ADATA		$65
+		ADATA		$45
+		ASMPL		_sample20
+		ADATA		$64
+		ASMPL		_sample13
+		ADATA		$45
+		ADATA		$65
+		ADATA		$45
+		ASMPL		_sample19
+		ACMDF1		$FD
+		ADATAEX		$C6,$02
+		ACMDF1		$01
+		ADATAEX		$C6,$04
+		ACMDF1		$01
+		ADATA		$26
+		ASMPL		_sample20
+		ADATA		$66
+		ACMDF1		$01
+		ARET
 _asub_9958F:
-		.BYTE	$F6,$2D		; ACMDF6      $2D
-		.BYTE	$F4,$78		; ACMDF4      $78
-		.BYTE	$F1,$FD		; ACMDF1      $FD
-		.BYTE	$FC,$06		; ALOOP_START $06
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$F1,$FA		; ACMDF1      $FA
-		.BYTE	$27		; ADATA	$27
-		.BYTE	$F1,$06		; ACMDF1      $06
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F1,$03		; ACMDF1      $03
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$F6,$20		; ACMDF6      $20
-		.BYTE	$26		; ADATA	$26
-		.BYTE	$06		; ADATA	$06
-		.BYTE	$05		; ADATA	$05
-		.BYTE	$04		; ADATA	$04
-		.BYTE	$FB		; ARET
+		ASMPL		_sample2D
+		ACMDF4		$78
+		ACMDF1		$FD
+		ALOOP_START	$06
+		ADATA		$25
+		ACMDF1		$FA
+		ADATA		$27
+		ACMDF1		$06
+		ALOOP_END
+		ACMDF1		$03
+		ACMDF4		$00
+		ASMPL		_sample20
+		ADATA		$26
+		ADATA		$06
+		ADATA		$05
+		ADATA		$04
+		ARET
 _mus5_D:
-		.BYTE	$F2,$0B		; ACMDF2      $0B
-		.BYTE	$F0,$02		; ACMDF0      $02
-		.BYTE	$F6,$00		; ACMDF6      $00
-		.BYTE	$F6,$AB		; ACMDF6      $AB
-		.BYTE	$F5,$34		; ACMDF5      $34
-		.BYTE	$CD,$45		; ADATAEX     $CD,$45
-		.BYTE	$CD,$00		; ADATAEX     $CD,$00
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$E3,$00		; ACMDE3      $00
-		.BYTE	$F3,$06		; ACMDF3      $06
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$F6,$10		; ACMDF6      $10
-		.BYTE	$F5,$1D		; ACMDF5      $1D
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FA		; AJSR	_asub_99609
-		.WORD	_asub_99609
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_99618
-		.WORD	_asub_99618
+		ACMDF2		$0B
+		ACMDF0		$02
+		ASMPL		_sample00
+		ASMPL		_sample2B|SMPL_FORCE
+		ACMDF5		$34
+		ADATAEX		$CD,$45
+		ADATAEX		$CD,$00
+		ALOOP_START	$04
+		ACMDE3		$00
+		ACMDF3		$06
+		ACMDF1		$01
+		ALOOP_END
+		ACMDF0		$0D
+		ASMPL		_sample10
+		ACMDF5		$1D
+		ALOOP_START	$03
+		AJSR		_asub_99609
+		ALOOP_END
+		AJSR		_asub_99618
 _aloc_995CF:
-		.BYTE	$F0,$09		; ACMDF0      $09
-		.BYTE	$F6,$27		; ACMDF6      $27
-		.BYTE	$FA		; AJSR	_asub_996DE
-		.WORD	_asub_996DE
-		.BYTE	$FA		; AJSR	_asub_99716
-		.WORD	_asub_99716
-		.BYTE	$FA		; AJSR	_asub_996DE
-		.WORD	_asub_996DE
-		.BYTE	$FA		; AJSR	_asub_996FD
-		.WORD	_asub_996FD
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$FA		; AJSR	_asub_99629
-		.WORD	_asub_99629
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$F6,$18		; ACMDF6      $18
-		.BYTE	$FA		; AJSR	_asub_996DE
-		.WORD	_asub_996DE
-		.BYTE	$FA		; AJSR	_asub_99716
-		.WORD	_asub_99716
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$FA		; AJSR	_asub_99629
-		.WORD	_asub_99629
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$F6,$18		; ACMDF6      $18
-		.BYTE	$FA		; AJSR	_asub_996DE
-		.WORD	_asub_996DE
-		.BYTE	$FA		; AJSR	_asub_996FD
-		.WORD	_asub_996FD
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$F0,$0F		; ACMDF0      $0F
-		.BYTE	$FA		; AJSR	_asub_99656
-		.WORD	_asub_99656
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F8		; AJMP	_aloc_995CF
-		.WORD	_aloc_995CF
-		.BYTE	$FF		; ASTOP
+		ACMDF0		$09
+		ASMPL		_sample27
+		AJSR		_asub_996DE
+		AJSR		_asub_99716
+		AJSR		_asub_996DE
+		AJSR		_asub_996FD
+		ACMDF0		$0D
+		AJSR		_asub_99629
+		ACMDF0		$0D
+		ASMPL		_sample18
+		AJSR		_asub_996DE
+		AJSR		_asub_99716
+		ACMDF0		$0D
+		AJSR		_asub_99629
+		ACMDF0		$0D
+		ASMPL		_sample18
+		AJSR		_asub_996DE
+		AJSR		_asub_996FD
+		ALOOP_START	$04
+		ACMDF0		$0F
+		AJSR		_asub_99656
+		ALOOP_END
+		AJMP		_aloc_995CF
+		ASTOP
 _asub_99609:
-		.BYTE	$F4,$B1		; ACMDF4      $B1
-		.BYTE	$74		; ADATA	$74
-		.BYTE	$54		; ADATA	$54
-		.BYTE	$F4,$FF		; ACMDF4      $FF
-		.BYTE	$38		; ADATA	$38
-		.BYTE	$39		; ADATA	$39
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F4,$FA		; ACMDF4      $FA
-		.BYTE	$BE		; ADATA	$BE
-		.BYTE	$B9		; ADATA	$B9
-		.BYTE	$FB		; ARET
+		ACMDF4		$B1
+		ADATA		$74
+		ADATA		$54
+		ACMDF4		$FF
+		ADATA		$38
+		ADATA		$39
+		ADATA		$3B
+		ADATA		$30
+		ACMDF4		$FA
+		ADATA		$BE
+		ADATA		$B9
+		ARET
 _asub_99618:
-		.BYTE	$F4,$B1		; ACMDF4      $B1
-		.BYTE	$74		; ADATA	$74
-		.BYTE	$54		; ADATA	$54
-		.BYTE	$F4,$FF		; ACMDF4      $FF
-		.BYTE	$38		; ADATA	$38
-		.BYTE	$39		; ADATA	$39
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F4,$A6		; ACMDF4      $A6
-		.BYTE	$7E		; ADATA	$7E
-		.BYTE	$5E		; ADATA	$5E
-		.BYTE	$79		; ADATA	$79
-		.BYTE	$59		; ADATA	$59
-		.BYTE	$FB		; ARET
+		ACMDF4		$B1
+		ADATA		$74
+		ADATA		$54
+		ACMDF4		$FF
+		ADATA		$38
+		ADATA		$39
+		ADATA		$3B
+		ADATA		$30
+		ACMDF4		$A6
+		ADATA		$7E
+		ADATA		$5E
+		ADATA		$79
+		ADATA		$59
+		ARET
 _asub_99629:
-		.BYTE	$F6,$28		; ACMDF6      $28
-		.BYTE	$F5,$29		; ACMDF5      $29
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$C2,$01		; ADATAEX     $C2,$01
-		.BYTE	$03		; ADATA	$03
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$10		; ADATA	$10
-		.BYTE	$C2,$01		; ADATAEX     $C2,$01
-		.BYTE	$63		; ADATA	$63
-		.BYTE	$D0,$2D		; ADATAEX     $D0,$2D
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F1,$FC		; ACMDF1      $FC
-		.BYTE	$CB,$01		; ADATAEX     $CB,$01
-		.BYTE	$C0,$00		; ADATAEX     $C0,$00
-		.BYTE	$E3,$00		; ACMDE3      $00
-		.BYTE	$F3,$0A		; ACMDF3      $0A
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$E3,$01		; ACMDE3      $01
-		.BYTE	$F3,$02		; ACMDF3      $02
-		.BYTE	$F1,$FF		; ACMDF1      $FF
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$D0,$32		; ADATAEX     $D0,$32
-		.BYTE	$FB		; ARET
+		ASMPL		_sample28
+		ACMDF5		$29
+		ACMDF4		$00
+		ADATAEX		$C2,$01
+		ADATA		$03
+		ADATA		$30
+		ADATA		$20
+		ADATA		$10
+		ADATAEX		$C2,$01
+		ADATA		$63
+		ADATAEX		$D0,$2D
+		ADATA		$20
+		ADATA		$3E
+		ADATA		$20
+		ADATA		$30
+		ADATA		$20
+		ADATA		$30
+		ACMDF1		$FC
+		ADATAEX		$CB,$01
+		ADATAEX		$C0,$00
+		ACMDE3		$00
+		ACMDF3		$0A
+		ALOOP_START	$04
+		ACMDE3		$01
+		ACMDF3		$02
+		ACMDF1		$FF
+		ALOOP_END
+		ADATAEX		$D0,$32
+		ARET
 _asub_99656:
-		.BYTE	$F6,$21		; ACMDF6      $21
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$C2,$01		; ADATAEX     $C2,$01
-		.BYTE	$C3,$11		; ADATAEX     $C3,$11
-		.BYTE	$F4,$6F		; ACMDF4      $6F
-		.BYTE	$C0,$11		; ADATAEX     $C0,$11
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$63		; ADATA	$63
-		.BYTE	$40		; ADATA	$40
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$3F		; ADATA	$3F
-		.BYTE	$40		; ADATA	$40
-		.BYTE	$FB		; ARET
+		ASMPL		_sample21
+		ALOOP_START	$04
+		ACMDF4		$00
+		ADATAEX		$C2,$01
+		ADATAEX		$C3,$11
+		ACMDF4		$6F
+		ADATAEX		$C0,$11
+		ALOOP_END
+		ADATA		$63
+		ADATA		$40
+		ACMDF4		$00
+		ADATA		$3E
+		ADATA		$3F
+		ADATA		$40
+		ARET
 _mus5_E:
-		.BYTE	$F2,$0B		; ACMDF2      $0B
-		.BYTE	$F0,$04		; ACMDF0      $04
-		.BYTE	$F6,$AB		; ACMDF6      $AB
-		.BYTE	$F5,$34		; ACMDF5      $34
-		.BYTE	$C1,$45		; ADATAEX     $C1,$45
-		.BYTE	$C1,$00		; ADATAEX     $C1,$00
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$E3,$00		; ACMDE3      $00
-		.BYTE	$F3,$06		; ACMDF3      $06
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F0,$0C		; ACMDF0      $0C
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$F6,$26		; ACMDF6      $26
-		.BYTE	$FA		; AJSR	_asub_996BC
-		.WORD	_asub_996BC
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_996CD
-		.WORD	_asub_996CD
+		ACMDF2		$0B
+		ACMDF0		$04
+		ASMPL		_sample2B|SMPL_FORCE
+		ACMDF5		$34
+		ADATAEX		$C1,$45
+		ADATAEX		$C1,$00
+		ALOOP_START	$04
+		ACMDE3		$00
+		ACMDF3		$06
+		ACMDF1		$01
+		ALOOP_END
+		ACMDF0		$0C
+		ALOOP_START	$03
+		ASMPL		_sample26
+		AJSR		_asub_996BC
+		ALOOP_END
+		AJSR		_asub_996CD
 _aloc_9968F:
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$FC,$03		; ALOOP_START $03
-		.BYTE	$F6,$15		; ACMDF6      $15
-		.BYTE	$FA		; AJSR	_asub_996BC
-		.WORD	_asub_996BC
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$FA		; AJSR	_asub_996CD
-		.WORD	_asub_996CD
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F0,$0A		; ACMDF0      $0A
-		.BYTE	$F5,$1D		; ACMDF5      $1D
-		.BYTE	$F6,$1D		; ACMDF6      $1D
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$FA		; AJSR	_asub_99731
-		.WORD	_asub_99731
-		.BYTE	$FA		; AJSR	_asub_99731
-		.WORD	_asub_99731
-		.BYTE	$FA		; AJSR	_asub_9973F
-		.WORD	_asub_9973F
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$FC,$02		; ALOOP_START $02
-		.BYTE	$FA		; AJSR	_asub_9975D
-		.WORD	_asub_9975D
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$F8		; AJMP	_aloc_9968F
-		.WORD	_aloc_9968F
-		.BYTE	$FF		; ASTOP
+		ACMDF0		$0D
+		ALOOP_START	$03
+		ALOOP_START	$03
+		ASMPL		_sample15
+		AJSR		_asub_996BC
+		ALOOP_END
+		AJSR		_asub_996CD
+		ALOOP_END
+		ACMDF0		$0A
+		ACMDF5		$1D
+		ASMPL		_sample1D
+		ACMDF4		$00
+		AJSR		_asub_99731
+		AJSR		_asub_99731
+		AJSR		_asub_9973F
+		ACMDF0		$0D
+		ALOOP_START	$02
+		AJSR		_asub_9975D
+		ALOOP_END
+		AJMP		_aloc_9968F
+		ASTOP
 _asub_996BC:
-		.BYTE	$F5,$11		; ACMDF5      $11
-		.BYTE	$F4,$B1		; ACMDF4      $B1
-		.BYTE	$7B		; ADATA	$7B
-		.BYTE	$5B		; ADATA	$5B
-		.BYTE	$F4,$FF		; ACMDF4      $FF
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F4,$FA		; ACMDF4      $FA
-		.BYTE	$A5		; ADATA	$A5
-		.BYTE	$BD		; ADATA	$BD
-		.BYTE	$FB		; ARET
+		ACMDF5		$11
+		ACMDF4		$B1
+		ADATA		$7B
+		ADATA		$5B
+		ACMDF4		$FF
+		ADATA		$3B
+		ADATA		$3E
+		ADATA		$20
+		ADATA		$30
+		ACMDF4		$FA
+		ADATA		$A5
+		ADATA		$BD
+		ARET
 _asub_996CD:
-		.BYTE	$F4,$B1		; ACMDF4      $B1
-		.BYTE	$7B		; ADATA	$7B
-		.BYTE	$5B		; ADATA	$5B
-		.BYTE	$F4,$FF		; ACMDF4      $FF
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F4,$A6		; ACMDF4      $A6
-		.BYTE	$65		; ADATA	$65
-		.BYTE	$45		; ADATA	$45
-		.BYTE	$7D		; ADATA	$7D
-		.BYTE	$5D		; ADATA	$5D
-		.BYTE	$FB		; ARET
+		ACMDF4		$B1
+		ADATA		$7B
+		ADATA		$5B
+		ACMDF4		$FF
+		ADATA		$3B
+		ADATA		$3E
+		ADATA		$20
+		ADATA		$30
+		ACMDF4		$A6
+		ADATA		$65
+		ADATA		$45
+		ADATA		$7D
+		ADATA		$5D
+		ARET
 _asub_996DE:
-		.BYTE	$F5,$29		; ACMDF5      $29
-		.BYTE	$F4,$BC		; ACMDF4      $BC
-		.BYTE	$F1,$F8		; ACMDF1      $F8
-		.BYTE	$70		; ADATA	$70
-		.BYTE	$F1,$08		; ACMDF1      $08
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$44		; ADATA	$44
-		.BYTE	$F4,$BC		; ACMDF4      $BC
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$62		; ADATA	$62
-		.BYTE	$F4,$BC		; ACMDF4      $BC
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$F1,$F8		; ACMDF1      $F8
-		.BYTE	$D0,$1C		; ADATAEX     $D0,$1C
-		.BYTE	$F1,$08		; ACMDF1      $08
-		.BYTE	$FB		; ARET
+		ACMDF5		$29
+		ACMDF4		$BC
+		ACMDF1		$F8
+		ADATA		$70
+		ACMDF1		$08
+		ADATA		$20
+		ADATA		$20
+		ACMDF4		$00
+		ADATA		$44
+		ACMDF4		$BC
+		ADATA		$20
+		ADATA		$30
+		ACMDF4		$00
+		ADATA		$62
+		ACMDF4		$BC
+		ADATA		$3E
+		ACMDF1		$F8
+		ADATAEX		$D0,$1C
+		ACMDF1		$08
+		ARET
 _asub_996FD:
-		.BYTE	$F1,$F8		; ACMDF1      $F8
-		.BYTE	$B0		; ADATA	$B0
-		.BYTE	$F1,$09		; ACMDF1      $09
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$7E		; ADATA	$7E
-		.BYTE	$C1,$01		; ADATAEX     $C1,$01
-		.BYTE	$02		; ADATA	$02
-		.BYTE	$F1,$F9		; ACMDF1      $F9
-		.BYTE	$30		; ADATA	$30
-		.BYTE	$F1,$07		; ACMDF1      $07
-		.BYTE	$C0,$16		; ADATAEX     $C0,$16
-		.BYTE	$FB		; ARET
+		ACMDF1		$F8
+		ADATA		$B0
+		ACMDF1		$09
+		ADATA		$20
+		ADATA		$20
+		ADATA		$20
+		ADATA		$20
+		ACMDF4		$00
+		ACMDF1		$01
+		ADATA		$7E
+		ADATAEX		$C1,$01
+		ADATA		$02
+		ACMDF1		$F9
+		ADATA		$30
+		ACMDF1		$07
+		ADATAEX		$C0,$16
+		ARET
 _asub_99716:
-		.BYTE	$F1,$F8		; ACMDF1      $F8
-		.BYTE	$D0,$16		; ADATAEX     $D0,$16
-		.BYTE	$F1,$08		; ACMDF1      $08
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$7E		; ADATA	$7E
-		.BYTE	$F4,$BC		; ACMDF4      $BC
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$F1,$F8		; ACMDF1      $F8
-		.BYTE	$D0,$1D		; ADATAEX     $D0,$1D
-		.BYTE	$F1,$08		; ACMDF1      $08
-		.BYTE	$FB		; ARET
+		ACMDF1		$F8
+		ADATAEX		$D0,$16
+		ACMDF1		$08
+		ADATA		$20
+		ADATA		$20
+		ADATA		$20
+		ADATA		$20
+		ACMDF4		$00
+		ADATA		$7E
+		ACMDF4		$BC
+		ADATA		$20
+		ACMDF1		$F8
+		ADATAEX		$D0,$1D
+		ACMDF1		$08
+		ARET
 _unref_0:
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$F6,$09		; ACMDF6      $09
+		ACMDF4		$00
+		ASMPL		_sample09
 _asub_99731:
-		.BYTE	$FC,$02		; ALOOP_START $02
-		.BYTE	$34		; ADATA	$34
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$1B		; ADATA	$1B
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$00		; ADATA	$00
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$FB		; ARET
+		ALOOP_START	$02
+		ADATA		$34
+		ADATA		$3B
+		ADATA		$20
+		ADATA		$3B
+		ADATA		$23
+		ADATA		$1B
+		ALOOP_END
+		ADATA		$23
+		ADATA		$3B
+		ADATA		$00
+		ADATA		$3B
+		ARET
 _asub_9973F:
-		.BYTE	$FC,$02		; ALOOP_START $02
-		.BYTE	$37		; ADATA	$37
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$3D		; ADATA	$3D
-		.BYTE	$27		; ADATA	$27
-		.BYTE	$00		; ADATA	$00
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$3C		; ADATA	$3C
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$03		; ADATA	$03
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$27		; ADATA	$27
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$3C		; ADATA	$3C
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$28		; ADATA	$28
-		.BYTE	$00		; ADATA	$00
-		.BYTE	$2A		; ADATA	$2A
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$22		; ADATA	$22
-		.BYTE	$1E		; ADATA	$1E
-		.BYTE	$25		; ADATA	$25
-		.BYTE	$3B		; ADATA	$3B
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$0E		; ADATA	$0E
-		.BYTE	$FB		; ARET
+		ALOOP_START	$02
+		ADATA		$37
+		ADATA		$20
+		ADATA		$23
+		ADATA		$3D
+		ADATA		$27
+		ADATA		$00
+		ALOOP_END
+		ADATA		$3C
+		ADATA		$20
+		ADATA		$03
+		ADATA		$20
+		ADATA		$27
+		ADATA		$23
+		ADATA		$20
+		ADATA		$3C
+		ADATA		$20
+		ADATA		$23
+		ADATA		$28
+		ADATA		$00
+		ADATA		$2A
+		ADATA		$25
+		ADATA		$22
+		ADATA		$1E
+		ADATA		$25
+		ADATA		$3B
+		ADATA		$3E
+		ADATA		$0E
+		ARET
 _asub_9975D:
-		.BYTE	$F5,$35		; ACMDF5      $35
-		.BYTE	$F6,$21		; ACMDF6      $21
-		.BYTE	$FC,$04		; ALOOP_START $04
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$C6,$01		; ADATAEX     $C6,$01
-		.BYTE	$C7,$11		; ADATAEX     $C7,$11
-		.BYTE	$F4,$6F		; ACMDF4      $6F
-		.BYTE	$C3,$11		; ADATAEX     $C3,$11
-		.BYTE	$FD		; ALOOP_END
-		.BYTE	$67		; ADATA	$67
-		.BYTE	$43		; ADATA	$43
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$20		; ADATA	$20
-		.BYTE	$22		; ADATA	$22
-		.BYTE	$43		; ADATA	$43
-		.BYTE	$FB		; ARET
+		ACMDF5		$35
+		ASMPL		_sample21
+		ALOOP_START	$04
+		ACMDF4		$00
+		ADATAEX		$C6,$01
+		ADATAEX		$C7,$11
+		ACMDF4		$6F
+		ADATAEX		$C3,$11
+		ALOOP_END
+		ADATA		$67
+		ADATA		$43
+		ACMDF4		$00
+		ADATA		$20
+		ADATA		$22
+		ADATA		$43
+		ARET

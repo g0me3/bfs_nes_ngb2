@@ -1,162 +1,148 @@
 
 		.BYTE	$05
-		.WORD	_musA_A
-		.BYTE	$0C
-		.WORD	_musA_B
-		.BYTE	$0C
-		.WORD	_musA_C
-		.BYTE	$00
-		.WORD	_musA_D
-		.BYTE	$04
-		.WORD	_musA_E
-		.BYTE	$08
+		CHNL_PTR	NOISE,_musA_A
+		CHNL_PTR	NOISE,_musA_B
+		CHNL_PTR	SQUA0,_musA_C
+		CHNL_PTR	SQUA1,_musA_D
+		CHNL_PTR	TRIAN,_musA_E
 _musA_A:
-		.BYTE	$F2,$09		; ACMDF2      $09
+		ACMDF2		$09
 _aloc_98CA4:
-		.BYTE	$E0,$F6,$08		; ACMDE0      $F6,$08
-		.BYTE	$7F		; ADATA	$7F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$5E		; ADATA	$5E
-		.BYTE	$5E		; ADATA	$5E
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$DF,$0E		; ADATAEX     $DF,$0E
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$DE,$06		; ADATAEX     $DE,$06
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$5F		; ADATA	$5F
-		.BYTE	$9F		; ADATA	$9F
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$5E		; ADATA	$5E
-		.BYTE	$DE,$0D		; ADATAEX     $DE,$0D
-		.BYTE	$3E		; ADATA	$3E
-		.BYTE	$E0,$F6,$08	; ACMDE0      $F6,$08
-		.BYTE	$DF,$0D		; ADATAEX     $DF,$0D
-		.BYTE	$E0,$F8,$1C	; ACMDE0      $F8,$1C
-		.BYTE	$7E		; ADATA	$7E
-		.BYTE	$F8		; AJMP	_aloc_98CA4
-		.WORD	_aloc_98CA4
-		.BYTE	$FF		; ASTOP
+		ADMC		_pcm0A
+		ADATA		$7F
+		ADMC		_pcm1
+		ADATA		$5E
+		ADATA		$5E
+		ADMC		_pcm0A
+		ADATAEX		$DF,$0E
+		ADMC		_pcm1
+		ADATAEX		$DE,$06
+		ADMC		_pcm0A
+		ADATA		$5F
+		ADATA		$9F
+		ADMC		_pcm1
+		ADATA		$5E
+		ADATAEX		$DE,$0D
+		ADATA		$3E
+		ADMC		_pcm0A
+		ADATAEX		$DF,$0D
+		ADMC		_pcm1
+		ADATA		$7E
+		AJMP		_aloc_98CA4
+		ASTOP
 _musA_B:
-		.BYTE	$F2,$09		; ACMDF2      $09
-		.BYTE	$F0,$0D		; ACMDF0      $0D
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$FA		; AJSR	_asub_98CE6
-		.WORD	_asub_98CE6
-		.BYTE	$FA		; AJSR	_asub_98CFD
-		.WORD	_asub_98CFD
-		.BYTE	$FA		; AJSR	_asub_98CE6
-		.WORD	_asub_98CE6
-		.BYTE	$FA		; AJSR	_asub_98D16
-		.WORD	_asub_98D16
-		.BYTE	$F8		; AJMP	_aloc_98CD0
-		.WORD	_musA_B
-		.BYTE	$FF		; ASTOP
+		ACMDF2		$09
+		ACMDF0		$0D
+		ACMDF4		$00
+		AJSR		_asub_98CE6
+		AJSR		_asub_98CFD
+		AJSR		_asub_98CE6
+		AJSR		_asub_98D16
+		AJMP		_musA_B
+		ASTOP
 _asub_98CE6:
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$04		; ADATA	$04
-		.BYTE	$F1,$FE		; ACMDF1      $FE
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$06		; ADATA	$06
-		.BYTE	$F1,$FE		; ACMDF1      $FE
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$04		; ADATA	$04
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$26		; ADATA	$26
-		.BYTE	$F1,$FE		; ACMDF1      $FE
-		.BYTE	$FB		; ARET
+		ASMPL		_sample13
+		ADATA		$24
+		ADATA		$24
+		ACMDF1		$02
+		ADATA		$04
+		ACMDF1		$FE
+		ADATA		$24
+		ACMDF1		$02
+		ADATA		$06
+		ACMDF1		$FE
+		ADATA		$24
+		ADATA		$04
+		ACMDF1		$02
+		ADATA		$26
+		ACMDF1		$FE
+		ARET
 _asub_98CFD:
-		.BYTE	$2F		; ADATA	$2F
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$F6,$15		; ACMDF6      $15
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$F1,$FF		; ACMDF1      $FF
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$04		; ADATA	$04
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$26		; ADATA	$26
-		.BYTE	$F1,$FE		; ACMDF1      $FE
-		.BYTE	$04		; ADATA	$04
-		.BYTE	$2F		; ADATA	$2F
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$06		; ADATA	$06
-		.BYTE	$F1,$FE		; ACMDF1      $FE
-		.BYTE	$FB		; ARET
+		ADATA		$2F
+		ADATA		$24
+		ASMPL		_sample15
+		ACMDF1		$01
+		ADATA		$23
+		ACMDF1		$FF
+		ASMPL		_sample13
+		ADATA		$04
+		ACMDF1		$02
+		ADATA		$26
+		ACMDF1		$FE
+		ADATA		$04
+		ADATA		$2F
+		ACMDF1		$02
+		ADATA		$06
+		ACMDF1		$FE
+		ARET
 _asub_98D16:
-		.BYTE	$2F		; ADATA	$2F
-		.BYTE	$F1,$02		; ACMDF1      $02
-		.BYTE	$26		; ADATA	$26
-		.BYTE	$F1,$FF		; ACMDF1      $FF
-		.BYTE	$F6,$15		; ACMDF6      $15
-		.BYTE	$23		; ADATA	$23
-		.BYTE	$F1,$01		; ACMDF1      $01
-		.BYTE	$0F		; ADATA	$0F
-		.BYTE	$F6,$13		; ACMDF6      $13
-		.BYTE	$26		; ADATA	$26
-		.BYTE	$F1,$FE		; ACMDF1      $FE
-		.BYTE	$04		; ADATA	$04
-		.BYTE	$24		; ADATA	$24
-		.BYTE	$06		; ADATA	$06
-		.BYTE	$FB		; ARET
+		ADATA		$2F
+		ACMDF1		$02
+		ADATA		$26
+		ACMDF1		$FF
+		ASMPL		_sample15
+		ADATA		$23
+		ACMDF1		$01
+		ADATA		$0F
+		ASMPL		_sample13
+		ADATA		$26
+		ACMDF1		$FE
+		ADATA		$04
+		ADATA		$24
+		ADATA		$06
+		ARET
 _musA_C:
-		.BYTE	$F2,$09		; ACMDF2      $09
-		.BYTE	$F0,$09		; ACMDF0      $09
-		.BYTE	$F4,$00		; ACMDF4      $00
+		ACMDF2		$09
+		ACMDF0		$09
+		ACMDF4		$00
 _aloc_98D31:
-		.BYTE	$F6,$1C		; ACMDF6      $1C
-		.BYTE	$F5,$28		; ACMDF5      $28
-		.BYTE	$AB		; ADATA	$AB
-		.BYTE	$AC		; ADATA	$AC
-		.BYTE	$86		; ADATA	$86
-		.BYTE	$6C		; ADATA	$6C
-		.BYTE	$AB		; ADATA	$AB
-		.BYTE	$A7		; ADATA	$A7
-		.BYTE	$A9		; ADATA	$A9
-		.BYTE	$86		; ADATA	$86
-		.BYTE	$69		; ADATA	$69
-		.BYTE	$A7		; ADATA	$A7
-		.BYTE	$F0,$0A		; ACMDF0      $0A
-		.BYTE	$F8		; AJMP	_aloc_98D31
-		.WORD	_aloc_98D31
-		.BYTE	$FF		; ASTOP
+		ASMPL		_sample1C
+		ACMDF5		$28
+		ADATA		$AB
+		ADATA		$AC
+		ADATA		$86
+		ADATA		$6C
+		ADATA		$AB
+		ADATA		$A7
+		ADATA		$A9
+		ADATA		$86
+		ADATA		$69
+		ADATA		$A7
+		ACMDF0		$0A
+		AJMP		_aloc_98D31
+		ASTOP
 _musA_D:
-		.BYTE	$F2,$09		; ACMDF2      $09
-		.BYTE	$F0,$08		; ACMDF0      $08
-		.BYTE	$F4,$00		; ACMDF4      $00
+		ACMDF2		$09
+		ACMDF0		$08
+		ACMDF4		$00
 _aloc_98D4B:
-		.BYTE	$F6,$1C		; ACMDF6      $1C
-		.BYTE	$F5,$28		; ACMDF5      $28
-		.BYTE	$BB		; ADATA	$BB
-		.BYTE	$BD		; ADATA	$BD
-		.BYTE	$97		; ADATA	$97
-		.BYTE	$7D		; ADATA	$7D
-		.BYTE	$BB		; ADATA	$BB
-		.BYTE	$B8		; ADATA	$B8
-		.BYTE	$B4		; ADATA	$B4
-		.BYTE	$93		; ADATA	$93
-		.BYTE	$77		; ADATA	$77
-		.BYTE	$B8		; ADATA	$B8
-		.BYTE	$F0,$09		; ACMDF0      $09
-		.BYTE	$F8		; AJMP	_aloc_98D4B
-		.WORD	_aloc_98D4B
-		.BYTE	$FF		; ASTOP
+		ASMPL		_sample1C
+		ACMDF5		$28
+		ADATA		$BB
+		ADATA		$BD
+		ADATA		$97
+		ADATA		$7D
+		ADATA		$BB
+		ADATA		$B8
+		ADATA		$B4
+		ADATA		$93
+		ADATA		$77
+		ADATA		$B8
+		ACMDF0		$09
+		AJMP		_aloc_98D4B
+		ASTOP
 _musA_E:
-		.BYTE	$F2,$09		; ACMDF2      $09
-		.BYTE	$F6,$03		; ACMDF6      $03
-		.BYTE	$F4,$00		; ACMDF4      $00
-		.BYTE	$F0,$0F		; ACMDF0      $0F
-		.BYTE	$F5,$1C		; ACMDF5      $1C
-		.BYTE	$FC,$08		; ALOOP_START $08
-		.BYTE	$70		; ADATA	$70
-		.BYTE	$90		; ADATA	$90
-		.BYTE	$FD		; ALOOP_END
+		ACMDF2		$09
+		ASMPL		_sample03
+		ACMDF4		$00
+		ACMDF0		$0F
+		ACMDF5		$1C
+		ALOOP_START	$08
+		ADATA		$70
+		ADATA		$90
+		ALOOP_END
 _aloc_98D6E:
-		.BYTE	$C4,$6A		; ADATAEX     $C4,$6A
-		.BYTE	$C4,$6A		; ADATAEX     $C4,$6A
-		.BYTE	$F8		; AJMP	_aloc_98D6E
-		.WORD	_aloc_98D6E
-		.BYTE	$FF		; ASTOP
+		ADATAEX		$C4,$6A
+		ADATAEX		$C4,$6A
+		AJMP		_aloc_98D6E
+		ASTOP

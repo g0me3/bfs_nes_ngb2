@@ -5,11 +5,9 @@ DEBUG			EQU		0
 OPTIMIZATION	EQU		0
 BUGFIXES		EQU		0
 
-LANG_EN			EQU		0
-LANG_JP			EQU		1
-LANR_RU			EQU		2
-
-LANGUAGE		EQU		LANG_EN
+REGION_JP		EQU		0
+REGION_EU		EQU		1
+REGION			EQU		REGION_JP
 
 PAD_A			EQU		$80
 PAD_B			EQU		$40
@@ -23,6 +21,127 @@ PAD_R			EQU		$01
 ;-------------------F-O-N-T-S-------------------
 
 ;--------------------A-P-U----------------------
+
+SQUA0	EQU	$00
+SQUA1	EQU	$04
+TRIAN	EQU	$08
+NOISE	EQU	$0C
+
+	MAC	CHNL_PTR
+		.WORD	{2}
+		.BYTE	{1}
+	ENDM
+
+SMPL_FORCE	EQU	$80
+
+	MAC	SMPL_PTR
+{1}		SET	[[.-_samples_lib]>>2]
+		.WORD	{2}
+		.WORD	{3}
+	ENDM
+
+	MAC	ADMC
+#if OPTIMIZATION==0
+		.BYTE	$E0
+		.BYTE	{1}_addr
+		.BYTE	{1}_size
+#else
+	#if {1}_addr==_pcm0A_addr && {1}_size==_pcm0A_size
+		.BYTE	$E4
+	#endif
+	#if {1}_addr==_pcm0B_addr && {1}_size==_pcm0B_size
+		.BYTE	$E5
+	#endif
+	#if {1}_addr==_pcm1_addr && {1}_size==_pcm1_size
+		.BYTE	$E6
+	#endif
+#endif
+	ENDM
+
+	MAC	ACMDE1
+		.BYTE	$E1
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDE2
+		.BYTE	$E2
+		.BYTE	{1},{2}
+	ENDM
+
+	MAC	ACMDE3
+		.BYTE	$E3
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDF0
+		.BYTE	$F0
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDF1
+		.BYTE	$F1
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDF2
+		.BYTE	$F2
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDF3
+		.BYTE	$F3
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDF4
+		.BYTE	$F4
+		.BYTE	{1}
+	ENDM
+
+	MAC	ACMDF5
+		.BYTE	$F5
+		.BYTE	{1}
+	ENDM
+
+	MAC	ASMPL
+		.BYTE	$F6
+		.BYTE	{1}
+	ENDM
+
+	MAC	AJMP
+		.BYTE	$F8
+		.WORD	{1}
+	ENDM
+
+	MAC	AJSR
+		.BYTE	$FA
+		.WORD	{1}
+	ENDM
+
+	MAC	ARET
+		.BYTE	$FB
+	ENDM
+
+	MAC	ALOOP_START
+		.BYTE	$FC
+		.BYTE	{1}
+	ENDM
+
+	MAC	ALOOP_END
+		.BYTE	$FD
+	ENDM
+
+	MAC	ASTOP
+		.BYTE	$FF
+	ENDM
+
+	MAC	ADATA
+		.BYTE	{1}
+	ENDM
+
+	MAC	ADATAEX
+		.BYTE	{1},{2}
+	ENDM
 
 ;--------------D-E-B-U-G-G-I-N-G----------------
 

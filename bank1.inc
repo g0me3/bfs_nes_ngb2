@@ -318,8 +318,8 @@ _sjsr_case_142CD:
 			NARGW		byte_1433C
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_00
 		SJMP			_sloc_142F4
-; =============== S C R I P T  S U B R O U T I N E ==========================
 
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_142E2:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
@@ -328,6 +328,10 @@ _sjsr_case_142E2:
 		NJSR			_nsub_full_pal_load
 			NARGW		byte_1435C
 		STORE16			_lvl_collisions_ptr,_lvl_collisions_01
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sloc_142F4:
 		STORE8			_lvl_data_prg_bank,$01
 		NJSR			_nsub_lvl_data_ptrs_load
@@ -352,7 +356,7 @@ _scr_14324:
 		SDELAY			$01
 		NJSR			_nsub_15E4A
 		SBCC			_scr_14324
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$03
 		SJSR			_ssub_62DC9
 		NJSR			_nsub_pause_menu_handler
@@ -800,15 +804,15 @@ _prize_sequence_data13:
 ; =============== S C R I P T ===============================================
 _scr_14734:
 		SLOOP_BEGIN		$80
-		SMEM_ALU	_apu_var402,_ADC,$FF
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF
 		SDELAY			$01
 		SLOOP_END
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$13
 		SDELAY			$A0
-		STORE8			_apu_var402,$FF
+		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
 		SJMP			_scr_14324
@@ -3453,7 +3457,7 @@ _scr_15F56:
 		NJSR			_nsub_62CF3
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
-		STORE8			_apu_var402,$FF
+		STORE8			_apu_mus_volume,$FF
 		SDELAY			$10
 		STORE8			_scr_trds_pause_mode,$01
 		SDELAY			$4B
@@ -3638,7 +3642,7 @@ _scr_16111:
 			NARGB		$00
 		NJSR			_nsub_game_over_draw
 		SJSR			_ssub_pal_fade_in
-		STORE8			_apu_var402,$FF
+		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
 			NARGB		$02
 		NJSR			_nsub_mcmp
@@ -4050,14 +4054,14 @@ _sjsr_case_1641B:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16421:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16444
 		SPR_IDX_SET		6,$00
 		SPR_IDX_SET		0,$FF
 _sloc_1642C:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$00
 		SPR_IDX_SET		0,$FF
@@ -4152,14 +4156,14 @@ _sjsr_case_164BE:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_164C4:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_164DE
 		SPR_IDX_SET		6,$01
 		SPR_IDX_SET		0,$FF
 _sloc_164CF:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$01
 		SPR_IDX_SET		0,$FF
@@ -4235,7 +4239,7 @@ _sjsr_case_16536:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_1653C:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1655A
 		SPR_IDX_SET		2,$02
@@ -4244,7 +4248,7 @@ _sjsr_case_1653C:
 		SPR_IDX_SET		0,$FF
 _sloc_16549:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		2,$04
 		SPR_IDX_DEC		2
@@ -4334,7 +4338,7 @@ _sjsr_case_165E0:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_165E6:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16602
 		SPR_IDX_SET		3,$05
@@ -4342,7 +4346,7 @@ _sjsr_case_165E6:
 		SPR_IDX_SET		0,$FF
 _sloc_165F2:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		3,$06
 		SPR_IDX_DEC		3
@@ -4380,14 +4384,14 @@ _sjsr_case_1661E:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16624:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1663E
 		SPR_IDX_SET		6,$07
 		SPR_IDX_SET		0,$FF
 _sloc_1662F:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$07
 		SPR_IDX_SET		0,$FF
@@ -4422,14 +4426,14 @@ _sjsr_case_1665D:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16663:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1667D
 		SPR_IDX_SET		6,$08
 		SPR_IDX_SET		0,$FF
 _sloc_1666E:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$08
 		SPR_IDX_SET		0,$FF
@@ -4465,14 +4469,14 @@ _sjsr_case_166A4:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_166AA:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_166C4
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
 _sloc_166B5:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$0A
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
@@ -4508,14 +4512,14 @@ _sjsr_case_166EB:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_166F1:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1670B
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
 _sloc_166FC:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
@@ -4537,14 +4541,14 @@ _sjsr_case_16716:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_1671C:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16736
 		SPR_IDX_SET		6,$0A
 		SPR_IDX_SET		0,$FF
 _sloc_16727:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0A
 		SPR_IDX_SET		0,$FF
@@ -4584,14 +4588,14 @@ _sloc_16760:
 _sjsr_case_16766:
 		SARG_SET		SARG0,$00
 _sloc_16769:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16787
 		SPR_IDX_SET		6,$0B
 		SPR_IDX_SET		0,$FF
 _sloc_16774:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0B
 		SPR_IDX_SET		0,$FF
@@ -4714,14 +4718,14 @@ _sjsr_case_167FA:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16800:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1681A
 		SPR_IDX_SET		6,$0C
 		SPR_IDX_SET		0,$FF
 _sloc_1680B:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0C
 		SPR_IDX_SET		0,$FF
@@ -4755,14 +4759,14 @@ _sjsr_case_16835:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_1683B:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16855
 		SPR_IDX_SET		6,$0D
 		SPR_IDX_SET		0,$FF
 _sloc_16846:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0D
 		SPR_IDX_SET		0,$FF
@@ -4797,7 +4801,7 @@ _sjsr_case_16870:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_16876:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16894
 		SPR_IDX_SET		1,$0E
@@ -4806,7 +4810,7 @@ _sjsr_case_16876:
 		SPR_IDX_SET		0,$FF
 _sloc_16883:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		1,$10
 		SPR_IDX_DEC		1
@@ -4860,7 +4864,7 @@ _sjsr_case_168ED:
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _sjsr_case_168F3:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16913
 		SPR_IDX_SET		2,$11
@@ -4870,7 +4874,7 @@ _sjsr_case_168F3:
 		SPR_IDX_SET		0,$FF
 _sloc_16901:
 		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		2,$14
 		SPR_IDX_DEC		2

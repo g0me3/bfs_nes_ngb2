@@ -43,7 +43,10 @@ _sjmp_case_2C029:
 		SPR_IDX_DEC		4
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_new_thread_start
-			NARGB		$1A,$38,$40,$01,$00
+			NARGB		$1A
+			NARGB		$38,$40
+			NARGB		$01
+			NARGB		$00
 		POS_X_MOVE	0,$C0
 		POS_Y_MOVE		0,$40
 		NJSR			_nsub_pal_patch_fade
@@ -222,7 +225,7 @@ _sjmp_case_2C160:
 		SJSR			_ssub_2C228
 _sloc_2C16B:
 		SLOOP_BEGIN		$10
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		NJSR			_nsub_628D1
 			NARGB		$00,$02
 		SDELAY			$07
@@ -237,7 +240,7 @@ _sjmp_case_2C17C:
 		SJSR			_ssub_2C228
 _sloc_2C187:
 		SLOOP_BEGIN		$10
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		NJSR			_nsub_628D1
 			NARGB		$00,$02
 		SDELAY			$04
@@ -252,13 +255,13 @@ _sjmp_case_2C198:
 		SJSR			_ssub_2C228
 _sloc_2C1A3:
 		SLOOP_BEGIN		$20
-		SARG_ALU		$01,_ADC,$F8
+		SARG_ALU		SARG1,_ADC,$F8
 		NJSR			_nsub_628D1
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
 		SLOOP_BEGIN		$20
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		NJSR			_nsub_628D1
 			NARGB		$00,$02
 		SDELAY			$05
@@ -737,7 +740,10 @@ _ssub_2C686:
 		SPR_IDX_INC		3
 		SPR_IDX_INC		3
 		NJSR			_nsub_new_thread_start
-			NARGB		$22,$00,$F8,$01,$00
+			NARGB		$22
+			NARGB		$00,$F8
+			NARGB		$01
+			NARGB		$00
 		SPR_IDX_INC		7
 		SPR_IDX_DEC		3
 		SPR_IDX_DEC		3
@@ -795,10 +801,13 @@ _scr_2C6D9:
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_2C6E2:
 		NJSR			_nsub_new_thread_start
-			NARGB		$22,$00,$00,$04,$00
+			NARGB		$22
+			NARGB		$00,$00
+			NARGB		$04
+			NARGB		$00
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$19
 		SRET
 byte_2C6F3:
@@ -977,7 +986,7 @@ _sjmp_case_2C8D1:
 			NARGB		$02
 			NARGW		byte_2C90A
 		SDELAY			$50
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$13
 		SDELAY			$3C
 		SLOOP_BEGIN		$3C
@@ -1010,9 +1019,15 @@ _nsub_2C90E:
 _sjmp_case_2C91D:
 		NJSR			_nsub_2C952
 		NJSR			_nsub_new_thread_start
-			NARGB		$22,$F8,$00,$02,$E0
+			NARGB		$22
+			NARGB		$F8,$00
+			NARGB		$02
+			NARGB		$E0
 		NJSR			_nsub_new_thread_start
-			NARGB		$22,$08,$00,$03,$20
+			NARGB		$22
+			NARGB		$08,$00
+			NARGB		$03
+			NARGB		$20
 		SPR_IDX_SET		0,$37
 _sloc_2C932:
 		SARG_SET		SARG0,$00
@@ -1089,7 +1104,10 @@ _sloc_2C99C:
 			NARGB		$04
 		SBCS			_sloc_2C99C
 		NJSR			_nsub_new_thread_start
-			NARGB		$2E,$00,$00,$01,$00
+			NARGB		$2E
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		SLOOP_END
 
 ; =============== S C R I P T ===============================================
@@ -1106,13 +1124,13 @@ _sloc_2C9BB:
 		NJSR			_nsub_2CB4F
 		NJSR			_nsub_2CAF6
 		SBCC			_sloc_2C9E4
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_2CAF6
 		SBCC			_sloc_2C9E4
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_2CAF6
 		SBCC			_sloc_2C9E4
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_2CAF6
 		SBCS			_sloc_2C9BB
 _sloc_2C9E4:
@@ -1124,7 +1142,7 @@ _sloc_2C9E4:
 			NARGB		$02,$40
 		SBCC			_sloc_2C9BB
 		NJSR			_nsub_62CC4
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$14
 		NJSR			_nsub_6273D
 			NARGB		$3C,$40
@@ -1141,11 +1159,14 @@ _sloc_2C9E4:
 		SPR_IDX_ADD_IMM 0,$04
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 0,$FC
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$15
 		SLOOP_BEGIN		$20
 		NJSR			_nsub_new_thread_start
-			NARGB		$2E,$00,$00,$02,$00
+			NARGB		$2E
+			NARGB		$00,$00
+			NARGB		$02
+			NARGB		$00
 		SDELAY			$03
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$04
@@ -1169,7 +1190,7 @@ _scr_2CA40:
 		SLOOP_END
 		NJSR			_nsub_62BE5
 		SBCS			_sloc_2CA66
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$22
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_6273D
@@ -1686,7 +1707,10 @@ _scr2F_lvl5_boss_key_keeper:
 			NARGB		$18
 		SARG_SET		SARG1,$40
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F,$00,$00,$01,$00
+			NARGB		$2F
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		NJSR			_nsub_2D257
 		SSCRIPT1_SET	_scr_2CFA1
 		SDELAY			$28
@@ -1700,7 +1724,10 @@ _sloc_2CF30:
 		SDELAY			$28
 		NJSR			_nsub_2D282
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F,$00,$00,$02,$00
+			NARGB		$2F
+			NARGB		$00,$00
+			NARGB		$02
+			NARGB		$00
 		NJSR			_nsub_2D257
 		SDELAY			$B4
 _sloc_2CF51:
@@ -1741,7 +1768,7 @@ _sloc_2CF89:
 			NARGB		$02
 		SBCC			_sloc_2CF73
 		NJSR			_nsub_2D229
-		SMEM_ALU	byte_7DB,_ADC,$FF
+		SMEM_ALU		byte_7DB,_ADC,$FF
 		NJSR			_nsub_2D19F
 		SBCC			_sloc_2CF30
 		SSTOP
@@ -1765,7 +1792,10 @@ _sjmp_case_2CFB4:
 			NARGB		$5A,$40
 		SDELAY			$28
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F,$00,$00,$02,$00
+			NARGB		$2F
+			NARGB		$00,$00
+			NARGB		$02
+			NARGB		$00
 		NJSR			_nsub_2D257
 		SJMP			_sloc_2CFED
 
@@ -1794,7 +1824,7 @@ _sloc_2CFED:
 		SCASE			_sjsr_case_2D0A8
 		SCASE			_sjsr_case_2D04C
 		POS_MOVE_STOP	0
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		SJMP			_sloc_2CFED
 _sloc_2D002:
 		NJSR			_nsub_62ABE
@@ -1804,7 +1834,10 @@ _sloc_2D002:
 		NJSR			_nsub_2D1B1
 		SDELAY			$01
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F,$00,$00,$04,$00
+			NARGB		$2F
+			NARGB		$00,$00
+			NARGB		$04
+			NARGB		$00
 		SDELAY			$3C
 		SJMP			_sloc_2D002
 _sjsr_case_2D01E:
@@ -1958,7 +1991,10 @@ _scr_2D122:
 		NJSR			_nsub_2D1A8
 		SBCC			_sloc_2D133
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F,$00,$18,$03,$00
+			NARGB		$2F
+			NARGB		$00,$18
+			NARGB		$03
+			NARGB		$00
 _sloc_2D133:
 		SARG_SET		SARG1,$72
 		SJMP			_sloc_62E25
@@ -1969,7 +2005,10 @@ _scr_2D139:
 		NJSR			_nsub_2D1A8
 		SBCC			_sloc_2D14A
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F,$00,$18,$03,$00
+			NARGB		$2F
+			NARGB		$00,$18
+			NARGB		$03
+			NARGB		$00
 _sloc_2D14A:
 		SARG_SET		SARG1,$74
 		SJMP			_sloc_62E2C
@@ -2673,7 +2712,7 @@ _sjmp_case_2D81B:
 			NARGB		SARG2
 		SDELAY			$02
 		SLOOP_END
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$0F
 		NBG_HNDL_SET	_nbgsub_2D83E
 		NJSR			_nsub_6273D
@@ -2757,45 +2796,57 @@ _scr30_lvl6_boss_vega:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$04
-		SCASE			_sjmp_case_2DEF2
-		SCASE			_sjmp_case_2DF47
-		SCASE			_sjmp_case_2DF5C
-		SCASE			_sjmp_case_2DFBA
-		SLOOP_BEGIN		$C8
-		SMEM_ALU	_apu_var402,_ADC,$FF
-		SDELAY			$02
+		SCASE			_lvl6_boss_vega_sub1
+		SCASE			_lvl6_boss_vega_sub2
+		SCASE			_lvl6_boss_vega_sub3
+		SCASE			_lvl6_boss_vega_sub4
+		SLOOP_BEGIN		$C8							; default initialization
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF	; slowly lower the music volume
+		SDELAY			$02							; in about 6 seconds
 		SLOOP_END
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe		; start laughing sound effect
 			NARGB		$0E
 		SDELAY			$64
-		STORE8			_apu_var402,$FF
-		NJSR			_nsub_apu_mus_load
+		STORE8			_apu_mus_volume,$FF			; restore music volume and play
+		NJSR			_nsub_apu_mus_load			; boss music
 			NARGB		$0B
-		SPR_IDX_SET		0,$C0
-		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask
+		SPR_IDX_SET		0,$C0						; display sprite (hidden)
+		SLOOP_BEGIN		$04							; slowly reveal through the
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; palette fade in effect
 			NARGB		$22
 		SDELAY			$06
 		SLOOP_END
-		STORE16			byte_7D7,$800
-		NBG_HNDL_SET	_nbgsub_2DA3B
-		SSCRIPT1_SET	_scr_2D996
-		SDELAY			$B4
-		POS_Y_DELTA_SET 0,$80,$00
+		STORE16			byte_7D7,$800				; set HP for this boss
+		NBG_HNDL_SET	_nbgsub_lvl6_boss_vega_damage_count	; set bg damage detection routine
+		SSCRIPT1_SET	_scr_lvl6_boss_vega_blinker	; start damage blinker secondary script
+		SDELAY			$B4							; now wait for a while
+		POS_Y_DELTA_SET 0,$80,$00					; and move forth from the painting
 		SDELAY			$60
-		POS_MOVE_STOP	0
+		POS_MOVE_STOP	0							; stop, get to the main loop
 _sloc_2D90E:
-		SPR_IDX_SET		0,$C0
+		SPR_IDX_SET		0,$C0						; delay before attack
 		SDELAY			$62
-		SARG_SET		SARG1,$00
+		SARG_SET		SARG1,$00					; reset attack tmp var
+		NJSR			_nsub_new_thread_start		; start to attack
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$00,$00
+			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		$20
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$00,$00,$01,$20
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$00,$00
+			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		$60
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$00,$00,$01,$60
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$00,$00
+			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		$A0
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$00,$00,$01,$A0
-		NJSR			_nsub_new_thread_start
-			NARGB		$30,$00,$00,$01,$E0
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$00,$00
+			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		$E0
 		SDELAY			$2E
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		0,$C1
@@ -2808,7 +2859,10 @@ _sloc_2D90E:
 		SPR_IDX_DEC		0
 		SDELAY			$0C
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$00,$00,$02,$00
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$00,$00
+			NARGB		_lvl6_boss_vega_sub2_idx+1
+			NARGB		$00
 		SDELAY			$20
 		SPR_IDX_SET		0,$C0
 		SDELAY			$10
@@ -2816,30 +2870,48 @@ _sloc_2D90E:
 		SDELAY			$08
 		NJSR			_nsub_2DA70
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$10,$F8,$03,$4C
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$10,$F8
+			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		$4C
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$10,$F8,$03,$6C
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$10,$F8
+			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		$6C
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$10,$F8,$03,$8C
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$10,$F8
+			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		$8C
 		SDELAY			$10
 		SPR_IDX_INC		0
 		SDELAY			$08
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$F0,$F8,$03,$74
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$F0,$F8
+			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		$74
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$F0,$F8,$03,$94
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$F0,$F8
+			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		$94
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$F0,$F8,$03,$B4
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$F0,$F8
+			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		$B4
 		SDELAY			$10
 		SJMP			_sloc_2D90E
 
 ; =============== S C R I P T ===============================================
-_scr_2D996:
+_scr_lvl6_boss_vega_blinker:
 		SDELAY			$01
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$00
 		SJMP_SW			$01
-		SCASE			_scr_2D996
+		SCASE			_scr_lvl6_boss_vega_blinker
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
 			NARGW		byte_2D9B8
@@ -2848,14 +2920,14 @@ _scr_2D996:
 			NARGB		$06
 			NARGW		byte_2D9B4
 		SDELAY			$01
-		SJMP			_scr_2D996
+		SJMP			_scr_lvl6_boss_vega_blinker
 byte_2D9B4:
 		.BYTE	$0F,$36,$17,$0F
 byte_2D9B8:
 		.BYTE	$0F,$20,$20,$20
 
 ; =============== S C R I P T ===============================================
-_scr_2D9BC:
+_scr_lvl6_boss_vega_death:
 		NJSR			_nsub_gen_threads_off_except_cur
 		NJSR			_nsub_pal_patch_fade
 			NARGB		$06
@@ -2866,7 +2938,7 @@ _scr_2D9BC:
 		SDELAY			$10
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$1A
 		POS_Y_DELTA_SET 0,$00,$FC
 		SPR_IDX_SET		4,$84
@@ -2906,7 +2978,10 @@ _scr_2D9BC:
 		SPR_IDX_SET		0,$91
 		SDELAY			$96
 		NJSR			_nsub_new_thread_start
-			NARGB		$30,$00,$58,$04,$00
+			NARGB		_scr30_lvl6_boss_vega_idx
+			NARGB		$00,$58
+			NARGB		_lvl6_boss_vega_sub4_idx+1
+			NARGB		$00
 		SDELAY			$40
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_dec_by_mask
@@ -2918,7 +2993,7 @@ _scr_2D9BC:
 		SSTOP
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_2DA3B:
+_nbgsub_lvl6_boss_vega_damage_count:
 		LDX		#$15
 		LDY		#$26
 		JSR		_player_to_obj_collision_test
@@ -2938,7 +3013,7 @@ _nbgsub_2DA3B:
 		ORA		byte_7D7
 		BNE		locret_2DA6F
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2D9BC
+		.WORD	_scr_lvl6_boss_vega_death
 		LDA		#$C8
 		JSR		_scores_add
 locret_2DA6F:
@@ -3300,7 +3375,7 @@ _spr_raw_lib1A_94:
 		.BYTE	$F1,$C5,$00,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_2DEF2:
+_lvl6_boss_vega_sub1:
 		SARG_SET		SARG0,$00
 		SSCRIPT1_SET	_scr_2DF30
 		NBG_HNDL_SET	_nbgsub_2DF36
@@ -3309,12 +3384,12 @@ _sjmp_case_2DEF2:
 		SDELAY			$10
 		POS_MOVE_STOP	0
 		SDELAY			$4E
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_BEGIN		$80
 		NJSR			_nsub_628D1
 			NARGB		$00,$06
 		SDELAY			$01
-		SARG_ALU		$01,_ADC,$04
+		SARG_ALU		SARG1,_ADC,$04
 		SLOOP_END
 		SARG_SET		SARG2,$04
 		SLOOP_BEGIN		$07
@@ -3324,7 +3399,7 @@ _sjmp_case_2DEF2:
 		SDELAY			$01
 		NJSR			_nsub_2DF3D
 		SLOOP_END
-		SARG_ALU		$02,_ADC,$01
+		SARG_ALU		SARG2,_ADC,$01
 		SLOOP_END
 		SSTOP
 
@@ -3350,7 +3425,7 @@ _nsub_2DF3D:
 		RTS
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_2DF47:
+_lvl6_boss_vega_sub2:
 		SARG_SET		SARG0,$00
 		SPR_IDX_SET		0,$8A
 		SLOOP_BEGIN		$03
@@ -3367,7 +3442,7 @@ _sjmp_case_2DF47:
 		SSTOP
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_2DF5C:
+_lvl6_boss_vega_sub3:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_2DF78
 		NJSR			_nsub_628D1
@@ -3421,7 +3496,7 @@ _spr_raw_lib1A_90:
 		.BYTE	$F8,$98,$00,$F8
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_2DFBA:
+_lvl6_boss_vega_sub4:
 		POS_Y_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		4,$92

@@ -92,7 +92,7 @@ _unused_13:
 		.BYTE	0
 _apu_cur_pc:
 		.BYTE	0,0
-_apu_sp:
+_apu_cur_sp:
 		.BYTE	0
 _apu_ptr35:
 		.BYTE	0,0
@@ -259,9 +259,9 @@ _ppu_queue_data:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _apu_var400:
 		.BYTE	0
-_apu_var401:
+_apu_snd_volume:
 		.BYTE	0
-_apu_var402:
+_apu_mus_volume:
 		.BYTE	0
 _apu_var403:
 		.BYTE	0
@@ -269,39 +269,39 @@ _apu_var404:
 		.BYTE	0
 _unused_8:
 		.BYTE	0
-_apu_reg_var00:
+_apu_reg_pulse0_A:
 		.BYTE	0,0,0,0
-_apu_reg_var01:
+_apu_reg_pulse1_A:
 		.BYTE	0,0,0,0
-_apu_reg_var02:
+_apu_reg_trian_A:
 		.BYTE	0,0,0,0
-_apu_reg_var03:
+_apu_reg_noise_A:
 		.BYTE	0,0,0,0
-_apu_reg_var04:
+_apu_reg_pulse0_B:
 		.BYTE	0,0,0,0
-_apu_reg_var05:
+_apu_reg_pulse1_B:
 		.BYTE	0,0,0,0
-_apu_reg_var06:
+_apu_reg_trian_B:
 		.BYTE	0,0,0,0
-_apu_reg_var07:
+_apu_reg_noise_B:
 		.BYTE	0,0,0,0
-_apu_reg_var08:
+_apu_reg_pulse0_C:
 		.BYTE	0,0,0,0
-_apu_reg_var09:
+_apu_reg_pulse1_C:
 		.BYTE	0,0,0,0
-_apu_reg_var0A:
+_apu_reg_trian_C:
 		.BYTE	0,0,0,0
-_apu_reg_var0B:
+_apu_reg_noise_C:
 		.BYTE	0,0,0,0
-_apu_chnl_var00:
+_apu_chnl_type:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
-_apu_chnl_var01:
+_apu_mus_delay:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_mus_pc_lo:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_mus_pc_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
-_apu_chnl_var02:
+_apu_snd_delay:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_snd_pc_lo:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
@@ -315,15 +315,15 @@ _apu_chnl_var08:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_chnl_var09:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
-_apu_chnl_var0A:
+_apu_chnl_smpl:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_chnl_var0B:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_chnl_var0C:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
-_apu_chnl_var0D:
+_apu_mus_sp:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
-_apu_chnl_var0E:
+_apu_snd_sp:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_chnl_var0F:
 		.BYTE	0,0,0,0,0,0,0,0,0,0

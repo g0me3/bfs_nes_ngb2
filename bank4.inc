@@ -21,11 +21,11 @@ _sjmp_case_3800F:
 _sloc_38012:
 		SLOOP_BEGIN		$0A
 		SJSR			_ssub_38029
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		SLOOP_END
 		SLOOP_BEGIN		$0A
 		SJSR			_ssub_38029
-		SARG_ALU		$01,_ADC,$F8
+		SARG_ALU		SARG1,_ADC,$F8
 		SLOOP_END
 		SJMP			_sloc_38012
 
@@ -360,7 +360,10 @@ _sjmp_case_382D6:
 		NBG_HNDL_SET	_nbgsub_382FC
 _sloc_382D9:
 		NJSR			_nsub_new_thread_start
-			NARGB		$15,$00,$08,$01,$00
+			NARGB		$15
+			NARGB		$00,$08
+			NARGB		$01
+			NARGB		$00
 		SLOOP_BEGIN		$0A
 		SPR_IDX_SET		7,$05
 		SPR_IDX_SET		7,$09
@@ -441,7 +444,7 @@ _scr16_still_throw_forward_slime:
 ; =============== S C R I P T ===============================================
 _sjmp_case_3835C:
 		NBG_HNDL_SET	_nbgsub_38392
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$08
 _sloc_38363:
 		SLOOP_BEGIN		$03
@@ -454,7 +457,10 @@ _sloc_38363:
 		SPR_IDX_ADD_IMM 7,$04
 		SLOOP_END
 		NJSR			_nsub_new_thread_start
-			NARGB		$16,$00,$00,$01,$00
+			NARGB		$16
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		SJMP			_sloc_38363
 
 ; =============== S C R I P T ===============================================
@@ -572,7 +578,7 @@ _scr1B_court_chair:
 _sloc_38442:
 		SPR_IDX_SET		0,$25
 		SDELAY			$0A
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$12
 		POS_Y_MOVE		0,$FF
 		SPR_IDX_INC		3
@@ -891,13 +897,13 @@ _sloc_386EC:
 		NJSR			_nsub_62CC4
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3871B
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3871B
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3871B
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_62CD3
 		SBCS			_sloc_386EC
 _sloc_3871B:
@@ -1140,13 +1146,13 @@ _sloc_38973:
 		NJSR			_nsub_62CC4
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_389A2
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_389A2
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_389A2
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_62CD3
 		SBCS			_sloc_38973
 _sloc_389A2:
@@ -1537,7 +1543,10 @@ _sjmp_case_38D3D:
 ; =============== S C R I P T ===============================================
 _scr_38D4B:
 		NJSR			_nsub_new_thread_start
-			NARGB		$0E,$00,$00,$00,$00
+			NARGB		$0E
+			NARGB		$00,$00
+			NARGB		$00
+			NARGB		$00
 		NBG_HNDL_SET	_nbgsub_38D93
 		SARG_SET		SARG0,$02
 _sloc_38D59:
@@ -1715,12 +1724,12 @@ _sjmp_case_38EF6:
 _sloc_38EFD:
 		SLOOP_BEGIN		$0A
 		SJSR			_ssub_38F2A
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		SLOOP_END
 		SJSR			_ssub_38F1A
 		SLOOP_BEGIN		$0A
 		SJSR			_ssub_38F2A
-		SARG_ALU		$01,_ADC,$F8
+		SARG_ALU		SARG1,_ADC,$F8
 		SLOOP_END
 		SJSR			_ssub_38F1A
 		SJMP			_sloc_38EFD
@@ -1730,7 +1739,10 @@ _ssub_38F1A:
 		POS_MOVE_STOP	0
 		SPR_IDX_ADD_IMM 0,$02
 		NJSR			_nsub_new_thread_start
-			NARGB		$21,$00,$00,$06,$00
+			NARGB		$21
+			NARGB		$00,$00
+			NARGB		$06
+			NARGB		$00
 		SDELAY			$14
 		SPR_IDX_ADD_IMM 0,$FE
 		SRET
@@ -1988,7 +2000,7 @@ _scr2B_still_throw_ballistic_slime:
 
 ; =============== S C R I P T ===============================================
 _sjmp_case_3910D:
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$08
 		NBG_HNDL_SET	_nbgsub_39143
 _sloc_39114:
@@ -1998,7 +2010,10 @@ _sloc_39114:
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 7,$04
 		NJSR			_nsub_new_thread_start
-			NARGB		$2B,$00,$00,$01,$00
+			NARGB		$2B
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		SLOOP_BEGIN		$05
 		SPR_IDX_ADD_IMM 7,$FC
 		SPR_IDX_ADD_IMM 7,$04
@@ -2211,7 +2226,10 @@ _sloc_392AD:
 			NARGB		$08
 		SLOOP_END
 		NJSR			_nsub_new_thread_start
-			NARGB		$2C,$00,$00,$01,$00
+			NARGB		$2C
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		SJMP			_sloc_3927A
 
 ; =============== S C R I P T ===============================================
@@ -2742,7 +2760,7 @@ _sloc_396F1:
 		SCASE			_sjsr_case_39726
 		SCASE			_sjsr_case_39736
 		POS_MOVE_STOP	0
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		SJMP			_sloc_396F1
 _sjsr_case_39706:
 		POS_Y_DELTA_SET 0,$80,$FE
@@ -3090,7 +3108,10 @@ _sloc_399E9:
 		SPR_IDX_ADD_IMM 4,$FC
 		SLOOP_END
 		NJSR			_nsub_new_thread_start
-			NARGB		$25,$00,$00,$01,$00
+			NARGB		$25
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		SJMP			_sloc_399E9
 
 ; =============== S C R I P T ===============================================
@@ -3450,13 +3471,13 @@ _scr26_sword_ninja:
 		NJSR			_nsub_62CC4
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_39D06
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_39D06
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_39D06
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_62CD3
 		SBCS			_sloc_39D1A
 _sloc_39D06:
@@ -3770,17 +3791,20 @@ _sloc_39F9F:
 		NJSR			_nsub_6273D
 			NARGB		$36,$40
 		SDELAY			$10
-		SARG_ALU		$01,_ADC,$F0
+		SARG_ALU		SARG1,_ADC,$F0
 		SLOOP_BEGIN		$03
 		NJSR			_nsub_new_thread_start
-			NARGB		$27,$00,$00,$01,$00
+			NARGB		$27
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		SPR_IDX_ADD_IMM 5,$04
 		SPR_IDX_ADD_IMM 5,$04
 		SPR_IDX_ADD_IMM 5,$FC
 		SPR_IDX_ADD_IMM 5,$FC
-		SARG_ALU		$01,_ADC,$10
+		SARG_ALU		SARG1,_ADC,$10
 		SLOOP_END
-		SARG_ALU		$01,_ADC,$F0
+		SARG_ALU		SARG1,_ADC,$F0
 		SDELAY			$10
 
 ; =============== S C R I P T ===============================================
@@ -3976,13 +4000,13 @@ _sloc_3A15F:
 		NJSR			_nsub_62CC4
 		NJSR			_nsub_3A242
 		SBCC			_sloc_3A197
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_3A242
 		SBCC			_sloc_3A197
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_3A242
 		SBCC			_sloc_3A197
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_3A242
 		SBCS			_sloc_3A15F
 _sloc_3A197:
@@ -4211,7 +4235,10 @@ _sloc_3A2E6:
 		POS_Y_MOVE		0,$F8
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_new_thread_start
-			NARGB		$29,$00,$F8,$01,$00
+			NARGB		$29
+			NARGB		$00,$F8
+			NARGB		$01
+			NARGB		$00
 		SLOOP_BEGIN		$02
 		SPR_IDX_SET		6,$54
 		SPR_IDX_INC		6
@@ -4559,13 +4586,13 @@ _sloc_3A55B:
 		NJSR			_nsub_62CC4
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3A597
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3A597
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3A597
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_62CD3
 		SBCS			_sloc_3A5AB
 _sloc_3A597:
@@ -4745,9 +4772,15 @@ _scr0F_candle:
 		SJMP_SW			$01
 		SCASE			_sjmp_case_3A739
 		NJSR			_nsub_new_thread_start
-			NARGB		$0F,$00,$B0,$01,$00
+			NARGB		$0F
+			NARGB		$00,$B0
+			NARGB		$01
+			NARGB		$00
 		NJSR			_nsub_new_thread_start
-			NARGB		$0F,$00,$50,$01,$00
+			NARGB		$0F
+			NARGB		$00,$50
+			NARGB		$01
+			NARGB		$00
 
 ; !FALLTHROUGH!
 
@@ -4756,7 +4789,7 @@ _sjmp_case_3A739:
 		SDELAY			$01
 		NJSR			_nsub_3A74D
 		SBCC			_sjmp_case_3A739
-		NJSR			_nsub_apu_snd_load
+		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$23
 _sloc_3A745:
 		SPR_IDX_SET		3,$6B
@@ -5378,13 +5411,13 @@ _sloc_3AC3B:
 		NJSR			_nsub_62CC4
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3AC65
-		SARG_ALU		$01,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3AC65
-		SARG_ALU		$01,_ADC,$80
+		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_62CD3
 		SBCC			_sloc_3AC65
-		SARG_ALU		$01,_ADC,$C0
+		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_62CD3
 		SBCS			_sloc_3AC3B
 _sloc_3AC65:
@@ -5989,7 +6022,10 @@ _sjsr_case_3B237:
 		SSCRIPT1_OFF
 		SPR_IDX_SET		0,$C8
 		NJSR			_nsub_new_thread_start
-			NARGB		$2A,$F7,$20,$01,$00
+			NARGB		$2A
+			NARGB		$F7,$20
+			NARGB		$01
+			NARGB		$00
 		SDELAY			$18
 		SSCRIPT1_SET	_scr_3B24C
 		SRET
@@ -6398,11 +6434,17 @@ _scr1C_girl_and_floaters:
 			NARGW		byte_3B6D6
 		SARG_SET		SARG1,$00
 		NJSR			_nsub_new_thread_start
-			NARGB		$1C,$E0,$00,$01,$00
+			NARGB		$1C
+			NARGB		$E0,$00
+			NARGB		$01
+			NARGB		$00
 		NJSR			_nsub_obj_sarg_set_from_nsub_return_value
 			NARGB		$02
 		NJSR			_nsub_new_thread_start
-			NARGB		$1C,$F0,$00,$02,$00
+			NARGB		$1C
+			NARGB		$F0,$00
+			NARGB		$02
+			NARGB		$00
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$4C
 		SPR_IDX_SET		1,$FF
@@ -6420,7 +6462,7 @@ _sloc_3B634:
 		NJSR			_nsub_628D1
 			NARGB		$00,$03
 		SDELAY			$03
-		SARG_ALU		$01,_ADC,$F8
+		SARG_ALU		SARG1,_ADC,$F8
 		SLOOP_END
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_6273D
@@ -6428,7 +6470,7 @@ _sloc_3B634:
 		NJSR			_nsub_628D1
 			NARGB		$00,$03
 		SDELAY			$03
-		SARG_ALU		$01,_ADC,$F8
+		SARG_ALU		SARG1,_ADC,$F8
 		SLOOP_END
 		SJMP			_sloc_3B634
 
@@ -6514,7 +6556,10 @@ _scr_3B693:
 _scr_3B6C8:
 		SLOOP_BEGIN		$06
 		NJSR			_nsub_new_thread_start
-			NARGB		$1C,$00,$00,$03,$00
+			NARGB		$1C
+			NARGB		$00,$00
+			NARGB		$03
+			NARGB		$00
 		SDELAY			$14
 		SLOOP_END
 		SSCRIPT0_OFF
@@ -6588,7 +6633,7 @@ _sloc_3B72C:
 		NJSR			_nsub_628D1
 			NARGB		$00,$03
 		SDELAY			$03
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		SLOOP_END
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_6273D
@@ -6596,7 +6641,7 @@ _sloc_3B72C:
 		NJSR			_nsub_628D1
 			NARGB		$00,$03
 		SDELAY			$03
-		SARG_ALU		$01,_ADC,$08
+		SARG_ALU		SARG1,_ADC,$08
 		SLOOP_END
 		SJMP			_sloc_3B72C
 
@@ -7092,14 +7137,20 @@ _scr11_lvl2_ghost_nanny:
 		NJSR			_nsub_apu_mus_load
 			NARGB		$0C
 		NJSR			_nsub_new_thread_start
-			NARGB		$11,$00,$00,$01,$00
+			NARGB		$11
+			NARGB		$00,$00
+			NARGB		$01
+			NARGB		$00
 		POS_X_SET		0,$90,$00
 		POS_Y_SET		0,$C0,$02
 		SLOOP_BEGIN		$02
 		SJSR			_ssub_3BBE1
 		SLOOP_END
 		NJSR			_nsub_new_thread_start
-			NARGB		$11,$00,$00,$02,$00
+			NARGB		$11
+			NARGB		$00,$00
+			NARGB		$02
+			NARGB		$00
 		SLOOP_BEGIN		$04
 		SJSR			_ssub_3BBE1
 		SLOOP_END
@@ -7115,7 +7166,7 @@ _scr11_lvl2_ghost_nanny:
 		SPR_IDX_SET		0,$FF
 		POS_MOVE_STOP	0
 		SLOOP_BEGIN		$80
-		SMEM_ALU	_apu_var402,_ADC,$FF
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF
 		SDELAY			$01
 		SLOOP_END
 		NJSR			_nsub_62BA9

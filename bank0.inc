@@ -805,7 +805,7 @@ _sloc_8A65:
 		NJSR			_nsub_pal_patch_load	; read pal byte from selected array
 			NARGW		_pal_new_blink			; with index SARG0, put it on
 			NARGB		$16,SARG0				; selected position of palette buffer (16),
-		SARG_ALU		$00,_ADC,$01			; then blit it and increment idx
+		SARG_ALU		SARG0,_ADC,$01			; then blit it and increment idx
 		SDELAY			$01						; sync to fluch buffers, loop 6 times
 		SLOOP_END
 		SJMP			_sloc_8A65				; repeat infinitely
@@ -822,7 +822,7 @@ _intro_sub0C_title_new_unref:
 		NJSR			_nsub_pal_patch_load
 			NARGW		_pal_new_blink_unused
 			NARGB		$17,SARG1
-		SARG_ALU		$01,_ADC,$01
+		SARG_ALU		SARG1,_ADC,$01
 		SDELAY			$01
 		SLOOP_END
 		SJMP			_intro_sub0C_title_new_unref
@@ -830,7 +830,7 @@ _intro_sub0C_title_new_unref:
 _pal_new_blink:
 		.BYTE	$35,$25,$15,$05,$15,$25
 _pal_new_blink_unused:
-		.BYTE	$0F,$10,$20,$30,$20,$10,$01 ; *--
+		.BYTE	$0F,$10,$20,$30,$20,$10,$01
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_pal_patch_load:
@@ -967,7 +967,7 @@ _nsub_select_buster_input:
 		AND		#PAD_R
 		BEQ		loc_8BE6
 		LDA		#$0B
-		JSR		_far_prg6_apu_snd_load
+		JSR		_far_prg6_apu_snd_load_safe
 loc_8BD5:
 		INC		_scr_trds_args0,X			; increment current selection index
 		LDA		_scr_trds_args0,X
@@ -983,7 +983,7 @@ loc_8BE6:
 		AND		#PAD_L
 		BEQ		loc_8C00
 		LDA		#$0B
-		JSR		_far_prg6_apu_snd_load
+		JSR		_far_prg6_apu_snd_load_safe
 loc_8BF1:
 		DEC		_scr_trds_args0,X			; same but for decrement
 		BPL		loc_8BF9
@@ -1000,7 +1000,7 @@ loc_8C00:
 		AND		#PAD_A
 		BEQ		loc_8C36
 		LDA		#$0C
-		JSR		_far_prg6_apu_snd_load		; init one of two players indexes
+		JSR		_far_prg6_apu_snd_load_safe		; init one of two players indexes
 		LDA		_scr_trds_args0,X
 		LDY		_beam_player_idxA
 		BPL		loc_8C17
@@ -1488,7 +1488,7 @@ _nbgsub_secret_menu_exit_wait:
 		LDA		#$FF
 		JSR		_far_prg6_apu_mus_load		; if sound test used, shut all sounds
 		LDA		#$FF
-		JSR		_far_prg6_apu_snd_load
+		JSR		_far_prg6_apu_snd_load_safe
 		JSR		_cur_thread_reload_param	; load intro script again starting
 		.WORD	_scr_title_restart			; directly from title screen
 locret_8FAA:
@@ -1763,9 +1763,9 @@ loc_91C2:
 		CMP		#$03
 		BNE		locret_91EC
 		LDA		#$FF
-		JSR		_far_prg6_apu_snd_load
+		JSR		_far_prg6_apu_snd_load_safe
 		LDA		_sound_test_snd_idx
-		JMP		_far_prg6_apu_snd_load
+		JMP		_far_prg6_apu_snd_load_safe
 loc_91D1:
 		LDA		_pad0_pressed				; B stops them
 		AND		#PAD_B
@@ -1779,7 +1779,7 @@ loc_91E3:
 		CMP		#$03
 		BNE		locret_91EC
 		LDA		#$FF
-		JMP		_far_prg6_apu_snd_load
+		JMP		_far_prg6_apu_snd_load_safe
 locret_91EC:
 		RTS
 
@@ -2125,7 +2125,7 @@ loc_9484:
 		PHA
 		INC		_scr_trds_args0
 		BNE		loc_9490
-		INC		_scr_trds_args1	; *--
+		INC		_scr_trds_args1
 loc_9490:
 		PLA
 		RTS
