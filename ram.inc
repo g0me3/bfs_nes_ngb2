@@ -447,13 +447,13 @@ _tmp_idx:
 		.BYTE	0
 _tmp7B6:
 		.BYTE	0
-_beam_player_idxA:
+_beamer_idxA:
 		.BYTE	0
-_catch_player_idxA:
+_catcher_idxA:
 		.BYTE	0
-_beam_player_idxB:
+_beamer_idxB:
 		.BYTE	0
-_catch_player_idxB:
+_catcher_idxB:
 		.BYTE	0
 _tmp7BB:
 		.BYTE	0
@@ -461,9 +461,11 @@ _tmp7BC:
 		.BYTE	0
 _collision_flag:
 		.BYTE	0
-_tmp7BE:
-		.BYTE	0,0
-_tmp7C0:
+_cur_room_orientation_idx:
+		.BYTE	0
+_cur_room_data_col:
+		.BYTE	0
+_cur_room_data_row:
 		.BYTE	0
 _cur_lvl_room_idx:
 		.BYTE	0

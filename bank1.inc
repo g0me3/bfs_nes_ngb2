@@ -3,60 +3,75 @@
 
 		BANK_START $01
 
+		SECTION_START
+
 ; =============== S C R I P T ===============================================
 ; base level handler with some set of common operations as well as set
-; a specific options for every particular room
-; all level handlers have mostly the same structure.
+; of specific options for every particular room. all level handlers have
+; mostly the same structure and consists of two parts:
+; - initialization part. usually setup once per stage at the beginning
+; and set all global level parameters, setting up background scripted
+; and native routines, run players scripts, also handles the continue
+; checkpoints
+; - room handlers state machine. every room have its own unique settings
+; as well and may contain additional adjusting global settings. the main
+; function of room handlers is to test if player reaches the exit points
+; and then jump to a corresponding new room handler. every room handler
+; usually setup its own set of doors, entry points and exits.
+;
 _scr01_lvl1_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx	; here is the beginning of the stage
 		NJSR			_nsub_read_mem					; we start from here either if begin the stage
 			NARGW		_tmp_idx						; or continue after game over
 		SJSR_SW	$04										;
-		SCASE			_lvl1_checkpoint012_init		; entering level from checkpoints need to
-		SCASE			_lvl1_checkpoint012_init		; reinit the current stage from given position
-		SCASE			_lvl1_checkpoint012_init		; so we have here so much cases how many
-		SCASE			_lvl1_checkpoint3_init			; checkpoints have particular stage
+		SCASE			_lvl1_room_initA				; entering level from checkpoints need to
+		SCASE			_lvl1_room_initA				; reinit the current stage from given position
+		SCASE			_lvl1_room_initA				; so we have here a number of cases as much
+		SCASE			_lvl1_room_initB				; checkpoints in a particular stage
 		NJSR			_nsub_players_room_start_pos_init	; when room is entered, set the starting position
-			NARGB		$04								; of players based on checkpoint index
-			NARGB		$4E,$71,$00
+			NARGB		$04								; of players based on checkpoint index (read internally)
+			NARGB		$4E,$71,$00						; by _nsub
 			NARGB		$79,$46,$03
 			NARGB		$39,$6E,$03
 			NARGB		$6E,$34,$00
-		NJSR			_nsub_read_mem
-			NARGW		_tmp_idx						; and finally go to main room handler, according
-		SJMP_SW			$04								; also to a starting checkpoint position
-		SCASE			_lvl1_room0_handler				; see, four checkpoints started from room0
-		SCASE			_lvl1_room3_handler				; room3, room1 and room 6 accordingly.
+		NJSR			_nsub_read_mem					; and finally go to main room handler, according
+			NARGW		_tmp_idx						; also to a starting checkpoint position.
+		SJMP_SW			$04								; in this case, four checkpoints started from room0
+		SCASE			_lvl1_room0_handler				; room3, room1 and room 6 accordingly.
+		SCASE			_lvl1_room3_handler
 		SCASE			_lvl1_room1_handler
 		SCASE			_lvl1_room6_handler
 
 ; =============== S C R I P T ===============================================
+; TODO, most of this regular script sequences may be also parametrized and
+; parsed only with single _nsub ruotine at the beginning of the room...
+;
 _lvl1_room0_handler:
-		STORE8			_cur_lvl_room_idx,$00			; when entering the actual level, set current room
-		NJSR			_nsub_room_draw					; sequence index to inform object manager where to
+		STORE8			_cur_lvl_room_idx,$00			; when entering the actual room, set current room
+		NJSR			_nsub_room_draw					; index to inform object manager where to
 			NARGB		$00,$02,$03						; start to fetch objects data. next draw the room
 		NJSR			_nsub_room_doors_handler_and_data_init	; and load the doors handlers.
 			NARGW		_lvl1_room0_doors
 		STORE16			_room_prize_sequence_ptr,_lvl1_room0_prize_seq	; init prize sequence data as well
 		SJSR			_ssub_room_entry_pal_fade_in	; and finally fade in to start the game
 _sloc_14048:
-		SDELAY			$01								; the handler now did all its work, now he just
-		NJSR			_nsub_players_room_exit_test	; constantly check the players positions to check
-			NARGB		$03								; if they got to the exit, return door's idx if test pass
+		SDELAY			$01								; the handler here did all its work, now he just
+		NJSR			_nsub_players_room_exit_test	; constantly test the players positions to check
+			NARGB		$03								; if they got to the exit, the return door's idx
 			NARGB		$F8,$01,$88,$03					; NOTE: doors and exit points are separate entities.
 			NARGB		$00,$04,$B0,$03					; doors only blocks the exits which usually always
-			NARGB		$80,$02,$08,$03					; active, but doors may be open only in particular conditions
-		SBCC			_sloc_14048
-		SJSR			_ssub_room_exit_pal_fade_out	; now we have a new door in _tmp_idx so we could select
-		NJSR			_nsub_players_room_start_pos_init	; player positions for the next room
-			NARGB		$03
-			NARGB		$3C,$6E,$03
-			NARGB		$82,$74,$01
-			NARGB		$4E,$5A,$00
+			NARGB		$80,$02,$08,$03					; active, but doors may be open only in particular
+		SBCC			_sloc_14048						; conditions
+		SJSR			_ssub_room_exit_pal_fade_out	; now we have a new door idx in _tmp_idx so we could
+		NJSR			_nsub_players_room_start_pos_init	; select player positions for the next room
+			NARGB		$03								; first two parameters are packed X and Y pos of
+			NARGB		$3C,$6E,$03						; beamer after entering the room, the third one
+			NARGB		$82,$74,$01						; is for relative position of the catcher according
+			NARGB		$4E,$5A,$00						; to entry direction
 		NJSR			_nsub_read_mem
-			NARGW		_tmp_idx						; and go to selected room handler
-		SJMP_SW			$03
-		SCASE			_lvl1_room1_handler
+			NARGW		_tmp_idx						; and go to selected room handler, so as we seee
+		SJMP_SW			$03								; the warping logic between rooms handled purely
+		SCASE			_lvl1_room1_handler				; with these scripts
 		SCASE			_lvl1_room2_handler
 		SCASE			_lvl1_room3_handler
 
@@ -75,7 +90,7 @@ _lvl1_room0_prize_seq:
 
 ; =============== S C R I P T ===============================================
 _lvl1_room1_handler:
-		STORE8			_cur_lvl_room_idx,$01			; all work for all roms mostly the same
+		STORE8			_cur_lvl_room_idx,$01			; all work for other roms mostly the same
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -94,7 +109,7 @@ _sloc_140B2:
 			NARGB		$42,$6E,$01
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx						; TODO: single switch cases are redundant, regular
-		SJMP_SW			$01								; SJMR would be just enough
+		SJMP_SW			$01								; SJSR would be just enough
 		SCASE			_lvl1_room0_handler
 
 _lvl1_room1_doors:
@@ -127,7 +142,7 @@ _sloc_14104:
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_patch_pal_load			; sometimes
 			NARGB		$06								; we need to fix sprites palette as
-			NARGW		_lvl1_room01234_pal+$18			; well as change sprites CHR bank
+			NARGW		_lvl1_full_palA+$18			; well as change sprites CHR bank
 		NJSR			_nsub_mmc1_chr0_set				; because there are other enemies will appear
 			NARGB		$04
 		NJSR			_nsub_players_room_start_pos_init
@@ -166,8 +181,8 @@ _lvl1_room3_handler:
 		NJSR			_nsub_mmc1_chr1_set			; TODO: already set in init routines,
 			NARGB		$02							; remove redundancy
 		NJSR			_nsub_full_pal_load
-			NARGW		_lvl1_room01234_pal
-		STORE16			_lvl_collisions_ptr,_lvl1_room01234_collisions
+			NARGW		_lvl1_full_palA
+		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1417E:
 		SDELAY			$01
@@ -207,8 +222,8 @@ _lvl1_room3_doors:
 		.BYTE	$FF
 _lvl1_room3_prize_seq:
 ; REGION, changed in the EU version
-		.BYTE	$17,$18,$18,$18,$14,$13,$00
 ;		.BYTE	$17,$14,$18,$13,$00
+		.BYTE	$17,$18,$18,$18,$14,$13,$00
 ; -
 
 ; =============== S C R I P T ===============================================
@@ -245,6 +260,9 @@ _lvl1_room4_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
+; this is the last room with boss, note, the boss area locks scrolls not here
+; but rather by the boss object itself..
+;
 _lvl1_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
@@ -281,10 +299,10 @@ _lvl1_room6_handler:
 		NJSR			_nsub_mmc1_chr0_set			; this is a corridor before the court
 			NARGB		$07							; room, here we need to change CHR and pal
 		NJSR			_nsub_mmc1_chr1_set			; also there is another bg collision table
-			NARGB		$03							; TODO: already coded in init routine, merge
-		NJSR			_nsub_full_pal_load			; code to remove redundancy
-			NARGW		_lvl1_room56_pal
-		STORE16			_lvl_collisions_ptr,_lvl1_room56_collisions
+			NARGB		$03							; TODO: already coded in init routines,
+		NJSR			_nsub_full_pal_load			; merge code to remove redundancy
+			NARGW		_lvl1_full_palB
+		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB
 		NJSR			_nsub_room_draw
 			NARGB		$02,$03,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
@@ -319,25 +337,25 @@ _lvl1_room6_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_lvl1_checkpoint012_init:
+_lvl1_room_initA:
 		NJSR			_nsub_mmc1_chr0_set			; TODO; merge initializator for room handlers
 			NARGB		$04							; to remove redundancy
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$02
 		NJSR			_nsub_full_pal_load
-			NARGW		_lvl1_room01234_pal
-		STORE16			_lvl_collisions_ptr,_lvl1_room01234_collisions
+			NARGW		_lvl1_full_palA
+		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA
 		SJMP			_lvl1_common_init
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_lvl1_checkpoint3_init:
+_lvl1_room_initB:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$03
 		NJSR			_nsub_full_pal_load
-			NARGW		_lvl1_room56_pal
-		STORE16			_lvl_collisions_ptr,_lvl1_room56_collisions
+			NARGW		_lvl1_full_palB
+		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB
 
 ; !FALLTHROUGH!
 
@@ -350,43 +368,47 @@ _lvl1_common_init:
 			NARGW		_lvl1_macroC_tbl
 			NARGW		_lvl1_macroD_tbl
 			NARGW		_lvl1_attrs_tbl
-		STORE16			_lvl_rooms_lib_ptr,_lvl1_rooms_lib
+		STORE16			_lvl_rooms_lib_ptr,lvl1_rooms_lib
 		NJSR			_nsub_apu_mus_load			; begin background music
 			NARGB		$00
-		NJSR			_nsub_beam_player_handler_start	; start players control script 08, for beamer
-		NJSR			_nsub_catch_player_handler_start; and 0A for catcher
+		NJSR			_nsub_beamer_handler_start	; start players control script 08, for beamer
+		NJSR			_nsub_catcher_handler_start; and 0A for catcher
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler	; also set the room object handler as a native bg sub
-		SSCRIPT1_SET	_scr_ingame_pause_handler	; secondary script of current level thread set to pause handler
+		SSCRIPT1_SET	_scr_common_pause_handler	; secondary script of current level thread set to pause handler
 		STORE16			_lvl_objects_ptr,_lvl1_objects_list	; finally init objects list pointer
 		NJSR			_nsub_lvl_room_objects_init	; and initialize objects offset according to last checkpoint
 		SRET
 
 ; =============== S C R I P T ===============================================
-_scr_ingame_pause_handler:
+_scr_common_pause_handler:
 		SDELAY			$01							; common pause handler for all levels
 		NJSR			_nsub_ingame_start_input_test	; just wait for START is pressed
-		SBCC			_scr_ingame_pause_handler	; and then play pause sound
+		SBCC			_scr_common_pause_handler	; and then play pause sound
 		NJSR			_nsub_apu_snd_load_safe		; and run pause native handler
 			NARGB		$03
 		SJSR			_ssub_room_exit_pal_fade_out_ex	; when exit, loop back to wait for input
 		NJSR			_nsub_ingame_pause_handler
 		SJSR			_ssub_room_entry_pal_fade_in_ex
-		SJMP			_scr_ingame_pause_handler
+		SJMP			_scr_common_pause_handler
 
-_lvl1_room01234_pal:
+_lvl1_full_palA:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$1A,$17,$0F,$37,$27,$17,$0F,$30,$05,$17
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$2B,$0F,$0F,$10,$17,$07
-_lvl1_room56_pal:
+_lvl1_full_palB:
 		.BYTE	$0F,$30,$17,$07,$0F,$30,$05,$07,$0F,$10,$17,$07,$0F,$30,$10,$00
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$31,$25,$0F,$0F,$10,$17,$07
 
 ; =============== S U B R O U T I N E =======================================
-; TOSO, the native bg subs may include various background work, mostly palette
-; rotations... but here is only objects handlers, so it may replaced with
+; TODO, the native bg subs may include various background work, mostly palette
+; rotations... but here is the only objects handler, so it may be replaced with
 ; direct handler call instead of _j_ routine for remove redundancy.
 ;
 _j_nbgsub_lvl_room_objects_handler:
 		JMP		_nbgsub_lvl_room_objects_handler
+
+		SECTION_END	"LVL1 SCRIPTS"
+
+		SECTION_START
 
 ; =============== S C R I P T ===============================================
 _scr02_lvl2_handler:
@@ -394,11 +416,11 @@ _scr02_lvl2_handler:
 		NJSR			_nsub_read_mem					; now we have 4 checkpoints here
 			NARGW		_tmp_idx
 		SJSR_SW	$05
-		SCASE			_lvl2_checkpoint0123_init
-		SCASE			_lvl2_checkpoint0123_init
-		SCASE			_lvl2_checkpoint0123_init
-		SCASE			_lvl2_checkpoint0123_init
-		SCASE			_lvl2_checkpoint4_init
+		SCASE			_lvl2_room_initA
+		SCASE			_lvl2_room_initA
+		SCASE			_lvl2_room_initA
+		SCASE			_lvl2_room_initA
+		SCASE			_lvl2_room_initB
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$05
 			NARGB		$06,$D1,$01
@@ -421,8 +443,8 @@ _lvl2_room0_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$06
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data07
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data07
+			NARGW		_lvl2_room0_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room0_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_143CE:
 		SDELAY			$01
@@ -439,11 +461,11 @@ _sloc_143CE:
 		SJMP_SW			$01
 		SCASE			_lvl2_room1_handler
 
-_lvl_doors_data07:
+_lvl2_room0_doors:
 		.BYTE	$00,$80,$06,$10,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data07:
+_lvl2_room0_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
@@ -452,8 +474,8 @@ _lvl2_room1_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data08
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data08
+			NARGW		_lvl2_room1_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room1_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1440E:
 		SDELAY			$01
@@ -469,11 +491,11 @@ _sloc_1440E:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room2_handler
-_lvl_doors_data08:
+_lvl2_room1_doors:
 		.BYTE	$00,$80,$04,$20,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data08:
+_lvl2_room1_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
@@ -482,8 +504,8 @@ _lvl2_room2_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data09
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data09
+			NARGW		_lvl2_room2_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room2_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1444E:
 		SDELAY			$01
@@ -499,13 +521,14 @@ _sloc_1444E:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room3_handler
-_lvl_doors_data09:
+
+_lvl2_room2_doors:
 		.BYTE	$00,$80,$03,$10,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$80,$03,$D0,$02
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
-_prize_sequence_data09:
+_lvl2_room2_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
@@ -514,8 +537,8 @@ _lvl2_room3_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$06
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data0A
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0A
+			NARGW		_lvl2_room3_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room3_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14495:
 		SDELAY			$01
@@ -531,11 +554,12 @@ _sloc_14495:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room4_handler
-_lvl_doors_data0A:
+
+_lvl2_room3_doors:
 		.BYTE	$01,$80,$06,$20,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data0A:
+_lvl2_room3_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
@@ -544,8 +568,8 @@ _lvl2_room4_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data0B
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0B
+			NARGW		_lvl2_room4_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room4_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_144D5:
 		SDELAY			$01
@@ -564,13 +588,14 @@ _sloc_144D5:
 		SJMP_SW			$02
 		SCASE			_lvl2_room5_handler
 		SCASE			_lvl2_room4_handler
-_lvl_doors_data0B:
+
+_lvl2_room4_doors:
 		.BYTE	$01,$B0,$04,$20,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$50,$04,$20,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data0B:
+_lvl2_room4_prize_seq:
 		.BYTE	$1D,$1D,$20,$1D,$1D,$1E,$00
 
 ; =============== S C R I P T ===============================================
@@ -579,8 +604,8 @@ _lvl2_room5_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data0C
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0C
+			NARGW		_lvl2_room5_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room5_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1452B:
 		SDELAY			$01
@@ -596,11 +621,12 @@ _sloc_1452B:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room6_handler
-_lvl_doors_data0C:
+
+_lvl2_room5_doors:
 		.BYTE	$01,$E0,$02,$40,$03
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data0C:
+_lvl2_room5_prize_seq:
 		.BYTE	$20,$1D,$1E,$20,$1D,$1E,$00
 
 ; =============== S C R I P T ===============================================
@@ -609,8 +635,8 @@ _lvl2_room6_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data0D
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0D
+			NARGW		_lvl2_room6_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room6_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14571:
 		SDELAY			$01
@@ -626,13 +652,14 @@ _sloc_14571:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room7_handler
-_lvl_doors_data0D:
+
+_lvl2_room6_doors:
 		.BYTE	$03,$E0,$02,$40,$03
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$20,$02,$40,$03
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
-_prize_sequence_data0D:
+_lvl2_room6_prize_seq:
 		.BYTE	$20,$20,$1F,$00
 
 ; =============== S C R I P T ===============================================
@@ -641,8 +668,8 @@ _lvl2_room7_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data0E
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0E
+			NARGW		_lvl2_room7_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room7_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_145BB:
 		SDELAY			$01
@@ -658,11 +685,12 @@ _sloc_145BB:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room8_handler
-_lvl_doors_data0E:
+
+_lvl2_room7_doors:
 		.BYTE	$04,$80,$02,$20,$02
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data0E:
+_lvl2_room7_prize_seq:
 		.BYTE	$1E,$1F,$1E,$20,$00
 
 ; =============== S C R I P T ===============================================
@@ -671,8 +699,8 @@ _lvl2_room8_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data0F
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data0F
+			NARGW		_lvl2_room8_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room8_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_145FF:
 		SDELAY			$01
@@ -688,24 +716,25 @@ _sloc_145FF:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_room9_handler
-_lvl_doors_data0F:
+
+_lvl2_room8_doors:
 		.BYTE	$04,$E0,$00,$40,$03
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data0F:
+_lvl2_room8_prize_seq:
 		.BYTE	$1E,$1F,$1D,$20,$00
 
 ; =============== S C R I P T ===============================================
 _lvl2_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$0B
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_02
+		NJSR			_nsub_mmc1_chr1_set			; here we enter the train section
+			NARGB		$0B							; currently only part of the tiles are changed
+		STORE16			_lvl_collisions_ptr,_lvl2_collisionsB
 		NJSR			_nsub_room_draw
 			NARGB		$02,$05,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data10
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data10
+			NARGW		_lvl2_room9_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_room9_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1464C:
 		SDELAY			$01
@@ -721,25 +750,26 @@ _sloc_1464C:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_roomA_handler
-_lvl_doors_data10:
+
+_lvl2_room9_doors:
 		.BYTE	$05,$80,$00,$D0,$04
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data10:
+_lvl2_room9_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _lvl2_roomA_handler:
-		STORE8			_cur_lvl_room_idx,$0A
-		NJSR			_nsub_room_draw
+		STORE8			_cur_lvl_room_idx,$0A		; go further on the train and
+		NJSR			_nsub_room_draw				; we need to update bg palettes from now
 			NARGB		$01,$05,$01
 		NJSR			_nsub_bg_pal_load
-			NARGW		byte_147C5
-		NBG_HNDL_SET	_nbgsub_147F1
-		SSCRIPT1_SET	_scr_14734
+			NARGW		_lvl2_bg_palA
+		NBG_HNDL_SET	_nbgsub_lvl2_roomA			; also here we have custom bg native sub
+		SSCRIPT1_SET	_scr_lvl2_roomA_secondary	; and new secondary script handler
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data11
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data11
+			NARGW		_lvl2_roomA_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_roomA_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14698:
 		SDELAY			$01
@@ -755,13 +785,14 @@ _sloc_14698:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_roomB_handler
-_lvl_doors_data11:
+
+_lvl2_roomA_doors:
 		.BYTE	$05,$80,$01,$20,$04
 		.WORD	_room_door_always_closed
 		.BYTE	$05,$80,$02,$D0,$04
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data11:
+_lvl2_roomA_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
@@ -770,8 +801,8 @@ _lvl2_roomB_handler:
 		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data12
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data12
+			NARGW		_lvl2_roomB_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_roomB_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_146DF:
 		SDELAY			$01
@@ -787,72 +818,74 @@ _sloc_146DF:
 			NARGW		_tmp_idx
 		SJMP_SW			$01
 		SCASE			_lvl2_roomC_handler
-_lvl_doors_data12:
+
+_lvl2_roomB_doors:
 		.BYTE	$05,$80,$03,$20,$04
 		.WORD	_room_door_always_closed
 		.BYTE	$05,$80,$04,$D0,$04
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data12:
+_lvl2_roomB_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
 _lvl2_roomC_handler:
 		STORE8			_cur_lvl_room_idx,$0C
-		NJSR			_nsub_room_draw
-			NARGB		$01,$05,$05
-		STORE8			_cur_room_x_pageB,$05
+		NJSR			_nsub_room_draw			; although, the boss room is double sized
+			NARGB		$01,$05,$05				; they used two parts separately for boss
+		STORE8			_cur_room_x_pageB,$05	; room and for empty tracks when you beat it.
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data13
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data13
+			NARGW		_lvl2_roomC_doors
+		STORE16			_room_prize_sequence_ptr,_lvl2_roomC_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
-		SUSPEND
-_lvl_doors_data13:
+		SUSPEND									; there is no doors to go further, script stop here
+
+_lvl2_roomC_doors:
 		.BYTE	$05,$80,$05,$20,$04
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
-_prize_sequence_data13:
+_lvl2_roomC_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_scr_14734:
-		SLOOP_BEGIN		$80
-		SMEM_ALU		_apu_mus_volume,_ADC,$FF
-		SDELAY			$01
+_scr_lvl2_roomA_secondary:
+		SLOOP_BEGIN		$80							; when entering the train, regular pause
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF	; secondary script replaced with this,
+		SDELAY			$01							; which first disables  the music
 		SLOOP_END
-		NJSR			_nsub_apu_mus_load
+		NJSR			_nsub_apu_mus_load			; plays train sound
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load_safe
+		NJSR			_nsub_apu_snd_load_safe		; and then start another music
 			NARGB		$13
 		SDELAY			$A0
 		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJMP			_scr_ingame_pause_handler
+		SJMP			_scr_common_pause_handler	; and finally goes to the regular pause seq
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_lvl2_checkpoint0123_init:
+_lvl2_room_initA:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$0A
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_03
-		SJMP			_lvl2_rooms_init
+		STORE16			_lvl_collisions_ptr,_lvl2_collisionsA
+		SJMP			_lvl2_common_init
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_lvl2_checkpoint4_init:
+_lvl2_room_initB:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$0B
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_02
+		STORE16			_lvl_collisions_ptr,_lvl2_collisionsB
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_lvl2_rooms_init:
+_lvl2_common_init:
 		NJSR			_nsub_full_pal_load
-			NARGW		_lvl2_rooms_pal
+			NARGW		_lvl2_full_pal
 		STORE8			_lvl_data_prg_bank,$02
 		NJSR			_nsub_lvl_data_ptrs_load	; TODO, same routine always, and same additional
 			NARGW		_lvl2_macroA_tbl			; rooms lib ptr settings, why not to include it
@@ -863,28 +896,32 @@ _lvl2_rooms_init:
 		STORE16			_lvl_rooms_lib_ptr,_lvl2_rooms_lib
 		NJSR			_nsub_apu_mus_load
 			NARGB		$06
-		NJSR			_nsub_beam_player_handler_start
-		NJSR			_nsub_catch_player_handler_start
-		SSCRIPT1_SET	_scr_ingame_pause_handler
+		NJSR			_nsub_beamer_handler_start
+		NJSR			_nsub_catcher_handler_start
+		SSCRIPT1_SET	_scr_common_pause_handler	; initial bg and secondary handlers are common
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_3
 		STORE16			_lvl_objects_ptr,_lvl2_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
 
-_lvl2_rooms_pal:
+_lvl2_full_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$10,$00,$07,$0F,$10,$00,$08,$0F,$10,$00,$17
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$10,$00,$0F,$0F,$36,$27,$0F
-byte_147C5:
+_lvl2_bg_palA:
 		.BYTE	$0F,$30,$10,$00,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$01,$00,$07
+; NOTE, this is a leftover from full paletter for train part of the level 2
+; however, the final version uses only first part of it for background
+; as you may see, the only difference in sprites palettes is two last palettes
+; are swapped.
 _unused_2:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$2B,$0F,$0F,$10,$17,$07 ;	*--
-byte_147E5:
+_lvl2_roomA_patch_pal_list:
 		.BYTE	$0F,$0F,$07,$0F
 		.BYTE	$0F,$07,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$07
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_147F1:
+_nbgsub_lvl2_roomA:
 		LDA		_scr_trds_args0
 		CLC
 		ADC		#$01
@@ -895,10 +932,10 @@ loc_147FC:
 		STA		_scr_trds_args0
 		ASL
 		ASL
-		ADC		#<[byte_147E5]
+		ADC		#<[_lvl2_roomA_patch_pal_list]
 		PHA
 		LDA		#$00
-		ADC		#>[byte_147E5]
+		ADC		#>[_lvl2_roomA_patch_pal_list]
 		TAX
 		PLA
 		LDY		#$02
@@ -910,12 +947,16 @@ loc_147FC:
 _j_nbgsub_lvl_room_objects_handler_3:
 		JMP		_nbgsub_lvl_room_objects_handler
 
+		SECTION_END	"LVL2 SCRIPTS"
+
+		SECTION_START
+
 ; =============== S C R I P T ===============================================
 _scr03_lvl3_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-		SJSR			_ssub_15117
+		SJSR			_lvl3_common_init
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$07
 			NARGB		$0E,$34,$00
@@ -928,22 +969,22 @@ _scr03_lvl3_handler:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$07
-		SCASE			_sjmp_case_1484A
-		SCASE			_sjmp_case_148E1
-		SCASE			_sjmp_case_14A2E
-		SCASE			_sjmp_case_14B83
-		SCASE			_sjmp_case_14CD8
-		SCASE			_sjmp_case_14E2F
-		SCASE			_sjmp_case_14F89
+		SCASE			_lvl3_room0_handler
+		SCASE			_lvl3_room2_handler
+		SCASE			_lvl3_room5_handler
+		SCASE			_lvl3_room8_handler
+		SCASE			_lvl3_roomB_handler
+		SCASE			_lvl3_roomE_handler
+		SCASE			_lvl3_room14_handler
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1484A:
+_lvl3_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data14
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data14
+			NARGW		_lvl3_room0_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room0_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14861:
 		SDELAY			$01
@@ -958,24 +999,25 @@ _sloc_14861:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_14891
-_lvl_doors_data14:
+		SCASE			_lvl3_room1_handler
+
+_lvl3_room0_doors:
 		.BYTE	$01,$80,$01,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$90,$01,$D0,$06
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
-_prize_sequence_data14:
+_lvl3_room0_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14891:
+_lvl3_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data15
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data15
+			NARGW		_lvl3_room1_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room1_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_148A8:
 		SDELAY			$01
@@ -992,25 +1034,26 @@ _sloc_148A8:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_148E1
-		SCASE			_sjmp_case_1484A
-_lvl_doors_data15:
+		SCASE			_lvl3_room2_handler
+		SCASE			_lvl3_room0_handler
+
+_lvl3_room1_doors:
 		.BYTE	$00,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$80,$00,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data15:
+_lvl3_room1_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_148E1:
+_lvl3_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl_doors_data16
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data16
+		STORE16			_room_prize_sequence_ptr,_lvl3_room2_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_148F8:
 		SDELAY			$01
@@ -1027,8 +1070,9 @@ _sloc_148F8:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14952
-		SCASE			_sjmp_case_14891
+		SCASE			_lvl3_room3_handler
+		SCASE			_lvl3_room1_handler
+
 _lvl_doors_data16:
 		.BYTE	$02,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
@@ -1043,17 +1087,17 @@ _lvl_doors_data16:
 		.BYTE	$02,$30,$01,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data16:
+_lvl3_room2_prize_seq:
 		.BYTE	$25,$25,$25,$28,$28,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14952:
+_lvl3_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data17
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data17
+			NARGW		_lvl3_room3_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room3_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14969:
 		SDELAY			$01
@@ -1070,9 +1114,10 @@ _sloc_14969:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_149BE
-		SCASE			_sjmp_case_148E1
-_lvl_doors_data17:
+		SCASE			_lvl3_room4_handler
+		SCASE			_lvl3_room2_handler
+
+_lvl3_room3_doors:
 		.BYTE	$02,$30,$02,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$02,$80,$07
@@ -1086,24 +1131,24 @@ _lvl_doors_data17:
 		.BYTE	$03,$D0,$02,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data17:
+_lvl3_room3_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_149BE:
+_lvl3_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$00
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data18
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data18
-		NJSR			_nsub_apu_mus_load
-			NARGB		$04
-		NJSR			_nsub_patch_pal_load
+			NARGW		_lvl3_room4_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room4_prize_seq
+		NJSR			_nsub_apu_mus_load				; here is the special room with
+			NARGB		$04								; middle boss, as well as special
+		NJSR			_nsub_patch_pal_load			; music and palettes for it
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_149E3:
 		SDELAY			$01
@@ -1112,7 +1157,7 @@ _sloc_149E3:
 			NARGB		$80,$03,$08,$00
 			NARGB		$D0,$03,$F8,$01
 		SBCC			_sloc_149E3
-		SJSR			_ssub_room_exit_pal_fade_out
+		SJSR			_ssub_room_exit_pal_fade_out	; restore regular music here
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
 		NJSR			_nsub_players_room_start_pos_init
@@ -1122,9 +1167,9 @@ _sloc_149E3:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14A2E
-		SCASE			_sjmp_case_14952
-_lvl_doors_data18:
+		SCASE			_lvl3_room5_handler
+		SCASE			_lvl3_room3_handler
+_lvl3_room4_doors:
 		.BYTE	$03,$80,$01,$50,$05
 		.WORD	_room_door_always_open
 		.BYTE	$03,$40,$01,$80,$07
@@ -1134,22 +1179,22 @@ _lvl_doors_data18:
 		.BYTE	$03,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data18:
+_lvl3_room4_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14A2E:
+_lvl3_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$00
-		NJSR			_nsub_mmc1_chr0_set
+		NJSR			_nsub_mmc1_chr0_set		; restore regular level CHR bank
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data19
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data19
+			NARGW		_lvl3_room5_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room5_prize_seq
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15159+$1C
+			NARGW		_lvl3_full_pal+$1C		; restore also old palette portion
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14A4F:
 		SDELAY			$01
@@ -1166,9 +1211,10 @@ _sloc_14A4F:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14AA7
-		SCASE			_sjmp_case_149BE
-_lvl_doors_data19:
+		SCASE			_lvl3_room6_handler
+		SCASE			_lvl3_room4_handler
+
+_lvl3_room5_doors:
 		.BYTE	$05,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$05,$70,$00,$B0,$07
@@ -1182,20 +1228,20 @@ _lvl_doors_data19:
 		.BYTE	$05,$D0,$01,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data19:
+_lvl3_room5_prize_seq:
 ; REGION, changed in the EU version
-		.BYTE	$28,$26,$26,$00
 ;		.BYTE	$28,$28,$26,$00
+		.BYTE	$28,$26,$26,$00
 ; -
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14AA7:
+_lvl3_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
 			NARGB		$00,$04,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data1A
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1A
+			NARGW		_lvl3_room6_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room6_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14ABE:
 		SDELAY			$01
@@ -1212,9 +1258,10 @@ _sloc_14ABE:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14B13
-		SCASE			_sjmp_case_14A2E
-_lvl_doors_data1A:
+		SCASE			_lvl3_room7_handler
+		SCASE			_lvl3_room5_handler
+
+_lvl3_room6_doors:
 		.BYTE	$04,$30,$02,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$40,$02,$80,$07
@@ -1228,22 +1275,22 @@ _lvl_doors_data1A:
 		.BYTE	$05,$D0,$02,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data1A:
+_lvl3_room6_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14B13:
+_lvl3_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$00
-		NJSR			_nsub_mmc1_chr0_set
+		NJSR			_nsub_mmc1_chr0_set				; mini-boss room again
 			NARGB		$0F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data1B
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1B
+			NARGW		_lvl3_room7_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room7_prize_seq
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
 		SJSR			_ssub_room_entry_pal_fade_in
@@ -1264,9 +1311,10 @@ _sloc_14B38:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14B83
-		SCASE			_sjmp_case_14AA7
-_lvl_doors_data1B:
+		SCASE			_lvl3_room8_handler
+		SCASE			_lvl3_room6_handler
+
+_lvl3_room7_doors:
 		.BYTE	$04,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$01,$50,$05
@@ -1276,11 +1324,11 @@ _lvl_doors_data1B:
 		.BYTE	$04,$30,$01,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data1B:
+_lvl3_room7_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14B83:
+_lvl3_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
 			NARGB		$01,$06,$00
@@ -1288,10 +1336,10 @@ _sjmp_case_14B83:
 			NARGB		$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15159+$1C
+			NARGW		_lvl3_full_pal+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data1C
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1C
+			NARGW		_lvl3_room8_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room8_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14BA4:
 		SDELAY			$01
@@ -1308,9 +1356,10 @@ _sloc_14BA4:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14BFC
-		SCASE			_sjmp_case_14B13
-_lvl_doors_data1C:
+		SCASE			_lvl3_room9_handler
+		SCASE			_lvl3_room7_handler
+
+_lvl3_room8_doors:
 		.BYTE	$06,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$06,$40,$00,$B0,$07
@@ -1324,17 +1373,17 @@ _lvl_doors_data1C:
 		.BYTE	$06,$30,$01,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data1C:
+_lvl3_room8_prize_seq:
 		.BYTE	$27,$27,$28,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14BFC:
+_lvl3_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_room_draw
 			NARGB		$00,$06,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data1D
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1D
+			NARGW		_lvl3_room9_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room9_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14C13:
 		SDELAY			$01
@@ -1351,9 +1400,10 @@ _sloc_14C13:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14C68
-		SCASE			_sjmp_case_14B83
-_lvl_doors_data1D:
+		SCASE			_lvl3_roomA_handler
+		SCASE			_lvl3_room8_handler
+
+_lvl3_room9_doors:
 		.BYTE	$06,$30,$02,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$06,$40,$02,$80,$07
@@ -1367,11 +1417,17 @@ _lvl_doors_data1D:
 		.BYTE	$07,$D0,$02,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data1D:
+_lvl3_room9_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14C68:
+; NOTE: when it exit from mini-boss room it restores only music, the
+; rest of the settings like CHR bank and palette for sprites leave intact
+; this is because the game logic assumes that room you already visited and
+; cleared have no enemies, so doesn't matter if there is no proper sprites
+; settings anymore there...
+;
+_lvl3_roomA_handler:
 		STORE8			_cur_lvl_room_idx,$0A
 		NJSR			_nsub_room_draw
 			NARGB		$01,$07,$00
@@ -1379,10 +1435,10 @@ _sjmp_case_14C68:
 			NARGB		$0F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data1E
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1E
+			NARGW		_lvl3_roomA_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_roomA_prize_seq
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
 		SJSR			_ssub_room_entry_pal_fade_in
@@ -1403,9 +1459,10 @@ _sloc_14C8D:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14CD8
-		SCASE			_sjmp_case_14BFC
-_lvl_doors_data1E:
+		SCASE			_lvl3_roomB_handler
+		SCASE			_lvl3_room9_handler
+
+_lvl3_roomA_doors:
 		.BYTE	$07,$80,$00,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$07,$80,$01,$50,$05
@@ -1415,11 +1472,14 @@ _lvl_doors_data1E:
 		.BYTE	$07,$D0,$01,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data1E:
+_lvl3_roomA_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14CD8:
+; NOTE, to the previous note, it only need to restore proper CHR/pal settings
+; for rooms where enemies still existing..
+;
+_lvl3_roomB_handler:
 		STORE8			_cur_lvl_room_idx,$0B
 		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$03
@@ -1427,10 +1487,10 @@ _sjmp_case_14CD8:
 			NARGB		$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15159+$1C
+			NARGW		_lvl3_full_pal+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data1F
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data1F
+			NARGW		_lvl3_roomB_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_roomB_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14CF9:
 		SDELAY			$01
@@ -1447,9 +1507,10 @@ _sloc_14CF9:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14D4E
-		SCASE			_sjmp_case_14C68
-_lvl_doors_data1F:
+		SCASE			_lvl3_roomC_handler
+		SCASE			_lvl3_roomA_handler
+
+_lvl3_roomB_doors:
 		.BYTE	$01,$80,$03,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$70,$03,$B0,$07
@@ -1463,17 +1524,17 @@ _lvl_doors_data1F:
 		.BYTE	$01,$D0,$04,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data1F:
+_lvl3_roomB_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14D4E:
+_lvl3_roomC_handler:
 		STORE8			_cur_lvl_room_idx,$0C
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data20
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data20
+			NARGW		_lvl3_roomC_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_roomC_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14D65:
 		SDELAY			$01
@@ -1490,9 +1551,10 @@ _sloc_14D65:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14DBF
-		SCASE			_sjmp_case_14CD8
-_lvl_doors_data20:
+		SCASE			_lvl3_roomD_handler
+		SCASE			_lvl3_roomB_handler
+
+_lvl3_roomC_doors:
 		.BYTE	$00,$30,$05,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$40,$05,$80,$07
@@ -1506,11 +1568,11 @@ _lvl_doors_data20:
 		.BYTE	$01,$D0,$05,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data20:
+_lvl3_roomC_prize_seq:
 		.BYTE	$28,$24,$24,$24,$28,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14DBF:
+_lvl3_roomD_handler:
 		STORE8			_cur_lvl_room_idx,$0D
 		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$03
@@ -1518,10 +1580,10 @@ _sjmp_case_14DBF:
 			NARGB		$0F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data21
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data21
+			NARGW		_lvl3_roomD_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_roomD_prize_seq
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
 		SJSR			_ssub_room_entry_pal_fade_in
@@ -1542,9 +1604,10 @@ _sloc_14DE4:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14E2F
-		SCASE			_sjmp_case_14D4E
-_lvl_doors_data21:
+		SCASE			_lvl3_roomE_handler
+		SCASE			_lvl3_roomC_handler
+
+_lvl3_roomD_doors:
 		.BYTE	$00,$80,$03,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$B0,$04,$50,$05
@@ -1554,11 +1617,11 @@ _lvl_doors_data21:
 		.BYTE	$00,$30,$04,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data21:
+_lvl3_roomD_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14E2F:
+_lvl3_roomE_handler:
 		STORE8			_cur_lvl_room_idx,$0E
 		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$03
@@ -1566,10 +1629,10 @@ _sjmp_case_14E2F:
 			NARGB		$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15159+$1C
+			NARGW		_lvl3_full_pal+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data22
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data22
+			NARGW		_lvl3_roomE_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_roomE_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14E50:
 		SDELAY			$01
@@ -1586,9 +1649,10 @@ _sloc_14E50:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14EAD
-		SCASE			_sjmp_case_14DBF
-_lvl_doors_data22:
+		SCASE			_lvl3_roomF_handler
+		SCASE			_lvl3_roomD_handler
+
+_lvl3_roomE_doors:
 		.BYTE	$02,$80,$03,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$80,$03,$E0,$05
@@ -1602,17 +1666,17 @@ _lvl_doors_data22:
 		.BYTE	$02,$30,$04,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data22:
+_lvl3_roomE_prize_seq:
 		.BYTE	$28,$24,$24,$24,$24,$24,$24,$25,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14EAD:
+_lvl3_roomF_handler:
 		STORE8			_cur_lvl_room_idx,$0F
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data23
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data23
+			NARGW		_lvl3_roomF_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_roomF_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14EC4:
 		SDELAY			$01
@@ -1629,9 +1693,10 @@ _sloc_14EC4:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14F19
-		SCASE			_sjmp_case_14E2F
-_lvl_doors_data23:
+		SCASE			_lvl3_room10_handler
+		SCASE			_lvl3_roomE_handler
+
+_lvl3_roomF_doors:
 		.BYTE	$02,$30,$05,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$05,$80,$07
@@ -1645,11 +1710,11 @@ _lvl_doors_data23:
 		.BYTE	$03,$D0,$05,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data23:
+_lvl3_roomF_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14F19:
+_lvl3_room10_handler:
 		STORE8			_cur_lvl_room_idx,$10
 		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$03
@@ -1657,10 +1722,10 @@ _sjmp_case_14F19:
 			NARGB		$0F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data24
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data24
+			NARGW		_lvl3_room10_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room10_prize_seq
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
 		SJSR			_ssub_room_entry_pal_fade_in
@@ -1681,9 +1746,10 @@ _sloc_14F3E:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14F89
-		SCASE			_sjmp_case_14EAD
-_lvl_doors_data24:
+		SCASE			_lvl3_room14_handler
+		SCASE			_lvl3_roomF_handler
+
+_lvl3_room10_doors:
 		.BYTE	$03,$80,$03,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$80,$04,$50,$05
@@ -1693,11 +1759,14 @@ _lvl_doors_data24:
 		.BYTE	$03,$D0,$04,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data24:
+_lvl3_room10_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14F89:
+; NOTE: for some reason, there is a gap between 10 and 14 room indexes.
+; whey there are no 11, 12 and 13 is unknown
+;
+_lvl3_room14_handler:
 		STORE8			_cur_lvl_room_idx,$14
 		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$03
@@ -1705,10 +1774,10 @@ _sjmp_case_14F89:
 			NARGB		$0F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data25
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data25
+			NARGW		_lvl3_room14_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room14_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14FAA:
 		SDELAY			$01
@@ -1725,9 +1794,10 @@ _sloc_14FAA:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_14FFF
-		SCASE			_sjmp_case_14F19
-_lvl_doors_data25:
+		SCASE			_lvl3_room15_handler
+		SCASE			_lvl3_room10_handler
+
+_lvl3_room14_doors:
 		.BYTE	$05,$80,$03,$20,$06
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$05,$70,$03,$B0,$07
@@ -1741,17 +1811,17 @@ _lvl_doors_data25:
 		.BYTE	$05,$D0,$04,$D0,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data25:
+_lvl3_room14_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_14FFF:
+_lvl3_room15_handler:
 		STORE8			_cur_lvl_room_idx,$15
 		NJSR			_nsub_room_draw
 			NARGB		$00,$04,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data26
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data26
+			NARGW		_lvl3_room15_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room15_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15016:
 		SDELAY			$01
@@ -1768,9 +1838,10 @@ _sloc_15016:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_1506B
-		SCASE			_sjmp_case_14F89
-_lvl_doors_data26:
+		SCASE			_lvl3_room16_handler
+		SCASE			_lvl3_room14_handler
+
+_lvl3_room15_doors:
 		.BYTE	$04,$30,$05,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$40,$05,$80,$07
@@ -1784,17 +1855,17 @@ _lvl_doors_data26:
 		.BYTE	$05,$D0,$05,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data26:
+_lvl3_room15_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1506B:
+_lvl3_room16_handler:
 		STORE8			_cur_lvl_room_idx,$16
 		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data27
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data27
+			NARGW		_lvl3_room16_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room16_prize_seq
 		NJSR			_nsub_apu_mus_load
 			NARGB		$01
 		SJSR			_ssub_room_entry_pal_fade_in
@@ -1813,9 +1884,10 @@ _sloc_15086:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_150CD
-		SCASE			_sjmp_case_14FFF
-_lvl_doors_data27:
+		SCASE			_lvl3_room17_handler
+		SCASE			_lvl3_room15_handler
+
+_lvl3_room16_doors:
 		.BYTE	$04,$B0,$04,$70,$07
 		.WORD	_room_door_always_open
 		.BYTE	$04,$80,$04,$A0,$05
@@ -1825,22 +1897,22 @@ _lvl_doors_data27:
 		.BYTE	$04,$30,$03,$20,$05
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data27:
+_lvl3_room16_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_150CD:
+_lvl3_room17_handler:
 		STORE8			_cur_lvl_room_idx,$17
 		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data28
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data28
+			NARGW		_lvl3_room17_doors
+		STORE16			_room_prize_sequence_ptr,_lvl3_room17_prize_seq
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15159+$1C
+			NARGW		_lvl3_full_pal+$1C
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_150EE:
 		SDELAY			$01
@@ -1855,16 +1927,17 @@ _sloc_150EE:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1506B
-_lvl_doors_data28:
+		SCASE			_lvl3_room16_handler
+
+_lvl3_room17_doors:
 		.BYTE	$00,$30,$02,$E0,$05
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
-_prize_sequence_data28:
+_lvl3_room17_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_15117:
+_lvl3_common_init:
 		STORE8			_lvl_data_prg_bank,$02
 		STORE16			_lvl_rooms_lib_ptr,_lvl3_rooms_lib
 		NJSR			_nsub_lvl_data_ptrs_load
@@ -1873,9 +1946,9 @@ _ssub_15117:
 			NARGW		_lvl3_macroC_tbl
 			NARGW		_lvl3_macroD_tbl
 			NARGW		_lvl3_attrs_tbl
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_04
+		STORE16			_lvl_collisions_ptr,_lvl3_collisions
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_15159
+			NARGW		_lvl3_full_pal
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_mmc1_chr1_set
@@ -1883,28 +1956,33 @@ _ssub_15117:
 		NJSR			_nsub_apu_mus_load
 			NARGB		$07
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_0
-		NJSR			_nsub_beam_player_handler_start
-		NJSR			_nsub_catch_player_handler_start
-		SSCRIPT1_SET	_scr_ingame_pause_handler
+		NJSR			_nsub_beamer_handler_start
+		NJSR			_nsub_catcher_handler_start
+		SSCRIPT1_SET	_scr_common_pause_handler
 		STORE16			_lvl_objects_ptr,_lvl3_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
-byte_15159:
+
+_lvl3_full_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$19,$10,$17,$0F,$37,$27,$17,$0F,$30,$10,$1A
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$37,$27,$17,$0F,$36,$25,$0F
-byte_15179:
+_lvl3_roomsAE_patch_pal:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S U B R O U T I N E =======================================
 _j_nbgsub_lvl_room_objects_handler_0:
 		JMP		_nbgsub_lvl_room_objects_handler
 
+		SECTION_END	"LVL3 SCRIPTS"
+
+		SECTION_START
+
 ; =============== S C R I P T ===============================================
 _scr04_lvl4_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-		SJSR			_ssub_154D2
+		SJSR			_lvl4_common_init
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$06
 			NARGB		$26,$AE,$01
@@ -1916,21 +1994,21 @@ _scr04_lvl4_handler:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$06
-		SCASE			_sjmp_case_151B4
-		SCASE			_sjmp_case_151F4
-		SCASE			_sjmp_case_152EB
-		SCASE			_sjmp_case_15331
-		SCASE			_sjmp_case_15388
-		SCASE			_sjmp_case_1543A
+		SCASE			_lvl4_room0_handler
+		SCASE			_lvl4_room1_handler
+		SCASE			_lvl4_room4_handler
+		SCASE			_lvl4_room5_handler
+		SCASE			_lvl4_room6_handler
+		SCASE			_lvl4_room8_handler
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_151B4:
+_lvl4_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data29
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data29
+			NARGW		_lvl4_room0_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room0_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_151CB:
 		SDELAY			$01
@@ -1945,22 +2023,23 @@ _sloc_151CB:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_151F4
-_lvl_doors_data29:
+		SCASE			_lvl4_room1_handler
+
+_lvl4_room0_doors:
 		.BYTE	$01,$A0,$05,$20,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data29:
+_lvl4_room0_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_151F4:
+_lvl4_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data2A
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2A
+			NARGW		_lvl4_room1_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room1_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1520B:
 		SDELAY			$01
@@ -1977,9 +2056,10 @@ _sloc_1520B:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_1524B
-		SCASE			_sjmp_case_1528B
-_lvl_doors_data2A:
+		SCASE			_lvl4_room2_handler
+		SCASE			_lvl4_room3_handler
+
+_lvl4_room1_doors:
 		.BYTE	$01,$90,$04,$D0,$08
 		.WORD	_room_door_always_closed
 		.BYTE	$01,$E0,$04,$A0,$09
@@ -1987,17 +2067,17 @@ _lvl_doors_data2A:
 		.BYTE	$01,$B0,$03,$20,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data2A:
+_lvl4_room1_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1524B:
+_lvl4_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data2B
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2B
+			NARGW		_lvl4_room2_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room2_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15262:
 		SDELAY			$01
@@ -2012,22 +2092,23 @@ _sloc_15262:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_151F4
-_lvl_doors_data2B:
+		SCASE			_lvl4_room1_handler
+
+_lvl4_room2_doors:
 		.BYTE	$02,$10,$04,$A0,$0A
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data2B:
+_lvl4_room2_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1528B:
+_lvl4_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data2C
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2C
+			NARGW		_lvl4_room3_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room3_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_152A2:
 		SDELAY			$01
@@ -2046,10 +2127,11 @@ _sloc_152A2:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$03
-		SCASE			_sjmp_case_151F4
-		SCASE			_sjmp_case_152EB
-		SCASE			_sjmp_case_15331
-_lvl_doors_data2C:
+		SCASE			_lvl4_room1_handler
+		SCASE			_lvl4_room4_handler
+		SCASE			_lvl4_room5_handler
+
+_lvl4_room3_doors:
 		.BYTE	$01,$B0,$02,$D0,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$50,$02,$D0,$08
@@ -2057,17 +2139,17 @@ _lvl_doors_data2C:
 		.BYTE	$00,$50,$02,$20,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data2C:
+_lvl4_room3_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_152EB:
+_lvl4_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data2D
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2D
+			NARGW		_lvl4_room4_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room4_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15302:
 		SDELAY			$01
@@ -2082,22 +2164,23 @@ _sloc_15302:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1528B
-_lvl_doors_data2D:
+		SCASE			_lvl4_room3_handler
+
+_lvl4_room4_doors:
 		.BYTE	$00,$50,$03,$20,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data2D:
+_lvl4_room4_prize_seq:
 		.BYTE	$2C,$2C,$2C,$29,$29,$2C,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15331:
+_lvl4_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data2E
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2E
+			NARGW		_lvl4_room5_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room5_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15348:
 		SDELAY			$01
@@ -2114,9 +2197,10 @@ _sloc_15348:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_1528B
-		SCASE			_sjmp_case_15388
-_lvl_doors_data2E:
+		SCASE			_lvl4_room3_handler
+		SCASE			_lvl4_room6_handler
+
+_lvl4_room5_doors:
 		.BYTE	$00,$50,$01,$D0,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$E0,$01,$30,$10
@@ -2124,17 +2208,17 @@ _lvl_doors_data2E:
 		.BYTE	$01,$00,$01,$80,$0B
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data2E:
+_lvl4_room5_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15388:
+_lvl4_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data2F
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data2F
+			NARGW		_lvl4_room6_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room6_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1539F:
 		SDELAY			$01
@@ -2151,28 +2235,29 @@ _sloc_1539F:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15331
-		SCASE			_sjmp_case_153E1
-_lvl_doors_data2F:
+		SCASE			_lvl4_room5_handler
+		SCASE			_lvl4_room7_handler
+
+_lvl4_room6_doors:
 		.BYTE	$02,$10,$01,$30,$0C
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$60,$02,$D0,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data2F:
+_lvl4_room6_prize_seq:
 ; REGION, changed in the EU version
-		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$2C,$00
 ;		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$00
+		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$2C,$00
 ; -
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_153E1:
+_lvl4_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data30
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data30
+			NARGW		_lvl4_room7_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room7_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_153F8:
 		SDELAY			$01
@@ -2189,28 +2274,29 @@ _sloc_153F8:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15388
-		SCASE			_sjmp_case_1543A
-_lvl_doors_data30:
+		SCASE			_lvl4_room6_handler
+		SCASE			_lvl4_room8_handler
+
+_lvl4_room7_doors:
 		.BYTE	$02,$60,$03,$20,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$C0,$03,$20,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data30:
+_lvl4_room7_prize_seq:
 ; REGION, changed in the EU version
-		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$2B,$00
 ;		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$00
+		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$2B,$00
 ; -
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1543A:
+_lvl4_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$01
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data31
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data31
+			NARGW		_lvl4_room8_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room8_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15451:
 		SDELAY			$01
@@ -2227,25 +2313,26 @@ _sloc_15451:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_153E1
-		SCASE			_sjmp_case_15492
-_lvl_doors_data31:
+		SCASE			_lvl4_room7_handler
+		SCASE			_lvl4_room9_handler
+
+_lvl4_room8_doors:
 		.BYTE	$03,$C0,$02,$D0,$08
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$20,$01,$20,$0D
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data31:
+_lvl4_room8_prize_seq:
 		.BYTE	$29,$2D,$2D,$2C,$29,$2D,$2C,$2D,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15492:
+_lvl4_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_room_draw
 			NARGB		$02,$03,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data32
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data32
+			NARGW		_lvl4_room9_doors
+		STORE16			_room_prize_sequence_ptr,_lvl4_room9_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_154A9:
 		SDELAY			$01
@@ -2260,16 +2347,17 @@ _sloc_154A9:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_1543A
-_lvl_doors_data32:
+		SCASE			_lvl4_room8_handler
+
+_lvl4_room9_doors:
 		.BYTE	$03,$20,$00,$D0,$0D
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data32:
+_lvl4_room9_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_154D2:
+_lvl4_common_init:
 		STORE8			_lvl_data_prg_bank,$05
 		NJSR			_nsub_lvl_data_ptrs_load
 			NARGW		_lvl4_macroA_tbl
@@ -2278,38 +2366,41 @@ _ssub_154D2:
 			NARGW		_lvl4_macroD_tbl
 			NARGW		_lvl4_attrs_tbl
 		STORE16			_lvl_rooms_lib_ptr,_lvl4_rooms_lib
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_05
+		STORE16			_lvl_collisions_ptr,_lvl4_collisions
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_15514
+			NARGW		_lvl4_full_pal
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$12
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$11
 		NJSR			_nsub_apu_mus_load
 			NARGB		$08
-		NBG_HNDL_SET	_nbgsub_15534
-		NJSR			_nsub_beam_player_handler_start
-		NJSR			_nsub_catch_player_handler_start
-		SSCRIPT1_SET	_scr_ingame_pause_handler
+		NBG_HNDL_SET	_nbgsub_lvl4_common
+		NJSR			_nsub_beamer_handler_start
+		NJSR			_nsub_catcher_handler_start
+		SSCRIPT1_SET	_scr_common_pause_handler
 		STORE16			_lvl_objects_ptr,_lvl4_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
-byte_15514:
+
+_lvl4_full_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$26,$17,$05,$0F,$37,$17,$08,$0F,$07,$15,$05
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$39,$2C,$0F,$0F,$15,$0F,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_15534:
+; palette rotate for sewers water
+;
+_nbgsub_lvl4_common:
 		LDA		_nmi_counter
 		AND		#$07
 		BNE		loc_15558
 		LDA		_scr_trds_args0
 		ASL
 		ASL
-		ADC		#<[byte_1555B]
+		ADC		#<[_lvl4_patch_pal_lib]
 		PHA
 		LDA		#$00
-		ADC		#>[byte_1555B]
+		ADC		#>[_lvl4_patch_pal_lib]
 		TAX
 		PLA
 		LDY		#$03
@@ -2323,7 +2414,7 @@ _nbgsub_15534:
 loc_15558:
 		JMP		_nbgsub_lvl_room_objects_handler
 
-byte_1555B:
+_lvl4_patch_pal_lib:
 		.BYTE	$0F,$07,$15,$05
 		.BYTE	$0F,$05,$07,$15
 		.BYTE	$0F,$15,$05,$07
@@ -2331,12 +2422,16 @@ byte_1555B:
 		.BYTE	$0F,$05,$07,$16
 		.BYTE	$0F,$16,$05,$07
 
+		SECTION_END	"LVL4 SCRIPTS"
+
+		SECTION_START
+
 ; =============== S C R I P T ===============================================
 _scr05_lvl5_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-		SJSR			_ssub_15CDB
+		SJSR			_lvl5_common_init
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$05
 			NARGB		$4D,$D4,$00
@@ -2347,20 +2442,20 @@ _scr05_lvl5_handler:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$05
-		SCASE			_sjmp_case_155A2
-		SCASE			_sjmp_case_15691
-		SCASE			_sjmp_case_158DB
-		SCASE			_sjmp_case_15A91
-		SCASE			_sjmp_case_15BE7
+		SCASE			_lvl5_room0_handler
+		SCASE			_lvl5_room3_handler
+		SCASE			_lvl5_roomA_handler
+		SCASE			_lvl5_roomF_handler
+		SCASE			_lvl5_room13_handler
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_155A2:
+_lvl5_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
 			NARGB		$02,$02,$06
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data33
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data33
+			NARGW		_lvl5_room0_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room0_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_155B9:
 		SDELAY			$01
@@ -2375,26 +2470,27 @@ _sloc_155B9:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_155E9
-_lvl_doors_data33:
+		SCASE			_lvl5_room1_handler
+
+_lvl5_room0_doors:
 		.BYTE	$02,$40,$06,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$40,$06,$D0,$0E
 		.WORD	_room_door_always_closed
 		.BYTE	$FF
-_prize_sequence_data33:
+_lvl5_room0_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_155E9:
+_lvl5_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$05
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data34
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data34
+			NARGW		_lvl5_room1_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room1_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15604:
 		SDELAY			$01
@@ -2411,25 +2507,26 @@ _sloc_15604:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_1563D
-		SCASE			_sjmp_case_155A2
-_lvl_doors_data34:
+		SCASE			_lvl5_room2_handler
+		SCASE			_lvl5_room0_handler
+
+_lvl5_room1_doors:
 		.BYTE	$02,$40,$05,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$E0,$05,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data34:
+_lvl5_room1_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1563D:
+_lvl5_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$05
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data35
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data35
+			NARGW		_lvl5_room2_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room2_prize_seq
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0D
 		SJSR			_ssub_room_entry_pal_fade_in
@@ -2448,30 +2545,31 @@ _sloc_15658:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15691
-		SCASE			_sjmp_case_155E9
-_lvl_doors_data35:
+		SCASE			_lvl5_room3_handler
+		SCASE			_lvl5_room1_handler
+
+_lvl5_room2_doors:
 		.BYTE	$04,$10,$05,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$05,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data35:
+_lvl5_room2_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15691:
+_lvl5_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
 			NARGB		$01,$04,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data36
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data36
+			NARGW		_lvl5_room3_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room3_prize_seq
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		byte_15D1D+$18
+			NARGW		_lvl5_full_pal+$18
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_156B2:
 		SDELAY			$01
@@ -2490,10 +2588,11 @@ _sloc_156B2:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$03
-		SCASE			_sjmp_case_1573F
-		SCASE			_sjmp_case_156FB
-		SCASE			_sjmp_case_1563D
-_lvl_doors_data36:
+		SCASE			_lvl5_room5_handler
+		SCASE			_lvl5_room4_handler
+		SCASE			_lvl5_room2_handler
+
+_lvl5_room3_doors:
 		.BYTE	$04,$B0,$04,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$E0,$03,$50,$0F
@@ -2501,11 +2600,11 @@ _lvl_doors_data36:
 		.BYTE	$04,$10,$03,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data36:
+_lvl5_room3_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_156FB:
+_lvl5_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
 			NARGB		$02,$05,$03
@@ -2514,8 +2613,8 @@ _sjmp_case_156FB:
 			NARGB		$0E
 ; -
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_room_doors_data37
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data37
+			NARGW		_lvl5_room4_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room4_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15716:
 		SDELAY			$01
@@ -2529,29 +2628,29 @@ _sloc_15716:
 			NARGB		$9C,$67,$03
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-; NOTE: SJMP_SW		 here has only single case entry, but counter here is $02
+; TODO: SJMP_SW here has only single case entry, but counter here is $02
 ; this not cause any bugs, but incorrect.
-; FIXME
 		SJMP_SW			$02
 ; -
-		SCASE			_sjmp_case_15691
-_room_doors_data37:
+		SCASE			_lvl5_room3_handler
+
+_lvl5_room4_doors:
 		.BYTE	$05,$10,$03,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data37:
+_lvl5_room4_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_1573F:
+_lvl5_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
 			NARGB		$02,$03,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$12
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data38
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data38
+			NARGW		_lvl5_room5_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room5_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1575A:
 		SDELAY			$01
@@ -2568,25 +2667,26 @@ _sloc_1575A:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15691
-		SCASE			_sjmp_case_15793
-_lvl_doors_data38:
+		SCASE			_lvl5_room3_handler
+		SCASE			_lvl5_room6_handler
+
+_lvl5_room5_doors:
 		.BYTE	$03,$E0,$03,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$B0,$03,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data38:
+_lvl5_room5_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15793:
+_lvl5_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
 			NARGB		$00,$02,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data39
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data39
+			NARGW		_lvl5_room6_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room6_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_157AA:
 		SDELAY			$01
@@ -2603,25 +2703,26 @@ _sloc_157AA:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_1573F
-		SCASE			_sjmp_case_157E3
-_lvl_doors_data39:
+		SCASE			_lvl5_room5_handler
+		SCASE			_lvl5_room7_handler
+
+_lvl5_room6_doors:
 		.BYTE	$03,$B0,$04,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$10,$04,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data39:
+_lvl5_room6_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_157E3:
+_lvl5_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
 			NARGB		$01,$01,$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data3A
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3A
+			NARGW		_lvl5_room7_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room7_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_157FA:
 		SDELAY			$01
@@ -2640,10 +2741,11 @@ _sloc_157FA:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$03
-		SCASE			_sjmp_case_15793
-		SCASE			_sjmp_case_15843
-		SCASE			_sjmp_case_15887
-_lvl_doors_data3A:
+		SCASE			_lvl5_room6_handler
+		SCASE			_lvl5_room8_handler
+		SCASE			_lvl5_room9_handler
+
+_lvl5_room7_doors:
 		.BYTE	$01,$E0,$04,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$B0,$05,$D0,$0E
@@ -2651,11 +2753,11 @@ _lvl_doors_data3A:
 		.BYTE	$01,$10,$05,$A0,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data3A:
+_lvl5_room7_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15843:
+_lvl5_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$06
@@ -2664,8 +2766,8 @@ _sjmp_case_15843:
 			NARGB		$12
 ; -
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data3B
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3B
+			NARGW		_lvl5_room8_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room8_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1585E:
 		SDELAY			$01
@@ -2680,24 +2782,25 @@ _sloc_1585E:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_157E3
-_lvl_doors_data3B:
+		SCASE			_lvl5_room7_handler
+
+_lvl5_room8_doors:
 		.BYTE	$01,$B0,$06,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data3B:
+_lvl5_room8_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15887:
+_lvl5_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$05
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data3C
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3C
+			NARGW		_lvl5_room9_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room9_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_158A2:
 		SDELAY			$01
@@ -2714,29 +2817,30 @@ _sloc_158A2:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_157E3
-		SCASE			_sjmp_case_158DB
-_lvl_doors_data3C:
+		SCASE			_lvl5_room7_handler
+		SCASE			_lvl5_roomA_handler
+
+_lvl5_room9_doors:
 		.BYTE	$00,$40,$05,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$E0,$05,$A0,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data3C:
+_lvl5_room9_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_158DB:
+_lvl5_roomA_handler:
 		STORE8			_cur_lvl_room_idx,$0A
 		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$03
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0F
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_15D1D
+			NARGW		_lvl5_full_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data3D
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3D
+			NARGW		_lvl5_roomA_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_roomA_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_158FB:
 		SDELAY			$01
@@ -2753,25 +2857,26 @@ _sloc_158FB:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15887
-		SCASE			_sjmp_case_15934
-_lvl_doors_data3D:
+		SCASE			_lvl5_room9_handler
+		SCASE			_lvl5_roomB_handler
+
+_lvl5_roomA_doors:
 		.BYTE	$00,$40,$04,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$E0,$03,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data3D:
+_lvl5_roomA_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15934:
+_lvl5_roomB_handler:
 		STORE8			_cur_lvl_room_idx,$0B
 		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$03
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data3E
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3E
+			NARGW		_lvl5_roomB_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_roomB_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1594B:
 		SDELAY			$01
@@ -2788,27 +2893,28 @@ _sloc_1594B:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15984
-		SCASE			_sjmp_case_158DB
-_lvl_doors_data3E:
+		SCASE			_lvl5_roomC_handler
+		SCASE			_lvl5_roomA_handler
+
+_lvl5_roomB_doors:
 		.BYTE	$01,$10,$03,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$E0,$03,$A0,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data3E:
+_lvl5_roomB_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15984:
+_lvl5_roomC_handler:
 		STORE8			_cur_lvl_room_idx,$0C
 		NJSR			_nsub_room_draw
 			NARGB		$01,$02,$02
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data3F
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data3F
+			NARGW		_lvl5_roomC_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_roomC_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_1599F:
 		SDELAY			$01
@@ -2825,25 +2931,26 @@ _sloc_1599F:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_159DF
-		SCASE			_sjmp_case_15934
-_lvl_doors_data3F:
+		SCASE			_lvl5_roomD_handler
+		SCASE			_lvl5_roomB_handler
+
+_lvl5_roomC_doors:
 		.BYTE	$02,$10,$03,$A0,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$02,$10,$02,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data3F:
+_lvl5_roomC_prize_seq:
 		.BYTE	$19,$18,$19,$19,$19,$18,$18,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_159DF:
+_lvl5_roomD_handler:
 		STORE8			_cur_lvl_room_idx,$0D
 		NJSR			_nsub_room_draw
 			NARGB		$00,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data40
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data40
+			NARGW		_lvl5_roomD_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_roomD_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_159F6:
 		SDELAY			$01
@@ -2860,19 +2967,20 @@ _sloc_159F6:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15A37
-		SCASE			_sjmp_case_15984
-_lvl_doors_data40:
+		SCASE			_lvl5_roomE_handler
+		SCASE			_lvl5_roomC_handler
+
+_lvl5_roomD_doors:
 		.BYTE	$01,$E0,$02,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$40,$02,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data40:
+_lvl5_roomD_prize_seq:
 		.BYTE	$13,$13,$19,$19,$19,$19,$17,$17,$00
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15A37:
+_lvl5_roomE_handler:
 		STORE8			_cur_lvl_room_idx,$0E
 		NJSR			_nsub_room_draw
 			NARGB		$02,$00,$01
@@ -2880,10 +2988,10 @@ _sjmp_case_15A37:
 			NARGB		$0F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15179
+			NARGW		_lvl3_roomsAE_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data41
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data41
+			NARGW		_lvl5_roomE_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_roomE_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15A58:
 		SDELAY			$01
@@ -2900,19 +3008,20 @@ _sloc_15A58:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15A91
-		SCASE			_sjmp_case_159DF
-_lvl_doors_data41:
+		SCASE			_lvl5_roomF_handler
+		SCASE			_lvl5_roomD_handler
+
+_lvl5_roomE_doors:
 		.BYTE	$00,$E0,$01,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$00,$40,$01,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data41:
+_lvl5_roomE_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15A91:
+_lvl5_roomF_handler:
 		STORE8			_cur_lvl_room_idx,$0F
 		NJSR			_nsub_room_draw
 			NARGB		$00,$01,$01
@@ -2920,10 +3029,10 @@ _sjmp_case_15A91:
 			NARGB		$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15D1D+$1C
+			NARGW		_lvl5_full_pal+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data42
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data42
+			NARGW		_lvl5_roomF_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_roomF_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15AB2:
 		SDELAY			$01
@@ -2942,10 +3051,11 @@ _sloc_15AB2:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$03
-		SCASE			_sjmp_case_15B3F
-		SCASE			_sjmp_case_15A37
-		SCASE			_sjmp_case_15AFB
-_lvl_doors_data42:
+		SCASE			_lvl5_room11_handler
+		SCASE			_lvl5_roomE_handler
+		SCASE			_lvl5_room10_handler
+
+_lvl5_roomF_doors:
 		.BYTE	$01,$70,$01,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$01,$10,$01,$50,$0F
@@ -2953,11 +3063,11 @@ _lvl_doors_data42:
 		.BYTE	$02,$E0,$01,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data42:
+_lvl5_roomF_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15AFB:
+_lvl5_room10_handler:
 		STORE8			_cur_lvl_room_idx,$10
 		NJSR			_nsub_room_draw
 			NARGB		$02,$01,$00
@@ -2966,8 +3076,8 @@ _sjmp_case_15AFB:
 			NARGB		$0E
 ; -
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data43
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data43
+			NARGW		_lvl5_room10_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room10_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15B16:
 		SDELAY			$01
@@ -2982,24 +3092,25 @@ _sloc_15B16:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_15A91
-_lvl_doors_data43:
+		SCASE			_lvl5_roomF_handler
+
+_lvl5_room10_doors:
 		.BYTE	$01,$70,$00,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data43:
+_lvl5_room10_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15B3F:
+_lvl5_room11_handler:
 		STORE8			_cur_lvl_room_idx,$11
 		NJSR			_nsub_room_draw
 			NARGB		$01,$03,$01
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$04
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data44
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data44
+			NARGW		_lvl5_room11_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room11_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15B5A:
 		SDELAY			$01
@@ -3016,27 +3127,28 @@ _sloc_15B5A:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15B93
-		SCASE			_sjmp_case_15A91
-_lvl_doors_data44:
+		SCASE			_lvl5_room12_handler
+		SCASE			_lvl5_roomF_handler
+
+_lvl5_room11_doors:
 		.BYTE	$03,$10,$01,$50,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$E0,$02,$A0,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data44:
+_lvl5_room11_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15B93:
+_lvl5_room12_handler:
 		STORE8			_cur_lvl_room_idx,$12
 		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$02
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data45
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data45
+			NARGW		_lvl5_room12_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room12_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15BAE:
 		SDELAY			$01
@@ -3053,19 +3165,20 @@ _sloc_15BAE:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15BE7
-		SCASE			_sjmp_case_15B3F
-_lvl_doors_data45:
+		SCASE			_lvl5_room13_handler
+		SCASE			_lvl5_room11_handler
+
+_lvl5_room12_doors:
 		.BYTE	$04,$10,$02,$A0,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$02,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data45:
+_lvl5_room12_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15BE7:
+_lvl5_room13_handler:
 		STORE8			_cur_lvl_room_idx,$13
 		NJSR			_nsub_room_draw
 			NARGB		$02,$04,$01
@@ -3073,10 +3186,10 @@ _sjmp_case_15BE7:
 			NARGB		$0C
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15D3D
+			NARGW		_lvl5_room13_patch_pal
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data46
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data46
+			NARGW		_lvl5_room13_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room13_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15C08:
 		SDELAY			$01
@@ -3093,19 +3206,20 @@ _sloc_15C08:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15C41
-		SCASE			_sjmp_case_15B93
-_lvl_doors_data46:
+		SCASE			_lvl5_room14_handler
+		SCASE			_lvl5_room12_handler
+
+_lvl5_room13_doors:
 		.BYTE	$04,$B0,$01,$20,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$04,$B0,$01,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data46:
+_lvl5_room13_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15C41:
+_lvl5_room14_handler:
 		STORE8			_cur_lvl_room_idx,$14
 		NJSR			_nsub_room_draw
 			NARGB		$00,$03,$00
@@ -3113,10 +3227,10 @@ _sjmp_case_15C41:
 			NARGB		$18
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_15D1D+$1C
+			NARGW		_lvl5_full_pal+$1C
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data47
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data47
+			NARGW		_lvl5_room14_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room14_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15C62:
 		SDELAY			$01
@@ -3133,25 +3247,26 @@ _sloc_15C62:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15C9B
-		SCASE			_sjmp_case_15BE7
-_lvl_doors_data47:
+		SCASE			_lvl5_room15_handler
+		SCASE			_lvl5_room13_handler
+
+_lvl5_room14_doors:
 		.BYTE	$04,$B0,$00,$D0,$0E
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$03,$10,$00,$70,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data47:
+_lvl5_room14_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15C9B:
+_lvl5_room15_handler:
 		STORE8			_cur_lvl_room_idx,$15
 		NJSR			_nsub_room_draw
 			NARGB		$02,$02,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data48
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data48
+			NARGW		_lvl5_room15_doors
+		STORE16			_room_prize_sequence_ptr,_lvl5_room15_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15CB2:
 		SDELAY			$01
@@ -3166,16 +3281,17 @@ _sloc_15CB2:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_15C41
-_lvl_doors_data48:
+		SCASE			_lvl5_room14_handler
+
+_lvl5_room15_doors:
 		.BYTE	$02,$E0,$00,$70,$0F
 		.WORD	_room_door_gen_clear_open
 		.BYTE	$FF
-_prize_sequence_data48:
+_lvl5_room15_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_15CDB:
+_lvl5_common_init:
 		STORE8			_lvl_data_prg_bank,$05
 		STORE16			_lvl_rooms_lib_ptr,_lvl5_rooms_lib
 		NJSR			_nsub_lvl_data_ptrs_load
@@ -3184,9 +3300,9 @@ _ssub_15CDB:
 			NARGW		_lvl5_macroC_tbl
 			NARGW		_lvl5_macroD_tbl
 			NARGW		_lvl5_attrs_tbl
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_06
+		STORE16			_lvl_collisions_ptr,_lvl5_collisions
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_15D1D
+			NARGW		_lvl5_full_pal
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0E
 		NJSR			_nsub_mmc1_chr1_set
@@ -3194,44 +3310,52 @@ _ssub_15CDB:
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_1
 		NJSR			_nsub_apu_mus_load
 			NARGB		$09
-		NJSR			_nsub_beam_player_handler_start
-		NJSR			_nsub_catch_player_handler_start
-		SSCRIPT1_SET	_scr_ingame_pause_handler
+		NJSR			_nsub_beamer_handler_start
+		NJSR			_nsub_catcher_handler_start
+		SSCRIPT1_SET	_scr_common_pause_handler
 		STORE16			_lvl_objects_ptr,_lvl5_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
-byte_15D1D:
+
+_lvl5_full_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$01,$0F,$30,$27,$01,$0F,$30,$15,$07
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$26,$0F,$0F,$36,$26,$0F
-byte_15D3D:
+_lvl5_room13_patch_pal:
 		.BYTE	$0F,$36,$27,$0F
 
 ; =============== S U B R O U T I N E =======================================
 _j_nbgsub_lvl_room_objects_handler_1:
 		JMP		_nbgsub_lvl_room_objects_handler
 
+		SECTION_END	"LVL5 SCRIPTS"
+
+		SECTION_START
+
 ; =============== S C R I P T ===============================================
 _scr06_lvl6_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-		SJSR			_ssub_15DD6
+		SJSR			_lvl6_common_init
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
 			NARGB		$0E,$73,$00
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$01
-		SCASE			_sjmp_case_15D5F
+		SCASE			_lvl6_room0_handler
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15D5F:
+; this is second to last game room, there are no roods in it
+; only doubled exit point since the exit area is too wide for one exit
+;
+_lvl6_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$02
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data49
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data49
+			NARGW		_lvl6_room0_doors
+		STORE16			_room_prize_sequence_ptr,_lvl6_room0_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15D76:
 		SDELAY			$01
@@ -3248,42 +3372,48 @@ _sloc_15D76:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_sjmp_case_15DA1
-		SCASE			_sjmp_case_15DA1
-_lvl_doors_data49:
+		SCASE			_lvl6_room1_handler
+		SCASE			_lvl6_room1_handler
+
+_lvl6_room0_doors:
 		.BYTE	$FF
-_prize_sequence_data49:
+_lvl6_room0_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_15DA1:
+; final boss room. unless any other room handlers, this one uses
+; partial palette fade out routine since the boss sprite hidden in it
+; so it keep boss sprite invisible at the beginning of the battle.
+;
+_lvl6_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
 			NARGB		$01,$00,$00
 		NJSR			_nsub_room_doors_handler_and_data_init
-			NARGW		_lvl_doors_data4A
-		STORE16			_room_prize_sequence_ptr,_prize_sequence_data4A
+			NARGW		_lvl6_room1_doors
+		STORE16			_room_prize_sequence_ptr,_lvl6_room1_prize_seq
 		SDELAY			$01
-		SLOOP_BEGIN		$04
+		SLOOP_BEGIN		$04						; pal fade with mask
 		NJSR			_nsub_pal_fade_req_inc_by_mask
 			NARGB		$DD
 		SDELAY			$03
 		SLOOP_END
-		STORE8			_scr_trds_pause_mode,$00
-		NJSR			_nsub_15E3B
-		SCRL_Y_MOVE_SET 0,$80,$FF
+		STORE8			_scr_trds_pause_mode,$00; not sure why they disable pause here
+		NJSR			_nsub_players_auto_walk_init	; reload players scripts with auto walk
+		SCRL_Y_MOVE_SET 0,$80,$FF				; set scroll animation parameter
+		SDELAY			$F0						; do animation while scrolling and walking up
 		SDELAY			$F0
-		SDELAY			$F0
-		SCRL_MOVE_STOP  0
-		STORE8			_cur_room_x_pageB,$00
-		SUSPEND
-_lvl_doors_data4A:
+		SCRL_MOVE_STOP  0						; stop
+		STORE8			_cur_room_x_pageB,$00	; fix the main room page idx here.
+		SUSPEND									; all done
+
+_lvl6_room1_doors:
 		.BYTE	$FF
-_prize_sequence_data4A:
+_lvl6_room1_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_15DD6:
+_lvl6_common_init:
 		STORE8			_lvl_data_prg_bank,$03
 		NJSR			_nsub_lvl_data_ptrs_load
 			NARGW		_lvl6_macroA_tbl
@@ -3292,9 +3422,9 @@ _ssub_15DD6:
 			NARGW		_lvl6_macroD_tbl
 			NARGW		_lvl6_macroE_tbl
 		STORE16			_lvl_rooms_lib_ptr,_lvl6_rooms_lib
-		STORE16			_lvl_collisions_ptr,_lvl_collisions_07
+		STORE16			_lvl_collisions_ptr,_lvl6_collisions
 		NJSR			_nsub_full_pal_load
-			NARGW		byte_15E18
+			NARGW		_lvl6_full_pal
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$17
 		NJSR			_nsub_mmc1_chr1_set
@@ -3302,13 +3432,14 @@ _ssub_15DD6:
 		NJSR			_nsub_apu_mus_load
 			NARGB		$0A
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_2
-		NJSR			_nsub_beam_player_handler_start
-		NJSR			_nsub_catch_player_handler_start
-		SSCRIPT1_SET	_scr_ingame_pause_handler
+		NJSR			_nsub_beamer_handler_start
+		NJSR			_nsub_catcher_handler_start
+		SSCRIPT1_SET	_scr_common_pause_handler
 		STORE16			_lvl_objects_ptr,_lvl6_objects_list
 		NJSR			_nsub_lvl_room_objects_init
 		SRET
-byte_15E18:
+
+_lvl6_full_pal:
 		.BYTE	$0F,$30,$10,$1B,$0F,$10,$1B,$06,$0F,$26,$17,$07,$0F,$09,$10,$0B
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$17,$0F,$0F,$36,$25,$0F
 
@@ -3317,20 +3448,24 @@ _j_nbgsub_lvl_room_objects_handler_2:
 		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_15E3B:
+_nsub_players_auto_walk_init:
 		LDX		#$02
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_602DB
+		.WORD	_scr_beamer_auto_walk
 		LDX		#$04
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_60FDB
+		.WORD	_scr_catcher_auto_walk
 		RTS
+
+		SECTION_END	"LVL6 SCRIPTS"
+
+		SECTION_START
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_ingame_start_input_test:
-		LDA		_scr_trds_pause_mode
-		BNE		loc_15E56
-		LDA		_pad0_pressed
+		LDA		_scr_trds_pause_mode		; sub constantly called from
+		BNE		loc_15E56					; level secondary script to
+		LDA		_pad0_pressed				; check if START was pressed ot nor
 		AND		#$10
 		BEQ		loc_15E56
 		SEC
@@ -3340,6 +3475,15 @@ loc_15E56:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
+; NOTE: this _game_flags ($80) used by the game to determine if previous
+; level were comlete or not when the main level script is stopped during
+; the game. usually, there are three options: 00/01 if continue or end were
+; selected at the "GAME OVER" screen, 80 is set after the "STAGE CLEAR"
+; screen and thus the main engine will increment the level number...
+; not sure where this routine should be called, but it seems something
+; after the game over... there is no point of setting this variable during
+; the game.
+;
 _nsub_ingame_select_input_test_unused:
 		LDA		_pad0_pressed
 		AND		#$20
@@ -3354,9 +3498,9 @@ loc_15E65:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_ingame_pause_handler:
-		LDA		#$FF
-		JSR		_far_prg6_apu_mus_load_ex
-		LDA		_ppu_scroll_pos_x
+		LDA		#$FF							; stop music at the pause entry
+		JSR		_far_prg6_apu_mus_load_ex		; onlu snd is player this time
+		LDA		_ppu_scroll_pos_x				; backup critical variables
 		PHA
 		LDA		_ppu_scroll_pos_x+1
 		PHA
@@ -3379,41 +3523,41 @@ _nsub_ingame_pause_handler:
 		STA		_ppu_scroll_pos_y+1
 		LDA		_chr_bank1
 		PHA
-		LDA		#_tlm1_score_idx
+		LDA		#_tlm1_score_idx				; draw pause static info tile-map
 		JSR		_far_prg0_tlm_lib_unpack
-		JSR		_nsub_pause_info_display
-		JSR		_ppu_res_send_param
+		JSR		_nsub_scores_and_lives_draw		; draw pause dynamic info (scores, lives)
+		JSR		_ppu_res_send_param				; send palette
 		.WORD	_res_pause_pal
 loc_15EA2:
-		JSR		_wait_for_nmi
+		JSR		_wait_for_nmi					; enter the pause loop here
 		LDA		#$00
 		STA		_spr_buf_pos
 		STA		_spr_buf_shuffle
-		JSR		_pause_menu_anim
+		JSR		_pause_screen_anim				; animate player's icon
 		LDA		_pad0_pressed
 		AND		#$10
-		BEQ		loc_15EA2
+		BEQ		loc_15EA2						; and wait for press START
 		JSR		_full_pal_fade
-		JSR		sub_6290C
-		PLA
-		JSR		_mmc1_chr1_set
-		LDY		_near_room_door_data_pos
-		BMI		loc_15ED8
+		JSR		_room_draw						; redraw current room, all vars already
+		PLA										; initialized
+		JSR		_mmc1_chr1_set					; restore room background CHR bank
+		LDY		_near_room_door_data_pos		; there is a special case to
+		BMI		loc_15ED8						; also update currently opened door
+		INY										; if you pause nearby
 		INY
 		INY
 		INY
-		INY
-		LDA		(_room_doors_data_ptr),Y
+		LDA		(_room_doors_data_ptr),Y		; fetch only the door type,
 		ASL
 		TAY
-		LDA		off_15F18,Y
+		LDA		off_15F18,Y						; then call corresponding door draw routine
 		STA		_ptr06
 		LDA		off_15F18+1,Y
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
 loc_15ED8:
 		PLA
-		STA		_cur_room_y_pageB
+		STA		_cur_room_y_pageB				; restore all vars and music, return to the game script
 		PLA
 		STA		_cur_room_x_pageB
 		PLA
@@ -3432,12 +3576,12 @@ loc_15ED8:
 		JMP		_far_prg6_apu_mus_load
 
 ; =============== S U B R O U T I N E =======================================
-_pause_menu_anim:
-		LDA		#$00
+_pause_screen_anim:
+		LDA		#$00							; custom sprite insert routine
 		STA		_tmpD8
 		STA		_tmpD9
-		LDA		_beam_player_idxA
-		AND		#$F0
+		LDA		_beamer_idxA					; using the beamer spr idx
+		AND		#$F0							; animate it based on frames counter
 		LSR
 		LSR
 		STA		_tmp0
@@ -3446,9 +3590,10 @@ _pause_menu_anim:
 		LSR
 		LSR
 		ADC		_tmp0
-		LDX		#$90
+		LDX		#$90							; and put it to fixed location
 		LDY		#$B8
 		JMP		_spr_clip_pause_player_insert
+
 off_15F18:
 		.WORD	_nsub_16444
 		.WORD	_nsub_164DE
@@ -3467,6 +3612,7 @@ off_15F18:
 		.WORD	_nsub_16894
 		.WORD	_nsub_16913
 		.WORD	_nsub_16855
+
 _res_pause_pal:
 		.WORD	$3F00
 		.BYTE	$18,$01
@@ -3474,64 +3620,67 @@ _res_pause_pal:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
 
 ; =============== S C R I P T ===============================================
-_scr_15F56:
-		NJSR			_nsub_62CF3
-		NJSR			_nsub_apu_mus_load
-			NARGB		$FF
+_scr_stage_complete:
+		NJSR			_nsub_players_scr_suspend			; suspend players
+		NJSR			_nsub_apu_mus_load					; they still visible
+			NARGB		$FF									; music off, wait for 10 frames
 		STORE8			_apu_mus_volume,$FF
 		SDELAY			$10
-		STORE8			_scr_trds_pause_mode,$01
-		SDELAY			$4B
-		NJSR			_nsub_all_threads_off_except_cur
+		STORE8			_scr_trds_pause_mode,$01			; set pause mode to disable all scripts
+		SDELAY			$4B									; stand still for about 1.25 seconds
+		NJSR			_nsub_all_threads_off_except_cur	; then off all threads except this one
 		SDELAY			$2D
-		NJSR			_nsub_apu_mus_load
+		NJSR			_nsub_apu_mus_load					; start stage complete jingle
 			NARGB		$03
-		NJSR			_nsub_mmc1_chr0_set
+		NJSR			_nsub_mmc1_chr0_set					; also change sprites CHR bank
 			NARGB		$05
-		NJSR			_nsub_62BB1
-			NARGB		$80,$7C
-		SPR_IDX_SET		0,$17
+		NJSR			_nsub_obj_screen_pos_set			; set object sprite screen position
+			NARGB		$80,$7C								; relative to current scroll
+		SPR_IDX_SET		0,$17								; set sprite for "STAGE COMPLETE"
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_15FD6
-		SDELAY			$78
+		NBG_HNDL_SET	_ngsub_stage_complete_pal_anim		; start to rotate palette for this sprite
+		SDELAY			$78									; for 2 seconds
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask
+		NJSR			_nsub_pal_fade_req_dec_by_mask		; fade all except this sprite pal
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
-		NJSR			_nsub_far_prg0_tlm_lib_unpack
+		NJSR			_nsub_far_prg0_tlm_lib_unpack		; now unpack tlm for scores info
 			NARGB		_tlm1_score_idx
-		NJSR			_nsub_pause_info_display
+		NJSR			_nsub_scores_and_lives_draw			; draw the same info as for pause screen
 		NJSR			_nsub_bg_pal_load
-			NARGW		byte_15FC3
-		NJSR			_nsub_scroll_page_set
+			NARGW		_stage_complete_bg_pal
+		NJSR			_nsub_scroll_page_set				; reset scrolls
 			NARGB		$00
-		POS_X_SET		0,$80,$00
-		POS_Y_SET		0,$7C,$00
-		NBG_HNDL_SET	_nbgsub_15FD3
-		SPR_IDX_INC		0
-		NJSR			_nsub_mmc1_chr0_set
+		POS_X_SET		0,$80,$00							; re-set the current sprite position
+		POS_Y_SET		0,$7C,$00							; without scroll adjusting this time
+		NBG_HNDL_SET	_ngsub_stage_complete_pal_anim_with_player	; set anim routine also with player icon
+		SPR_IDX_INC		0									; change sprite idx to 18 because now sprite
+		NJSR			_nsub_mmc1_chr0_set					; tiles changes and goes to second CHR page
 			NARGB		$04
-		NJSR			_nsub_mmc1_chr1_set
+		NJSR			_nsub_mmc1_chr1_set					; because bg tiles of font are there as well
 			NARGB		$05
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask
+		NJSR			_nsub_pal_fade_req_inc_by_mask		; fade out complete screen prepared
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
-		SDELAY			$F0
+		SDELAY			$F0									; and wait for the jingle is over
 		SJSR			_ssub_pal_fade_out
-		STORE8			_game_flags,$80
-		SSTOP
-byte_15FC3:
+		STORE8			_game_flags,$80						; set game flag to inform engine to increment level idx
+		SSTOP												; and kill current script to exit from engine loop.
+
+_stage_complete_bg_pal:
 		.BYTE	$0F,$30,$0F,$0F,$0F,$30,$10,$00,$0F,$35,$25,$15,$0F,$30,$3B,$2B
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_15FD3:
-		JSR		_pause_menu_anim
+_ngsub_stage_complete_pal_anim_with_player:
+		JSR		_pause_screen_anim
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
-_nbgsub_15FD6:
+_ngsub_stage_complete_pal_anim:
 		LDA		_nmi_counter
 		AND		#$03
 		BNE		locret_15FFD
@@ -3541,7 +3690,7 @@ _nbgsub_15FD6:
 		TAY
 		LDX		#$00
 loc_15FE3:
-		LDA		byte_15FFE,Y
+		LDA		_stage_complete_patch_pal_list,Y
 		STA		_pal_buf+$1C,X
 		INY
 		INX
@@ -3556,7 +3705,8 @@ loc_15FE3:
 		STA		_scr_trds_args0
 locret_15FFD:
 		RTS
-byte_15FFE:
+
+_stage_complete_patch_pal_list:
 		.BYTE	$0F,$06,$0F,$0F
 		.BYTE	$0F,$17,$06,$0F
 		.BYTE	$0F,$27,$17,$06
@@ -3573,45 +3723,46 @@ byte_15FFE:
 		.BYTE	$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_pause_info_display:
+_nsub_scores_and_lives_draw:
 		LDA		#$05
 		JSR		_mmc1_chr1_set
-		JSR		sub_63A73
-		LDA		_lives
+		JSR		_ppu_spr_fill_F1
+		LDA		_lives					; convert binary lives to decimal
 		LDX		#$00
 		JSR		_bin2dec
-		LDA		_var3
-		BNE		loc_1604E
+		LDA		_var3					; check if high digit is zero
+		BNE		loc_1604E				; so fill it with "SPACE"
 		LDA		#$20
 		BNE		loc_16050
 loc_1604E:
-		ORA		#$30
+		ORA		#$30					; or adjust the number idx
 loc_16050:
-		STA		_tmp_buf+4
-		LDA		_var4
+		STA		_tmp_buf+4				; lower digit cannot be zero here
+		LDA		_var4					; so just convert to number idx
 		ORA		#$30
 		STA		_tmp_buf+5
 		LDX		#$15
 		LDY		#$16
-		JSR		_ppu_offset_calc
+		JSR		_ppu_offset_calc		; helper routine to calc ppu position
 		LDX		#$01
 		STX		_tmp_buf+3
 		INX
 		STX		_tmp_buf+2
-		JSR		_ppu_res_send_param_no_ofs
+		JSR		_ppu_res_send_param_no_ofs	; send lives buffer data first
 		.WORD	_tmp_buf+2
 		LDA		_hi_scores
 		LDX		_hi_scores+1
-		JSR		_bin2dec
+		JSR		_bin2dec				; convert scores now
 		LDX		#$10
 		LDY		#$08
-		JSR		_printfd
-		LDA		_scores
+		JSR		_print_num99999			; print using special subroutine now
+		LDA		_scores					; same as using "%5d" in format(...)
 		LDX		_scores+1
 		JSR		_bin2dec
 		LDX		#$10
 		LDY		#$0A
-		JMP		_printfd
+		JMP		_print_num99999
+
 _spr_raw_lib01_17:
 		.BYTE	$10
 		.BYTE	$00,$8E,$03,$18
@@ -3676,13 +3827,13 @@ _sloc_16146:
 		POS_X_DELTA_SET 0,$00,$01
 		SPR_IDX_SET		0,$15
 		SLOOP_BEGIN		$50
-		NJSR			_nsub_161F3
+		NJSR			_nsub_game_over_menu_item_input
 		SDELAY			$01
 		SLOOP_END
 		POS_X_DELTA_SET 0,$00,$FF
 		SPR_IDX_INC		0
 		SLOOP_BEGIN		$50
-		NJSR			_nsub_161F3
+		NJSR			_nsub_game_over_menu_item_input
 		SDELAY			$01
 		SLOOP_END
 		SJMP			_sloc_16146
@@ -3695,7 +3846,7 @@ _sloc_16162:
 ; =============== S C R I P T ===============================================
 _scr_1616A:
 		SDELAY			$01
-		NJSR			_nsub_16213
+		NJSR			_nsub_game_over_menu_accept_test
 		SBCC			_scr_1616A
 		SJSR			_ssub_pal_fade_out
 		SSTOP
@@ -3713,13 +3864,13 @@ _nsub_game_over_draw:
 		JSR		_bin2dec
 		LDX		#$10
 		LDY		#$04
-		JSR		_printfd
+		JSR		_print_num99999
 		LDA		_scores
 		LDX		_scores+1
 		JSR		_bin2dec
 		LDX		#$10
 		LDY		#$06
-		JSR		_printfd
+		JSR		_print_num99999
 		DEC		_continues
 		BEQ		loc_161E3
 		LDA		_continues
@@ -3748,7 +3899,7 @@ word_161EE:
 		.BYTE	$20
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_161F3:
+_nsub_game_over_menu_item_input:
 		LDA		_pad0_pressed
 		AND		#$2C
 		BEQ		loc_16201
@@ -3767,7 +3918,7 @@ byte_16211:
 		.BYTE	$AD,$8D
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16213:
+_nsub_game_over_menu_accept_test:
 		LDA		_pad0_pressed
 		AND		#$10
 		BEQ		loc_1621B
@@ -3776,6 +3927,7 @@ _nsub_16213:
 loc_1621B:
 		CLC
 		RTS
+
 _spr_raw_lib01_15:
 		.BYTE	$07
 		.BYTE	$F0,$3B,$22,$00
@@ -3795,51 +3947,55 @@ _spr_raw_lib01_16:
 		.BYTE	$F0,$0D,$62,$08
 		.BYTE	$F0,$1D,$62,$00
 
+		SECTION_END	"PAUSE/STAGE COMPLETE/GAME OVER HANDLERS"
+
+		SECTION_START
+
 ; =============== S C R I P T ===============================================
 _scr0C_room_doors_handler:
 		NBG_HNDL_SET	_nbgsub_room_doors_data_load
 		NJSR			_nsub_room_door_exit_allow_test
 		SBCC			_sloc_16284
 		SJSR_SW	$11
-		SCASE			_sjsr_case_1641B
-		SCASE			_sjsr_case_164BE
-		SCASE			_sjsr_case_16536
-		SCASE			_sjsr_case_165E0
-		SCASE			_sjsr_case_1661E
-		SCASE			_sjsr_case_1665D
-		SCASE			_sjsr_case_166A4
-		SCASE			_sjsr_case_166EB
-		SCASE			_sjsr_case_16716
-		SCASE			_sjsr_case_1675D
-		SCASE			_sjsr_case_167CA
-		SCASE			_sjsr_case_167DA
-		SCASE			_sjsr_case_167EA
-		SCASE			_sjsr_case_167FA
-		SCASE			_sjsr_case_16870
-		SCASE			_sjsr_case_168ED
-		SCASE			_sjsr_case_16835
+		SCASE			_ssub_door00_open
+		SCASE			_ssub_door01_open
+		SCASE			_ssub_door02_open
+		SCASE			_ssub_door03_open
+		SCASE			_ssub_door04_open
+		SCASE			_ssub_door05_open
+		SCASE			_ssub_door06_open
+		SCASE			_ssub_door07_open
+		SCASE			_ssub_door08_open
+		SCASE			_ssub_door09_open
+		SCASE			_ssub_door0A_open
+		SCASE			_ssub_door0B_open
+		SCASE			_ssub_door0C_open
+		SCASE			_ssub_door0D_open
+		SCASE			_ssub_door0E_open
+		SCASE			_ssub_door0F_open
+		SCASE			_ssub_door10_open
 _sloc_16284:
 		SDELAY			$01
 		NJSR			_nsub_room_door_exit_allow_test
 		SBCC			_sloc_16284
 		SJSR_SW	$11
-		SCASE			_sjsr_case_16421
-		SCASE			_sjsr_case_164C4
-		SCASE			_sjsr_case_1653C
-		SCASE			_sjsr_case_165E6
-		SCASE			_sjsr_case_16624
-		SCASE			_sjsr_case_16663
-		SCASE			_sjsr_case_166AA
-		SCASE			_sjsr_case_166F1
-		SCASE			_sjsr_case_1671C
-		SCASE			_sjsr_case_16766
-		SCASE			_sjsr_case_167D0
-		SCASE			_sjsr_case_167E0
-		SCASE			_sjsr_case_167F0
-		SCASE			_sjsr_case_16800
-		SCASE			_sjsr_case_16876
-		SCASE			_sjsr_case_168F3
-		SCASE			_sjsr_case_1683B
+		SCASE			_ssub_door00_anim
+		SCASE			_ssub_door01_anim
+		SCASE			_ssub_door02_anim
+		SCASE			_ssub_door03_anim
+		SCASE			_ssub_door04_anim
+		SCASE			_ssub_door05_anim
+		SCASE			_ssub_door06_anim
+		SCASE			_ssub_door07_anim
+		SCASE			_ssub_door08_anim
+		SCASE			_ssub_door09_anim
+		SCASE			_ssub_door0A_anim
+		SCASE			_ssub_door0B_anim
+		SCASE			_ssub_door0C_anim
+		SCASE			_ssub_door0D_anim
+		SCASE			_ssub_door0E_anim
+		SCASE			_ssub_door0F_anim
+		SCASE			_ssub_door10_anim
 		SJMP			_sloc_16284
 
 ; =============== S U B R O U T I N E =======================================
@@ -3886,6 +4042,7 @@ loc_162F0:
 loc_162F7:
 		STX		_cur_room_doors_cnt
 		RTS
+
 _obj_doors_widths_list:
 		.BYTE	$10,$04,$10,$04,$08,$10,$10,$10,$10,$04,$04,$04,$04,$04,$10,$04
 		.BYTE	$04
@@ -4068,14 +4225,12 @@ loc_16419:
 		RTS
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-
-; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1641B:
+_ssub_door00_open:
 		NJSR			_nsub_16444
 		SJMP			_sloc_1642C
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16421:
+_ssub_door00_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16444
@@ -4164,6 +4319,7 @@ byte_164A5:
 		.BYTE	$F0,$F0,$00,$00
 byte_164A9:
 		.BYTE	$FF,$FF,$00,$00
+
 _spr_raw_lib01_00:
 		.BYTE	$04
 		.BYTE	$F0,$31,$43,$08
@@ -4172,12 +4328,12 @@ _spr_raw_lib01_00:
 		.BYTE	$F0,$31,$03,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_164BE:
+_ssub_door01_open:
 		NJSR			_nsub_164DE
 		SJMP			_sloc_164CF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_164C4:
+_ssub_door01_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_164DE
@@ -4255,12 +4411,12 @@ _spr_raw_lib01_01:
 		.BYTE	$00,$EF,$03,$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16536:
+_ssub_door02_open:
 		NJSR			_nsub_1655A
 		SJMP			_sloc_16549
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1653C:
+_ssub_door02_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1655A
@@ -4354,12 +4510,12 @@ _spr_raw_lib01_04:
 		.BYTE	$F4,$CB,$03,$F1
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_165E0:
+_ssub_door03_open:
 		NJSR			_nsub_16602
 		SJMP			_sloc_165F2
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_165E6:
+_ssub_door03_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16602
@@ -4400,12 +4556,12 @@ _spr_raw_lib01_06:
 		.BYTE	$00,$E9,$03,$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1661E:
+_ssub_door04_open:
 		NJSR			_nsub_1663E
 		SJMP			_sloc_1662F
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16624:
+_ssub_door04_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1663E
@@ -4442,12 +4598,12 @@ _spr_raw_lib01_07:
 		.BYTE	$00,$8B,$40,$F8
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1665D:
+_ssub_door05_open:
 		NJSR			_nsub_1667D
 		SJMP			_sloc_1666E
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16663:
+_ssub_door05_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1667D
@@ -4485,12 +4641,12 @@ _spr_raw_lib01_08:
 		.BYTE	$00,$43,$42,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_166A4:
+_ssub_door06_open:
 		NJSR			_nsub_166C4
 		SJMP			_sloc_166B5
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_166AA:
+_ssub_door06_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_166C4
@@ -4528,12 +4684,12 @@ _spr_raw_lib01_09:
 		.BYTE	$F0,$31,$02,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_166EB:
+_ssub_door07_open:
 		NJSR			_nsub_1670B
 		SJMP			_sloc_166FC
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_166F1:
+_ssub_door07_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1670B
@@ -4557,12 +4713,12 @@ byte_16712:
 		.BYTE	$26,$26,$26,$26
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16716:
+_ssub_door08_open:
 		NJSR			_nsub_16736
 		SJMP			_sloc_16727
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1671C:
+_ssub_door08_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16736
@@ -4592,6 +4748,7 @@ _nsub_16741:
 		JMP		sub_1645A
 byte_16748:
 		.BYTE	$8B,$8D,$8C,$8E
+
 _spr_raw_lib01_0A:
 		.BYTE	$04
 		.BYTE	$00,$CF,$00,$08
@@ -4600,14 +4757,14 @@ _spr_raw_lib01_0A:
 		.BYTE	$00,$CF,$00,$F8
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1675D:
+_ssub_door09_open:
 		SARG_SET		SARG0,$00
 _sloc_16760:
 		NJSR			_nsub_16787
 		SJMP			_sloc_16774
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16766:
+_ssub_door09_anim:
 		SARG_SET		SARG0,$00
 _sloc_16769:
 		NJSR			_nsub_apu_snd_load_safe
@@ -4692,12 +4849,12 @@ _spr_raw_lib01_0B:
 		.BYTE	$00,$DF,$00,$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167CA:
+_ssub_door0A_open:
 		SARG_SET		SARG0,$01
 		SJMP			_sloc_16760
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167D0:
+_ssub_door0A_anim:
 		SARG_SET		SARG0,$01
 		SJMP			_sloc_16769
 byte_167D6:
@@ -4706,12 +4863,12 @@ byte_167D8:
 		.BYTE	$99,$91
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167DA:
+_ssub_door0B_open:
 		SARG_SET		SARG0,$02
 		SJMP			_sloc_16760
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167E0:
+_ssub_door0B_anim:
 		SARG_SET		SARG0,$02
 		SJMP			_sloc_16769
 byte_167E6:
@@ -4720,12 +4877,12 @@ byte_167E8:
 		.BYTE	$8F,$9A
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167EA:
+_ssub_door0C_open:
 		SARG_SET		SARG0,$03
 		SJMP			_sloc_16760
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167F0:
+_ssub_door0C_anim:
 		SARG_SET		SARG0,$03
 		SJMP			_sloc_16769
 byte_167F6:
@@ -4734,12 +4891,12 @@ byte_167F8:
 		.BYTE	$90,$91
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_167FA:
+_ssub_door0D_open:
 		NJSR			_nsub_1681A
 		SJMP			_sloc_1680B
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16800:
+_ssub_door0D_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_1681A
@@ -4775,12 +4932,12 @@ _spr_raw_lib01_0C:
 		.BYTE	$00,$CF,$00,$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16835:
+_ssub_door10_open:
 		NJSR			_nsub_16855
 		SJMP			_sloc_16846
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_1683B:
+_ssub_door10_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16855
@@ -4817,12 +4974,12 @@ _spr_raw_lib01_0D:
 		.BYTE	$00,$DF,$00,$08
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16870:
+_ssub_door0E_open:
 		NJSR			_nsub_16894
 		SJMP			_sloc_16883
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_16876:
+_ssub_door0E_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16894
@@ -4856,6 +5013,7 @@ _nsub_1689F:
 		JMP		sub_1645A
 byte_168A6:
 		.BYTE	$0A,$1A,$0B,$1B
+
 _spr_raw_lib01_0E:
 		.BYTE	$08
 		.BYTE	$F0,$7D,$00,$08
@@ -4880,12 +5038,12 @@ _spr_raw_lib01_10:
 		.BYTE	$00,$7D,$00,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_168ED:
+_ssub_door0F_open:
 		NJSR			_nsub_16913
 		SJMP			_sloc_16901
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_sjsr_case_168F3:
+_ssub_door0F_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_16913
@@ -4936,6 +5094,10 @@ _spr_raw_lib01_13:
 _spr_raw_lib01_14:
 		.BYTE	$01
 		.BYTE	$00,$6D,$00,$00
+
+		SECTION_END	"DOORS HANDLERS"
+
+		SECTION_START
 
 ; =============== S C R I P T ===============================================
 _scr0D_money_bag:
@@ -4988,6 +5150,7 @@ _nsub_prize_sequence_completed_test:
 loc_1698C:
 		CLC
 		RTS
+
 _spr_raw_lib01_19:
 		.BYTE	$02
 		.BYTE	$F8,$BD,$00,$00
@@ -4996,6 +5159,7 @@ _spr_raw_lib01_1A:
 		.BYTE	$02
 		.BYTE	$F8,$BD,$01,$00
 		.BYTE	$F8,$AD,$01,$F8
+
 _spr_raw_lib01:
 		.WORD	_spr_raw_lib01_00
 		.WORD	_spr_raw_lib01_01
@@ -5025,19 +5189,23 @@ _spr_raw_lib01:
 		.WORD	_spr_raw_lib01_19
 		.WORD	_spr_raw_lib01_1A
 
+		SECTION_END	"OBJ0D SCRIPT"
+
+		SECTION_START
+
 _lvl1_objects_list:
-		.BYTE	$FF,$02
+		CHECKPOINT
 		OBJ_SET	_scr13_slow_moving_slime,			$30,$02,$88,$03,_NON,_NON,_NON
 		OBJ_SET	_scr13_slow_moving_slime,			$70,$03,$98,$03,_NON,_NON,_NON
 		OBJ_SET	_scr13_slow_moving_slime,			$A0,$03,$78,$03,_NON,_NON,_NON
 		OBJ_SET	_scr17_runner,						$D0,$03,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$70,$03,$A0,$03,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
-		.BYTE	$FF,$01,$02
+		ROOM	$02
 		OBJ_SET	_scr1C_girl_and_floaters,			$90,$04,$E0,$02,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$03,_NON
-		.BYTE	$FF,$01,$03
-		.BYTE	$FF,$02
+		ROOM	$03
+		CHECKPOINT
 		OBJ_SET	_scr17_runner,						$A8,$03,$C0,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr18_chain_saw,					$C8,$03,$70,$02,_NON,_NON,_NON
@@ -5047,33 +5215,33 @@ _lvl1_objects_list:
 		OBJ_SET	_scr18_chain_saw,					$10,$03,$60,$02,_NON,_NON,_NON
 ; -
 ; REGION, changed in the EU version
-		OBJ_SET	_scr13_slow_moving_slime,			$70,$02,$A0,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr13_slow_moving_slime,			$90,$02,$A0,$02,_NON,_NON,_NON
-;
+		OBJ_SET	_scr13_slow_moving_slime,			$70,$02,$A0,$02,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr14_fast_moving_slime,			$D0,$02,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$02,$50,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$04,_NON
-		.BYTE	$FF,$01,$04
+		ROOM	$04
 		OBJ_SET	_scr19_toilet_snake,				$78,$01,$50,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr13_slow_moving_slime,			$C8,$01,$68,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$03,_NON
-		.BYTE	$FF,$01,$03
+		ROOM	$03
 		OBJ_SET	_scr13_slow_moving_slime,			$60,$02,$70,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr14_fast_moving_slime,			$A0,$02,$70,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$00,_NON
-		.BYTE	$FF,$01,$00
+		ROOM	$00
 		OBJ_SET	_scr13_slow_moving_slime,			$98,$02,$A8,$03,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr14_fast_moving_slime,			$78,$02,$98,$03,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr17_runner,						$80,$02,$48,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$01,_NON
-		.BYTE	$FF,$01,$01
-		.BYTE	$FF,$02
+		ROOM	$01
+		CHECKPOINT
 		OBJ_SET	_scr15_trolley_kick_slime,			$08,$01,$80,$03,_NON,_NON,_NON
 		OBJ_SET	_scr16_still_throw_forward_slime,	$B8,$00,$A0,$03,_NON,_NON,_NON
 		OBJ_SET	_scr16_still_throw_forward_slime,	$80,$00,$50,$03,_NON,_NON,_NON
@@ -5084,14 +5252,14 @@ _lvl1_objects_list:
 		OBJ_SET	_scr14_fast_moving_slime,			$A0,$01,$B8,$03,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$B0,$00,$60,$03,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$00,_NON
-		.BYTE	$FF,$01,$00
+		ROOM	$00
 		OBJ_SET	_scr18_chain_saw,					$78,$02,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr18_chain_saw,					$B8,$02,$88,$03,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr18_chain_saw,					$88,$02,$98,$03,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
-		.BYTE	$FF,$01,$03
+		ROOM	$03
 		OBJ_SET	_scr17_runner,						$48,$02,$C8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr14_fast_moving_slime,			$A8,$02,$88,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
@@ -5099,23 +5267,24 @@ _lvl1_objects_list:
 		OBJ_SET	_scr14_fast_moving_slime,			$58,$02,$68,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
-		.BYTE	$FF,$01,$06
-		.BYTE	$FF,$02
+		ROOM	$06
+		CHECKPOINT
 ; REGION, added in the EU version
 ;		.BYTE	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
 ; -
-		.BYTE	$FF,$01,$05
+		ROOM	$05
 		OBJ_SET	_scr1B_court_chair,					$78,$02,$78,$01,$00,_NON,_NON
 		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,$01,_NON,_NON
 		OBJ_SET	_scr1B_court_chair,					$48,$02,$58,$01,$02,_NON,_NON
 		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,$03,_NON,_NON
 		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,$00,_NON,_NON
-		.BYTE	$FF,$00
-_lvl1_room01234_collisions:
+		OBJ_END
+
+_lvl1_collisionsA:
 		.BYTE	$FF,$FC,$FB,$F3,$03,$DB,$03,$F7,$03,$F8,$0F,$FF,$7E,$FF,$7E,$7F
 		.BYTE	$01,$00,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 ; never used, but configured to be usable..
-_lvl1_room56_collisions:
+_lvl1_collisionsB:
 		.BYTE	$FC,$F7,$F8,$FB,$0C,$CE,$0F,$FF,$0B,$00,$07,$00,$F7,$00,$FB,$02
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 ; no refrences at all.
@@ -5202,40 +5371,12 @@ _lvl1_attrs_tbl:
 		.BYTE	$03,$03,$00,$00,$00,$00,$00,$00,$00,$01,$02,$01,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl1_rooms_lib:
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_17062
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_17152
-		.WORD	byte_17AB2
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_17242
-		.WORD	byte_17332
-		.WORD	byte_17422
-		.WORD	byte_17512
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_17602
-		.WORD	byte_176F2
-		.WORD	byte_177E2
-		.WORD	byte_178D2
-		.WORD	byte_179C2
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-byte_17062:
+lvl1_rooms_lib:
+		.WORD	      0,      0,_l1_r20,      0,      0,      0,      0,      0
+		.WORD	      0,      0,_l1_r21,_l1_r31,      0,      0,      0,      0
+		.WORD	      0,_l1_r12,_l1_r22,_l1_r32,_l1_r42,      0,      0,      0
+		.WORD	_l1_r03,_l1_r13,_l1_r23,_l1_r33,_l1_r34,      0,      0,      0
+_l1_r20:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$A3,$6F,$A0,$B0,$A1,$B2,$A0,$B0,$B3,$B1,$A0,$B0,$6F,$A2,$00
 		.BYTE	$00,$A4,$89,$86,$89,$86,$89,$86,$89,$86,$89,$86,$89,$86,$6E,$00
@@ -5251,7 +5392,7 @@ byte_17062:
 		.BYTE	$00,$6E,$7B,$88,$87,$83,$7B,$7B,$7B,$7B,$7B,$88,$87,$83,$6E,$00
 		.BYTE	$00,$6E,$7B,$7B,$7B,$7B,$8A,$8A,$8A,$8A,$7B,$7B,$7B,$8A,$6E,$00
 		.BYTE	$00,$6E,$7B,$82,$92,$92,$92,$92,$92,$92,$92,$92,$93,$7B,$6E,$00
-byte_17152:
+_l1_r21:
 		.BYTE	$00,$6E,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$6E,$00
 		.BYTE	$00,$6E,$7B,$7B,$8A,$7B,$8A,$8A,$8A,$8A,$7B,$8A,$8A,$7B,$6E,$00
 		.BYTE	$00,$6E,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$6E,$00
@@ -5267,7 +5408,7 @@ byte_17152:
 		.BYTE	$00,$6E,$B4,$B4,$B4,$B4,$CA,$8B,$8C,$B4,$B4,$B4,$B4,$B4,$6E,$00
 		.BYTE	$00,$6C,$6F,$6F,$6F,$6F,$6F,$8B,$8C,$6F,$6F,$6F,$6F,$6F,$7C,$00
 		.BYTE	$00,$6D,$7A,$7A,$7A,$7A,$7A,$8B,$8C,$7A,$7A,$7A,$7A,$7A,$7D,$00
-byte_17242:
+_l1_r12:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01,$16
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$0E,$C5
@@ -5283,7 +5424,7 @@ byte_17242:
 		.BYTE	$00,$00,$00,$00,$15,$14,$14,$14,$14,$14,$14,$14,$14,$14,$29,$14
 		.BYTE	$16,$16,$16,$C6,$3A,$16,$16,$C6,$07,$16,$16,$C6,$16,$16,$07,$C6
 		.BYTE	$C3,$C2,$04,$C5,$C3,$05,$C4,$04,$0E,$C5,$05,$04,$C3,$70,$0E,$04
-byte_17332:
+_l1_r22:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$01,$16,$09,$10,$C6,$BC,$0A,$1A,$BE,$C6,$16,$16,$16,$16,$07
 		.BYTE	$00,$0E,$C5,$17,$60,$05,$BD,$0B,$1B,$BF,$04,$C2,$C5,$C3,$05,$0E
@@ -5299,7 +5440,7 @@ byte_17332:
 		.BYTE	$14,$29,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14
 		.BYTE	$16,$07,$C6,$09,$09,$09,$CC,$0A,$1A,$CE,$09,$09,$09,$09,$10,$07
 		.BYTE	$70,$0E,$04,$17,$08,$18,$CD,$0B,$1B,$CF,$08,$18,$17,$18,$60,$0E
-byte_17422:
+_l1_r32:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$16,$16,$C6,$16,$16,$C6,$16,$16,$16,$07,$C6,$16,$16,$16,$07,$16
 		.BYTE	$04,$C3,$04,$C5,$04,$C3,$04,$C2,$C5,$0E,$C4,$04,$C3,$C5,$0E,$C3
@@ -5315,7 +5456,7 @@ byte_17422:
 		.BYTE	$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$15,$59,$57,$15,$14
 		.BYTE	$16,$16,$16,$16,$C6,$16,$16,$07,$C6,$16,$16,$3A,$16,$C6,$1E,$14
 		.BYTE	$04,$C4,$C3,$C2,$C5,$04,$C4,$0E,$04,$04,$C3,$C4,$04,$04,$15,$14
-byte_17512:
+_l1_r42:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$16,$07,$16,$C6,$16,$16,$16,$16,$C6,$16,$16,$C6,$16,$16,$11,$00
 		.BYTE	$C5,$0E,$C3,$04,$C3,$04,$C2,$C4,$04,$C5,$04,$C3,$04,$C4,$15,$00
@@ -5331,7 +5472,7 @@ byte_17512:
 		.BYTE	$14,$15,$14,$28,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$15,$00
 		.BYTE	$57,$15,$14,$14,$14,$14,$14,$14,$28,$14,$14,$14,$14,$14,$15,$00
 		.BYTE	$C6,$1E,$14,$38,$14,$14,$38,$14,$14,$14,$14,$14,$14,$14,$15,$00
-byte_17602:
+_l1_r03:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$01,$16,$C6,$16,$16,$16,$C6,$16,$16,$C6,$16,$16,$16,$16,$07
 		.BYTE	$00,$C7,$5E,$5D,$C2,$C4,$05,$04,$C4,$04,$04,$C3,$04,$C4,$05,$0E
@@ -5347,7 +5488,7 @@ byte_17602:
 		.BYTE	$00,$02,$C6,$16,$16,$16,$16,$16,$C6,$16,$16,$C6,$16,$16,$16,$3A
 		.BYTE	$00,$03,$04,$C4,$C2,$04,$C3,$C5,$04,$04,$04,$C4,$C3,$04,$04,$C2
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_176F2:
+_l1_r13:
 		.BYTE	$00,$00,$00,$00,$15,$14,$14,$14,$14,$14,$14,$14,$14,$14,$29,$14
 		.BYTE	$16,$16,$16,$C6,$3A,$16,$16,$C6,$07,$16,$16,$C6,$16,$16,$07,$C6
 		.BYTE	$C3,$C2,$04,$C5,$C3,$05,$C4,$04,$0E,$C5,$05,$04,$C3,$70,$0E,$04
@@ -5363,7 +5504,7 @@ byte_176F2:
 		.BYTE	$16,$16,$16,$16,$16,$16,$C6,$3A,$16,$16,$16,$16,$16,$16,$3A,$16
 		.BYTE	$C4,$04,$C3,$04,$04,$C4,$04,$04,$04,$C5,$04,$04,$04,$C5,$04,$04
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_177E2:
+_l1_r23:
 		.BYTE	$14,$29,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14
 		.BYTE	$16,$07,$C6,$09,$09,$09,$CC,$0A,$1A,$CE,$09,$09,$09,$09,$10,$07
 		.BYTE	$70,$0E,$04,$17,$08,$18,$CD,$0B,$1B,$CF,$08,$18,$17,$18,$60,$0E
@@ -5379,7 +5520,7 @@ byte_177E2:
 		.BYTE	$16,$3A,$16,$C6,$16,$16,$BC,$0A,$1A,$BE,$16,$16,$C6,$16,$16,$3A
 		.BYTE	$C5,$04,$04,$C5,$04,$C2,$BD,$0B,$1B,$BF,$04,$C5,$04,$C3,$04,$C5
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_178D2:
+_l1_r33:
 		.BYTE	$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$15,$59,$57,$15,$14
 		.BYTE	$16,$16,$16,$16,$C6,$16,$16,$07,$C6,$16,$16,$3A,$16,$C6,$1E,$14
 		.BYTE	$04,$C4,$C3,$C2,$C5,$04,$C4,$0E,$04,$04,$C3,$C4,$04,$04,$15,$14
@@ -5395,7 +5536,7 @@ byte_178D2:
 		.BYTE	$16,$C6,$3A,$C6,$16,$16,$16,$C6,$16,$16,$16,$3A,$16,$C6,$3A,$16
 		.BYTE	$04,$C4,$04,$04,$C2,$04,$04,$C5,$C3,$04,$04,$C4,$04,$04,$C2,$C3
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_179C2:
+_l1_r34:
 		.BYTE	$04,$15,$14,$14,$14,$14,$14,$14,$14,$28,$14,$14,$14,$28,$15,$00
 		.BYTE	$14,$15,$14,$14,$28,$14,$14,$28,$0F,$14,$14,$14,$14,$14,$15,$00
 		.BYTE	$14,$15,$14,$14,$14,$14,$14,$38,$14,$14,$28,$14,$56,$14,$15,$00
@@ -5411,7 +5552,7 @@ byte_179C2:
 		.BYTE	$C6,$3A,$16,$16,$C6,$16,$16,$16,$16,$16,$16,$16,$C6,$16,$12,$00
 		.BYTE	$04,$C2,$C3,$04,$C3,$C4,$04,$04,$C5,$C3,$04,$04,$04,$C5,$13,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_17AB2:
+_l1_r31:
 		.BYTE	$00,$6E,$7B,$8A,$8A,$7B,$8A,$7B,$8A,$8A,$7B,$8A,$8A,$7B,$6E,$00
 		.BYTE	$00,$6E,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$7B,$6E,$00
 		.BYTE	$00,$B5,$6F,$6F,$6F,$6F,$6F,$0A,$1A,$6F,$6F,$6F,$6F,$6F,$6E,$00
@@ -5427,5 +5568,7 @@ byte_17AB2:
 		.BYTE	$6F,$6F,$6F,$6F,$6F,$6F,$6F,$0A,$1A,$6F,$6F,$6F,$6F,$6F,$6F,$6F
 		.BYTE	$7A,$7A,$7A,$7A,$7A,$7A,$7A,$0B,$1B,$7A,$7A,$7A,$7A,$7A,$7A,$7A
 		.BYTE	$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4,$B4
+
+		SECTION_END	"LVL1 DATA"
 
 		BANK_END 1,$C000

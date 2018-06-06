@@ -36,8 +36,8 @@ loc_60020:
 		STA		_ppu_ctrl_shadow
 		STA		_PPU_CTRL
 ; REGION, the US proto version enables the left tile colums for both BG and SPRITES
-		LDA		#$18
 ;		LDA		#$1E
+		LDA		#$18
 ; -
 		STA		_ppu_mask_req
 		STA		_PPU_MASK
@@ -112,10 +112,17 @@ _GAME_ENTRY:
 		STA		_scores_to_next_live_step+1
 		LDA		#$04
 		STA		_continues
+#if DEBUG==1
+		LDA		#$00
+		STA		_level
+		LDA		#$04
+		STA		_lvl_last_checkpoint_idx
+#else
 		LDA		#$00
 		STA		_level
 		LDA		#$01
 		STA		_lvl_last_checkpoint_idx
+#endif
 _MAIN_GAME_LOOP:
 		LDA		#$00
 		STA		_mmc1_busy
@@ -315,7 +322,7 @@ _spr_raw_lib08_AE:
 		.BYTE	$06,$8D,$80,$FC
 
 ; =============== S C R I P T ===============================================
-_scr08_beam_player_handler:
+_scr08_beamer_handler:
 		STORE8			_collision_flag,$00
 		STORE8			_player_inv_timer,$00
 		STORE16			_tmp7B1,$180
@@ -360,40 +367,42 @@ _scr_602CB:
 		POS_Y_SET		0,$C8,$02
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$40
-		NJSR			_nsub_605E8
+		NJSR			_nsub_beamer_spr_idx_calc
 		SUSPEND
 
 ; =============== S C R I P T ===============================================
-_scr_602DB:
-		POS_Y_DELTA_SET 0,$80,$FF
-		SLOOP_BEGIN		$F0
-		SARG_ALU		SARG0,_ADC,$01
-		NJSR			_nsub_605E8
+_scr_beamer_auto_walk:
+		POS_Y_DELTA_SET 0,$80,$FF					; setup anim for slow walk up
+		SLOOP_BEGIN		$F0							; do walk for 240 cycles
+		SARG_ALU		SARG0,_ADC,$01				; set players spr type (walk up)
+		NJSR			_nsub_beamer_spr_idx_calc	; calculate animation sprite idx and set
 		SDELAY			$02
 		SLOOP_END
-		POS_MOVE_STOP	0
-		SJMP			_scr08_beam_player_handler
+		POS_MOVE_STOP	0							; stop when done, then return control
+		SJMP			_scr08_beamer_handler		; to the main beamer script
 
 ; =============== S C R I P T ===============================================
 _scr_602EE:
-		NJSR			_nsub_605E8
+		NJSR			_nsub_beamer_spr_idx_calc
 		SDELAY			$78
 		SARG_SET		SARG1,$80
 		POS_Y_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$F0
 		SARG_ALU		SARG0,_ADC,$01
-		NJSR			_nsub_605E8
+		NJSR			_nsub_beamer_spr_idx_calc
 		SDELAY			$01
 		SLOOP_END
 		SSTOP
 
 ; =============== S C R I P T ===============================================
-_scr_60306:
+_scr_suspend:
 		SUSPEND
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_60307:
 		JSR		sub_60327
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_collision_flag_test:
@@ -417,11 +426,11 @@ sub_60327:
 		JSR		sub_6034F
 		STA		_tmp7B1
 		STY		_tmp7B2
-		LDA		_beam_player_idxA
+		LDA		_beamer_idxA
 		BCC		loc_60337
 		ADC		#$4F
 loc_60337:
-		STA		_beam_player_idxB
+		STA		_beamer_idxB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -429,11 +438,11 @@ sub_6033B:
 		JSR		sub_6034F
 		STA		_tmp7B3
 		STY		_tmp7B3+1
-		LDA		_catch_player_idxA
+		LDA		_catcher_idxA
 		BCC		loc_6034B
 		ADC		#$4F
 loc_6034B:
-		STA		_catch_player_idxB
+		STA		_catcher_idxB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -482,8 +491,8 @@ byte_6039E:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_603A2:
-		LDA		_beam_player_idxA
-		STA		_beam_player_idxB
+		LDA		_beamer_idxA
+		STA		_beamer_idxB
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
@@ -863,15 +872,19 @@ loc_605D5:
 loc_605DD:
 		LDA		_player_inv_timer
 		LSR
-		BCC		_nsub_605E8
+		BCC		_nsub_beamer_spr_idx_calc
 		LDA		#$FF
 		STA		_scr_trds_spr_idx+2
 		RTS
-_nsub_605E8:
-		LDA		_beam_player_idxB
 
 ; =============== S U B R O U T I N E =======================================
-sub_605EB:
+_nsub_beamer_spr_idx_calc:
+		LDA		_beamer_idxB
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E =======================================
+_players_spr_idx_calc:
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -910,7 +923,7 @@ locret_60622:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_60623:
-		LDA		_beam_player_idxB
+		LDA		_beamer_idxB
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -1921,7 +1934,7 @@ _spr_raw_lib09_0F:
 		.BYTE	$F4,$7C,$81,$F4
 
 ; =============== S C R I P T ===============================================
-_scr0A_catch_player_handler:
+_scr0A_catcher_handler:
 		STORE8			_tmp7AF,$00
 		STORE8			_tmp7BB,$02
 		STORE8			_tmp7BC,$18
@@ -1936,29 +1949,29 @@ _scr_60FCB:
 		POS_Y_SET		0,$C8,$02
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$40
-		NJSR			_nsub_610B9
+		NJSR			_nsub_catcher_spr_idx_calc
 		SUSPEND
 
 ; =============== S C R I P T ===============================================
-_scr_60FDB:
-		POS_Y_DELTA_SET 0,$80,$FF
-		SLOOP_BEGIN		$F0
-		SARG_ALU		SARG0,_ADC,$01
-		NJSR			_nsub_610B9
+_scr_catcher_auto_walk:
+		POS_Y_DELTA_SET 0,$80,$FF					; same as for beamer
+		SLOOP_BEGIN		$F0							; just walk up, then jump to
+		SARG_ALU		SARG0,_ADC,$01				; common handler, returning
+		NJSR			_nsub_catcher_spr_idx_calc	; control to the player and AI
 		SDELAY			$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		SJMP			_scr0A_catch_player_handler
+		SJMP			_scr0A_catcher_handler
 
 ; =============== S C R I P T ===============================================
 _scr_60FEE:
-		NJSR			_nsub_610B9
+		NJSR			_nsub_catcher_spr_idx_calc
 		SDELAY			$78
 		SARG_SET		SARG1,$80
 		POS_Y_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$F0
 		SARG_ALU		SARG0,_ADC,$01
-		NJSR			_nsub_610B9
+		NJSR			_nsub_catcher_spr_idx_calc
 		SDELAY			$01
 		SLOOP_END
 		SSTOP
@@ -2063,13 +2076,15 @@ byte_610AE:
 ; =============== S U B R O U T I N E =======================================
 sub_610B2:
 		LDA		_tmp7B6
-		BMI		_nsub_610B9
+		BMI		_nsub_catcher_spr_idx_calc
 		INC		_scr_trds_args0+4
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E =======================================
-_nsub_610B9:
-		LDA		_catch_player_idxB
-		JMP		sub_605EB
+_nsub_catcher_spr_idx_calc:
+		LDA		_catcher_idxB
+		JMP		_players_spr_idx_calc
 
 ; =============== S U B R O U T I N E =======================================
 sub_610BF:
@@ -2480,8 +2495,8 @@ locret_61346:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_61347:
-		LDA		_catch_player_idxA
-		STA		_catch_player_idxB
+		LDA		_catcher_idxA
+		STA		_catcher_idxB
 		RTS
 
 ; =============== S C R I P T ===============================================
@@ -4192,7 +4207,7 @@ byte_61EE1:
 		.BYTE	$27,$03,$00,$00
 
 ; =============== S U B R O U T I N E =======================================
-_printfd:
+_print_num99999:
 		JSR		_ppu_offset_calc
 		LDX		#$00
 		STX		_var5
@@ -4925,7 +4940,7 @@ _printf_scores_ex:
 		TAY
 		PLA
 		TAX
-		JMP		_printfd
+		JMP		_print_num99999
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_hi_scores_display:
@@ -4951,7 +4966,7 @@ _printf_hi_scores_ex:
 		TAY
 		PLA
 		TAX
-		JMP		_printfd
+		JMP		_print_num99999
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_apu_mus_load:
@@ -5433,30 +5448,30 @@ _nsub_628D1:
 ; =============== S U B R O U T I N E =======================================
 _nsub_room_draw:
 		JSR		_scr_getc
-		STA		_tmp7BE
+		STA		_cur_room_orientation_idx
 		JSR		_scr_getc
-		STA		_tmp7BE+1
+		STA		_cur_room_data_col
 		JSR		_scr_getc
-		STA		_tmp7C0
+		STA		_cur_room_data_row
 
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
-sub_6290C:
+_room_draw:
 		JSR		_ppu_vblank_off
-		LDA		_tmp7BE
+		LDA		_cur_room_orientation_idx
 		ORA		#$1E
 		JSR		_mmc1_ctrl
-		LDA		_tmp7BE+1
+		LDA		_cur_room_data_col
 		STA		_tmp_var0
 		STA		_cur_room_y_pageB
 		STA		_cur_room_y_pageA
-		LDA		_tmp7C0
+		LDA		_cur_room_data_row
 		STA		_tmp_var1
 		STA		_cur_room_x_pageA
 		STA		_cur_room_x_pageB
 		JSR		sub_619F7
-		LDA		_tmp7BE
+		LDA		_cur_room_orientation_idx
 		BNE		loc_6293C
 		INC		_cur_room_y_pageA
 		INC		_tmp_var0
@@ -5622,7 +5637,7 @@ _nsub_players_room_start_pos_init:
 		ROL
 		ASL
 		ASL
-		ADC		_beam_player_idxA
+		ADC		_beamer_idxA
 		STA		_scr_trds_spr_idx+2
 		LDA		_scr_trds_args1+4
 		ASL
@@ -5630,7 +5645,7 @@ _nsub_players_room_start_pos_init:
 		ROL
 		ASL
 		ASL
-		ADC		_catch_player_idxA
+		ADC		_catcher_idxA
 		STA		_scr_trds_spr_idx+4
 		PLA
 		STA		_tmp0
@@ -5847,12 +5862,17 @@ loc_62BA4:
 _nsub_62BA9:
 		LDX		#$00
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_15F56
+		.WORD	_scr_stage_complete
 locret_62BB0:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62BB1:
+; NOTE: this routine used only for "STAGE CLEAR" sprite position set
+; only once in all scripts, but still using the parametric positions.
+; seems they used this routine before as part of scripting library
+; but now its usage seems very redundant.
+;
+_nsub_obj_screen_pos_set:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
 		CLC
@@ -5932,7 +5952,7 @@ loc_62C18:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_beam_player_handler_start:
+_nsub_beamer_handler_start:
 		JSR		sub_62C2E
 		LDA		#$02
 		STA		_var4
@@ -5952,7 +5972,7 @@ sub_62C2E:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_catch_player_handler_start:
+_nsub_catcher_handler_start:
 		JSR		sub_62C2E
 		LDA		#$04
 		STA		_var4
@@ -6096,12 +6116,12 @@ _nsub_62CE8:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_62CF3:
-		LDX		#$02
-		LDA		_scr_trds_spr_idx,X
+_nsub_players_scr_suspend:
+		LDX		#$02						; suspend player's scripts
+		LDA		_scr_trds_spr_idx,X			; but keed it's current sprite idxes
 		PHA
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_60306
+		.WORD	_scr_suspend
 		PLA
 		LDX		#$02
 		STA		_scr_trds_spr_idx,X
@@ -6109,7 +6129,7 @@ _nsub_62CF3:
 		LDA		_scr_trds_spr_idx,X
 		PHA
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_60306
+		.WORD	_scr_suspend
 		PLA
 		LDX		#$04
 		STA		_scr_trds_spr_idx,X
@@ -7140,9 +7160,9 @@ _scmd04_sjsr:
 
 ; =============== S U B R O U T I N E =======================================
 _scmd05_ret:
-		LDX		_scr_cur_trd_idxw
-		LDY		_scr_trds_sp,X
-		BEQ		loc_63334
+		LDX		_scr_cur_trd_idxw				; NOTE, the method of handling parallel
+		LDY		_scr_trds_sp,X					; scripts sometime causes clear script
+		BEQ		loc_63334						; stacks during execution of the sub routines...
 		DEY
 		LDA		(_scr_cur_trd_stack_ptr),Y
 		STA		_scr_pc
@@ -7153,9 +7173,9 @@ _scmd05_ret:
 		STA		_scr_trds_sp,X
 		RTS
 loc_63334:
-		LDX		_scr_cur_trd_idx
-		LDA		#$FF
-		STA		_scr_trds_idx,X
+		LDX		_scr_cur_trd_idx				; ...so if script trying to return from _ssub
+		LDA		#$FF							; with empty stack, we just silently exit it
+		STA		_scr_trds_idx,X					; and keep executing the res.
 		PLA
 		PLA
 		PLA
@@ -7857,10 +7877,10 @@ _spr_clip_insert:
 		STY		_tmp2
 
 ; REGION: replaced in the US version, linked with optmized portion of the code above.
-		TYA
 ; =============== S U B R O U T I N E =======================================
 ;_spr_clip_insert_ex:
 ;		LDA		_tmp2
+		TYA
 ; -
 		BNE		loc_6373A
 		LDA		_tmpD9
@@ -8177,11 +8197,11 @@ loc_63884:
 		LDA		_ppu_mask_shadow
 		BNE		.res_send_hor_queue
 ; REGION, replaced in the EU version
+;		LDA		#$01
+;		STA		_ppu_forbid_flag
 		LDA		_ppu_ctrl_shadow
 		PHA
 		JSR		_ppu_nmi_off
-;		LDA		#$01
-;		STA		_ppu_forbid_flag
 ; -
 		LDA		_ppu_ctrl_shadow
 		STA		_PPU_CTRL
@@ -8203,10 +8223,10 @@ loc_638C3:
 		DEX
 		BNE		loc_638B3
 ; REGION, replaced in the EU version
-		PLA
-		JSR		_ppu_ctrl_write
 ;		LDA		#$00
 ;		STA		_ppu_forbid_flag
+		PLA
+		JSR		_ppu_ctrl_write
 ; -
 		JMP		loc_638EC
 .res_send_hor_queue:
@@ -8260,11 +8280,11 @@ _vertical_mode:
 		LDA		_ppu_mask_shadow
 		BNE		.res_send_vert_queue
 ; REGION, replaced in the EU version
+;		LDA		#$01
+;		STA		_ppu_forbid_flag
 		LDA		_ppu_ctrl_shadow
 		PHA
 		JSR		_ppu_nmi_off
-;		LDA		#$01
-;		STA		_ppu_forbid_flag
 ; -
 		LDA		_ppu_ctrl_shadow
 		ORA		#$04
@@ -8291,10 +8311,10 @@ loc_63947:
 		DEX
 		BNE		loc_63932
 ; REGION, replaced in the EU version
-		PLA
-		JSR		_ppu_ctrl_write
 ;		LDA		#$00
 ;		STA		_ppu_forbid_flag
+		PLA
+		JSR		_ppu_ctrl_write
 ; -
 		JMP		loc_63975
 .res_send_vert_queue:
@@ -8482,7 +8502,7 @@ loc_63A63:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-sub_63A73:
+_ppu_spr_fill_F1:
 		LDX		#$00
 		LDA		#$F1
 loc_63A77:
@@ -8684,9 +8704,9 @@ _scr_lib_lo:
 		SCR_IDX_LO	_scr05_lvl5_handler
 		SCR_IDX_LO	_scr06_lvl6_handler
 		SCR_IDX_LO	_scr07_ending
-		SCR_IDX_LO	_scr08_beam_player_handler
+		SCR_IDX_LO	_scr08_beamer_handler
 		SCR_IDX_LO	_scr09_player_beam
-		SCR_IDX_LO	_scr0A_catch_player_handler
+		SCR_IDX_LO	_scr0A_catcher_handler
 		SCR_IDX_LO	_scr0B_player_catch
 		SCR_IDX_LO	_scr0C_room_doors_handler
 ; 		GAME OBJECT scripts, used in the level objects lists, may run
@@ -8737,9 +8757,9 @@ _scr_lib_hi:
 		SCR_IDX_HI	_scr05_lvl5_handler
 		SCR_IDX_HI	_scr06_lvl6_handler
 		SCR_IDX_HI	_scr07_ending
-		SCR_IDX_HI	_scr08_beam_player_handler
+		SCR_IDX_HI	_scr08_beamer_handler
 		SCR_IDX_HI	_scr09_player_beam
-		SCR_IDX_HI	_scr0A_catch_player_handler
+		SCR_IDX_HI	_scr0A_catcher_handler
 		SCR_IDX_HI	_scr0B_player_catch
 		SCR_IDX_HI	_scr0C_room_doors_handler
 		SCR_IDX_HI	_scr0D_money_bag
@@ -8778,6 +8798,7 @@ _scr_lib_hi:
 		SCR_IDX_HI	_scr2E_lvl4_boss_dragons
 		SCR_IDX_HI	_scr2F_lvl5_boss_key_keeper
 		SCR_IDX_HI	_scr30_lvl6_boss_vega
+
 _spr_raw_lib_lo:
 		.BYTE	<[_spr_raw_lib00]
 		.BYTE	<[_spr_raw_lib01]

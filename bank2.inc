@@ -3,15 +3,17 @@
 
 		BANK_START $02
 
+		SECTION_START
+
 _lvl2_objects_list:
-		.BYTE	$FF,$02
+		CHECKPOINT
 ; REGION, changed in the EU version
-		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$98,$06,_NON,_NON,_NON
 ;		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$90,$06,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$98,$06,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$00,$68,$06,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
-		.BYTE	$FF,$01,$01
+		ROOM	$01
 		OBJ_SET	_scr1E_pick_axe_miner,				$50,$00,$88,$05,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr1E_pick_axe_miner,				$A0,$00,$98,$05,_NON,_NON,_NON
@@ -22,21 +24,21 @@ _lvl2_objects_list:
 		OBJ_SET	_scr1E_pick_axe_miner,				$88,$00,$28,$05,_NON,_NON,_NON
 ; -
 ; REGION, changed in the EU version
-		OBJ_SET	_scr1E_pick_axe_miner,				$98,$00,$C0,$04,_NON,_NON,_NON
 ;		OBJ_SET	_scr1E_pick_axe_miner,				$B8,$00,$C0,$04,_NON,_NON,_NON
+		OBJ_SET	_scr1E_pick_axe_miner,				$98,$00,$C0,$04,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$C0,$00,$48,$04,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$02,_NON
-		.BYTE	$FF,$01,$02
+		ROOM	$02
 		OBJ_SET	_scr1D_air_hammer_miner,			$80,$00,$C0,$03,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$80,$00,$30,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
-		.BYTE	$FF,$01,$03
-		.BYTE	$FF,$02
+		ROOM	$03
+		CHECKPOINT
 		OBJ_SET	_scr1E_pick_axe_miner,				$38,$01,$88,$06,_NON,_NON,_NON
 		OBJ_SET	_scr20_trolley_miner,				$88,$01,$78,$06,$80,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$04,_NON
-		.BYTE	$FF,$01,$04
+		ROOM	$04
 		OBJ_SET	_scr20_trolley_miner,				$18,$01,$28,$05,$40,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr20_trolley_miner,				$78,$01,$78,$04,$40,_NON,_NON
@@ -47,15 +49,15 @@ _lvl2_objects_list:
 		OBJ_SET	_scr1D_air_hammer_miner,			$80,$01,$D0,$04,_NON,_NON,_NON
 		OBJ_SET	_scr1D_air_hammer_miner,			$38,$01,$68,$04,_NON,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr20_trolley_miner,				$E8,$01,$A8,$05,$C0,_NON,_NON
 ;		OBJ_SET	_scr20_trolley_miner,				$58,$01,$A8,$04,$00,_NON,_NON
-;
+		OBJ_SET	_scr20_trolley_miner,				$E8,$01,$A8,$05,$C0,_NON,_NON
+; -
 		OBJ_SET	_scr1D_air_hammer_miner,			$98,$01,$98,$04,_NON,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$50,$01,$38,$04,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$01,$50,$04,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
-		.BYTE	$FF,$01,$05
-		.BYTE	$FF,$02
+		ROOM	$05
+		CHECKPOINT
 		OBJ_SET	_scr20_trolley_miner,				$68,$01,$78,$03,$00,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$A8,$01,$60,$03,_NON,_NON,_NON
 ; REGION, removed in the EU version
@@ -69,7 +71,7 @@ _lvl2_objects_list:
 		OBJ_SET	_scr20_trolley_miner,				$B8,$01,$58,$02,$80,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$01,$50,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$06,_NON
-		.BYTE	$FF,$01,$06
+		ROOM	$06
 		OBJ_SET	_scr20_trolley_miner,				$98,$02,$58,$02,$C0,_NON,_NON
 		OBJ_SET	_scr1F_hammer_miner,				$78,$02,$B0,$02,_NON,_NON,_NON
 		OBJ_SET	_scr1F_hammer_miner,				$10,$03,$80,$02,_NON,_NON,_NON
@@ -80,18 +82,18 @@ _lvl2_objects_list:
 		OBJ_SET	_scr1F_hammer_miner,				$78,$03,$50,$02,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$60,$02,$70,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$07,_NON
-		.BYTE	$FF,$01,$07
-		.BYTE	$FF,$02
+		ROOM	$07
+		CHECKPOINT
 ; REGION, changed in the EU version
-		OBJ_SET	_scr1F_hammer_miner,				$58,$04,$48,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr1F_hammer_miner,				$58,$04,$68,$02,_NON,_NON,_NON
+		OBJ_SET	_scr1F_hammer_miner,				$58,$04,$48,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr1E_pick_axe_miner,				$B8,$04,$68,$02,_NON,_NON,_NON
 		OBJ_SET	_scr20_trolley_miner,				$A8,$04,$C8,$02,$00,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$C8,$04,$C0,$02,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$88,$04,$C0,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$08,_NON
-		.BYTE	$FF,$01,$08
+		ROOM	$08
 		OBJ_SET	_scr20_trolley_miner,				$68,$04,$B8,$01,$00,_NON,_NON
 		OBJ_SET	_scr1E_pick_axe_miner,				$D0,$04,$98,$01,_NON,_NON,_NON
 ; REGION, removed in the EU version
@@ -107,28 +109,28 @@ _lvl2_objects_list:
 		OBJ_SET	_scr1D_air_hammer_miner,			$B8,$04,$68,$00,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$80,$04,$58,$00,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$09,_NON
-		.BYTE	$FF,$01,$09
-		.BYTE	$FF,$02
-		.BYTE	$FF,$01,$0A
+		ROOM	$09
+		CHECKPOINT
+		ROOM	$0A
 		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$01,_NON,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$90,$05,$98,$01,$00,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$70,$05,$08,$02,$01,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr21_train_ghost,					$80,$05,$40,$02,$02,_NON,_NON
-		OBJ_SET	_scr21_train_ghost,					$70,$05,$98,$02,$01,_NON,_NON
 ;		OBJ_SET	_scr21_train_ghost,					$80,$05,$40,$02,$03,_NON,_NON
 ;		OBJ_SET	_scr21_train_ghost,					$70,$05,$98,$02,$02,_NON,_NON
-;
+		OBJ_SET	_scr21_train_ghost,					$80,$05,$40,$02,$02,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$70,$05,$98,$02,$01,_NON,_NON
+; -
 ; REGION, removed in the EU version
 		OBJ_SET	_scr21_train_ghost,					$80,$05,$60,$02,$00,_NON,_NON
 ; -
-		.BYTE	$FF,$01,$0B
+		ROOM	$0B
 		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$03,_NON,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$98,$04,$03,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$68,$03,$04,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr21_train_ghost,					$94,$05,$98,$03,$03,_NON,_NON
 ;		OBJ_SET	_scr21_train_ghost,					$94,$05,$98,$03,$02,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$94,$05,$98,$03,$03,_NON,_NON
 ; -
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$38,$04,$05,_NON,_NON
 ; REGION, removed in the EU version
@@ -138,17 +140,18 @@ _lvl2_objects_list:
 		OBJ_SET	_scr21_train_ghost,					$94,$05,$68,$04,$04,_NON,_NON
 		OBJ_SET	_scr21_train_ghost,					$6C,$05,$C8,$03,$03,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr21_train_ghost,					$94,$05,$08,$04,$05,_NON,_NON
 ;		OBJ_SET	_scr21_train_ghost,					$94,$05,$08,$04,$01,_NON,_NON
+		OBJ_SET	_scr21_train_ghost,					$94,$05,$08,$04,$05,_NON,_NON
 ; -
-		.BYTE	$FF,$01,$0C
+		ROOM	$0C
 		OBJ_SET	_scr10_train_semaphores,			$80,$05,$80,$05,_NON,_NON,_NON
 		OBJ_SET	_scr22_lvl2_boss_train_slime,		$80,$05,$90,$05,_NON,_NON,_NON
-		.BYTE	$FF,$00
-_lvl_collisions_03:
+		OBJ_END
+
+_lvl2_collisionsA:
 		.BYTE	$3C,$00,$00,$00,$C0,$03,$0C,$03,$03,$FB,$F3,$FB,$F0,$F0,$F0,$F1
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-_lvl_collisions_02:
+_lvl2_collisionsB:
 		.BYTE	$3D,$E9,$FF,$F9,$EF,$FE,$FD,$FE,$FD,$FC,$FF,$FF,$0D,$FF,$0B,$FF
 		.BYTE	$00,$0F,$00,$0C,$00,$00,$00,$10,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl2_macroA_tbl:
@@ -232,63 +235,14 @@ _lvl2_attrs_tbl:
 		.BYTE	$02,$02,$02,$03,$01,$01,$01,$01,$02,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl2_rooms_lib:
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20854
-		.WORD	byte_20B24
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20A34
-		.WORD	byte_20D04
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20854
-		.WORD	byte_21394
-		.WORD	byte_21484
-		.WORD	byte_20764
-		.WORD	byte_20EE4
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_21574
-		.WORD	byte_20A34
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20D04
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20FD4
-		.WORD	byte_20C14
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20EE4
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_211B4
-		.WORD	byte_20DF4
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_210C4
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_20944
-		.WORD	byte_20764
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_212A4
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-byte_20764:
+		.WORD	      0,      0,      0,      0,_l2_r40,_l2_r50,      0,      0
+		.WORD	      0,      0,      0,      0,_l2_r41,_l2_r51,      0,      0
+		.WORD	      0,_l2_r40,_l2_r22,_l2_r32,_l2_r42,_l2_r52,      0,      0
+		.WORD	_l2_r03,_l2_r41,      0,      0,      0,_l2_r51,      0,      0
+		.WORD	_l2_r04,_l2_r14,      0,      0,      0,_l2_r52,      0,      0
+		.WORD	_l2_r05,_l2_r15,      0,      0,      0,_l2_r55,      0,      0
+		.WORD	_l2_r06,_l2_r42,      0,      0,      0,_l2_r56,      0,      0
+_l2_r42:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$46,$48,$2B,$2B,$2B,$4C,$0A,$1A,$3C,$2B,$2B,$2B,$2B,$41,$2A
 		.BYTE	$2B,$4C,$49,$2D,$2C,$2D,$4D,$0B,$1B,$3D,$2C,$2D,$2C,$2D,$40,$2A
@@ -304,7 +258,7 @@ byte_20764:
 		.BYTE	$2A,$47,$52,$52,$52,$42,$50,$1F,$09,$C7,$10,$25,$10,$19,$40,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$1F,$09,$3B,$52,$52,$52,$52,$42,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$CF,$CD,$40,$2A,$2A,$2A,$2A,$2A,$2A
-byte_20854:
+_l2_r40:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$46,$48,$2B,$2B,$2B,$2B,$2B,$2B,$2B,$2B,$2B,$2B,$41,$2A,$2A
 		.BYTE	$2A,$50,$49,$2D,$2C,$2D,$2C,$2D,$2C,$2D,$2C,$2D,$2C,$3C,$2B,$2B
@@ -320,7 +274,7 @@ byte_20854:
 		.BYTE	$2A,$50,$4A,$02,$06,$16,$13,$1C,$C5,$09,$20,$01,$1C,$C5,$40,$2A
 		.BYTE	$2A,$50,$4A,$10,$36,$0C,$02,$06,$C4,$19,$21,$02,$06,$29,$40,$2A
 		.BYTE	$2A,$50,$4A,$01,$37,$C7,$10,$26,$10,$1C,$0D,$10,$C6,$C8,$40,$2A
-byte_20944:
+_l2_r06:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$0B,$1B,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$09,$09,$3C,$2B,$2B,$2B,$41,$2A,$2A
@@ -336,7 +290,7 @@ byte_20944:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$50,$1F,$C8,$C8,$C8,$09,$40,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$47,$52,$52,$52,$52,$52,$42,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A
-byte_20A34:
+_l2_r41:
 		.BYTE	$2A,$50,$4A,$01,$38,$C7,$01,$25,$03,$06,$16,$12,$19,$09,$40,$2A
 		.BYTE	$2A,$50,$4A,$01,$39,$C7,$01,$25,$01,$C6,$0C,$10,$19,$09,$40,$2A
 		.BYTE	$2A,$50,$4A,$01,$1C,$0D,$01,$25,$01,$19,$C7,$01,$19,$09,$40,$2A
@@ -352,7 +306,7 @@ byte_20A34:
 		.BYTE	$2A,$50,$4A,$10,$0E,$C7,$05,$06,$06,$06,$06,$15,$0E,$09,$40,$2A
 		.BYTE	$2A,$47,$52,$52,$52,$52,$4B,$C8,$C8,$3B,$52,$52,$52,$52,$42,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$CF,$CD,$40,$2A,$2A,$2A,$2A,$2A,$2A
-byte_20B24:
+_l2_r50:
 		.BYTE	$2A,$2A,$50,$D0,$D0,$D0,$D0,$D0,$D0,$D0,$D0,$D0,$D0,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$C0,$BE,$BE,$BE,$BE,$BE,$BE,$BE,$BE,$BE,$40,$2A,$2A
 		.BYTE	$73,$73,$54,$C0,$BE,$BE,$BE,$BE,$BE,$BE,$BE,$BE,$BE,$40,$2A,$2A
@@ -368,7 +322,7 @@ byte_20B24:
 		.BYTE	$2A,$2A,$50,$00,$5B,$75,$69,$D4,$D6,$77,$6A,$5B,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$5B,$76,$78,$D5,$D7,$78,$6B,$5B,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$5B,$AE,$BF,$BF,$BF,$BF,$AF,$5B,$00,$40,$2A,$2A
-byte_20C14:
+_l2_r14:
 		.BYTE	$2A,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$2A
 		.BYTE	$2A,$46,$48,$4C,$0A,$1A,$3C,$2B,$2B,$4C,$0A,$1A,$3C,$2B,$41,$2A
 		.BYTE	$2A,$50,$49,$4D,$0B,$1B,$3D,$2D,$2C,$4D,$0B,$1B,$3D,$2D,$40,$2A
@@ -384,7 +338,7 @@ byte_20C14:
 		.BYTE	$2A,$50,$4A,$01,$25,$01,$19,$09,$09,$C7,$01,$26,$01,$19,$40,$2A
 		.BYTE	$2A,$50,$4A,$01,$25,$01,$19,$09,$09,$C7,$10,$25,$01,$0E,$40,$2A
 		.BYTE	$2B,$4C,$4A,$01,$25,$01,$19,$34,$35,$C7,$10,$25,$10,$19,$3C,$2B
-byte_20D04:
+_l2_r51:
 		.BYTE	$2A,$2A,$50,$00,$6C,$89,$85,$86,$96,$95,$99,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$8A,$69,$D4,$D6,$77,$9A,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$8B,$78,$D5,$D7,$78,$9B,$6C,$00,$40,$2A,$2A
@@ -400,7 +354,7 @@ byte_20D04:
 		.BYTE	$2A,$2A,$50,$00,$6C,$7B,$7E,$7E,$7E,$7E,$8D,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$79,$7C,$6D,$6F,$8E,$9E,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$7A,$7D,$6E,$7F,$8F,$9F,$6C,$00,$40,$2A,$2A
-byte_20DF4:
+_l2_r15:
 		.BYTE	$2C,$4D,$3A,$10,$25,$10,$19,$3D,$4D,$1E,$10,$25,$10,$19,$3D,$2C
 		.BYTE	$C9,$C5,$0D,$01,$25,$01,$1C,$C5,$C5,$0D,$10,$25,$01,$1C,$C5,$CA
 		.BYTE	$CB,$16,$06,$13,$25,$03,$06,$06,$06,$06,$12,$25,$03,$06,$16,$CC
@@ -416,7 +370,7 @@ byte_20DF4:
 		.BYTE	$2A,$50,$4A,$05,$16,$15,$C6,$C8,$C8,$C7,$05,$16,$15,$19,$40,$2A
 		.BYTE	$2A,$47,$52,$52,$52,$52,$4B,$09,$09,$3B,$52,$52,$52,$52,$42,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$CF,$CD,$40,$2A,$2A,$2A,$2A,$2A,$2A
-byte_20EE4:
+_l2_r52:
 		.BYTE	$2A,$2A,$50,$00,$6C,$7B,$7E,$7E,$7E,$7E,$8D,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$79,$7C,$6D,$6F,$8E,$9E,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$7A,$7D,$6E,$7F,$8F,$9F,$6C,$00,$40,$2A,$2A
@@ -432,7 +386,7 @@ byte_20EE4:
 		.BYTE	$2A,$2A,$50,$00,$6C,$83,$69,$D4,$D6,$77,$93,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$8B,$78,$D5,$D7,$78,$9B,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$AE,$7E,$7E,$7E,$7E,$AF,$6C,$00,$40,$2A,$2A
-byte_20FD4:
+_l2_r04:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$46,$48,$2B,$2B,$2B,$4C,$0A,$0A,$3C,$2B,$2B,$2B,$2B,$41,$2A
 		.BYTE	$2A,$50,$49,$2D,$2C,$2D,$4D,$0B,$0B,$3D,$2D,$2C,$2D,$2C,$40,$2A
@@ -448,7 +402,7 @@ byte_20FD4:
 		.BYTE	$2A,$50,$4A,$01,$1C,$0D,$01,$25,$01,$25,$10,$26,$10,$19,$40,$2A
 		.BYTE	$2A,$50,$4A,$02,$16,$06,$15,$25,$10,$25,$01,$25,$01,$19,$40,$2A
 		.BYTE	$2A,$50,$4A,$01,$C6,$C8,$C8,$C7,$01,$25,$01,$25,$01,$19,$40,$2A
-byte_210C4:
+_l2_r55:
 		.BYTE	$2A,$2A,$50,$00,$6C,$7A,$7D,$6E,$7F,$8F,$9F,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$83,$69,$D4,$D6,$77,$93,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$84,$78,$D5,$D7,$78,$94,$6C,$00,$40,$2A,$2A
@@ -464,7 +418,7 @@ byte_210C4:
 		.BYTE	$2A,$2A,$50,$00,$6C,$A4,$A8,$AA,$BA,$B8,$B4,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$A5,$A8,$00,$00,$B9,$B4,$6C,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$6C,$A5,$A8,$AB,$BB,$B9,$B5,$6C,$00,$40,$2A,$2A
-byte_211B4:
+_l2_r05:
 		.BYTE	$2A,$50,$4A,$10,$1C,$C5,$C5,$0D,$03,$06,$13,$27,$01,$19,$40,$2A
 		.BYTE	$2A,$50,$4A,$05,$06,$06,$06,$06,$12,$26,$05,$06,$15,$19,$40,$2A
 		.BYTE	$2A,$47,$52,$52,$52,$52,$4B,$26,$01,$19,$3B,$52,$52,$52,$42,$2A
@@ -480,7 +434,7 @@ byte_211B4:
 		.BYTE	$CB,$16,$06,$13,$27,$01,$19,$1D,$01,$27,$02,$16,$15,$C6,$3B,$52
 		.BYTE	$52,$4B,$0C,$05,$06,$15,$19,$C7,$05,$06,$15,$C6,$C8,$09,$40,$2A
 		.BYTE	$2A,$47,$52,$52,$52,$52,$4B,$CD,$CD,$3B,$52,$52,$52,$52,$42,$2A
-byte_212A4:
+_l2_r56:
 		.BYTE	$2A,$2A,$50,$00,$5B,$58,$58,$59,$5A,$57,$57,$5B,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$5B,$58,$58,$59,$5A,$57,$57,$5B,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$5B,$58,$58,$59,$5A,$57,$57,$5B,$00,$40,$2A,$2A
@@ -496,7 +450,7 @@ byte_212A4:
 		.BYTE	$2A,$2A,$50,$00,$5B,$58,$58,$59,$5A,$57,$57,$5B,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$5B,$58,$58,$59,$5A,$57,$57,$5B,$00,$40,$2A,$2A
 		.BYTE	$2A,$2A,$50,$00,$5B,$58,$58,$59,$5A,$57,$57,$5B,$00,$40,$2A,$2A
-byte_21394:
+_l2_r22:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$46,$48,$2B,$2B,$2B,$2B,$2B,$41,$2A,$2A,$2A,$46,$2B,$2B
 		.BYTE	$2B,$2B,$4C,$49,$2C,$2D,$2C,$2D,$2C,$3C,$2B,$2B,$2B,$4C,$2C,$2D
@@ -512,7 +466,7 @@ byte_21394:
 		.BYTE	$2A,$2A,$50,$4A,$05,$06,$15,$19,$09,$09,$09,$09,$09,$09,$C7,$05
 		.BYTE	$2A,$2A,$47,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A
-byte_21484:
+_l2_r32:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2B,$2B,$2B,$2B,$2B,$2B,$2B,$2B,$41,$2A,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2C,$2D,$2C,$2D,$2C,$2D,$2C,$2D,$3C,$2B,$2B,$2B,$2B,$2B,$2B,$2B
@@ -528,7 +482,7 @@ byte_21484:
 		.BYTE	$06,$16,$06,$06,$06,$16,$15,$19,$09,$09,$09,$09,$09,$40,$2A,$2A
 		.BYTE	$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$52,$42,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A,$2A
-byte_21574:
+_l2_r03:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$D8,$D8,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$0B,$1B,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$2A,$2A,$2A,$2A
@@ -544,11 +498,16 @@ byte_21574:
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$09,$09,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$0B,$1B,$40,$2A,$2A,$2A,$2A,$2A,$2A
 		.BYTE	$2A,$2A,$2A,$2A,$2A,$2A,$50,$CD,$CD,$40,$2A,$2A,$2A,$2A,$2A,$2A
+
+		SECTION_END	"LVL2 DATA"
+
+		SECTION_START
+
 _lvl3_objects_list:
-		.BYTE	$FF,$02
+		CHECKPOINT
 ; REGION, changed in the EU version
-		OBJ_SET	_scr28_pink_goo,					$D8,$00,$48,$01,_NON,_NON,_NON
 ;		OBJ_SET	_scr28_pink_goo,					$F0,$00,$48,$01,_NON,_NON,_NON
+		OBJ_SET	_scr28_pink_goo,					$D8,$00,$48,$01,_NON,_NON,_NON
 ; -
 ; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$D8,$00,$78,$01,_NON,_NON,_NON
@@ -559,7 +518,7 @@ _lvl3_objects_list:
 		OBJ_SET	_scr28_pink_goo,					$08,$01,$98,$01,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
-		.BYTE	$FF,$01,$01
+		ROOM	$01
 		OBJ_SET	_scr28_pink_goo,					$58,$01,$78,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$D8,$01,$58,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$88,$00,$88,$00,_NON,_NON,_NON
@@ -567,8 +526,8 @@ _lvl3_objects_list:
 		OBJ_SET	_scr28_pink_goo,					$58,$00,$A8,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$A8,$00,$68,$00,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$02,_NON
-		.BYTE	$FF,$01,$02
-		.BYTE	$FF,$02
+		ROOM	$02
+		CHECKPOINT
 		OBJ_SET	_scr25_stinging_wing_elephant,		$A8,$02,$80,$00,$40,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$48,$02,$48,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$98,$02,$C8,$00,_NON,_NON,_NON
@@ -579,43 +538,43 @@ _lvl3_objects_list:
 ; -
 		OBJ_SET	_scr0D_money_bag,					$B0,$02,$B0,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$03,_NON
-		.BYTE	$FF,$01,$03
+		ROOM	$03
 		OBJ_SET	_scr28_pink_goo,					$A8,$02,$68,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$B8,$02,$98,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr28_pink_goo,					$58,$02,$A8,$02,_NON,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr26_sword_ninja,					$38,$03,$A8,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr28_pink_goo,					$38,$03,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$38,$03,$A8,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr28_pink_goo,					$98,$03,$A8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$C8,$03,$68,$02,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$04,_NON
-		.BYTE	$FF,$01,$04
+		ROOM	$04
 ; REGION, changed in the EU version
-		OBJ_SET	_scr2A_morning_star_troll,			$88,$03,$48,$00,_NON,_NON,_NON
 ;		OBJ_SET	_scr2A_morning_star_troll,			$A0,$03,$48,$00,_NON,_NON,_NON
-;
+		OBJ_SET	_scr2A_morning_star_troll,			$88,$03,$48,$00,_NON,_NON,_NON
+; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
-		.BYTE	$FF,$01,$05
-		.BYTE	$FF,$02
+		ROOM	$05
+		CHECKPOINT
 		OBJ_SET	_scr26_sword_ninja,					$88,$05,$80,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$78,$05,$A8,$01,_NON,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr26_sword_ninja,					$88,$05,$88,$00,_NON,_NON,_NON
 ;		OBJ_SET	_scr28_pink_goo,					$88,$05,$88,$00,_NON,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$88,$05,$88,$00,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr0D_money_bag,					$40,$05,$68,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$06,_NON
-		.BYTE	$FF,$01,$06
+		ROOM	$06
 		OBJ_SET	_scr26_sword_ninja,					$90,$05,$A0,$02,_NON,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$05,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$04,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$04,$60,$02,$00,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr26_sword_ninja,					$78,$04,$60,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr25_stinging_wing_elephant,		$78,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr26_sword_ninja,					$78,$04,$60,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr25_stinging_wing_elephant,		$42,$04,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$80,$04,$90,$02,_NON,_NON,_NON
@@ -623,34 +582,34 @@ _lvl3_objects_list:
 ;		OBJ_SET	_scr26_sword_ninja,					$90,$04,$A0,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$07,_NON
-		.BYTE	$FF,$01,$07
+		ROOM	$07
 		OBJ_SET	_scr2A_morning_star_troll,			$60,$04,$48,$00,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$B0,$04,$48,$00,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$08,_NON
-		.BYTE	$FF,$01,$08
-		.BYTE	$FF,$02
+		ROOM	$08
+		CHECKPOINT
 		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$68,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$B0,$06,$10,$01,_NON,_NON,_NON
 		OBJ_SET	_scr27_shuriken_ninja,				$40,$06,$C0,$01,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$58,$06,$A0,$01,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$09,_NON
-		.BYTE	$FF,$01,$09
+		ROOM	$09
 ; REGION, changed in the EU version
-		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$A8,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr28_pink_goo,					$88,$06,$A8,$02,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$A8,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr28_pink_goo,					$28,$07,$A8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$D8,$06,$B8,$02,_NON,_NON,_NON
 ; REGION, changed in the EU version
-		OBJ_SET	_scr27_shuriken_ninja,				$A8,$06,$98,$02,_NON,_NON,_NON
-		OBJ_SET	_scr27_shuriken_ninja,				$88,$07,$98,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr28_pink_goo,					$A8,$06,$98,$02,_NON,_NON,_NON
 ;		OBJ_SET	_scr28_pink_goo,					$88,$07,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$A8,$06,$98,$02,_NON,_NON,_NON
+		OBJ_SET	_scr27_shuriken_ninja,				$88,$07,$98,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr28_pink_goo,					$C8,$07,$B8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr27_shuriken_ninja,				$88,$06,$98,$02,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0A,_NON
-		.BYTE	$FF,$01,$0A
+		ROOM	$0A
 		OBJ_SET	_scr23_halloween,					$80,$07,$80,$01,_NON,_NON,_NON
 ; REGION, added in the EU version
 ;		OBJ_SET	_scr23_halloween,					$58,$07,$B0,$01,_NON,_NON,_NON
@@ -659,13 +618,13 @@ _lvl3_objects_list:
 		OBJ_SET	_scr2A_morning_star_troll,			$78,$07,$98,$00,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$B0,$07,$48,$00,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0B,_NON
-		.BYTE	$FF,$01,$0B
-		.BYTE	$FF,$02
+		ROOM	$0B
+		CHECKPOINT
 		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$90,$03,$80,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$01,$00,$04,$00,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$A0,$04,$40,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0C,_NON
-		.BYTE	$FF,$01,$0C
+		ROOM	$0C
 		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$00,$68,$05,$00,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$58,$00,$98,$05,_NON,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$A0,$05,$C0,_NON,_NON
@@ -676,7 +635,7 @@ _lvl3_objects_list:
 		OBJ_SET	_scr24_flying_wing_elephant,		$50,$00,$B0,$05,$00,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$B0,$00,$B0,$05,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0D,_NON
-		.BYTE	$FF,$01,$0D
+		ROOM	$0D
 		OBJ_SET	_scr2A_morning_star_troll,			$60,$00,$78,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$B8,$00,$48,$03,_NON,_NON,_NON
 ; REGION, removed in the EU version
@@ -684,8 +643,8 @@ _lvl3_objects_list:
 ; -
 		OBJ_SET	_scr23_halloween,					$48,$00,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0E,_NON
-		.BYTE	$FF,$01,$0E
-		.BYTE	$FF,$02
+		ROOM	$0E
+		CHECKPOINT
 		OBJ_SET	_scr24_flying_wing_elephant,		$40,$02,$30,$03,$80,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$60,$02,$C0,$03,$C0,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$80,$02,$90,$03,$00,_NON,_NON
@@ -696,7 +655,7 @@ _lvl3_objects_list:
 		OBJ_SET	_scr24_flying_wing_elephant,		$C0,$02,$80,$04,$40,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$C8,$02,$98,$04,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0F,_NON
-		.BYTE	$FF,$01,$0F
+		ROOM	$0F
 		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$02,$60,$05,$00,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$02,$60,$05,$00,_NON,_NON
 		OBJ_SET	_scr24_flying_wing_elephant,		$80,$03,$90,$05,$40,_NON,_NON
@@ -704,7 +663,7 @@ _lvl3_objects_list:
 		OBJ_SET	_scr25_stinging_wing_elephant,		$C0,$03,$60,$05,$00,_NON,_NON
 		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$03,$60,$05,$00,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$10,_NON
-		.BYTE	$FF,$01,$10
+		ROOM	$10
 		OBJ_SET	_scr2A_morning_star_troll,			$68,$03,$A8,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$98,$03,$78,$03,_NON,_NON,_NON
 		OBJ_SET	_scr2A_morning_star_troll,			$B8,$03,$48,$03,_NON,_NON,_NON
@@ -712,15 +671,15 @@ _lvl3_objects_list:
 		OBJ_SET	_scr23_halloween,					$48,$03,$00,$04,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$C0,$03,$C0,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$14,_NON
-		.BYTE	$FF,$01,$14
-		.BYTE	$FF,$02
+		ROOM	$14
+		CHECKPOINT
 		OBJ_SET	_scr23_halloween,					$80,$05,$88,$03,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$30,$05,$E0,$03,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$C8,$05,$78,$04,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$30,$05,$A0,$04,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$B0,$05,$90,$03,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$15,_NON
-		.BYTE	$FF,$01,$15
+		ROOM	$15
 		OBJ_SET	_scr23_halloween,					$70,$04,$90,$05,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$A0,$04,$B0,$05,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$E0,$04,$88,$05,_NON,_NON,_NON
@@ -729,12 +688,13 @@ _lvl3_objects_list:
 		OBJ_SET	_scr23_halloween,					$10,$05,$98,$05,_NON,_NON,_NON
 		OBJ_SET	_scr23_halloween,					$30,$05,$A8,$05,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$16,_NON
-		.BYTE	$FF,$01,$16
+		ROOM	$16
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$17,_NON
-		.BYTE	$FF,$01,$17
+		ROOM	$17
 		OBJ_SET	_scr11_lvl2_ghost_nanny,			$80,$00,$80,$02,_NON,_NON,_NON
-		.BYTE	$FF,$00
-_lvl_collisions_04:
+		OBJ_END
+
+_lvl3_collisions:
 		.BYTE	$03,$BE,$EF,$8E,$0F,$8F,$0F,$BF,$0F,$B7,$0B,$B4,$FF,$B5,$FD,$34
 		.BYTE	$01,$C0,$03,$00,$00,$C0,$00,$80,$00,$3C,$00,$7C,$03,$FC,$01,$F5
 _lvl3_macroA_tbl:
@@ -818,55 +778,13 @@ _lvl3_attrs_tbl:
 		.BYTE	$03,$03,$03,$03,$03,$03,$03,$03,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 _lvl3_rooms_lib:
-		.WORD	byte_22CA1
-		.WORD	byte_22D91
-		.WORD	byte_227F1
-		.WORD	byte_22251
-		.WORD	byte_22251
-		.WORD	byte_22341
-		.WORD	byte_227F1
-		.WORD	byte_22251
-		.WORD	byte_22E81
-		.WORD	byte_22F71
-		.WORD	byte_228E1
-		.WORD	byte_229D1
-		.WORD	byte_22431
-		.WORD	byte_22521
-		.WORD	byte_228E1
-		.WORD	byte_229D1
-		.WORD	byte_23061
-		.WORD	$0000		; *--
-		.WORD	byte_22611
-		.WORD	byte_22701
-		.WORD	byte_22AC1
-		.WORD	byte_22BB1
-		.WORD	byte_22611
-		.WORD	byte_22701
-		.WORD	byte_22251
-		.WORD	byte_22341
-		.WORD	byte_227F1
-		.WORD	byte_22251
-		.WORD	byte_21E91
-		.WORD	byte_21F81
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_22431
-		.WORD	byte_22521
-		.WORD	byte_228E1
-		.WORD	byte_229D1
-		.WORD	byte_22071
-		.WORD	byte_22161
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-		.WORD	byte_22611
-		.WORD	byte_22701
-		.WORD	byte_22AC1
-		.WORD	byte_22BB1
-		.WORD	byte_22611
-		.WORD	byte_22701
-		.WORD	$0000		; *--
-		.WORD	$0000		; *--
-byte_21E91:
+		.WORD	_l3_r00,_l3_r10,_l3_r20,_l3_r03,_l3_r03,_l3_r13,_l3_r20,_l3_r03
+		.WORD	_l3_r01,_l3_r11,_l3_r21,_l3_r31,_l3_r04,_l3_r14,_l3_r21,_l3_r31
+		.WORD	_l3_r02,      0,_l3_r05,_l3_r15,_l3_r25,_l3_r35,_l3_r05,_l3_r15
+		.WORD	_l3_r03,_l3_r13,_l3_r20,_l3_r03,_l3_r43,_l3_r53,      0,      0
+		.WORD	_l3_r04,_l3_r14,_l3_r21,_l3_r31,_l3_r44,_l3_r54,      0,      0
+		.WORD	_l3_r05,_l3_r15,_l3_r25,_l3_r35,_l3_r05,_l3_r15,      0,      0
+_l3_r43:
 		.BYTE	$00,$96,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$8F
 		.BYTE	$00,$35,$0A,$1A,$27,$02,$12,$12,$6D,$7D,$8D,$12,$12,$12,$02,$12
 		.BYTE	$00,$03,$0B,$1B,$28,$60,$70,$80,$6E,$7E,$8E,$13,$13,$13,$03,$10
@@ -882,7 +800,7 @@ byte_21E91:
 		.BYTE	$00,$04,$01,$01,$1F,$03,$13,$13,$13,$19,$01,$01,$28,$13,$04,$82
 		.BYTE	$00,$04,$01,$01,$01,$04,$37,$0E,$01,$01,$01,$01,$01,$01,$04,$01
 		.BYTE	$00,$04,$01,$01,$1E,$04,$38,$3F,$01,$01,$01,$01,$01,$37,$04,$01
-byte_21F81:
+_l3_r53:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$12,$02,$12,$12,$12,$12,$09,$40,$50,$27,$12,$12,$12,$12,$96,$00
 		.BYTE	$13,$03,$10,$13,$13,$13,$19,$41,$51,$28,$13,$13,$13,$13,$04,$00
@@ -898,7 +816,7 @@ byte_21F81:
 		.BYTE	$13,$04,$82,$01,$43,$53,$26,$26,$04,$01,$01,$01,$01,$2A,$04,$00
 		.BYTE	$01,$04,$01,$01,$17,$12,$12,$12,$17,$09,$0A,$1A,$27,$12,$96,$00
 		.BYTE	$37,$04,$01,$01,$18,$13,$13,$13,$18,$19,$0B,$1B,$28,$13,$04,$00
-byte_22071:
+_l3_r44:
 		.BYTE	$00,$04,$01,$01,$3E,$04,$01,$0F,$01,$01,$01,$01,$01,$38,$04,$01
 		.BYTE	$00,$04,$01,$01,$3E,$04,$01,$01,$01,$4A,$20,$20,$5A,$01,$04,$01
 		.BYTE	$00,$04,$01,$01,$1F,$04,$01,$45,$01,$4B,$20,$20,$5B,$01,$04,$01
@@ -914,7 +832,7 @@ byte_22071:
 		.BYTE	$00,$35,$0A,$1A,$27,$12,$12,$12,$12,$12,$12,$12,$12,$12,$17,$12
 		.BYTE	$00,$03,$0B,$1B,$28,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-byte_22161:
+_l3_r54:
 		.BYTE	$38,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
 		.BYTE	$01,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$72,$01,$01,$04,$00
 		.BYTE	$01,$04,$01,$01,$83,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
@@ -930,7 +848,7 @@ byte_22161:
 		.BYTE	$12,$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$85,$0A,$1A,$96,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$19,$0B,$1B,$04,$00
 		.BYTE	$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
-byte_22251:
+_l3_r03:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$02,$12,$12,$12,$12,$09,$40,$50,$27,$12,$12,$12,$12,$96,$00
 		.BYTE	$00,$03,$10,$10,$13,$13,$19,$41,$51,$28,$13,$13,$10,$10,$04,$00
@@ -946,7 +864,7 @@ byte_22251:
 		.BYTE	$00,$04,$3F,$01,$01,$01,$83,$01,$01,$01,$01,$01,$01,$3E,$04,$00
 		.BYTE	$00,$04,$3F,$01,$01,$01,$01,$31,$01,$01,$01,$01,$01,$3E,$04,$00
 		.BYTE	$00,$04,$0F,$01,$01,$01,$01,$01,$01,$01,$65,$01,$01,$1F,$04,$00
-byte_22341:
+_l3_r13:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$02,$12,$12,$12,$12,$09,$40,$50,$27,$12,$12,$12,$12,$96,$00
 		.BYTE	$00,$03,$10,$13,$13,$13,$19,$41,$51,$28,$13,$13,$13,$13,$04,$00
@@ -962,7 +880,7 @@ byte_22341:
 		.BYTE	$00,$04,$82,$01,$43,$53,$26,$26,$04,$01,$01,$01,$01,$2A,$04,$00
 		.BYTE	$00,$04,$01,$01,$17,$12,$12,$12,$17,$09,$0A,$1A,$27,$12,$96,$00
 		.BYTE	$00,$04,$01,$01,$18,$13,$13,$13,$18,$19,$0B,$1B,$28,$13,$04,$00
-byte_22431:
+_l3_r04:
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$31,$01,$01,$01,$01,$01,$01,$83,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
@@ -978,7 +896,7 @@ byte_22431:
 		.BYTE	$00,$35,$0A,$1A,$27,$12,$12,$12,$12,$12,$12,$12,$12,$12,$17,$12
 		.BYTE	$00,$03,$0B,$1B,$28,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-byte_22521:
+_l3_r14:
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$72,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$83,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
@@ -994,7 +912,7 @@ byte_22521:
 		.BYTE	$12,$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$85,$0A,$1A,$96,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$19,$0B,$1B,$04,$00
 		.BYTE	$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
-byte_22611:
+_l3_r05:
 		.BYTE	$00,$04,$01,$01,$34,$44,$54,$01,$01,$64,$01,$01,$0E,$20,$1E,$34
 		.BYTE	$00,$35,$0A,$1A,$27,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$17
 		.BYTE	$00,$03,$0B,$1B,$28,$05,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13
@@ -1010,7 +928,7 @@ byte_22611:
 		.BYTE	$00,$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12
 		.BYTE	$00,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_22701:
+_l3_r15:
 		.BYTE	$44,$54,$48,$01,$01,$01,$01,$01,$01,$06,$3E,$04,$01,$01,$04,$00
 		.BYTE	$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$85,$0A,$1A,$96,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$05,$19,$0B,$1B,$04,$00
@@ -1026,7 +944,7 @@ byte_22701:
 		.BYTE	$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$07,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$08,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_227F1:
+_l3_r20:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$02,$12,$12,$12,$12,$09,$40,$50,$27,$12,$12,$12,$12,$96,$00
 		.BYTE	$00,$03,$10,$13,$13,$13,$19,$41,$51,$28,$13,$13,$13,$13,$04,$00
@@ -1042,7 +960,7 @@ byte_227F1:
 		.BYTE	$00,$43,$53,$26,$26,$04,$01,$01,$01,$01,$2A,$04,$01,$01,$04,$00
 		.BYTE	$00,$02,$79,$26,$89,$17,$09,$0A,$1A,$27,$12,$96,$01,$01,$04,$00
 		.BYTE	$00,$03,$7A,$26,$8A,$18,$19,$0B,$1B,$28,$13,$04,$01,$01,$04,$00
-byte_228E1:
+_l3_r21:
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$83,$01,$01,$01,$01,$01,$01,$31,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
@@ -1058,7 +976,7 @@ byte_228E1:
 		.BYTE	$00,$35,$0A,$1A,$27,$12,$12,$12,$12,$12,$12,$12,$12,$12,$17,$12
 		.BYTE	$00,$03,$0B,$1B,$28,$13,$13,$13,$13,$13,$13,$13,$13,$13,$18,$13
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-byte_229D1:
+_l3_r31:
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$83,$01,$01,$01,$01,$01,$01,$31,$01,$01,$04,$00
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
@@ -1074,7 +992,7 @@ byte_229D1:
 		.BYTE	$12,$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$85,$0A,$1A,$96,$00
 		.BYTE	$13,$18,$13,$13,$13,$13,$13,$13,$13,$13,$13,$19,$0B,$1B,$04,$00
 		.BYTE	$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$04,$00
-byte_22AC1:
+_l3_r25:
 		.BYTE	$00,$04,$01,$01,$34,$44,$54,$48,$01,$01,$01,$01,$06,$01,$01,$34
 		.BYTE	$00,$35,$0A,$1A,$27,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$17
 		.BYTE	$00,$03,$0B,$1B,$28,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13
@@ -1090,7 +1008,7 @@ byte_22AC1:
 		.BYTE	$00,$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12
 		.BYTE	$00,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_22BB1:
+_l3_r35:
 		.BYTE	$44,$54,$01,$01,$01,$01,$64,$01,$0E,$20,$1E,$04,$01,$01,$04,$00
 		.BYTE	$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$85,$0A,$1A,$96,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$19,$0B,$1B,$04,$00
@@ -1106,7 +1024,7 @@ byte_22BB1:
 		.BYTE	$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$07,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$08,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_22CA1:
+_l3_r00:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$02,$12,$12,$12,$12,$09,$40,$50,$27,$12,$12,$12,$12,$12,$12
 		.BYTE	$00,$03,$10,$10,$13,$13,$19,$41,$51,$28,$13,$13,$10,$10,$13,$10
@@ -1122,7 +1040,7 @@ byte_22CA1:
 		.BYTE	$00,$02,$12,$12,$12,$12,$09,$0A,$1A,$27,$12,$12,$12,$12,$12,$12
 		.BYTE	$00,$03,$13,$13,$13,$13,$19,$0B,$1B,$28,$13,$13,$13,$13,$13,$13
 		.BYTE	$00,$04,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-byte_22D91:
+_l3_r10:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$02,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$96,$00
 		.BYTE	$03,$13,$3C,$4C,$4C,$4C,$5C,$13,$10,$13,$3C,$4C,$5C,$13,$04,$00
@@ -1138,7 +1056,7 @@ byte_22D91:
 		.BYTE	$17,$12,$02,$12,$12,$12,$09,$0A,$1A,$27,$12,$12,$12,$12,$96,$00
 		.BYTE	$13,$10,$07,$3C,$4C,$5C,$19,$0B,$1B,$28,$3C,$5C,$10,$13,$04,$00
 		.BYTE	$01,$11,$08,$3D,$4D,$5D,$01,$01,$01,$01,$3D,$5D,$11,$01,$04,$00
-byte_22E81:
+_l3_r01:
 		.BYTE	$00,$04,$3F,$45,$01,$01,$01,$45,$01,$48,$58,$01,$01,$01,$01,$01
 		.BYTE	$00,$02,$12,$12,$12,$12,$09,$0A,$1A,$27,$12,$12,$12,$12,$12,$12
 		.BYTE	$00,$03,$13,$13,$13,$10,$19,$0B,$1B,$28,$13,$13,$13,$13,$13,$13
@@ -1154,7 +1072,7 @@ byte_22E81:
 		.BYTE	$00,$17,$12,$12,$12,$12,$09,$40,$50,$27,$12,$12,$12,$12,$12,$17
 		.BYTE	$00,$18,$13,$13,$13,$13,$19,$41,$51,$28,$13,$13,$13,$13,$13,$33
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_22F71:
+_l3_r11:
 		.BYTE	$01,$01,$4F,$06,$5F,$38,$01,$01,$01,$01,$38,$01,$06,$5F,$04,$00
 		.BYTE	$12,$12,$02,$12,$12,$12,$09,$0A,$1A,$27,$12,$12,$12,$12,$96,$00
 		.BYTE	$13,$10,$07,$3C,$4C,$5C,$19,$0B,$1B,$28,$3C,$5C,$10,$62,$04,$00
@@ -1170,7 +1088,7 @@ byte_22F71:
 		.BYTE	$12,$12,$17,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$12,$07,$00
 		.BYTE	$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$13,$08,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-byte_23061:
+_l3_r02:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$B1,$A3,$00,$00,$00,$A1,$00,$00,$00
 		.BYTE	$A0,$00,$C6,$B1,$C9,$B1,$BB,$B1,$00,$CC,$B1,$C7,$D3,$A0,$A1,$A8
 		.BYTE	$00,$A5,$00,$00,$00,$B6,$00,$D4,$A3,$00,$00,$D2,$A1,$00,$B5,$00
@@ -1186,5 +1104,7 @@ byte_23061:
 		.BYTE	$12,$96,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$6F,$7F,$8F
 		.BYTE	$10,$35,$0A,$1A,$27,$02,$12,$12,$6D,$7D,$8D,$12,$12,$12,$96,$8F
 		.BYTE	$11,$03,$0B,$1B,$28,$60,$70,$80,$6E,$7E,$8E,$13,$13,$13,$04,$8F
+
+		SECTION_END	"LVL3 DATA"
 
 		BANK_END 2,$C000

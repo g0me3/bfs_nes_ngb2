@@ -187,6 +187,18 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 
 _NON	EQU	-1
 
+	MAC	OBJ_END
+		.BYTE	$FF, $00
+	ENDM
+
+	MAC	ROOM
+		.BYTE	$FF, $01, {1}
+	ENDM
+
+	MAC	CHECKPOINT
+		.BYTE	$FF, $02
+	ENDM
+
 	MAC	OBJ_SET
 		.BYTE	{1}_idx,{2},{3},{4},{5}
 #if {6}!=_NON
@@ -272,6 +284,10 @@ _NON	EQU	-1
 		.BYTE	_scmd06_delay_idx
 		.BYTE	{1}
 	ENDM
+
+ROOM_H	EQU	$00
+ROOM_V	EQU	$01
+ROOM_0	EQU	$02
 
 	MAC	NJSR
 		.BYTE	_scmd07_njsr_idx

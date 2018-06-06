@@ -277,8 +277,8 @@ _tlm_title_text:
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 ; REGION, "HAL lab." changed in the US proto version
-		.BYTE	$20,$20,$20,$20,$42,$59,$20,$48,$41,$4C,$20,$4C,$41,$42,$4F,$52,$41,$54,$4F,$52,$59,$20,$20,$20
 ;		.BYTE	$FF,$FF,$FF,$42,$59,$FF,$48,$41,$4C,$FF,$41,$4D,$45,$52,$49,$43,$41,$2C,$49,$4E,$43,$2E,$FF,$FF
+		.BYTE	$20,$20,$20,$20,$42,$59,$20,$48,$41,$4C,$20,$4C,$41,$42,$4F,$52,$41,$54,$4F,$52,$59,$20,$20,$20
 ; -
 
 ; =============== S U B R O U T I N E =======================================
@@ -802,7 +802,7 @@ _intro_sub0C_title_new:
 _sloc_8A65:
 		SARG_SET		SARG0,$00				; init tmp counter var
 		SLOOP_BEGIN		$06
-		NJSR			_nsub_pal_patch_blink	; read pal byte from selected array
+		NJSR			_nsub_patch_pal_blink	; read pal byte from selected array
 			NARGW		_pal_new_blink			; with index SARG0, put it on
 			NARGB		$16,SARG0				; selected position of palette buffer (16),
 		SARG_ALU		SARG0,_ADC,$01			; then blit it and increment idx
@@ -819,7 +819,7 @@ _sloc_8A65:
 _intro_sub0C_title_new_unref:
 		SARG_SET		SARG1,$00
 		SLOOP_BEGIN		$06
-		NJSR			_nsub_pal_patch_blink
+		NJSR			_nsub_patch_pal_blink
 			NARGW		_pal_new_blink_unused
 			NARGB		$17,SARG1
 		SARG_ALU		SARG1,_ADC,$01
@@ -833,7 +833,7 @@ _pal_new_blink_unused:
 		.BYTE	$0F,$10,$20,$30,$20,$10,$01
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_pal_patch_blink:
+_nsub_patch_pal_blink:
 		JSR		_scr_getc					; this is custom palette blink routine used
 		STA		_ptr06						; only for this place... in other cases they
 		JSR		_scr_getc					; used common pal fade _nsub routine with
@@ -884,8 +884,8 @@ _scr_select_busters:
 			NARGW		_pal_select_busters
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$06
-		STORE8			_beam_player_idxA,$FF			; no players selected yet, reset
-		STORE8			_catch_player_idxA,$FF
+		STORE8			_beamer_idxA,$FF			; no players selected yet, reset
+		STORE8			_catcher_idxA,$FF
 		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
 		STORE8			_cur_room_x_pageB,$00			; not by its ingame meanings
 		POS_X_SET		0,$00,$01						; main offset for screen objects here
@@ -948,14 +948,14 @@ _pal_select_busters:
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_players_idx_init:
-		LDY		_beam_player_idxA
+		LDY		_beamer_idxA
 		LDA		byte_8BC3,Y
-		STA		_beam_player_idxA
-		STA		_beam_player_idxB
-		LDY		_catch_player_idxA
+		STA		_beamer_idxA
+		STA		_beamer_idxB
+		LDY		_catcher_idxA
 		LDA		byte_8BC3,Y
-		STA		_catch_player_idxA
-		STA		_catch_player_idxB
+		STA		_catcher_idxA
+		STA		_catcher_idxB
 		RTS
 byte_8BC3:
 		.BYTE	$00,$10,$20,$30,$40
@@ -976,7 +976,7 @@ loc_8BD5:
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8BE1:
-		CMP		_beam_player_idxA			; skip if first player already selected
+		CMP		_beamer_idxA			; skip if first player already selected
 		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
 		LDA		_pad0_pressed
@@ -991,7 +991,7 @@ loc_8BF1:
 		STA		_scr_trds_args0,X
 loc_8BF9:
 		LDA		_scr_trds_args0,X
-		CMP		_beam_player_idxA
+		CMP		_beamer_idxA
 		BEQ		loc_8BF1
 loc_8C00:
 ; TODO: very annoying, title accepts only START, select busters only A
@@ -1002,12 +1002,12 @@ loc_8C00:
 		LDA		#$0C
 		JSR		_far_prg6_apu_snd_load_safe		; init one of two players indexes
 		LDA		_scr_trds_args0,X
-		LDY		_beam_player_idxA
+		LDY		_beamer_idxA
 		BPL		loc_8C17
-		STA		_beam_player_idxA
+		STA		_beamer_idxA
 		BMI		loc_8C1A
 loc_8C17:
-		STA		_catch_player_idxA
+		STA		_catcher_idxA
 loc_8C1A:
 		LDA		#$FF
 		STA		_scr_trds_spr_idx,X			; disable obj name sprite, jump to
@@ -1021,7 +1021,7 @@ loc_8C23:
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8C2F:
-		CMP		_beam_player_idxA
+		CMP		_beamer_idxA
 		BEQ		loc_8C23
 		SEC									; when selection is done, set carry to
 		RTS									; signal the main code to do next part
@@ -1124,18 +1124,18 @@ _ssub_select_busters:
 		STORE8			_cur_room_x_pageA,$01	; now enable selection input
 _sloc_8D0C:
 		SDELAY			$01						; common portion for any object
-		NJSR			_nsub_is_beam_player_selected
+		NJSR			_nsub_is_beamer_selected
 		SBCC			_sloc_8D0C				; wait if select is done
 		NJSR			_nsub_is_cur_buster_select_for_beam_player
-		SBCS			_sloc_beam_player_selected	; then test if this object selected
+		SBCS			_sloc_beamer_selected	; then test if this object selected
 _sloc_8D1A:
 		SDELAY			$01						; for both players one by one
-		NJSR			_nsub_is_catch_player_selected
+		NJSR			_nsub_is_catcher_selected
 		SBCC			_sloc_8D1A
 		NJSR			_nsub_is_cur_buster_select_for_catch_player
-		SBCS			_sloc_catch_player_selected
+		SBCS			_sloc_catcher_selected
 		SUSPEND
-_sloc_beam_player_selected:						; here is common beginning for step out
+_sloc_beamer_selected:						; here is common beginning for step out
 		SJSR			_ssub_buster_selected_step_out	; of selected regular busters
 		SPR_IDX_ADD_IMM 0,$03
 
@@ -1143,7 +1143,7 @@ _sloc_beam_player_selected:						; here is common beginning for step out
 
 ; =============== S C R I P T ===============================================
 ; here is common walk to pole anim for selected beam player
-_scr_beam_player_walk_common:
+_scr_beamer_walk_common:
 		POS_X_DELTA_SET 0,$00,$FF				; move left init
 		SSCRIPT1_SET	_scr_buster_walk_left_anim	; load secondary script for walk anim
 _sloc_8D35:
@@ -1197,14 +1197,14 @@ _sloc_8D7B:
 		SJMP			_sloc_8D7B
 
 ; =============== S C R I P T ===============================================
-_sloc_catch_player_selected:
+_sloc_catcher_selected:
 		SJSR			_ssub_buster_selected_step_out
 		SPR_IDX_ADD_IMM 0,$03
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ===============================================
-_scr_catch_player_walk_common:
+_scr_catcher_walk_common:
 		POS_X_DELTA_SET 0,$00,$FF				; same start as for catch player, but...
 		SSCRIPT1_SET	_scr_buster_walk_left_anim
 _sloc_8D94:
@@ -1254,8 +1254,8 @@ _scr_buster_walk_left_anim:
 		SJMP			_scr_buster_walk_left_anim
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_is_beam_player_selected:
-		LDA		_beam_player_idxA				; names are selfexplanatory here and below
+_nsub_is_beamer_selected:
+		LDA		_beamer_idxA				; names are selfexplanatory here and below
 		BPL		loc_8DE4
 		CLC
 		RTS
@@ -1266,7 +1266,7 @@ loc_8DE4:
 ; =============== S U B R O U T I N E =======================================
 _nsub_is_cur_buster_select_for_beam_player:
 		LDX		_scr_cur_trd_idx
-		LDA		_beam_player_idxA
+		LDA		_beamer_idxA
 		CMP		_scr_trds_args0,X
 		BEQ		loc_8DF1
 		CLC
@@ -1276,8 +1276,8 @@ loc_8DF1:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_is_catch_player_selected:
-		LDA		_catch_player_idxA
+_nsub_is_catcher_selected:
+		LDA		_catcher_idxA
 		BPL		loc_8DFA
 		CLC
 		RTS
@@ -1288,7 +1288,7 @@ loc_8DFA:
 ; =============== S U B R O U T I N E =======================================
 _nsub_is_cur_buster_select_for_catch_player:
 		LDX		_scr_cur_trd_idx
-		LDA		_catch_player_idxA
+		LDA		_catcher_idxA
 		CMP		_scr_trds_args0,X
 		BEQ		loc_8E07
 		CLC
@@ -1329,23 +1329,23 @@ _sub0A_select_louis:
 		SPR_IDX_SET		0,$34
 _sloc_8E32:
 		SDELAY			$01					; wait for beam player selected in main thread
-		NJSR			_nsub_is_beam_player_selected
+		NJSR			_nsub_is_beamer_selected
 		SBCC			_sloc_8E32			; then there are two options
 		NJSR			_nsub_is_cur_buster_select_for_beam_player
 		SBCS			_sloc_8E4F
 _sloc_8E40:
 		SDELAY			$01					; here goes if buster not selected as beam player
-		NJSR			_nsub_is_catch_player_selected
+		NJSR			_nsub_is_catcher_selected
 		SBCC			_sloc_8E40			; then we just wait for chatch player selection
 		NJSR			_nsub_is_cur_buster_select_for_catch_player
 		SBCS			_sloc_8E55			; again two options
 		SUSPEND								; suspend, if buster not selected for anything
 _sloc_8E4F:									; here goes if buster were selected for beam player
 		SJSR			_ssub_louis_selected_base_anim
-		SJMP			_scr_beam_player_walk_common
+		SJMP			_scr_beamer_walk_common
 _sloc_8E55:									; here goest if buster were selected for catch player
 		SJSR			_ssub_louis_selected_base_anim
-		SJMP			_scr_catch_player_walk_common
+		SJMP			_scr_catcher_walk_common
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_louis_selected_base_anim:
@@ -1738,7 +1738,7 @@ _sound_test_mus_draw:
 		JSR		_bin2dec
 		LDX		#$07
 		LDY		#$15
-		JMP		_printfd
+		JMP		_print_num99999
 
 ; =============== S U B R O U T I N E =======================================
 _sound_test_se_draw:
@@ -1747,7 +1747,7 @@ _sound_test_se_draw:
 		JSR		_bin2dec
 		LDX		#$07
 		LDY		#$17
-		JMP		_printfd
+		JMP		_print_num99999
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_secret_menu_AB_input:
@@ -3952,15 +3952,15 @@ _nsub_end_spr_pal_anim:
 		INC		_scr_trds_args0,X
 		ASL
 		ASL
-		ADC		#<[byte_A7A8]
+		ADC		#<[_pal_end_sprite_lib]
 		PHA
 		LDA		#$00
-		ADC		#>[byte_A7A8]
+		ADC		#>[_pal_end_sprite_lib]
 		TAX
 		PLA
 		LDY		#$07
 		JMP		_patch_pal_load
-byte_A7A8:
+_pal_end_sprite_lib:
 		.BYTE	$0F,$31,$0F,$35,$0F,$31,$0F,$25,$0F,$31,$00,$15,$0F,$31,$00,$05
 		.BYTE	$0F,$31,$10,$15,$0F,$31,$10,$25,$0F,$31,$20,$35,$0F,$31,$20,$25
 		.BYTE	$0F,$31,$10,$15,$0F,$31,$10,$05,$0F,$31,$00,$15,$0F,$31,$00,$25
@@ -4890,17 +4890,17 @@ _tlm5_kanji_unused:
 		INCBIN	"..\tlm\tlm5.pak"
 _tlm6_copyrights:
 ; REGION, typo fixed partially in the EU version, however, only one, not the second one lol
-		INCBIN	"..\tlm\tlm6_jp.pak"
 ;		INCBIN	"..\tlm\tlm6_eu.pak"
 ; REGION, same typos as in the JP version, HAL lab changed to HAL america
 ;		INCBIN	"..\tlm\tlm6_us.pak"
+		INCBIN	"..\tlm\tlm6_jp.pak"
 ; -
 _tlm7_staff:
 		INCBIN	"..\tlm\tlm7.pak"
 _tlm8_HAL:
 ; REGION, different type of HAL logo for US region
-		INCBIN	"..\tlm\tlm8_halA.pak"
 ;		INCBIN	"..\tlm\tlm8_halB.pak"
+		INCBIN	"..\tlm\tlm8_halA.pak"
 ; -
 _tlm9_secret_menu:
 		INCBIN	"..\tlm\tlm9.pak"
