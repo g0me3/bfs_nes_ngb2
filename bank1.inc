@@ -2628,9 +2628,13 @@ _sloc_15716:
 			NARGB		$9C,$67,$03
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-; TODO: SJMP_SW here has only single case entry, but counter here is $02
+; BUG: SJMP_SW here has only single case entry, but counter here is $02
 ; this not cause any bugs, but incorrect.
+#if BUGFIXES==1
+		SJMP_SW			$01
+#else
 		SJMP_SW			$02
+#endif
 ; -
 		SCASE			_lvl5_room3_handler
 
@@ -3541,7 +3545,7 @@ loc_15EA2:
 		JSR		_room_draw						; redraw current room, all vars already
 		PLA										; initialized
 		JSR		_mmc1_chr1_set					; restore room background CHR bank
-		LDY		_near_room_door_data_pos		; there is a special case to
+		LDY		_active_door_data_pos			; there is a special case to
 		BMI		loc_15ED8						; also update currently opened door
 		INY										; if you pause nearby
 		INY
@@ -3595,23 +3599,23 @@ _pause_screen_anim:
 		JMP		_spr_clip_pause_player_insert
 
 off_15F18:
-		.WORD	_nsub_16444
-		.WORD	_nsub_164DE
-		.WORD	_nsub_1655A
-		.WORD	_nsub_16602
-		.WORD	_nsub_1663E
-		.WORD	_nsub_1667D
-		.WORD	_nsub_166C4
-		.WORD	_nsub_1670B
-		.WORD	_nsub_16736
-		.WORD	sub_1679C
-		.WORD	sub_167A0
-		.WORD	sub_167A4
-		.WORD	sub_167A8
-		.WORD	_nsub_1681A
-		.WORD	_nsub_16894
-		.WORD	_nsub_16913
-		.WORD	_nsub_16855
+		.WORD	_nsub_door00_open_draw
+		.WORD	_nsub_door01_open_draw
+		.WORD	_nsub_door02_open_draw
+		.WORD	_nsub_door03_open_draw
+		.WORD	_nsub_door04_open_draw
+		.WORD	_nsub_door05_open_draw
+		.WORD	_nsub_door06_open_draw
+		.WORD	_nsub_door07_open_draw
+		.WORD	_nsub_door08_open_draw
+		.WORD	_nsub_door09_open_draw
+		.WORD	_nsub_door0A_open_draw
+		.WORD	_nsub_door0B_open_draw
+		.WORD	_nsub_door0C_open_draw
+		.WORD	_nsub_door0D_open_draw
+		.WORD	_nsub_door0E_open_draw
+		.WORD	_nsub_door0F_open_draw
+		.WORD	_nsub_door10_open_draw
 
 _res_pause_pal:
 		.WORD	$3F00
@@ -3763,7 +3767,7 @@ loc_16050:
 		LDY		#$0A
 		JMP		_print_num99999
 
-_spr_raw_lib01_17:
+_spr_nlib01_17:
 		.BYTE	$10
 		.BYTE	$00,$8E,$03,$18
 		.BYTE	$00,$8C,$03,$10
@@ -3781,7 +3785,7 @@ _spr_raw_lib01_17:
 		.BYTE	$F0,$6C,$03,$F0
 		.BYTE	$F0,$6E,$03,$F8
 		.BYTE	$F0,$70,$03,$00
-_spr_raw_lib01_18:
+_spr_nlib01_18:
 		.BYTE	$10
 		.BYTE	$00,$8F,$03,$18
 		.BYTE	$00,$8D,$03,$10
@@ -3928,7 +3932,7 @@ loc_1621B:
 		CLC
 		RTS
 
-_spr_raw_lib01_15:
+_spr_nlib01_15:
 		.BYTE	$07
 		.BYTE	$F0,$3B,$22,$00
 		.BYTE	$00,$3D,$22,$08
@@ -3937,7 +3941,7 @@ _spr_raw_lib01_15:
 		.BYTE	$00,$1F,$22,$F8
 		.BYTE	$F0,$0D,$22,$F0
 		.BYTE	$F0,$1D,$22,$F8
-_spr_raw_lib01_16:
+_spr_nlib01_16:
 		.BYTE	$07
 		.BYTE	$00,$3D,$62,$F0
 		.BYTE	$00,$3F,$62,$F8
@@ -3953,33 +3957,33 @@ _spr_raw_lib01_16:
 
 ; =============== S C R I P T ===============================================
 _scr0C_room_doors_handler:
-		NBG_HNDL_SET	_nbgsub_room_doors_data_load
-		NJSR			_nsub_room_door_exit_allow_test
-		SBCC			_sloc_16284
-		SJSR_SW	$11
-		SCASE			_ssub_door00_open
-		SCASE			_ssub_door01_open
-		SCASE			_ssub_door02_open
-		SCASE			_ssub_door03_open
-		SCASE			_ssub_door04_open
-		SCASE			_ssub_door05_open
-		SCASE			_ssub_door06_open
-		SCASE			_ssub_door07_open
-		SCASE			_ssub_door08_open
-		SCASE			_ssub_door09_open
-		SCASE			_ssub_door0A_open
-		SCASE			_ssub_door0B_open
-		SCASE			_ssub_door0C_open
-		SCASE			_ssub_door0D_open
-		SCASE			_ssub_door0E_open
-		SCASE			_ssub_door0F_open
-		SCASE			_ssub_door10_open
+		NBG_HNDL_SET	_nbgsub_room_doors_data_load	; initialize the doors data on start
+		NJSR			_nsub_player_to_doors_collision_test	; now test if player appears at the door
+		SBCC			_sloc_16284						; in this case draw it open manually
+		SJSR_SW	$11										; without animation and sounds
+		SCASE			_ssub_door00_opened	; lvl1 face 2x2 regular
+		SCASE			_ssub_door01_opened	; lvl1 edge 1x2
+		SCASE			_ssub_door02_opened ; lvl2 face 2x1 regular
+		SCASE			_ssub_door03_opened ; lvl2 edge 1x2
+		SCASE			_ssub_door04_opened	; lvl2 face 1x2 train
+		SCASE			_ssub_door05_opened	; lvl3 face 2x2 regular A
+		SCASE			_ssub_door06_opened	; lvl3 face 2x2 regular B
+		SCASE			_ssub_door07_opened	; lvl3 face 2x2 regular B (diff open)
+		SCASE			_ssub_door08_opened	; lvl4 face 2x2 regular
+		SCASE			_ssub_door09_opened	; lvl4
+		SCASE			_ssub_door0A_opened ; lvl4
+		SCASE			_ssub_door0B_opened ; lvl4
+		SCASE			_ssub_door0C_opened ; lvl4
+		SCASE			_ssub_door0D_opened ; lvl4
+		SCASE			_ssub_door0E_opened
+		SCASE			_ssub_door0F_opened
+		SCASE			_ssub_door10_opened ; lvl4
 _sloc_16284:
-		SDELAY			$01
-		NJSR			_nsub_room_door_exit_allow_test
-		SBCC			_sloc_16284
+		SDELAY			$01								; or else skip to the main door handler loop
+		NJSR			_nsub_player_to_doors_collision_test	; test if players get near any door
+		SBCC			_sloc_16284						; then execute the door animation script
 		SJSR_SW	$11
-		SCASE			_ssub_door00_anim
+		SCASE			_ssub_door00_anim				; all dors has a sepatate ones
 		SCASE			_ssub_door01_anim
 		SCASE			_ssub_door02_anim
 		SCASE			_ssub_door03_anim
@@ -3999,15 +4003,20 @@ _sloc_16284:
 		SJMP			_sloc_16284
 
 ; =============== S U B R O U T I N E =======================================
+; pre-load the doors data into additional doors objects parameters array
+; which are used to handle objects-to-room collision tests in conjunction
+; with macro-tile based collision test. the main purpose is to detect any
+; solid obstacles on the way of any dynamic objects
+;
 _nbgsub_room_doors_data_load:
 		LDX		_cur_room_doors_cnt
 		LDY		#$00
 loc_162B8:
 		LDA		(_room_doors_data_ptr),Y
 		BMI		loc_162F7
-		CPY		_near_room_door_data_pos
+		CPY		_active_door_data_pos
 		BEQ		loc_162F0
-		STA		_obj_door_x_lo_poss+1,X
+		STA		_obj_door_x_lo_poss+1,X		; position of the door taken from arrays
 		INY
 		LDA		(_room_doors_data_ptr),Y
 		STA		_obj_door_x_hi_poss+1,X
@@ -4020,8 +4029,8 @@ loc_162B8:
 		INY
 		TYA
 		PHA
-		LDA		(_room_doors_data_ptr),Y
-		TAY
+		LDA		(_room_doors_data_ptr),Y	; diminsions are fixed for particular door
+		TAY									; and fetched from arrays additionally
 		LDA		_obj_doors_widths_list,Y
 		STA		_obj_doors_widths+1,X
 		LDA		_obj_doors_heights_list,Y
@@ -4044,22 +4053,20 @@ loc_162F7:
 		RTS
 
 _obj_doors_widths_list:
-		.BYTE	$10,$04,$10,$04,$08,$10,$10,$10,$10,$04,$04,$04,$04,$04,$10,$04
-		.BYTE	$04
+		.BYTE	$10,$04,$10,$04,$08,$10,$10,$10,$10,$04,$04,$04,$04,$04,$10,$04,$04
 _obj_doors_heights_list:
-		.BYTE	$0F,$10,$04,$10,$0F,$0F,$0F,$0F,$0F,$10,$10,$10,$10,$08,$0F,$10
-		.BYTE	$10
+		.BYTE	$0F,$10,$04,$10,$0F,$0F,$0F,$0F,$0F,$10,$10,$10,$10,$08,$0F,$10,$10
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_room_doors_handler_and_data_init:
-		JSR		_scr_getc
+		JSR		_scr_getc						; initialize doors data pointer
 		STA		_room_doors_data_ptr
 		JSR		_scr_getc
 		STA		_room_doors_data_ptr+1
 		LDA		#$FF
-		STA		_near_room_door_data_pos
-		STA		_scr_trds_idx+1
-		LDA		#$01
+		STA		_active_door_data_pos			; init to make sure this thread will
+		STA		_scr_trds_idx+1					; load in slot 01
+		LDA		#$01							; also run the doors handler thread
 		STA		_var4
 		LDA		#$02
 		STA		_var5
@@ -4067,51 +4074,51 @@ _nsub_room_doors_handler_and_data_init:
 		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_room_door_exit_allow_test:
-		LDA		#$00
-		STA		_near_room_door_data_pos
+_nsub_player_to_doors_collision_test:
+		LDA		#$00							; now doors thread constantly polling
+		STA		_active_door_data_pos			; this routine
 loc_16341:
-		LDY		_near_room_door_data_pos
+		LDY		_active_door_data_pos			; fetch all doors data from array
 		LDA		(_room_doors_data_ptr),Y
 		BMI		loc_16366
-		JSR		_room_door_screen_pos_calc
+		JSR		_room_door_screen_pos_calc		; calculates its screen position
 		BCS		loc_1635B
 		LDA		#$02
-		JSR		_obj_to_room_door_distance_test
-		BCC		loc_1636B
-		LDA		#$04
+		JSR		_obj_to_room_door_distance_test	; test distance to both players.
+		BCC		loc_1636B						; yes, catcher can't open the door
+		LDA		#$04							; but he definitely don't let it to close
 		JSR		_obj_to_room_door_distance_test
 		BCC		loc_1636B
 loc_1635B:
-		LDA		_near_room_door_data_pos
+		LDA		_active_door_data_pos			; skip if no doors nearby
 		CLC
 		ADC		#$07
-		STA		_near_room_door_data_pos
+		STA		_active_door_data_pos
 		BNE		loc_16341
 loc_16366:
-		STA		_near_room_door_data_pos
+		STA		_active_door_data_pos			; and exit
 		CLC
 		RTS
 loc_1636B:
-		TYA
+		TYA										; if nearby door detected
 		PHA
-		LDY		_near_room_door_data_pos
+		LDY		_active_door_data_pos			; load its offset in data array
+		INY										; calculated during tests
 		INY
 		INY
 		INY
 		INY
-		INY
-		LDA		(_room_doors_data_ptr),Y
+		LDA		(_room_doors_data_ptr),Y		; fetch the door native handler
 		STA		_ptr06
 		INY
 		LDA		(_room_doors_data_ptr),Y
 		STA		_ptr06+1
 		PLA
 		TAY
-		JSR		_jump_ptr_ind
-		BCC		loc_1635B
-		LDX		_scr_cur_trd_idx
-		LDY		_near_room_door_data_pos
+		JSR		_jump_ptr_ind					; and run it, if door allowed to open
+		BCC		loc_1635B						; CARRY=1 returned
+		LDX		_scr_cur_trd_idx				; if so, load current door coordinates
+		LDY		_active_door_data_pos			; as current thread object sprite coordinates
 		LDA		(_room_doors_data_ptr),Y
 		STA		_scr_trds_x_pos_hi,X
 		INY
@@ -4129,10 +4136,10 @@ loc_1636B:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_players_to_near_room_door_distance_test:
-		JSR		_near_room_door_screen_pos_calc
-		LDA		#$02
-		JSR		_obj_to_room_door_distance_test
+_nsub_is_players_near_active_door:
+		JSR		_active_door_screen_pos_calc	; performs the door collision tests
+		LDA		#$02							; for currently opened nearby door
+		JSR		_obj_to_room_door_distance_test	; for both players
 		BCC		locret_163B3
 		LDA		#$04
 		JSR		_obj_to_room_door_distance_test
@@ -4141,9 +4148,9 @@ locret_163B3:
 
 ; =============== S U B R O U T I N E =======================================
 _obj_to_room_door_distance_test:
-		STA		_tmp0
-		TXA
-		PHA
+		STA		_tmp0							; special collision test for doors
+		TXA										; uses fixed activation area for it
+		PHA										; 32x32 pixels
 		TYA
 		PHA
 		LDX		_tmp0
@@ -4173,14 +4180,16 @@ locret_163E0:
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
-_near_room_door_screen_pos_calc:
-		LDY		_near_room_door_data_pos
-		LDA		(_room_doors_data_ptr),Y
+_active_door_screen_pos_calc:
+		LDY		_active_door_data_pos			; calculated door screen pos for
+		LDA		(_room_doors_data_ptr),Y		; active nearby door only
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
 _room_door_screen_pos_calc:
-		STA		_tmp_var0
-		INY
+		STA		_tmp_var0						; calculate door screen pos for
+		INY										; selected position of data
 		LDA		(_room_doors_data_ptr),Y
 		TAX
 		INY
@@ -4193,29 +4202,29 @@ _room_door_screen_pos_calc:
 
 ; =============== S U B R O U T I N E =======================================
 _room_door_always_open:
-		SEC
+		SEC										; default handler for always open door
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _room_door_always_closed:
-		CLC
+		CLC										; the same for doors always closed
 		RTS
 
 ; =============== S U B R O U T I N E =======================================
 _room_door_gen_clear_open:
-		STX		_tmp1
-		LDX		#$06
-loc_16400:
-		LDA		_scr_trds_idx,X
+		STX		_tmp1							; this is the main routine to test
+		LDX		#$06							; if all enemy objects in the room are
+loc_16400:										; gone
+		LDA		_scr_trds_idx,X					; fetch object index
 		BMI		loc_16409
-		CMP		#$13
-		BCS		loc_16419
+		CMP		#$13							; all objects above 13 are enemies
+		BCS		loc_16419						; others aren't preventing doors to be shut
 loc_16409:
 		INX
 		CPX		#$0E
 		BCC		loc_16400
-		LDX		_tmp1
-		LDA		#$02
+		LDX		_tmp1							; here is the additional test to be sure
+		LDA		#$02							; this is the main player want to open it
 		JSR		_obj_to_room_door_distance_test
 		BCS		loc_16419
 		SEC
@@ -4225,53 +4234,57 @@ loc_16419:
 		RTS
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door00_open:
-		NJSR			_nsub_16444
-		SJMP			_sloc_1642C
+_ssub_door00_opened:
+		NJSR			_nsub_door00_open_draw	; skip sound and open animation
+		SJMP			_ssub_door00_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door00_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16444
-		SPR_IDX_SET		6,$00
-		SPR_IDX_SET		0,$FF
-_sloc_1642C:
-		SJSR			_ssub_1643B
-		NJSR			_nsub_apu_snd_load_safe
+		NJSR			_nsub_door00_open_draw
+		SPR_IDX_SET		6,$00					; there are only one additional
+		SPR_IDX_SET		0,$FF					; phase for door opening, then disable sprite
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door00_wait:
+		SJSR			_ssub_wait_for_door_is_inactive	; now wait for players leave the door area
+		NJSR			_nsub_apu_snd_load_safe	; in this case play shut down sound
 			NARGB		$06
-		SPR_IDX_SET		6,$00
-		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_1644F
+		SPR_IDX_SET		6,$00					; and animate door close the same way it was
+		SPR_IDX_SET		0,$FF					; animated open
+		NJSR			_nsub_door00_close_draw	; now draw meta tile for closed door
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_1643B:
-		SDELAY			$01
-		NJSR			_nsub_players_to_near_room_door_distance_test
-		SBCC			_ssub_1643B
+_ssub_wait_for_door_is_inactive:
+		SDELAY			$01						; common routine for waiting the players to
+		NJSR			_nsub_is_players_near_active_door	; leave active door area
+		SBCC			_ssub_wait_for_door_is_inactive
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16444:
-		LDA		#<[byte_1644B]
-		LDX		#>[byte_1644B]
-		JMP		sub_1645A
-byte_1644B:
+_nsub_door00_open_draw:
+		LDA		#<[_mac_door00_open]
+		LDX		#>[_mac_door00_open]
+		JMP		_door_macro_drawA
+_mac_door00_open:
 		.BYTE	$14,$14,$14,$14
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1644F:
-		LDA		#<[byte_16456]
-		LDX		#>[byte_16456]
-		JMP		sub_1645A
-byte_16456:
+_nsub_door00_close_draw:
+		LDA		#<[_mac_door00_close]
+		LDX		#>[_mac_door00_close]
+		JMP		_door_macro_drawA
+_mac_door00_close:
 		.BYTE	$0A,$1A,$0B,$1B
 
 ; =============== S U B R O U T I N E =======================================
-sub_1645A:
-		STA		_ptr06
-		STX		_ptr06+1
+_door_macro_drawA:
+		STA		_ptr06						; draw the face oriented doors (2x2)
+		STX		_ptr06+1					; based on the object sprite coordinates
 		LDY		#$03
 loc_16460:
 		TYA
@@ -4284,17 +4297,17 @@ loc_16460:
 		PHA
 		LDA		_scr_trds_x_pos_lo+1
 		CLC
-		ADC		byte_1649D,Y
+		ADC		_door_x_lo_deltasA,Y
 		PHA
 		LDA		_scr_trds_x_pos_hi+1
-		ADC		byte_164A1,Y
+		ADC		_door_x_hi_deltasA,Y
 		STA		_tmp_var0
 		LDA		_scr_trds_y_pos_lo+1
 		CLC
-		ADC		byte_164A5,Y
+		ADC		_door_y_lo_deltasA,Y
 		PHA
 		LDA		_scr_trds_y_pos_hi+1
-		ADC		byte_164A9,Y
+		ADC		_door_y_hi_deltasA,Y
 		STA		_tmp_var1
 		PLA
 		TAY
@@ -4311,16 +4324,16 @@ loc_16460:
 		DEY
 		BPL		loc_16460
 		RTS
-byte_1649D:
+_door_x_lo_deltasA:
 		.BYTE	$F0,$00,$F0,$00
-byte_164A1:
+_door_x_hi_deltasA:
 		.BYTE	$FF,$00,$FF,$00
-byte_164A5:
+_door_y_lo_deltasA:
 		.BYTE	$F0,$F0,$00,$00
-byte_164A9:
+_door_y_hi_deltasA:
 		.BYTE	$FF,$FF,$00,$00
 
-_spr_raw_lib01_00:
+_spr_nlib01_00:
 		.BYTE	$04
 		.BYTE	$F0,$31,$43,$08
 		.BYTE	$00,$33,$43,$08
@@ -4328,46 +4341,53 @@ _spr_raw_lib01_00:
 		.BYTE	$F0,$31,$03,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door01_open:
-		NJSR			_nsub_164DE
-		SJMP			_sloc_164CF
+_ssub_door01_opened:
+		NJSR			_nsub_door01_open_draw
+		SJMP			_ssub_door01_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door01_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_164DE
+		NJSR			_nsub_door01_open_draw
 		SPR_IDX_SET		6,$01
 		SPR_IDX_SET		0,$FF
-_sloc_164CF:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door01_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$01
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_164E7
+		NJSR			_nsub_door01_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_164DE:
-		LDA		#<[byte_164E5]
-		LDX		#>[byte_164E5]
-		JMP		sub_164F0
-byte_164E5:
+_nsub_door01_open_draw:
+		LDA		#<[_mac_door01_open]
+		LDX		#>[_mac_door01_open]
+		JMP		_door_macro_drawB
+_mac_door01_open:
 		.BYTE	$00,$00
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_164E7:
-		LDA		#<[byte_164EE]
-		LDX		#>[byte_164EE]
-		JMP		sub_164F0
-byte_164EE:
+_nsub_door01_close_draw:
+		LDA		#<[_mac_door01_close]
+		LDX		#>[_mac_door01_close]
+		JMP		_door_macro_drawB
+_mac_door01_close:
 		.BYTE	$29,$29
 
 ; =============== S U B R O U T I N E =======================================
-sub_164F0:
-		STA		_ptr06
-		STX		_ptr06+1
+; TODO: this routine may be merged with common routine if rearranged the
+; deltas tables and you may use just one sub with different Y as argument
+; Y=1 for 1x2 tiles and Y=3 for 2x2 tiles
+_door_macro_drawB:
+		STA		_ptr06						; for edge-oriented doors in
+		STX		_ptr06+1					; vertical arrangement (1x2)
 		LDY		#$01
 loc_164F6:
 		TYA
@@ -4383,10 +4403,10 @@ loc_164F6:
 		STA		_tmp_var0
 		LDA		_scr_trds_y_pos_lo+1
 		CLC
-		ADC		byte_16529,Y
+		ADC		_door_y_lo_deltasB,Y
 		PHA
 		LDA		_scr_trds_y_pos_hi+1
-		ADC		byte_1652B,Y
+		ADC		_door_y_hi_deltasB,Y
 		STA		_tmp_var1
 		PLA
 		TAY
@@ -4401,82 +4421,102 @@ loc_164F6:
 		DEY
 		BPL		loc_164F6
 		RTS
-byte_16529:
+_door_y_lo_deltasB:
 		.BYTE	$F0,$00
-byte_1652B:
+_door_y_hi_deltasB:
 		.BYTE	$FF,$00
-_spr_raw_lib01_01:
+
+_spr_nlib01_01:
 		.BYTE	$02
 		.BYTE	$F0,$EF,$83,$00
 		.BYTE	$00,$EF,$03,$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door02_open:
-		NJSR			_nsub_1655A
-		SJMP			_sloc_16549
+_ssub_door02_opened:
+		NJSR			_nsub_door02_open_draw
+		SJMP			_ssub_door02_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door02_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_1655A
-		SPR_IDX_SET		2,$02
-		SPR_IDX_INC		2
+		NJSR			_nsub_door02_open_draw
+		SPR_IDX_SET		2,$02						; this is a mine door, it has
+		SPR_IDX_INC		2							; a lot more detailed animation
 		SPR_IDX_INC		2
 		SPR_IDX_SET		0,$FF
-_sloc_16549:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door02_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		2,$04
 		SPR_IDX_DEC		2
 		SPR_IDX_DEC		2
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_16583
+		NJSR			_nsub_door02_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1655A:
-		LDY		#$01
-loc_1655C:
-		TYA
+_nsub_door02_open_draw:
+		LDY		#$01								; also there is a custom routine
+loc_1655C:											; to draw horizontal arranged door
+		TYA											; tiles (2x1)
 		PHA
 		LDA		_scr_trds_x_pos_lo+1
 		CLC
-		ADC		byte_1657F,Y
+		ADC		_door02_x_lo_deltaA,Y
 		TAX
 		LDA		_scr_trds_x_pos_hi+1
-		ADC		byte_16581,Y
+		ADC		_door02_x_hi_deltaA,Y
 		STA		_tmp_var0
 		LDY		_scr_trds_y_pos_lo+1
 		LDA		_scr_trds_y_pos_hi+1
 		STA		_tmp_var1
-		LDA		#$14
-		JSR		_ppu_macro_block_draw
+		LDA		#$14								; both open macros are the same here
+		JSR		_ppu_macro_block_draw				; hardcoded as a constant
 		PLA
 		TAY
 		DEY
 		BPL		loc_1655C
 		RTS
-byte_1657F:
+_door02_x_lo_deltaA:
 		.BYTE	$F0,$00
-byte_16581:
+_door02_x_hi_deltaA:
 		.BYTE	$FF,$00
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16583:
-		LDY		#$03
-loc_16585:
+_nsub_door02_close_draw:
+; BUG: here routine to draw 2x1 macro tile blocks fetches arrays out of range
+; all arrays here size 2, but this initialization set it for 4. so with first
+; two draws it will send garbage to the room tilemap, and the last two is ok.
+; for horizontal mirrored areas this is effect is invisible, but for vertical
+; ones you could see it if open the door, but not keep going further and return
+; back to first room section... SCREENSHOT TAKEN
+; this bug present in the EU version as well.
+;
+#if BUGFIXES==1
+; TODO, with index 01 set here, this routine turns the same as for open draw
+; so we may remove redundancy and merge both in one.
+;
+		LDY		#$01
+#else
+		LDY		#$03								; another custom routine to draw custom
+#endif
+loc_16585:											; mine doors in horizontal arrangement
 		TYA
 		PHA
-		LDA		byte_165AB,Y
+		LDA		_mac_door2_closed,Y					; two macroses hardcoded in array
 		PHA
 		LDA		_scr_trds_x_pos_lo+1
 		CLC
-		ADC		byte_1657F,Y
+		ADC		_door02_x_lo_deltaA,Y
 		TAX
 		LDA		_scr_trds_x_pos_hi+1
-		ADC		byte_16581,Y
+		ADC		_door02_x_hi_deltaA,Y
 		STA		_tmp_var0
 		LDY		_scr_trds_y_pos_lo+1
 		LDA		_scr_trds_y_pos_hi+1
@@ -4488,9 +4528,10 @@ loc_16585:
 		DEY
 		BPL		loc_16585
 		RTS
-byte_165AB:
+_mac_door2_closed:
 		.BYTE	$0B,$1B
-_spr_raw_lib01_02:
+
+_spr_nlib01_02:
 		.BYTE	$06
 		.BYTE	$0B,$F9,$43,$00
 		.BYTE	$0B,$F9,$43,$F8
@@ -4498,142 +4539,155 @@ _spr_raw_lib01_02:
 		.BYTE	$F8,$FB,$03,$00
 		.BYTE	$F8,$EB,$03,$F8
 		.BYTE	$F8,$DB,$03,$F0
-_spr_raw_lib01_03:
+_spr_nlib01_03:
 		.BYTE	$04
 		.BYTE	$0B,$F9,$03,$F8
 		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F8,$DD,$03,$F8
 		.BYTE	$F8,$CD,$03,$F0
-_spr_raw_lib01_04:
+_spr_nlib01_04:
 		.BYTE	$02
 		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F4,$CB,$03,$F1
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door03_open:
-		NJSR			_nsub_16602
-		SJMP			_sloc_165F2
+_ssub_door03_opened:
+		NJSR			_nsub_door03_open_draw
+		SJMP			_ssub_door03_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door03_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16602
-		SPR_IDX_SET		3,$05
-		SPR_IDX_INC		3
+		NJSR			_nsub_door03_open_draw
+		SPR_IDX_SET		3,$05					; this is a door for train
+		SPR_IDX_INC		3						; aprt of lvl2
 		SPR_IDX_SET		0,$FF
-_sloc_165F2:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door03_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		3,$06
 		SPR_IDX_DEC		3
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_1660B
+		NJSR			_nsub_door03_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16602:
-		LDA		#<[byte_16609]
-		LDX		#>[byte_16609]
-		JMP		sub_164F0
-byte_16609:
+_nsub_door03_open_draw:
+		LDA		#<[_mac_door03_open]			; this is 1x2 door so utilizes
+		LDX		#>[_mac_door03_open]			; one of common routines to draw
+		JMP		_door_macro_drawB				; vertical 1x2 macroses
+_mac_door03_open:
 		.BYTE	$2C,$14
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1660B:
-		LDA		#<[byte_16612]
-		LDX		#>[byte_16612]
-		JMP		sub_164F0
-byte_16612:
+_nsub_door03_close_draw:
+		LDA		#<[_mac_door03_close]
+		LDX		#>[_mac_door03_close]
+		JMP		_door_macro_drawB
+_mac_door03_close:
 		.BYTE	$D3,$D2
 
-_spr_raw_lib01_05:
+_spr_nlib01_05:
 		.BYTE	$01
 		.BYTE	$00,$D9,$03,$FF
-_spr_raw_lib01_06:
+_spr_nlib01_06:
 		.BYTE	$01
 		.BYTE	$00,$E9,$03,$FF
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door04_open:
-		NJSR			_nsub_1663E
-		SJMP			_sloc_1662F
+_ssub_door04_opened:
+		NJSR			_nsub_door04_open_draw
+		SJMP			_ssub_door04_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door04_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_1663E
+		NJSR			_nsub_door04_open_draw
 		SPR_IDX_SET		6,$07
 		SPR_IDX_SET		0,$FF
-_sloc_1662F:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door04_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$07
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_16649
+		NJSR			_nsub_door04_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1663E:
-		LDA		#<[byte_16645]
-		LDX		#>[byte_16645]
-		JMP		sub_1645A
-byte_16645:
+_nsub_door04_open_draw:
+		LDA		#<[_mac_door04_open]
+		LDX		#>[_mac_door04_open]
+		JMP		_door_macro_drawA
+_mac_door04_open:
 		.BYTE	$87,$97,$88,$98
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16649:
-		LDA		#<[byte_16650]
-		LDX		#>[byte_16650]
-		JMP		sub_1645A
-byte_16650:
+_nsub_door04_close_draw:
+		LDA		#<[_mac_door04_close]
+		LDX		#>[_mac_door04_close]
+		JMP		_door_macro_drawA
+_mac_door04_close:
 		.BYTE	$D4,$D6,$D5,$D7
 
-_spr_raw_lib01_07:
+_spr_nlib01_07:
 		.BYTE	$02
 		.BYTE	$F0,$AF,$40,$F8
 		.BYTE	$00,$8B,$40,$F8
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door05_open:
-		NJSR			_nsub_1667D
+_ssub_door05_opened:
+		NJSR			_nsub_door05_open_draw
 		SJMP			_sloc_1666E
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door05_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_1667D
+		NJSR			_nsub_door05_open_draw
 		SPR_IDX_SET		6,$08
 		SPR_IDX_SET		0,$FF
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sloc_1666E:
-		SJSR			_ssub_1643B
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$08
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_16688
+		NJSR			_nsub_door05_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1667D:
-		LDA		#<[byte_16684]
-		LDX		#>[byte_16684]
-		JMP		sub_1645A
-byte_16684:
+_nsub_door05_open_draw:
+		LDA		#<[_mac_door05_open]
+		LDX		#>[_mac_door05_open]
+		JMP		_door_macro_drawA
+_mac_door05_open:
 		.BYTE	$01,$01,$01,$01
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16688:
-		LDA		#<[byte_1668F]
-		LDX		#>[byte_1668F]
-		JMP		sub_1645A
-byte_1668F:
+_nsub_door05_close_draw:
+		LDA		#<[_mac_door05_close]
+		LDX		#>[_mac_door05_close]
+		JMP		_door_macro_drawA
+_mac_door05_close:
 		.BYTE	$0A,$1A,$0B,$1B
-_spr_raw_lib01_08:
+
+_spr_nlib01_08:
 		.BYTE	$04
 		.BYTE	$00,$43,$02,$08
 		.BYTE	$F0,$41,$02,$08
@@ -4641,42 +4695,47 @@ _spr_raw_lib01_08:
 		.BYTE	$00,$43,$42,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door06_open:
-		NJSR			_nsub_166C4
-		SJMP			_sloc_166B5
+_ssub_door06_opened:
+		NJSR			_nsub_door06_open_draw
+		SJMP			_ssub_door06_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door06_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_166C4
+		NJSR			_nsub_door06_open_draw
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
-_sloc_166B5:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door06_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$0A
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_166CF
+		NJSR			_nsub_door06_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_166C4:
-		LDA		#<[byte_166CB]
-		LDX		#>[byte_166CB]
-		JMP		sub_1645A
-byte_166CB:
+_nsub_door06_open_draw:
+		LDA		#<[_mac_door06_open]
+		LDX		#>[_mac_door06_open]
+		JMP		_door_macro_drawA
+_mac_door06_open:
 		.BYTE	$00,$00,$00,$00
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_166CF:
-		LDA		#<[byte_166D6]
-		LDX		#>[byte_166D6]
-		JMP		sub_1645A
-byte_166D6:
+_nsub_door06_close_draw:
+		LDA		#<[_mac_door06_close]
+		LDX		#>[_mac_door06_close]
+		JMP		_door_macro_drawA
+_mac_door06_close:
 		.BYTE	$40,$50,$41,$51
-_spr_raw_lib01_09:
+
+_spr_nlib01_09:
 		.BYTE	$04
 		.BYTE	$00,$23,$02,$08
 		.BYTE	$F0,$21,$02,$08
@@ -4684,337 +4743,397 @@ _spr_raw_lib01_09:
 		.BYTE	$F0,$31,$02,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door07_open:
-		NJSR			_nsub_1670B
-		SJMP			_sloc_166FC
+_ssub_door07_opened:
+		NJSR			_nsub_door07_open_draw
+		SJMP			_ssub_door07_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door07_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_1670B
+		NJSR			_nsub_door07_open_draw
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
-_sloc_166FC:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door07_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_166CF
-		SRET
+		NJSR			_nsub_door06_close_draw		; closed state for both doors are
+		SRET										; the same here, open are different
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1670B:
-		LDA		#<[byte_16712]
-		LDX		#>[byte_16712]
-		JMP		sub_1645A
-byte_16712:
+_nsub_door07_open_draw:
+		LDA		#<[_mac_door07_open]
+		LDX		#>[_mac_door07_open]
+		JMP		_door_macro_drawA
+_mac_door07_open:
 		.BYTE	$26,$26,$26,$26
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door08_open:
-		NJSR			_nsub_16736
-		SJMP			_sloc_16727
+_ssub_door08_opened:
+		NJSR			_nsub_door08_open_draw
+		SJMP			_ssub_door08_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door08_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16736
+		NJSR			_nsub_door08_open_draw
 		SPR_IDX_SET		6,$0A
 		SPR_IDX_SET		0,$FF
-_sloc_16727:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door08_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0A
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_16741
+		NJSR			_nsub_door08_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16736:
-		LDA		#<[byte_1673D]
-		LDX		#>[byte_1673D]
-		JMP		sub_1645A
-byte_1673D:
+_nsub_door08_open_draw:
+		LDA		#<[_mac_door08_open]
+		LDX		#>[_mac_door08_open]
+		JMP		_door_macro_drawA
+_mac_door08_open:
 		.BYTE	$20,$20,$96,$97
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16741:
-		LDA		#<[byte_16748]
-		LDX		#>[byte_16748]
-		JMP		sub_1645A
-byte_16748:
+_nsub_door08_close_draw:
+		LDA		#<[_mac_door08_close]
+		LDX		#>[_mac_door08_close]
+		JMP		_door_macro_drawA
+_mac_door08_close:
 		.BYTE	$8B,$8D,$8C,$8E
 
-_spr_raw_lib01_0A:
+_spr_nlib01_0A:
 		.BYTE	$04
 		.BYTE	$00,$CF,$00,$08
 		.BYTE	$00,$CF,$00,$00
 		.BYTE	$00,$CF,$00,$F0
 		.BYTE	$00,$CF,$00,$F8
 
+; TODO: from this point for some reasons, the developers start to merge
+; and optimize door drawing routines also for data offset loading functions.
+; mostly because all other levels has no more than 3 different kind of doors
+; but this time we have 4 same kinds at the same time...
+; not sure if they get some bytes from this, but they definitely has to
+; add more wrapper functions to support these optimizations. check this
+; carefully and maybe switch all to such cases or in the other hand
+; convert all to previous methods of sending data.
+
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door09_open:
+_ssub_door09_opened:
 		SARG_SET		SARG0,$00
-_sloc_16760:
-		NJSR			_nsub_16787
-		SJMP			_sloc_16774
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_lvl4_doos_openedB:
+		NJSR			_nsub_lvl4_doors_open_drawB
+		SJMP			_ssub_lvl4_doos_waitB
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door09_anim:
 		SARG_SET		SARG0,$00
-_sloc_16769:
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_lvl4_doos_animB:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16787
+		NJSR			_nsub_lvl4_doors_open_drawB
 		SPR_IDX_SET		6,$0B
 		SPR_IDX_SET		0,$FF
-_sloc_16774:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_lvl4_doos_waitB:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0B
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_167AC
+		NJSR			_nsub_lvl4_doors_close_drawB
 		SRET
-byte_16783:
+
+_mac_door09_open:
 		.BYTE	$17,$98
-byte_16785:
+_mac_door09_close:
 		.BYTE	$95,$91
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16787:
+_nsub_lvl4_doors_open_drawB:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_args0,X
 
-; =============== S U B R O U T I N E =======================================
-sub_1678B:
-		LDA		off_16794,Y
-		LDX		off_16798,Y
-		JMP		sub_164F0
-off_16794:
-		.BYTE	<[byte_16783]
-		.BYTE	<[byte_167D6]
-		.BYTE	<[byte_167E6]
-		.BYTE	<[byte_167F6]
-off_16798:
-		.BYTE	>[byte_16783]
-		.BYTE	>[byte_167D6]
-		.BYTE	>[byte_167E6]
-		.BYTE	>[byte_167F6]
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E =======================================
-sub_1679C:
+_nsub_lvl4_doors_open_drawB_ex:
+		LDA		_lvl4_mac_open_lib_lo,Y
+		LDX		_lvl4_mac_open_lib_hi,Y
+		JMP		_door_macro_drawB
+_lvl4_mac_open_lib_lo:
+		.BYTE	<[_mac_door09_open]
+		.BYTE	<[_mac_door0A_open]
+		.BYTE	<[_mac_door0B_open]
+		.BYTE	<[_mac_door0C_open]
+_lvl4_mac_open_lib_hi:
+		.BYTE	>[_mac_door09_open]
+		.BYTE	>[_mac_door0A_open]
+		.BYTE	>[_mac_door0B_open]
+		.BYTE	>[_mac_door0C_open]
+
+; =============== S U B R O U T I N E =======================================
+; NOTE: manual selection of the door open routines to be used in pause
+; screen to restore currently opened door after return from pause mode
+; since they optimized it with indexed arrays instead of using
+; direct offset loading as usual...
+;
+_nsub_door09_open_draw:
 		LDY		#$00
-		BEQ		sub_1678B
+		BEQ		_nsub_lvl4_doors_open_drawB_ex
 
 ; =============== S U B R O U T I N E =======================================
-sub_167A0:
+_nsub_door0A_open_draw:
 		LDY		#$01
-		BNE		sub_1678B
+		BNE		_nsub_lvl4_doors_open_drawB_ex
 
 ; =============== S U B R O U T I N E =======================================
-sub_167A4:
+_nsub_door0B_open_draw:
 		LDY		#$02
-		BNE		sub_1678B
+		BNE		_nsub_lvl4_doors_open_drawB_ex
 
 ; =============== S U B R O U T I N E =======================================
-sub_167A8:
+_nsub_door0C_open_draw:
 		LDY		#$03
-		BNE		sub_1678B
+		BNE		_nsub_lvl4_doors_open_drawB_ex
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_167AC:
+; no need to call it from any wrappers this time
+;
+_nsub_lvl4_doors_close_drawB:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_args0,X
-		LDA		off_167B9,Y
-		LDX		off_167BD,Y
-		JMP		sub_164F0
-off_167B9:
-		.BYTE	<[byte_16785]
-		.BYTE	<[byte_167D8]
-		.BYTE	<[byte_167E8]
-		.BYTE	<[byte_167F8]
-off_167BD:
-		.BYTE	>[byte_16785]
-		.BYTE	>[byte_167D8]
-		.BYTE	>[byte_167E8]
-		.BYTE	>[byte_167F8]
-_spr_raw_lib01_0B:
+		LDA		_lvl4_mac_close_lib_lo,Y
+		LDX		_lvl4_mac_close_lib_hi,Y
+		JMP		_door_macro_drawB
+_lvl4_mac_close_lib_lo:
+		.BYTE	<[_mac_door09_close]
+		.BYTE	<[_mac_door0A_close]
+		.BYTE	<[_mac_door0B_close]
+		.BYTE	<[_mac_door0C_close]
+_lvl4_mac_close_lib_hi:
+		.BYTE	>[_mac_door09_close]
+		.BYTE	>[_mac_door0A_close]
+		.BYTE	>[_mac_door0B_close]
+		.BYTE	>[_mac_door0C_close]
+
+_spr_nlib01_0B:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$00
 		.BYTE	$00,$DF,$00,$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door0A_open:
+_ssub_door0A_opened:
 		SARG_SET		SARG0,$01
-		SJMP			_sloc_16760
+		SJMP			_ssub_lvl4_doos_openedB
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door0A_anim:
 		SARG_SET		SARG0,$01
-		SJMP			_sloc_16769
-byte_167D6:
+		SJMP			_ssub_lvl4_doos_animB
+
+_mac_door0A_open:
 		.BYTE	$4E,$98
-byte_167D8:
+_mac_door0A_close:
 		.BYTE	$99,$91
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door0B_open:
+_ssub_door0B_opened:
 		SARG_SET		SARG0,$02
-		SJMP			_sloc_16760
+		SJMP			_ssub_lvl4_doos_openedB
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door0B_anim:
 		SARG_SET		SARG0,$02
-		SJMP			_sloc_16769
-byte_167E6:
+		SJMP			_ssub_lvl4_doos_animB
+
+_mac_door0B_open:
 		.BYTE	$51,$9B
-byte_167E8:
+_mac_door0B_close:
 		.BYTE	$8F,$9A
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door0C_open:
+_ssub_door0C_opened:
 		SARG_SET		SARG0,$03
-		SJMP			_sloc_16760
+		SJMP			_ssub_lvl4_doos_openedB
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door0C_anim:
 		SARG_SET		SARG0,$03
-		SJMP			_sloc_16769
-byte_167F6:
+		SJMP			_ssub_lvl4_doos_animB
+
+_mac_door0C_open:
 		.BYTE	$22,$98
-byte_167F8:
+_mac_door0C_close:
 		.BYTE	$90,$91
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door0D_open:
-		NJSR			_nsub_1681A
+_ssub_door0D_opened:
+		NJSR			_nsub_door0D_open_draw
 		SJMP			_sloc_1680B
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
+; the difference between previous doors and this one in
+; open animation scprite. it's different now, so they put it
+; in a separate script case...
+;
 _ssub_door0D_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_1681A
+		NJSR			_nsub_door0D_open_draw
 		SPR_IDX_SET		6,$0C
 		SPR_IDX_SET		0,$FF
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sloc_1680B:
-		SJSR			_ssub_1643B
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0C
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_16823
+		NJSR			_nsub_door0D_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1681A:
-		LDA		#<[byte_16821]
-		LDX		#>[byte_16821]
-		JMP		sub_164F0
-byte_16821:
+_nsub_door0D_open_draw:
+		LDA		#<[_mac_door0D_open]
+		LDX		#>[_mac_door0D_open]
+		JMP		_door_macro_drawB
+_mac_door0D_open:
 		.BYTE	$20,$96
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16823:
-		LDA		#<[byte_1682A]
-		LDX		#>[byte_1682A]
-		JMP		sub_164F0
-byte_1682A:
+_nsub_door0D_close_draw:
+		LDA		#<[_mac_door0D_close]
+		LDX		#>[_mac_door0D_close]
+		JMP		_door_macro_drawB
+_mac_door0D_close:
 		.BYTE	$8B,$8C
-_spr_raw_lib01_0C:
+
+_spr_nlib01_0C:
 		.BYTE	$02
 		.BYTE	$00,$CF,$00,$08
 		.BYTE	$00,$CF,$00,$00
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door10_open:
-		NJSR			_nsub_16855
-		SJMP			_sloc_16846
+_ssub_door10_opened:
+		NJSR			_nsub_door10_open_draw
+		SJMP			_ssub_door10_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door10_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16855
+		NJSR			_nsub_door10_open_draw
 		SPR_IDX_SET		6,$0D
 		SPR_IDX_SET		0,$FF
-_sloc_16846:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door10_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$0D
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_1685E
+		NJSR			_nsub_door10_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16855:
-		LDA		#<[byte_1685C]
-		LDX		#>[byte_1685C]
-		JMP		sub_164F0
-byte_1685C:
+_nsub_door10_open_draw:
+		LDA		#<[_mac_door10_open]
+		LDX		#>[_mac_door10_open]
+		JMP		_door_macro_drawB
+_mac_door10_open:
 		.BYTE	$22,$9E
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1685E:
-		LDA		#<[byte_16865]
-		LDX		#>[byte_16865]
-		JMP		sub_164F0
-byte_16865:
+_nsub_door10_close_draw:
+		LDA		#<[_mac_door10_close]
+		LDX		#>[_mac_door10_close]
+		JMP		_door_macro_drawB
+_mac_door10_close:
 		.BYTE	$9C,$9D
 
-_spr_raw_lib01_0D:
+_spr_nlib01_0D:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$08
 		.BYTE	$00,$DF,$00,$08
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door0E_open:
-		NJSR			_nsub_16894
-		SJMP			_sloc_16883
+_ssub_door0E_opened:
+		NJSR			_nsub_door0E_open_draw
+		SJMP			_ssub_door0E_wait
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door0E_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16894
+		NJSR			_nsub_door0E_open_draw
 		SPR_IDX_SET		1,$0E
 		SPR_IDX_INC		1
 		SPR_IDX_INC		1
 		SPR_IDX_SET		0,$FF
-_sloc_16883:
-		SJSR			_ssub_1643B
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
+_ssub_door0E_wait:
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		1,$10
 		SPR_IDX_DEC		1
 		SPR_IDX_DEC		1
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_1689F
+		NJSR			_nsub_door0E_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16894:
-		LDA		#<[byte_1689B]
-		LDX		#>[byte_1689B]
-		JMP		sub_1645A
-byte_1689B:
+_nsub_door0E_open_draw:
+		LDA		#<[_mac_door0E_open]
+		LDX		#>[_mac_door0E_open]
+		JMP		_door_macro_drawA
+_mac_door0E_open:
 		.BYTE	$14,$14,$55,$55
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1689F:
-		LDA		#<[byte_168A6]
-		LDX		#>[byte_168A6]
-		JMP		sub_1645A
-byte_168A6:
+_nsub_door0E_close_draw:
+		LDA		#<[_mac_door0E_close]
+		LDX		#>[_mac_door0E_close]
+		JMP		_door_macro_drawA
+_mac_door0E_close:
 		.BYTE	$0A,$1A,$0B,$1B
 
-_spr_raw_lib01_0E:
+_spr_nlib01_0E:
 		.BYTE	$08
 		.BYTE	$F0,$7D,$00,$08
 		.BYTE	$F0,$7D,$00,$00
@@ -5024,13 +5143,13 @@ _spr_raw_lib01_0E:
 		.BYTE	$00,$7F,$00,$08
 		.BYTE	$00,$7F,$00,$00
 		.BYTE	$00,$7F,$00,$F8
-_spr_raw_lib01_0F:
+_spr_nlib01_0F:
 		.BYTE	$04
 		.BYTE	$00,$6F,$00,$08
 		.BYTE	$00,$6F,$00,$00
 		.BYTE	$00,$6F,$00,$F8
 		.BYTE	$00,$6F,$00,$F0
-_spr_raw_lib01_10:
+_spr_nlib01_10:
 		.BYTE	$04
 		.BYTE	$00,$7D,$00,$08
 		.BYTE	$00,$7D,$00,$00
@@ -5038,22 +5157,26 @@ _spr_raw_lib01_10:
 		.BYTE	$00,$7D,$00,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
-_ssub_door0F_open:
-		NJSR			_nsub_16913
+_ssub_door0F_opened:
+		NJSR			_nsub_door0F_open_draw
 		SJMP			_sloc_16901
 
 ; =============== S C R I P T  S U B R O U T I N E ==========================
 _ssub_door0F_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
-		NJSR			_nsub_16913
+		NJSR			_nsub_door0F_open_draw
 		SPR_IDX_SET		2,$11
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
 		SPR_IDX_SET		0,$FF
+
+; FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E ==========================
 _sloc_16901:
-		SJSR			_ssub_1643B
+		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		2,$14
@@ -5061,37 +5184,38 @@ _sloc_16901:
 		SPR_IDX_DEC		2
 		SPR_IDX_DEC		2
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_1691C
+		NJSR			_nsub_door0F_close_draw
 		SRET
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_16913:
-		LDA		#<[byte_1691A]
-		LDX		#>[byte_1691A]
-		JMP		sub_164F0
-byte_1691A:
+_nsub_door0F_open_draw:
+		LDA		#<[_mac_door0F_open]
+		LDX		#>[_mac_door0F_open]
+		JMP		_door_macro_drawB
+_mac_door0F_open:
 		.BYTE	$00,$00
 
 ; =============== S U B R O U T I N E =======================================
-_nsub_1691C:
-		LDA		#<[byte_16923]
-		LDX		#>[byte_16923]
-		JMP		sub_164F0
-byte_16923:
+_nsub_door0F_close_draw:
+		LDA		#<[_mac_door0F_close]
+		LDX		#>[_mac_door0F_close]
+		JMP		_door_macro_drawB
+_mac_door0F_close:
 		.BYTE	$29,$29
-_spr_raw_lib01_11:
+
+_spr_nlib01_11:
 		.BYTE	$02
 		.BYTE	$F4,$5F,$00,$00
 		.BYTE	$00,$5F,$00,$00
-_spr_raw_lib01_12:
+_spr_nlib01_12:
 		.BYTE	$02
 		.BYTE	$F8,$5D,$00,$00
 		.BYTE	$00,$5D,$00,$00
-_spr_raw_lib01_13:
+_spr_nlib01_13:
 		.BYTE	$02
 		.BYTE	$FC,$5D,$00,$00
 		.BYTE	$00,$5D,$00,$00
-_spr_raw_lib01_14:
+_spr_nlib01_14:
 		.BYTE	$01
 		.BYTE	$00,$6D,$00,$00
 
@@ -5101,10 +5225,14 @@ _spr_raw_lib01_14:
 
 ; =============== S C R I P T ===============================================
 _scr0D_money_bag:
+; NOTE: there are unreferenced sprites below, intended to draw rotating coin
+; judging from the starting section of this script there may be a different
+; mode for this object with either spitting coins or something...
+; or else this initializer just redundant here
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_16966
+		SCASE			_scr0D_money_bagA
 
 _spr_unref:
 		.BYTE	$02
@@ -5121,73 +5249,76 @@ _spr_unref_2:
 		.BYTE	$F8,$BF,$40,$FC
 
 ; =============== S C R I P T ===============================================
-_sjmp_case_16966:
+_scr0D_money_bagA:
 		SARG_SET		SARG0,$00
 _sloc_16969:
 		SDELAY			$01
-		NJSR			_nsub_prize_sequence_completed_test
+		NJSR			_nsub_prize_sequence_completed_test	; wait for prize sequence completed
 		SBCC			_sloc_16969
-		SARG_SET		SARG2,$1E
-		NBG_HNDL_SET	_nbgsub_money_bag_collision_test
+		SARG_SET		SARG2,$1E							; set the money amount for this bonus.
+		NBG_HNDL_SET	_nbgsub_money_bag_collision_test	; now load collision test routine
 _sloc_16977:
-		SPR_IDX_SET		2,$19
+		SPR_IDX_SET		2,$19								; and just wait it it happens in infinite loop
 		SPR_IDX_INC		2
 		SJMP			_sloc_16977
 
 ; =============== S U B R O U T I N E =======================================
 _nbgsub_money_bag_collision_test:
-		LDX		#$0D
+; TODO: this is the only place we use this routine, this has a redundancy because
+; routine mostly the same as regular one but with money add at the end.
+; may be optimized
+		LDX		#$0D										; fixed dimensions for collision test.
 		LDY		#$0E
 		JMP		_money_prize_collision_test
 
 ; =============== S U B R O U T I N E =======================================
 _nsub_prize_sequence_completed_test:
-		LDA		_room_prize_sequence_ptr
-		ORA		_room_prize_sequence_ptr+1
-		BNE		loc_1698C
+		LDA		_room_prize_sequence_ptr					; prize sequence handled in catch routine
+		ORA		_room_prize_sequence_ptr+1					; when done, zeroes the pointer, so the
+		BNE		loc_1698C									; prize script check if it zero or not
 		SEC
 		RTS
 loc_1698C:
 		CLC
 		RTS
 
-_spr_raw_lib01_19:
+_spr_nlib01_19:
 		.BYTE	$02
 		.BYTE	$F8,$BD,$00,$00
 		.BYTE	$F8,$AD,$00,$F8
-_spr_raw_lib01_1A:
+_spr_nlib01_1A:
 		.BYTE	$02
 		.BYTE	$F8,$BD,$01,$00
 		.BYTE	$F8,$AD,$01,$F8
 
-_spr_raw_lib01:
-		.WORD	_spr_raw_lib01_00
-		.WORD	_spr_raw_lib01_01
-		.WORD	_spr_raw_lib01_02
-		.WORD	_spr_raw_lib01_03
-		.WORD	_spr_raw_lib01_04
-		.WORD	_spr_raw_lib01_05
-		.WORD	_spr_raw_lib01_06
-		.WORD	_spr_raw_lib01_07
-		.WORD	_spr_raw_lib01_08
-		.WORD	_spr_raw_lib01_09
-		.WORD	_spr_raw_lib01_0A
-		.WORD	_spr_raw_lib01_0B
-		.WORD	_spr_raw_lib01_0C
-		.WORD	_spr_raw_lib01_0D
-		.WORD	_spr_raw_lib01_0E
-		.WORD	_spr_raw_lib01_0F
-		.WORD	_spr_raw_lib01_10
-		.WORD	_spr_raw_lib01_11
-		.WORD	_spr_raw_lib01_12
-		.WORD	_spr_raw_lib01_13
-		.WORD	_spr_raw_lib01_14
-		.WORD	_spr_raw_lib01_15
-		.WORD	_spr_raw_lib01_16
-		.WORD	_spr_raw_lib01_17
-		.WORD	_spr_raw_lib01_18
-		.WORD	_spr_raw_lib01_19
-		.WORD	_spr_raw_lib01_1A
+_spr_nlib01:
+		.WORD	_spr_nlib01_00
+		.WORD	_spr_nlib01_01
+		.WORD	_spr_nlib01_02
+		.WORD	_spr_nlib01_03
+		.WORD	_spr_nlib01_04
+		.WORD	_spr_nlib01_05
+		.WORD	_spr_nlib01_06
+		.WORD	_spr_nlib01_07
+		.WORD	_spr_nlib01_08
+		.WORD	_spr_nlib01_09
+		.WORD	_spr_nlib01_0A
+		.WORD	_spr_nlib01_0B
+		.WORD	_spr_nlib01_0C
+		.WORD	_spr_nlib01_0D
+		.WORD	_spr_nlib01_0E
+		.WORD	_spr_nlib01_0F
+		.WORD	_spr_nlib01_10
+		.WORD	_spr_nlib01_11
+		.WORD	_spr_nlib01_12
+		.WORD	_spr_nlib01_13
+		.WORD	_spr_nlib01_14
+		.WORD	_spr_nlib01_15
+		.WORD	_spr_nlib01_16
+		.WORD	_spr_nlib01_17
+		.WORD	_spr_nlib01_18
+		.WORD	_spr_nlib01_19
+		.WORD	_spr_nlib01_1A
 
 		SECTION_END	"OBJ0D SCRIPT"
 

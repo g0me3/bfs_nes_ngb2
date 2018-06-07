@@ -342,7 +342,7 @@ _apu_var580:
 		.BYTE	0
 _scr_trds_x_move_delta:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_mov_delta:
+_scr_trds_y_move_delta:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_sp:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -425,11 +425,11 @@ _cur_room_x_pageB:
 		.BYTE	0
 _cur_room_y_pageB:
 		.BYTE	0
-_near_room_door_data_pos:
+_active_door_data_pos:
 		.BYTE	0
-_tmp7AB:
+_beam_target_x_pos:
 		.BYTE	0
-_tmp7AC:
+_beam_target_y_pos:
 		.BYTE	0
 _tmp7AD:
 		.BYTE	0,0
