@@ -1,0 +1,479 @@
+_sample_copy_unused_start:
+		ADATA		$80
+		ADATA		$4F
+		ASTOP
+		ADATA		$81
+		ADATA		$4F
+		ASTOP
+		ADATA		$82
+		ADATA		$4F
+		ASTOP
+		ADATA		$83
+		ADATA		$4F
+		ASTOP
+		ADATA		$40
+		ASTOP
+		ADATA		$42
+		ADATA		$02
+		ADATA		$41
+		ADATA		$04
+		ADATA		$40
+		ASTOP
+		ADATA		$42
+		ASTOP
+		ADATA		$4C
+		ADATA		$03
+		ALOOP_START	$0C
+		ADATA		$6F
+		ADATA		$03
+		ALOOP_END
+		ASTOP
+_aloc_50A91:
+		ADATA		$57
+		ADATA		$56
+		ADATA		$45
+		ADATA		$03
+		ADATA		$44
+		ADATA		$0F
+_aloc_50A97:
+		ADATA		$6F
+		ADATA		$04
+		ADATA		$61
+		ADATA		$04
+		AJMP		_aloc_50A97
+		ADATA		$80
+		ADATA		$58
+		ADATA		$81
+		AJMP		_aloc_50A91
+		ADATA		$44
+		ADATA		$04
+		ADATA		$43
+		ALOOP_START	$05
+		ADATA		$6F
+		ADATA		$04
+		ADATA		$61
+		ADATA		$04
+		ADATA		$6F
+		ALOOP_END
+		ADATA		$20
+		ASTOP
+		ADATA		$81
+		ADATA		$58
+		ADATA		$80
+		AJMP		_aloc_50A91
+		ADATA		$80
+		ADATA		$58
+		ADATA		$82
+		AJMP		_aloc_50A91
+		ADATA		$82
+		ADATA		$58
+		ADATA		$80
+		AJMP		_aloc_50A91
+		ADATA		$80
+		ADATA		$57
+		ADATA		$82
+		ADATA		$04
+		AJMP		_aloc_50ACE
+		ADATA		$81
+		ADATA		$57
+		ADATA		$80
+		ADATA		$04
+_aloc_50ACE:
+		ADATA		$40
+_aloc_50ACF:
+		ADATA		$2E
+		ADATA		$62
+		ADATA		$04
+		ADATA		$22
+		ADATA		$6E
+		ADATA		$04
+		AJMP		_aloc_50ACF
+		ADATA		$80
+		ADATA		$58
+		ADATA		$83
+		AJMP		_aloc_50A91
+		ADATA		$83
+		ADATA		$58
+		ADATA		$80
+		AJMP		_aloc_50A91
+		ADATA		$44
+_aloc_50AE5:
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		AJMP		_aloc_50AE5
+		AJSR		_asub_50AF6
+		AJMP		_aloc_50B00
+_asub_50AF6:
+		ADATA		$80
+		ADATA		$43
+		ALOOP_START	$03
+		ADATA		$72
+		ALOOP_END
+		ADATA		$91
+		ADATA		$6E
+		ADATA		$83
+		ARET
+_aloc_50B00:
+		ALOOP_START	$02
+		ADATA		$6E
+		ADATA		$02
+		ALOOP_END
+		ADATA		$7F
+_aloc_50B06:
+		ADATA		$61
+		ADATA		$04
+		ADATA		$6F
+		ADATA		$04
+		AJMP		_aloc_50B06
+		ADATA		$49
+		ALOOP_START	$03
+		ADATA		$01
+		ADATA		$6B
+		ALOOP_END
+		ASTOP
+		ADATA		$49
+		ALOOP_START	$02
+		ADATA		$7E
+		ALOOP_END
+		ALOOP_START	$05
+		ADATA		$6F
+		ADATA		$02
+		ALOOP_END
+		ASTOP
+		ADATA		$82
+		ADATA		$58
+		ADATA		$20
+		ADATA		$83
+		AJMP		_aloc_50A91
+		ADATA		$80
+		ADATA		$58
+		ADATA		$82
+		AJMP		_aloc_50A91
+		ADATA		$2E
+		ADATA		$42
+		ASTOP
+		ADATA		$44
+		ADATA		$04
+		ADATA		$43
+		ALOOP_START	$0A
+		ADATA		$6F
+		ADATA		$04
+		ADATA		$61
+		ADATA		$04
+		ADATA		$6F
+		ALOOP_END
+		ADATA		$22
+		ASTOP
+		ADATA		$4B
+		ADATA		$92
+		ADATA		$48
+		ADATA		$83
+		ALOOP_START	$08
+		ADATA		$6F
+		ADATA		$02
+		ALOOP_END
+		ASTOP
+		ADATA		$83
+		ADATA		$46
+		ALOOP_START	$02
+		ADATA		$71
+		ADATA		$80
+		ALOOP_END
+		ALOOP_START	$02
+		ADATA		$6E
+		ADATA		$03
+		ALOOP_END
+_aloc_50B52:
+		ADATA		$42
+		ADATA		$02
+		ADATA		$41
+		ADATA		$0C
+		AJMP		_aloc_50B52
+		ADATA		$81
+		ADATA		$45
+		ALOOP_START	$02
+		ADATA		$72
+		ALOOP_END
+		ADATA		$82
+_aloc_50B60:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$23
+		ADATA		$02
+		ADATA		$22
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$2D
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		AJMP		_aloc_50B60
+		ADATA		$4A
+		ADATA		$83
+		ADATA		$02
+		ADATA		$81
+		ALOOP_START	$03
+		ADATA		$7E
+		ALOOP_END
+_aloc_50B77:
+		ADATA		$83
+		ADATA		$02
+		ADATA		$72
+		ADATA		$7E
+		AJMP		_aloc_50B77
+		ALOOP_START	$05
+		ADATA		$6F
+		ADATA		$03
+		ALOOP_END
+		ADATA		$80
+		ADATA		$4D
+		ADATA		$02
+		ADATA		$81
+		ADATA		$4A
+		ALOOP_START	$02
+		ADATA		$7D
+		ALOOP_END
+		ADATA		$82
+		ALOOP_START	$02
+		ADATA		$7F
+		ALOOP_END
+		ADATA		$80
+		ADATA		$4A
+		ADATA		$02
+		ADATA		$6E
+		ADATA		$83
+		ADATA		$02
+_aloc_50B97:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$21
+		ADATA		$03
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$03
+		AJMP		_aloc_50B97
+		ADATA		$57
+		ADATA		$31
+		ADATA		$6F
+		ADATA		$21
+		ADATA		$02
+		ADATA		$21
+		ADATA		$03
+		ADATA		$6F
+_aloc_50BAA:
+		ADATA		$21
+		ADATA		$05
+		AJMP		_aloc_50BAA
+		ADATA		$83
+		ADATA		$5A
+		ADATA		$81
+		ADATA		$59
+		ADATA		$80
+		ADATA		$47
+		ADATA		$03
+_aloc_50BB6:
+		ADATA		$21
+		ADATA		$03
+		ADATA		$2F
+		ADATA		$03
+		AJMP		_aloc_50BB6
+_aloc_50BBD:
+		ADATA		$82
+		ADATA		$5A
+		ADATA		$80
+		ADATA		$58
+		ALOOP_START	$02
+		ADATA		$7E
+		ADATA		$80
+		ADATA		$7E
+		ALOOP_END
+_aloc_50BC7:
+		ADATA		$46
+		ADATA		$03
+		ADATA		$42
+		ADATA		$02
+		ADATA		$46
+		ADATA		$03
+		ADATA		$42
+		ADATA		$02
+		AJMP		_aloc_50BC7
+		ASTOP
+		ADATA		$83
+		ADATA		$22
+		ADATA		$5A
+		ADATA		$81
+		ADATA		$59
+		ADATA		$80
+		ADATA		$47
+		ADATA		$03
+_aloc_50BDB:
+		ADATA		$21
+		ADATA		$03
+		ADATA		$2F
+		ADATA		$03
+		AJMP		_aloc_50BDB
+		ADATA		$53
+		ADATA		$55
+		ADATA		$53
+		ADATA		$42
+		ADATA		$02
+		ADATA		$40
+		ASTOP
+		ADATA		$23
+		AJMP		_aloc_50BBD
+		ASTOP
+		ADATA		$82
+		ADATA		$59
+		ADATA		$81
+		ADATA		$5A
+		ADATA		$83
+		ADATA		$5B
+		ADATA		$21
+		ADATA		$5D
+		ADATA		$2F
+		ADATA		$5A
+_aloc_50BF8:
+		ADATA		$49
+		ADATA		$21
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		AJMP		_aloc_50BF8
+		ADATA		$80
+		ADATA		$5D
+		ADATA		$81
+		ADATA		$5D
+		ADATA		$82
+		ADATA		$5A
+		ALOOP_START	$05
+		ADATA		$7F
+		ALOOP_END
+_aloc_50C0A:
+		ADATA		$55
+		AJMP		_aloc_50C0A
+_aloc_50C0E:
+		ADATA		$42
+		ADATA		$03
+		ADATA		$44
+		ADATA		$04
+		AJMP		_aloc_50C0E
+		ASTOP
+		ADATA		$83
+		ADATA		$4D
+		ADATA		$02
+		ADATA		$82
+		ADATA		$4B
+		ADATA		$04
+		ADATA		$4A
+		ADATA		$04
+		ADATA		$49
+		ADATA		$06
+_aloc_50C20:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$22
+		ADATA		$02
+		AJMP		_aloc_50C20
+		ADATA		$82
+		ADATA		$5D
+		ADATA		$83
+		ADATA		$5B
+		ADATA		$7E
+		ADATA		$6F
+		ADATA		$02
+		ADATA		$81
+_aloc_50C33:
+		ADATA		$31
+		ADATA		$3F
+		ADATA		$3F
+		ADATA		$31
+		AJMP		_aloc_50C33
+		ADATA		$80
+		ADATA		$5E
+		ADATA		$81
+		ADATA		$47
+		ADATA		$02
+		ADATA		$80
+		ADATA		$5B
+		ADATA		$5A
+		ALOOP_START	$0A
+		ADATA		$7F
+		ALOOP_END
+		ASTOP
+		ADATA		$83
+		ADATA		$5F
+		ADATA		$80
+		ADATA		$4C
+		ADATA		$02
+		ADATA		$82
+		ADATA		$49
+_aloc_50C4E:
+		ADATA		$21
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		AJMP		_aloc_50C4E
+		ASTOP
+		ADATA		$83
+		ADATA		$47
+		ALOOP_START	$06
+		ADATA		$61
+		ADATA		$02
+		ALOOP_END
+_aloc_50C61:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		AJMP		_aloc_50C61
+		ASTOP
+		ALOOP_START	$0D
+		ADATA		$7E
+		ADATA		$7F
+		ADATA		$7F
+		ADATA		$6F
+		ADATA		$02
+		ADATA		$71
+		ADATA		$71
+		ADATA		$62
+		ADATA		$02
+		ALOOP_END
+		ASTOP
+		ADATA		$82
+		ADATA		$4E
+		ADATA		$03
+		ADATA		$4B
+		ALOOP_START	$0B
+		ADATA		$6F
+		ADATA		$03
+		ALOOP_END
+		ASTOP
+		ADATA		$5F
+		ADATA		$5E
+		ADATA		$58
+		ADATA		$5C
+		ADATA		$5A
+		ALOOP_START	$0A
+		ADATA		$7F
+		ALOOP_END
+		ASTOP

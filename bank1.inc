@@ -5,7 +5,7 @@
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; base level handler with some set of common operations as well as set
 ; of specific options for every particular room. all level handlers have
 ; mostly the same structure and consists of two parts:
@@ -42,7 +42,7 @@ _scr01_lvl1_handler:
 		SCASE			_lvl1_room1_handler
 		SCASE			_lvl1_room6_handler
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; TODO, most of this regular script sequences may be also parametrized and
 ; parsed only with single _nsub ruotine at the beginning of the room...
 ;
@@ -88,7 +88,7 @@ _lvl1_room0_doors:
 _lvl1_room0_prize_seq:
 		.BYTE	$17,$13,$13,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl1_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01			; all work for other roms mostly the same
 		NJSR			_nsub_room_draw
@@ -121,7 +121,7 @@ _lvl1_room1_doors:
 _lvl1_room1_prize_seq:
 		.BYTE	$15,$16,$14,$14,$14,$16,$16,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl1_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
@@ -142,7 +142,7 @@ _sloc_14104:
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_patch_pal_load			; sometimes
 			NARGB		$06								; we need to fix sprites palette as
-			NARGW		_lvl1_full_palA+$18			; well as change sprites CHR bank
+			NARGW		_lvl1_full_palA+$18				; well as change sprites CHR bank
 		NJSR			_nsub_mmc1_chr0_set				; because there are other enemies will appear
 			NARGB		$04
 		NJSR			_nsub_players_room_start_pos_init
@@ -168,7 +168,7 @@ _lvl1_room2_doors:
 _lvl1_room2_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl1_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
@@ -176,10 +176,10 @@ _lvl1_room3_handler:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl1_room3_doors
 		STORE16			_room_prize_sequence_ptr,_lvl1_room3_prize_seq
-		NJSR			_nsub_mmc1_chr0_set			; if you return back from room6 you
-			NARGB		$04							; need to restore back CHR banks and palettes
-		NJSR			_nsub_mmc1_chr1_set			; TODO: already set in init routines,
-			NARGB		$02							; remove redundancy
+		NJSR			_nsub_mmc1_chr0_set				; if you return back from room6 you
+			NARGB		$04								; need to restore back CHR banks and palettes
+		NJSR			_nsub_mmc1_chr1_set				; TODO: already set in init routines,
+			NARGB		$02								; remove redundancy
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl1_full_palA
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA
@@ -226,7 +226,7 @@ _lvl1_room3_prize_seq:
 		.BYTE	$17,$18,$18,$18,$14,$13,$00
 ; -
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl1_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
@@ -259,7 +259,7 @@ _lvl1_room4_doors:
 _lvl1_room4_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; this is the last room with boss, note, the boss area locks scrolls not here
 ; but rather by the boss object itself..
 ;
@@ -293,14 +293,14 @@ _lvl1_room5_doors:
 _lvl1_room5_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl1_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
-		NJSR			_nsub_mmc1_chr0_set			; this is a corridor before the court
-			NARGB		$07							; room, here we need to change CHR and pal
-		NJSR			_nsub_mmc1_chr1_set			; also there is another bg collision table
-			NARGB		$03							; TODO: already coded in init routines,
-		NJSR			_nsub_full_pal_load			; merge code to remove redundancy
+		NJSR			_nsub_mmc1_chr0_set				; this is a corridor before the court
+			NARGB		$07								; room, here we need to change CHR and pal
+		NJSR			_nsub_mmc1_chr1_set				; also there is another bg collision table
+			NARGB		$03								; TODO: already coded in init routines,
+		NJSR			_nsub_full_pal_load				; merge code to remove redundancy
 			NARGW		_lvl1_full_palB
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB
 		NJSR			_nsub_room_draw
@@ -324,8 +324,8 @@ _sloc_14294:
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
-		SCASE			_lvl1_room5_handler			; we can exith this corridor back or continue
-		SCASE			_lvl1_room3_handler			; to the main boss
+		SCASE			_lvl1_room5_handler				; we can exith this corridor back or continue
+		SCASE			_lvl1_room3_handler				; to the main boss
 
 _lvl1_room6_doors:
 		.BYTE	$03,$80,$01,$30,$00
@@ -336,10 +336,10 @@ _lvl1_room6_doors:
 _lvl1_room6_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_initA:
-		NJSR			_nsub_mmc1_chr0_set			; TODO; merge initializator for room handlers
-			NARGB		$04							; to remove redundancy
+		NJSR			_nsub_mmc1_chr0_set				; TODO; merge initializator for room handlers
+			NARGB		$04								; to remove redundancy
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$02
 		NJSR			_nsub_full_pal_load
@@ -347,7 +347,7 @@ _lvl1_room_initA:
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA
 		SJMP			_lvl1_common_init
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_initB:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
@@ -359,32 +359,32 @@ _lvl1_room_initB:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_common_init:
-		STORE8			_lvl_data_prg_bank,$01		; common initialization for whole level, all levels
-		NJSR			_nsub_lvl_data_ptrs_load	; does the same initializers.
-			NARGW		_lvl1_macroA_tbl			; here set macro/attrs data for level draw,
-			NARGW		_lvl1_macroB_tbl			; level layouts and room data library
+		STORE8			_lvl_data_prg_bank,$01			; common initialization for whole level, all levels
+		NJSR			_nsub_lvl_data_ptrs_load		; does the same initializers.
+			NARGW		_lvl1_macroA_tbl				; here set macro/attrs data for level draw,
+			NARGW		_lvl1_macroB_tbl				; level layouts and room data library
 			NARGW		_lvl1_macroC_tbl
 			NARGW		_lvl1_macroD_tbl
 			NARGW		_lvl1_attrs_tbl
 		STORE16			_lvl_rooms_lib_ptr,lvl1_rooms_lib
-		NJSR			_nsub_apu_mus_load			; begin background music
+		NJSR			_nsub_apu_mus_load				; begin background music
 			NARGB		$00
-		NJSR			_nsub_beamer_handler_start	; start players control script 08, for beamer
-		NJSR			_nsub_catcher_handler_start; and 0A for catcher
+		NJSR			_nsub_beamer_handler_start		; start players control script 08, for beamer
+		NJSR			_nsub_catcher_handler_start		; and 0A for catcher
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler	; also set the room object handler as a native bg sub
-		SSCRIPT1_SET	_scr_common_pause_handler	; secondary script of current level thread set to pause handler
+		SSCRIPT1_SET	_scr_common_pause_handler		; secondary script of current level thread set to pause handler
 		STORE16			_lvl_objects_ptr,_lvl1_objects_list	; finally init objects list pointer
-		NJSR			_nsub_lvl_room_objects_init	; and initialize objects offset according to last checkpoint
+		NJSR			_nsub_lvl_room_objects_init		; and initialize objects offset according to last checkpoint
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_common_pause_handler:
-		SDELAY			$01							; common pause handler for all levels
+		SDELAY			$01								; common pause handler for all levels
 		NJSR			_nsub_ingame_start_input_test	; just wait for START is pressed
-		SBCC			_scr_common_pause_handler	; and then play pause sound
-		NJSR			_nsub_apu_snd_load_safe		; and run pause native handler
+		SBCC			_scr_common_pause_handler		; and then play pause sound
+		NJSR			_nsub_apu_snd_load_safe			; and run pause native handler
 			NARGB		$03
 		SJSR			_ssub_room_exit_pal_fade_out_ex	; when exit, loop back to wait for input
 		NJSR			_nsub_ingame_pause_handler
@@ -398,7 +398,7 @@ _lvl1_full_palB:
 		.BYTE	$0F,$30,$17,$07,$0F,$30,$05,$07,$0F,$10,$17,$07,$0F,$30,$10,$00
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$31,$25,$0F,$0F,$10,$17,$07
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; TODO, the native bg subs may include various background work, mostly palette
 ; rotations... but here is the only objects handler, so it may be replaced with
 ; direct handler call instead of _j_ routine for remove redundancy.
@@ -410,7 +410,7 @@ _j_nbgsub_lvl_room_objects_handler:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr02_lvl2_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx	; same as for lvl1
 		NJSR			_nsub_read_mem					; now we have 4 checkpoints here
@@ -437,7 +437,7 @@ _scr02_lvl2_handler:
 		SCASE			_lvl2_room7_handler
 		SCASE			_lvl2_room9_handler
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
@@ -468,7 +468,7 @@ _lvl2_room0_doors:
 _lvl2_room0_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
@@ -498,7 +498,7 @@ _lvl2_room1_doors:
 _lvl2_room1_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
@@ -531,7 +531,7 @@ _lvl2_room2_doors:
 _lvl2_room2_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
@@ -562,7 +562,7 @@ _lvl2_room3_doors:
 _lvl2_room3_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
@@ -598,7 +598,7 @@ _lvl2_room4_doors:
 _lvl2_room4_prize_seq:
 		.BYTE	$1D,$1D,$20,$1D,$1D,$1E,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
@@ -629,7 +629,7 @@ _lvl2_room5_doors:
 _lvl2_room5_prize_seq:
 		.BYTE	$20,$1D,$1E,$20,$1D,$1E,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
@@ -662,7 +662,7 @@ _lvl2_room6_doors:
 _lvl2_room6_prize_seq:
 		.BYTE	$20,$20,$1F,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
@@ -693,7 +693,7 @@ _lvl2_room7_doors:
 _lvl2_room7_prize_seq:
 		.BYTE	$1E,$1F,$1E,$20,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
@@ -724,11 +724,11 @@ _lvl2_room8_doors:
 _lvl2_room8_prize_seq:
 		.BYTE	$1E,$1F,$1D,$20,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
-		NJSR			_nsub_mmc1_chr1_set			; here we enter the train section
-			NARGB		$0B							; currently only part of the tiles are changed
+		NJSR			_nsub_mmc1_chr1_set				; here we enter the train section
+			NARGB		$0B								; currently only part of the tiles are changed
 		STORE16			_lvl_collisions_ptr,_lvl2_collisionsB
 		NJSR			_nsub_room_draw
 			NARGB		$02,$05,$00
@@ -758,15 +758,15 @@ _lvl2_room9_doors:
 _lvl2_room9_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_roomA_handler:
-		STORE8			_cur_lvl_room_idx,$0A		; go further on the train and
-		NJSR			_nsub_room_draw				; we need to update bg palettes from now
+		STORE8			_cur_lvl_room_idx,$0A			; go further on the train and
+		NJSR			_nsub_room_draw					; we need to update bg palettes from now
 			NARGB		$01,$05,$01
 		NJSR			_nsub_bg_pal_load
 			NARGW		_lvl2_bg_palA
-		NBG_HNDL_SET	_nbgsub_lvl2_roomA			; also here we have custom bg native sub
-		SSCRIPT1_SET	_scr_lvl2_roomA_secondary	; and new secondary script handler
+		NBG_HNDL_SET	_nbgsub_lvl2_roomA				; also here we have custom bg native sub
+		SSCRIPT1_SET	_scr_lvl2_roomA_secondary		; and new secondary script handler
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl2_roomA_doors
 		STORE16			_room_prize_sequence_ptr,_lvl2_roomA_prize_seq
@@ -795,7 +795,7 @@ _lvl2_roomA_doors:
 _lvl2_roomA_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_roomB_handler:
 		STORE8			_cur_lvl_room_idx,$0B
 		NJSR			_nsub_room_draw
@@ -828,17 +828,17 @@ _lvl2_roomB_doors:
 _lvl2_roomB_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl2_roomC_handler:
 		STORE8			_cur_lvl_room_idx,$0C
-		NJSR			_nsub_room_draw			; although, the boss room is double sized
-			NARGB		$01,$05,$05				; they used two parts separately for boss
-		STORE8			_cur_room_x_pageB,$05	; room and for empty tracks when you beat it.
+		NJSR			_nsub_room_draw					; although, the boss room is double sized
+			NARGB		$01,$05,$05						; they used two parts separately for boss
+		STORE8			_cur_room_x_pageB,$05			; room and for empty tracks when you beat it.
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl2_roomC_doors
 		STORE16			_room_prize_sequence_ptr,_lvl2_roomC_prize_seq
 		SJSR			_ssub_room_entry_pal_fade_in
-		SUSPEND									; there is no doors to go further, script stop here
+		SUSPEND											; there is no doors to go further, script stop here
 
 _lvl2_roomC_doors:
 		.BYTE	$05,$80,$05,$20,$04
@@ -847,23 +847,23 @@ _lvl2_roomC_doors:
 _lvl2_roomC_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_lvl2_roomA_secondary:
-		SLOOP_BEGIN		$80							; when entering the train, regular pause
-		SMEM_ALU		_apu_mus_volume,_ADC,$FF	; secondary script replaced with this,
-		SDELAY			$01							; which first disables  the music
+		SLOOP_BEGIN		$80								; when entering the train, regular pause
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF		; secondary script replaced with this,
+		SDELAY			$01								; which first disables  the music
 		SLOOP_END
-		NJSR			_nsub_apu_mus_load			; plays train sound
+		NJSR			_nsub_apu_mus_load				; plays train sound
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load_safe		; and then start another music
+		NJSR			_nsub_apu_snd_load_safe			; and then start another music
 			NARGB		$13
 		SDELAY			$A0
 		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
 			NARGB		$04
-		SJMP			_scr_common_pause_handler	; and finally goes to the regular pause seq
+		SJMP			_scr_common_pause_handler		; and finally goes to the regular pause seq
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl2_room_initA:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
@@ -872,7 +872,7 @@ _lvl2_room_initA:
 		STORE16			_lvl_collisions_ptr,_lvl2_collisionsA
 		SJMP			_lvl2_common_init
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl2_room_initB:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$0C
@@ -882,15 +882,15 @@ _lvl2_room_initB:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl2_common_init:
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl2_full_pal
 		STORE8			_lvl_data_prg_bank,$02
-		NJSR			_nsub_lvl_data_ptrs_load	; TODO, same routine always, and same additional
-			NARGW		_lvl2_macroA_tbl			; rooms lib ptr settings, why not to include it
-			NARGW		_lvl2_macroB_tbl			; in this subroutine as well as soon as
-			NARGW		_lvl2_macroC_tbl			; it used always.
+		NJSR			_nsub_lvl_data_ptrs_load		; TODO, same routine always, and same additional
+			NARGW		_lvl2_macroA_tbl				; rooms lib ptr settings, why not to include it
+			NARGW		_lvl2_macroB_tbl				; in this subroutine as well as soon as
+			NARGW		_lvl2_macroC_tbl				; it used always.
 			NARGW		_lvl2_macroD_tbl
 			NARGW		_lvl2_attrs_tbl
 		STORE16			_lvl_rooms_lib_ptr,_lvl2_rooms_lib
@@ -898,7 +898,7 @@ _lvl2_common_init:
 			NARGB		$06
 		NJSR			_nsub_beamer_handler_start
 		NJSR			_nsub_catcher_handler_start
-		SSCRIPT1_SET	_scr_common_pause_handler	; initial bg and secondary handlers are common
+		SSCRIPT1_SET	_scr_common_pause_handler		; initial bg and secondary handlers are common
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_3
 		STORE16			_lvl_objects_ptr,_lvl2_objects_list
 		NJSR			_nsub_lvl_room_objects_init
@@ -920,7 +920,7 @@ _lvl2_roomA_patch_pal_list:
 		.BYTE	$0F,$07,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$07
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_lvl2_roomA:
 		LDA		_scr_trds_args0
 		CLC
@@ -943,7 +943,7 @@ loc_147FC:
 
 ; !FALLTHROUGH!
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _j_nbgsub_lvl_room_objects_handler_3:
 		JMP		_nbgsub_lvl_room_objects_handler
 
@@ -951,7 +951,7 @@ _j_nbgsub_lvl_room_objects_handler_3:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr03_lvl3_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
@@ -977,7 +977,7 @@ _scr03_lvl3_handler:
 		SCASE			_lvl3_roomE_handler
 		SCASE			_lvl3_room14_handler
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
@@ -1010,7 +1010,7 @@ _lvl3_room0_doors:
 _lvl3_room0_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
@@ -1046,7 +1046,7 @@ _lvl3_room1_doors:
 _lvl3_room1_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
@@ -1090,7 +1090,7 @@ _lvl_doors_data16:
 _lvl3_room2_prize_seq:
 		.BYTE	$25,$25,$25,$28,$28,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
@@ -1134,7 +1134,7 @@ _lvl3_room3_doors:
 _lvl3_room3_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
@@ -1182,19 +1182,19 @@ _lvl3_room4_doors:
 _lvl3_room4_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
 			NARGB		$01,$05,$00
-		NJSR			_nsub_mmc1_chr0_set		; restore regular level CHR bank
+		NJSR			_nsub_mmc1_chr0_set				; restore regular level CHR bank
 			NARGB		$0E
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl3_room5_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_room5_prize_seq
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		_lvl3_full_pal+$1C		; restore also old palette portion
+			NARGW		_lvl3_full_pal+$1C				; restore also old palette portion
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14A4F:
 		SDELAY			$01
@@ -1234,7 +1234,7 @@ _lvl3_room5_prize_seq:
 		.BYTE	$28,$26,$26,$00
 ; -
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
@@ -1278,7 +1278,7 @@ _lvl3_room6_doors:
 _lvl3_room6_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
@@ -1327,7 +1327,7 @@ _lvl3_room7_doors:
 _lvl3_room7_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
@@ -1376,7 +1376,7 @@ _lvl3_room8_doors:
 _lvl3_room8_prize_seq:
 		.BYTE	$27,$27,$28,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_room_draw
@@ -1420,7 +1420,7 @@ _lvl3_room9_doors:
 _lvl3_room9_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; NOTE: when it exit from mini-boss room it restores only music, the
 ; rest of the settings like CHR bank and palette for sprites leave intact
 ; this is because the game logic assumes that room you already visited and
@@ -1475,7 +1475,7 @@ _lvl3_roomA_doors:
 _lvl3_roomA_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; NOTE, to the previous note, it only need to restore proper CHR/pal settings
 ; for rooms where enemies still existing..
 ;
@@ -1527,7 +1527,7 @@ _lvl3_roomB_doors:
 _lvl3_roomB_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_roomC_handler:
 		STORE8			_cur_lvl_room_idx,$0C
 		NJSR			_nsub_room_draw
@@ -1571,7 +1571,7 @@ _lvl3_roomC_doors:
 _lvl3_roomC_prize_seq:
 		.BYTE	$28,$24,$24,$24,$28,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_roomD_handler:
 		STORE8			_cur_lvl_room_idx,$0D
 		NJSR			_nsub_room_draw
@@ -1620,7 +1620,7 @@ _lvl3_roomD_doors:
 _lvl3_roomD_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_roomE_handler:
 		STORE8			_cur_lvl_room_idx,$0E
 		NJSR			_nsub_room_draw
@@ -1669,7 +1669,7 @@ _lvl3_roomE_doors:
 _lvl3_roomE_prize_seq:
 		.BYTE	$28,$24,$24,$24,$24,$24,$24,$25,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_roomF_handler:
 		STORE8			_cur_lvl_room_idx,$0F
 		NJSR			_nsub_room_draw
@@ -1713,7 +1713,7 @@ _lvl3_roomF_doors:
 _lvl3_roomF_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room10_handler:
 		STORE8			_cur_lvl_room_idx,$10
 		NJSR			_nsub_room_draw
@@ -1762,7 +1762,7 @@ _lvl3_room10_doors:
 _lvl3_room10_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; NOTE: for some reason, there is a gap between 10 and 14 room indexes.
 ; whey there are no 11, 12 and 13 is unknown
 ;
@@ -1814,7 +1814,7 @@ _lvl3_room14_doors:
 _lvl3_room14_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room15_handler:
 		STORE8			_cur_lvl_room_idx,$15
 		NJSR			_nsub_room_draw
@@ -1858,7 +1858,7 @@ _lvl3_room15_doors:
 _lvl3_room15_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room16_handler:
 		STORE8			_cur_lvl_room_idx,$16
 		NJSR			_nsub_room_draw
@@ -1900,7 +1900,7 @@ _lvl3_room16_doors:
 _lvl3_room16_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl3_room17_handler:
 		STORE8			_cur_lvl_room_idx,$17
 		NJSR			_nsub_room_draw
@@ -1936,7 +1936,7 @@ _lvl3_room17_doors:
 _lvl3_room17_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl3_common_init:
 		STORE8			_lvl_data_prg_bank,$02
 		STORE16			_lvl_rooms_lib_ptr,_lvl3_rooms_lib
@@ -1969,7 +1969,7 @@ _lvl3_full_pal:
 _lvl3_roomsAE_patch_pal:
 		.BYTE	$0F,$36,$2B,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _j_nbgsub_lvl_room_objects_handler_0:
 		JMP		_nbgsub_lvl_room_objects_handler
 
@@ -1977,7 +1977,7 @@ _j_nbgsub_lvl_room_objects_handler_0:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr04_lvl4_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
@@ -2001,7 +2001,7 @@ _scr04_lvl4_handler:
 		SCASE			_lvl4_room6_handler
 		SCASE			_lvl4_room8_handler
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
@@ -2032,7 +2032,7 @@ _lvl4_room0_doors:
 _lvl4_room0_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
@@ -2070,7 +2070,7 @@ _lvl4_room1_doors:
 _lvl4_room1_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
@@ -2101,7 +2101,7 @@ _lvl4_room2_doors:
 _lvl4_room2_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
@@ -2142,7 +2142,7 @@ _lvl4_room3_doors:
 _lvl4_room3_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
@@ -2173,7 +2173,7 @@ _lvl4_room4_doors:
 _lvl4_room4_prize_seq:
 		.BYTE	$2C,$2C,$2C,$29,$29,$2C,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
@@ -2211,7 +2211,7 @@ _lvl4_room5_doors:
 _lvl4_room5_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
@@ -2250,7 +2250,7 @@ _lvl4_room6_prize_seq:
 		.BYTE	$2B,$2B,$2B,$2B,$2D,$2D,$2D,$2D,$2C,$00
 ; -
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
@@ -2289,7 +2289,7 @@ _lvl4_room7_prize_seq:
 		.BYTE	$29,$2D,$29,$2D,$29,$29,$2D,$2D,$2B,$00
 ; -
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
@@ -2325,7 +2325,7 @@ _lvl4_room8_doors:
 _lvl4_room8_prize_seq:
 		.BYTE	$29,$2D,$2D,$2C,$29,$2D,$2C,$2D,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl4_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_room_draw
@@ -2356,7 +2356,7 @@ _lvl4_room9_doors:
 _lvl4_room9_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl4_common_init:
 		STORE8			_lvl_data_prg_bank,$05
 		NJSR			_nsub_lvl_data_ptrs_load
@@ -2387,7 +2387,7 @@ _lvl4_full_pal:
 		.BYTE	$0F,$30,$10,$00,$0F,$26,$17,$05,$0F,$37,$17,$08,$0F,$07,$15,$05
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$39,$2C,$0F,$0F,$15,$0F,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; palette rotate for sewers water
 ;
 _nbgsub_lvl4_common:
@@ -2426,7 +2426,7 @@ _lvl4_patch_pal_lib:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr05_lvl5_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
@@ -2448,7 +2448,7 @@ _scr05_lvl5_handler:
 		SCASE			_lvl5_roomF_handler
 		SCASE			_lvl5_room13_handler
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room0_handler:
 		STORE8			_cur_lvl_room_idx,$00
 		NJSR			_nsub_room_draw
@@ -2481,7 +2481,7 @@ _lvl5_room0_doors:
 _lvl5_room0_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room1_handler:
 		STORE8			_cur_lvl_room_idx,$01
 		NJSR			_nsub_room_draw
@@ -2519,7 +2519,7 @@ _lvl5_room1_doors:
 _lvl5_room1_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room2_handler:
 		STORE8			_cur_lvl_room_idx,$02
 		NJSR			_nsub_room_draw
@@ -2557,7 +2557,7 @@ _lvl5_room2_doors:
 _lvl5_room2_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room3_handler:
 		STORE8			_cur_lvl_room_idx,$03
 		NJSR			_nsub_room_draw
@@ -2603,7 +2603,7 @@ _lvl5_room3_doors:
 _lvl5_room3_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room4_handler:
 		STORE8			_cur_lvl_room_idx,$04
 		NJSR			_nsub_room_draw
@@ -2645,7 +2645,7 @@ _lvl5_room4_doors:
 _lvl5_room4_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room5_handler:
 		STORE8			_cur_lvl_room_idx,$05
 		NJSR			_nsub_room_draw
@@ -2683,7 +2683,7 @@ _lvl5_room5_doors:
 _lvl5_room5_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room6_handler:
 		STORE8			_cur_lvl_room_idx,$06
 		NJSR			_nsub_room_draw
@@ -2719,7 +2719,7 @@ _lvl5_room6_doors:
 _lvl5_room6_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room7_handler:
 		STORE8			_cur_lvl_room_idx,$07
 		NJSR			_nsub_room_draw
@@ -2760,7 +2760,7 @@ _lvl5_room7_doors:
 _lvl5_room7_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room8_handler:
 		STORE8			_cur_lvl_room_idx,$08
 		NJSR			_nsub_room_draw
@@ -2795,7 +2795,7 @@ _lvl5_room8_doors:
 _lvl5_room8_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room9_handler:
 		STORE8			_cur_lvl_room_idx,$09
 		NJSR			_nsub_room_draw
@@ -2833,7 +2833,7 @@ _lvl5_room9_doors:
 _lvl5_room9_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_roomA_handler:
 		STORE8			_cur_lvl_room_idx,$0A
 		NJSR			_nsub_room_draw
@@ -2873,7 +2873,7 @@ _lvl5_roomA_doors:
 _lvl5_roomA_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_roomB_handler:
 		STORE8			_cur_lvl_room_idx,$0B
 		NJSR			_nsub_room_draw
@@ -2909,7 +2909,7 @@ _lvl5_roomB_doors:
 _lvl5_roomB_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_roomC_handler:
 		STORE8			_cur_lvl_room_idx,$0C
 		NJSR			_nsub_room_draw
@@ -2947,7 +2947,7 @@ _lvl5_roomC_doors:
 _lvl5_roomC_prize_seq:
 		.BYTE	$19,$18,$19,$19,$19,$18,$18,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_roomD_handler:
 		STORE8			_cur_lvl_room_idx,$0D
 		NJSR			_nsub_room_draw
@@ -2983,7 +2983,7 @@ _lvl5_roomD_doors:
 _lvl5_roomD_prize_seq:
 		.BYTE	$13,$13,$19,$19,$19,$19,$17,$17,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_roomE_handler:
 		STORE8			_cur_lvl_room_idx,$0E
 		NJSR			_nsub_room_draw
@@ -3024,7 +3024,7 @@ _lvl5_roomE_doors:
 _lvl5_roomE_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_roomF_handler:
 		STORE8			_cur_lvl_room_idx,$0F
 		NJSR			_nsub_room_draw
@@ -3070,7 +3070,7 @@ _lvl5_roomF_doors:
 _lvl5_roomF_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room10_handler:
 		STORE8			_cur_lvl_room_idx,$10
 		NJSR			_nsub_room_draw
@@ -3105,7 +3105,7 @@ _lvl5_room10_doors:
 _lvl5_room10_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room11_handler:
 		STORE8			_cur_lvl_room_idx,$11
 		NJSR			_nsub_room_draw
@@ -3143,7 +3143,7 @@ _lvl5_room11_doors:
 _lvl5_room11_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room12_handler:
 		STORE8			_cur_lvl_room_idx,$12
 		NJSR			_nsub_room_draw
@@ -3181,7 +3181,7 @@ _lvl5_room12_doors:
 _lvl5_room12_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room13_handler:
 		STORE8			_cur_lvl_room_idx,$13
 		NJSR			_nsub_room_draw
@@ -3222,7 +3222,7 @@ _lvl5_room13_doors:
 _lvl5_room13_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room14_handler:
 		STORE8			_cur_lvl_room_idx,$14
 		NJSR			_nsub_room_draw
@@ -3263,7 +3263,7 @@ _lvl5_room14_doors:
 _lvl5_room14_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl5_room15_handler:
 		STORE8			_cur_lvl_room_idx,$15
 		NJSR			_nsub_room_draw
@@ -3294,7 +3294,7 @@ _lvl5_room15_doors:
 _lvl5_room15_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl5_common_init:
 		STORE8			_lvl_data_prg_bank,$05
 		STORE16			_lvl_rooms_lib_ptr,_lvl5_rooms_lib
@@ -3327,7 +3327,7 @@ _lvl5_full_pal:
 _lvl5_room13_patch_pal:
 		.BYTE	$0F,$36,$27,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _j_nbgsub_lvl_room_objects_handler_1:
 		JMP		_nbgsub_lvl_room_objects_handler
 
@@ -3335,7 +3335,7 @@ _j_nbgsub_lvl_room_objects_handler_1:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr06_lvl6_handler:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
@@ -3349,7 +3349,7 @@ _scr06_lvl6_handler:
 		SJMP_SW			$01
 		SCASE			_lvl6_room0_handler
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; this is second to last game room, there are no roods in it
 ; only doubled exit point since the exit area is too wide for one exit
 ;
@@ -3384,7 +3384,7 @@ _lvl6_room0_doors:
 _lvl6_room0_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; final boss room. unless any other room handlers, this one uses
 ; partial palette fade out routine since the boss sprite hidden in it
 ; so it keep boss sprite invisible at the beginning of the battle.
@@ -3397,26 +3397,26 @@ _lvl6_room1_handler:
 			NARGW		_lvl6_room1_doors
 		STORE16			_room_prize_sequence_ptr,_lvl6_room1_prize_seq
 		SDELAY			$01
-		SLOOP_BEGIN		$04						; pal fade with mask
+		SLOOP_BEGIN		$04								; pal fade with mask
 		NJSR			_nsub_pal_fade_req_inc_by_mask
 			NARGB		$DD
 		SDELAY			$03
 		SLOOP_END
-		STORE8			_scr_trds_pause_mode,$00; not sure why they disable pause here
+		STORE8			_scr_trds_pause_mode,$00		; not sure why they disable pause here
 		NJSR			_nsub_players_auto_walk_init	; reload players scripts with auto walk
-		SCRL_Y_MOVE_SET 0,$80,$FF				; set scroll animation parameter
-		SDELAY			$F0						; do animation while scrolling and walking up
+		SCRL_Y_MOVE_SET 0,$80,$FF						; set scroll animation parameter
+		SDELAY			$F0								; do animation while scrolling and walking up
 		SDELAY			$F0
-		SCRL_MOVE_STOP  0						; stop
-		STORE8			_cur_room_x_pageB,$00	; fix the main room page idx here.
-		SUSPEND									; all done
+		SCRL_MOVE_STOP  0								; stop
+		STORE8			_cur_room_x_pageB,$00			; fix the main room page idx here.
+		SUSPEND											; all done
 
 _lvl6_room1_doors:
 		.BYTE	$FF
 _lvl6_room1_prize_seq:
 		.BYTE	$FF
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl6_common_init:
 		STORE8			_lvl_data_prg_bank,$03
 		NJSR			_nsub_lvl_data_ptrs_load
@@ -3447,11 +3447,11 @@ _lvl6_full_pal:
 		.BYTE	$0F,$30,$10,$1B,$0F,$10,$1B,$06,$0F,$26,$17,$07,$0F,$09,$10,$0B
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$17,$0F,$0F,$36,$25,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _j_nbgsub_lvl_room_objects_handler_2:
 		JMP		_nbgsub_lvl_room_objects_handler
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_players_auto_walk_init:
 		LDX		#$02
 		JSR		_thread_reload_param_ex
@@ -3465,7 +3465,7 @@ _nsub_players_auto_walk_init:
 
 		SECTION_START
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_ingame_start_input_test:
 		LDA		_scr_trds_pause_mode		; sub constantly called from
 		BNE		loc_15E56					; level secondary script to
@@ -3478,7 +3478,7 @@ loc_15E56:
 		CLC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; NOTE: this _game_flags ($80) used by the game to determine if previous
 ; level were comlete or not when the main level script is stopped during
 ; the game. usually, there are three options: 00/01 if continue or end were
@@ -3500,11 +3500,11 @@ loc_15E65:
 		CLC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_ingame_pause_handler:
-		LDA		#$FF							; stop music at the pause entry
-		JSR		_far_prg6_apu_mus_load_ex		; onlu snd is player this time
-		LDA		_ppu_scroll_pos_x				; backup critical variables
+		LDA		#$FF						; stop music at the pause entry
+		JSR		_far_prg6_apu_mus_load_ex	; onlu snd is player this time
+		LDA		_ppu_scroll_pos_x			; backup critical variables
 		PHA
 		LDA		_ppu_scroll_pos_x+1
 		PHA
@@ -3527,41 +3527,41 @@ _nsub_ingame_pause_handler:
 		STA		_ppu_scroll_pos_y+1
 		LDA		_chr_bank1
 		PHA
-		LDA		#_tlm1_score_idx				; draw pause static info tile-map
+		LDA		#_tlm1_score_idx			; draw pause static info tile-map
 		JSR		_far_prg0_tlm_lib_unpack
-		JSR		_nsub_scores_and_lives_draw		; draw pause dynamic info (scores, lives)
-		JSR		_ppu_res_send_param				; send palette
+		JSR		_nsub_scores_and_lives_draw	; draw pause dynamic info (scores, lives)
+		JSR		_ppu_res_send_param			; send palette
 		.WORD	_res_pause_pal
 loc_15EA2:
-		JSR		_wait_for_nmi					; enter the pause loop here
+		JSR		_wait_for_nmi				; enter the pause loop here
 		LDA		#$00
 		STA		_spr_buf_pos
 		STA		_spr_buf_shuffle
-		JSR		_pause_screen_anim				; animate player's icon
+		JSR		_pause_screen_anim			; animate player's icon
 		LDA		_pad0_pressed
 		AND		#$10
-		BEQ		loc_15EA2						; and wait for press START
+		BEQ		loc_15EA2					; and wait for press START
 		JSR		_full_pal_fade
-		JSR		_room_draw						; redraw current room, all vars already
-		PLA										; initialized
-		JSR		_mmc1_chr1_set					; restore room background CHR bank
-		LDY		_active_door_data_pos			; there is a special case to
-		BMI		loc_15ED8						; also update currently opened door
-		INY										; if you pause nearby
+		JSR		_room_draw					; redraw current room, all vars already
+		PLA									; initialized
+		JSR		_mmc1_chr1_set				; restore room background CHR bank
+		LDY		_active_door_data_pos		; there is a special case to
+		BMI		loc_15ED8					; also update currently opened door
+		INY									; if you pause nearby
 		INY
 		INY
 		INY
-		LDA		(_room_doors_data_ptr),Y		; fetch only the door type,
+		LDA		(_room_doors_data_ptr),Y	; fetch only the door type,
 		ASL
 		TAY
-		LDA		off_15F18,Y						; then call corresponding door draw routine
+		LDA		off_15F18,Y					; then call corresponding door draw routine
 		STA		_ptr06
 		LDA		off_15F18+1,Y
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
 loc_15ED8:
 		PLA
-		STA		_cur_room_y_pageB				; restore all vars and music, return to the game script
+		STA		_cur_room_y_pageB			; restore all vars and music, return to the game script
 		PLA
 		STA		_cur_room_x_pageB
 		PLA
@@ -3579,13 +3579,13 @@ loc_15ED8:
 		LDA		_apu_req_idx
 		JMP		_far_prg6_apu_mus_load
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _pause_screen_anim:
-		LDA		#$00							; custom sprite insert routine
+		LDA		#$00						; custom sprite insert routine
 		STA		_tmpD8
 		STA		_tmpD9
-		LDA		_beamer_idxA					; using the beamer spr idx
-		AND		#$F0							; animate it based on frames counter
+		LDA		_beamer_idxA				; using the beamer spr idx
+		AND		#$F0						; animate it based on frames counter
 		LSR
 		LSR
 		STA		_tmp0
@@ -3594,7 +3594,7 @@ _pause_screen_anim:
 		LSR
 		LSR
 		ADC		_tmp0
-		LDX		#$90							; and put it to fixed location
+		LDX		#$90						; and put it to fixed location
 		LDY		#$B8
 		JMP		_spr_clip_pause_player_insert
 
@@ -3623,67 +3623,67 @@ _res_pause_pal:
 		.BYTE	$0F,$31,$11,$01,$0F,$00,$10,$20,$0F,$00,$10,$20,$0F,$00,$10,$20
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_stage_complete:
-		NJSR			_nsub_players_scr_suspend			; suspend players
-		NJSR			_nsub_apu_mus_load					; they still visible
-			NARGB		$FF									; music off, wait for 10 frames
+		NJSR			_nsub_players_scr_suspend		; suspend players
+		NJSR			_nsub_apu_mus_load				; they still visible
+			NARGB		$FF								; music off, wait for 10 frames
 		STORE8			_apu_mus_volume,$FF
 		SDELAY			$10
-		STORE8			_scr_trds_pause_mode,$01			; set pause mode to disable all scripts
-		SDELAY			$4B									; stand still for about 1.25 seconds
-		NJSR			_nsub_all_threads_off_except_cur	; then off all threads except this one
+		STORE8			_scr_trds_pause_mode,$01		; set pause mode to disable all scripts
+		SDELAY			$4B								; stand still for about 1.25 seconds
+		NJSR			_nsub_all_threads_off_except_cur; then off all threads except this one
 		SDELAY			$2D
-		NJSR			_nsub_apu_mus_load					; start stage complete jingle
+		NJSR			_nsub_apu_mus_load				; start stage complete jingle
 			NARGB		$03
-		NJSR			_nsub_mmc1_chr0_set					; also change sprites CHR bank
+		NJSR			_nsub_mmc1_chr0_set				; also change sprites CHR bank
 			NARGB		$05
-		NJSR			_nsub_obj_screen_pos_set			; set object sprite screen position
-			NARGB		$80,$7C								; relative to current scroll
-		SPR_IDX_SET		0,$17								; set sprite for "STAGE COMPLETE"
+		NJSR			_nsub_obj_screen_pos_set		; set object sprite screen position
+			NARGB		$80,$7C							; relative to current scroll
+		SPR_IDX_SET		0,$17							; set sprite for "STAGE COMPLETE"
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_ngsub_stage_complete_pal_anim		; start to rotate palette for this sprite
-		SDELAY			$78									; for 2 seconds
+		NBG_HNDL_SET	_ngsub_stage_complete_pal_anim	; start to rotate palette for this sprite
+		SDELAY			$78								; for 2 seconds
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask		; fade all except this sprite pal
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; fade all except this sprite pal
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
-		NJSR			_nsub_far_prg0_tlm_lib_unpack		; now unpack tlm for scores info
+		NJSR			_nsub_far_prg0_tlm_lib_unpack	; now unpack tlm for scores info
 			NARGB		_tlm1_score_idx
-		NJSR			_nsub_scores_and_lives_draw			; draw the same info as for pause screen
+		NJSR			_nsub_scores_and_lives_draw		; draw the same info as for pause screen
 		NJSR			_nsub_bg_pal_load
 			NARGW		_stage_complete_bg_pal
-		NJSR			_nsub_scroll_page_set				; reset scrolls
+		NJSR			_nsub_scroll_page_set			; reset scrolls
 			NARGB		$00
-		POS_X_SET		0,$80,$00							; re-set the current sprite position
-		POS_Y_SET		0,$7C,$00							; without scroll adjusting this time
+		POS_X_SET		0,$80,$00						; re-set the current sprite position
+		POS_Y_SET		0,$7C,$00						; without scroll adjusting this time
 		NBG_HNDL_SET	_ngsub_stage_complete_pal_anim_with_player	; set anim routine also with player icon
-		SPR_IDX_INC		0									; change sprite idx to 18 because now sprite
-		NJSR			_nsub_mmc1_chr0_set					; tiles changes and goes to second CHR page
+		SPR_IDX_INC		0								; change sprite idx to 18 because now sprite
+		NJSR			_nsub_mmc1_chr0_set				; tiles changes and goes to second CHR page
 			NARGB		$04
-		NJSR			_nsub_mmc1_chr1_set					; because bg tiles of font are there as well
+		NJSR			_nsub_mmc1_chr1_set				; because bg tiles of font are there as well
 			NARGB		$05
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask		; fade out complete screen prepared
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; fade out complete screen prepared
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
-		SDELAY			$F0									; and wait for the jingle is over
+		SDELAY			$F0								; and wait for the jingle is over
 		SJSR			_ssub_pal_fade_out
-		STORE8			_game_flags,$80						; set game flag to inform engine to increment level idx
-		SSTOP												; and kill current script to exit from engine loop.
+		STORE8			_game_flags,$80					; set game flag to inform engine to increment level idx
+		SSTOP											; and kill current script to exit from engine loop.
 
 _stage_complete_bg_pal:
 		.BYTE	$0F,$30,$0F,$0F,$0F,$30,$10,$00,$0F,$35,$25,$15,$0F,$30,$3B,$2B
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _ngsub_stage_complete_pal_anim_with_player:
 		JSR		_pause_screen_anim
 
 ; !FALLTHROUGH!
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _ngsub_stage_complete_pal_anim:
 		LDA		_nmi_counter
 		AND		#$03
@@ -3726,28 +3726,28 @@ _stage_complete_patch_pal_list:
 		.BYTE	$0F,$0F,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_scores_and_lives_draw:
 		LDA		#$05
 		JSR		_mmc1_chr1_set
 		JSR		_ppu_spr_fill_F1
-		LDA		_lives					; convert binary lives to decimal
+		LDA		_lives						; convert binary lives to decimal
 		LDX		#$00
 		JSR		_bin2dec
-		LDA		_var3					; check if high digit is zero
-		BNE		loc_1604E				; so fill it with "SPACE"
+		LDA		_var3						; check if high digit is zero
+		BNE		loc_1604E					; so fill it with "SPACE"
 		LDA		#$20
 		BNE		loc_16050
 loc_1604E:
-		ORA		#$30					; or adjust the number idx
+		ORA		#$30						; or adjust the number idx
 loc_16050:
-		STA		_tmp_buf+4				; lower digit cannot be zero here
-		LDA		_var4					; so just convert to number idx
+		STA		_tmp_buf+4					; lower digit cannot be zero here
+		LDA		_var4						; so just convert to number idx
 		ORA		#$30
 		STA		_tmp_buf+5
 		LDX		#$15
 		LDY		#$16
-		JSR		_ppu_offset_calc		; helper routine to calc ppu position
+		JSR		_ppu_offset_calc			; helper routine to calc ppu position
 		LDX		#$01
 		STX		_tmp_buf+3
 		INX
@@ -3756,11 +3756,11 @@ loc_16050:
 		.WORD	_tmp_buf+2
 		LDA		_hi_scores
 		LDX		_hi_scores+1
-		JSR		_bin2dec				; convert scores now
+		JSR		_bin2dec					; convert scores now
 		LDX		#$10
 		LDY		#$08
-		JSR		_print_num99999			; print using special subroutine now
-		LDA		_scores					; same as using "%5d" in format(...)
+		JSR		_print_num99999				; print using special subroutine now
+		LDA		_scores						; same as using "%5d" in format(...)
 		LDX		_scores+1
 		JSR		_bin2dec
 		LDX		#$10
@@ -3804,7 +3804,7 @@ _spr_nlib01_18:
 		.BYTE	$F0,$6F,$03,$F8
 		.BYTE	$F0,$71,$03,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_16111:
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_all_threads_off_except_cur
@@ -3847,7 +3847,7 @@ _sloc_16162:
 		SJSR			_ssub_pal_fade_out
 		SSTOP
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_1616A:
 		SDELAY			$01
 		NJSR			_nsub_game_over_menu_accept_test
@@ -3859,7 +3859,7 @@ byte_16176:
 		.BYTE	$0F,$30,$15,$03,$0F,$30,$10,$0F,$0F,$37,$27,$17,$0F,$0F,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$31,$12,$0F,$0F,$0F,$0F,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_game_over_draw:
 		LDA		_lvl_cur_checkpoint_idx
 		STA		_lvl_last_checkpoint_idx
@@ -3902,7 +3902,7 @@ word_161EE:
 		.BYTE	$0A,$05
 		.BYTE	$20
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_game_over_menu_item_input:
 		LDA		_pad0_pressed
 		AND		#$2C
@@ -3921,7 +3921,7 @@ loc_16201:
 byte_16211:
 		.BYTE	$AD,$8D
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_game_over_menu_accept_test:
 		LDA		_pad0_pressed
 		AND		#$10
@@ -3955,29 +3955,29 @@ _spr_nlib01_16:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr0C_room_doors_handler:
 		NBG_HNDL_SET	_nbgsub_room_doors_data_load	; initialize the doors data on start
 		NJSR			_nsub_player_to_doors_collision_test	; now test if player appears at the door
 		SBCC			_sloc_16284						; in this case draw it open manually
 		SJSR_SW	$11										; without animation and sounds
-		SCASE			_ssub_door00_opened	; lvl1 face 2x2 regular
-		SCASE			_ssub_door01_opened	; lvl1 edge 1x2
-		SCASE			_ssub_door02_opened ; lvl2 face 2x1 regular
-		SCASE			_ssub_door03_opened ; lvl2 edge 1x2
-		SCASE			_ssub_door04_opened	; lvl2 face 1x2 train
-		SCASE			_ssub_door05_opened	; lvl3 face 2x2 regular A
-		SCASE			_ssub_door06_opened	; lvl3 face 2x2 regular B
-		SCASE			_ssub_door07_opened	; lvl3 face 2x2 regular B (diff open)
-		SCASE			_ssub_door08_opened	; lvl4 face 2x2 regular
-		SCASE			_ssub_door09_opened	; lvl4
-		SCASE			_ssub_door0A_opened ; lvl4
-		SCASE			_ssub_door0B_opened ; lvl4
-		SCASE			_ssub_door0C_opened ; lvl4
-		SCASE			_ssub_door0D_opened ; lvl4
-		SCASE			_ssub_door0E_opened
-		SCASE			_ssub_door0F_opened
-		SCASE			_ssub_door10_opened ; lvl4
+		SCASE			_ssub_door00_opened				; lvl1 face 2x2 regular
+		SCASE			_ssub_door01_opened				; lvl1 edge 1x2
+		SCASE			_ssub_door02_opened 			; lvl2 face 2x1 regular
+		SCASE			_ssub_door03_opened 			; lvl2 edge 1x2
+		SCASE			_ssub_door04_opened				; lvl2 face 1x2 train
+		SCASE			_ssub_door05_opened				; lvl3 face 2x2 regular A
+		SCASE			_ssub_door06_opened				; lvl3 face 2x2 regular B
+		SCASE			_ssub_door07_opened				; lvl3 face 2x2 regular B (diff open)
+		SCASE			_ssub_door08_opened				; lvl4 face 2x2 regular
+		SCASE			_ssub_door09_opened				; lvl4
+		SCASE			_ssub_door0A_opened 			; lvl4
+		SCASE			_ssub_door0B_opened 			; lvl4
+		SCASE			_ssub_door0C_opened 			; lvl4
+		SCASE			_ssub_door0D_opened 			; lvl4
+		SCASE			_ssub_door0E_opened				; lvl5
+		SCASE			_ssub_door0F_opened				; lvl5
+		SCASE			_ssub_door10_opened 			; lvl4
 _sloc_16284:
 		SDELAY			$01								; or else skip to the main door handler loop
 		NJSR			_nsub_player_to_doors_collision_test	; test if players get near any door
@@ -4002,7 +4002,7 @@ _sloc_16284:
 		SCASE			_ssub_door10_anim
 		SJMP			_sloc_16284
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; pre-load the doors data into additional doors objects parameters array
 ; which are used to handle objects-to-room collision tests in conjunction
 ; with macro-tile based collision test. the main purpose is to detect any
@@ -4057,68 +4057,68 @@ _obj_doors_widths_list:
 _obj_doors_heights_list:
 		.BYTE	$0F,$10,$04,$10,$0F,$0F,$0F,$0F,$0F,$10,$10,$10,$10,$08,$0F,$10,$10
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_room_doors_handler_and_data_init:
-		JSR		_scr_getc						; initialize doors data pointer
+		JSR		_scr_getc					; initialize doors data pointer
 		STA		_room_doors_data_ptr
 		JSR		_scr_getc
 		STA		_room_doors_data_ptr+1
 		LDA		#$FF
-		STA		_active_door_data_pos			; init to make sure this thread will
-		STA		_scr_trds_idx+1					; load in slot 01
-		LDA		#$01							; also run the doors handler thread
+		STA		_active_door_data_pos		; init to make sure this thread will
+		STA		_scr_trds_idx+1				; load in slot 01
+		LDA		#$01						; also run the doors handler thread
 		STA		_var4
 		LDA		#$02
 		STA		_var5
 		LDA		#$0C
 		JMP		_thread_lib_load
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_player_to_doors_collision_test:
-		LDA		#$00							; now doors thread constantly polling
-		STA		_active_door_data_pos			; this routine
+		LDA		#$00						; now doors thread constantly polling
+		STA		_active_door_data_pos		; this routine
 loc_16341:
-		LDY		_active_door_data_pos			; fetch all doors data from array
+		LDY		_active_door_data_pos		; fetch all doors data from array
 		LDA		(_room_doors_data_ptr),Y
 		BMI		loc_16366
-		JSR		_room_door_screen_pos_calc		; calculates its screen position
+		JSR		_room_door_screen_pos_calc	; calculates its screen position
 		BCS		loc_1635B
 		LDA		#$02
 		JSR		_obj_to_room_door_distance_test	; test distance to both players.
-		BCC		loc_1636B						; yes, catcher can't open the door
-		LDA		#$04							; but he definitely don't let it to close
+		BCC		loc_1636B					; yes, catcher can't open the door
+		LDA		#$04						; but he definitely don't let it to close
 		JSR		_obj_to_room_door_distance_test
 		BCC		loc_1636B
 loc_1635B:
-		LDA		_active_door_data_pos			; skip if no doors nearby
+		LDA		_active_door_data_pos		; skip if no doors nearby
 		CLC
 		ADC		#$07
 		STA		_active_door_data_pos
 		BNE		loc_16341
 loc_16366:
-		STA		_active_door_data_pos			; and exit
+		STA		_active_door_data_pos		; and exit
 		CLC
 		RTS
 loc_1636B:
-		TYA										; if nearby door detected
+		TYA									; if nearby door detected
 		PHA
-		LDY		_active_door_data_pos			; load its offset in data array
-		INY										; calculated during tests
+		LDY		_active_door_data_pos		; load its offset in data array
+		INY									; calculated during tests
 		INY
 		INY
 		INY
 		INY
-		LDA		(_room_doors_data_ptr),Y		; fetch the door native handler
+		LDA		(_room_doors_data_ptr),Y	; fetch the door native handler
 		STA		_ptr06
 		INY
 		LDA		(_room_doors_data_ptr),Y
 		STA		_ptr06+1
 		PLA
 		TAY
-		JSR		_jump_ptr_ind					; and run it, if door allowed to open
-		BCC		loc_1635B						; CARRY=1 returned
-		LDX		_scr_cur_trd_idx				; if so, load current door coordinates
-		LDY		_active_door_data_pos			; as current thread object sprite coordinates
+		JSR		_jump_ptr_ind				; and run it, if door allowed to open
+		BCC		loc_1635B					; CARRY=1 returned
+		LDX		_scr_cur_trd_idx			; if so, load current door coordinates
+		LDY		_active_door_data_pos		; as current thread object sprite coordinates
 		LDA		(_room_doors_data_ptr),Y
 		STA		_scr_trds_x_pos_hi,X
 		INY
@@ -4135,10 +4135,10 @@ loc_1636B:
 		SEC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_is_players_near_active_door:
-		JSR		_active_door_screen_pos_calc	; performs the door collision tests
-		LDA		#$02							; for currently opened nearby door
+		JSR		_active_door_screen_pos_calc; performs the door collision tests
+		LDA		#$02						; for currently opened nearby door
 		JSR		_obj_to_room_door_distance_test	; for both players
 		BCC		locret_163B3
 		LDA		#$04
@@ -4146,11 +4146,11 @@ _nsub_is_players_near_active_door:
 locret_163B3:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _obj_to_room_door_distance_test:
-		STA		_tmp0							; special collision test for doors
-		TXA										; uses fixed activation area for it
-		PHA										; 32x32 pixels
+		STA		_tmp0						; special collision test for doors
+		TXA									; uses fixed activation area for it
+		PHA									; 32x32 pixels
 		TYA
 		PHA
 		LDX		_tmp0
@@ -4179,17 +4179,17 @@ loc_163DE:
 locret_163E0:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _active_door_screen_pos_calc:
-		LDY		_active_door_data_pos			; calculated door screen pos for
-		LDA		(_room_doors_data_ptr),Y		; active nearby door only
+		LDY		_active_door_data_pos		; calculated door screen pos for
+		LDA		(_room_doors_data_ptr),Y	; active nearby door only
 
 ; !FALLTHROUGH!
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _room_door_screen_pos_calc:
-		STA		_tmp_var0						; calculate door screen pos for
-		INY										; selected position of data
+		STA		_tmp_var0					; calculate door screen pos for
+		INY									; selected position of data
 		LDA		(_room_doors_data_ptr),Y
 		TAX
 		INY
@@ -4200,31 +4200,31 @@ _room_door_screen_pos_calc:
 		TAY
 		JMP		_screen_pos_calc_ex
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _room_door_always_open:
-		SEC										; default handler for always open door
+		SEC									; default handler for always open door
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _room_door_always_closed:
-		CLC										; the same for doors always closed
+		CLC									; the same for doors always closed
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _room_door_gen_clear_open:
-		STX		_tmp1							; this is the main routine to test
-		LDX		#$06							; if all enemy objects in the room are
-loc_16400:										; gone
-		LDA		_scr_trds_idx,X					; fetch object index
+		STX		_tmp1						; this is the main routine to test
+		LDX		#$06						; if all enemy objects in the room are
+loc_16400:									; gone
+		LDA		_scr_trds_idx,X				; fetch object index
 		BMI		loc_16409
-		CMP		#$13							; all objects above 13 are enemies
-		BCS		loc_16419						; others aren't preventing doors to be shut
+		CMP		#$13						; all objects above 13 are enemies
+		BCS		loc_16419					; others aren't preventing doors to be shut
 loc_16409:
 		INX
 		CPX		#$0E
 		BCC		loc_16400
-		LDX		_tmp1							; here is the additional test to be sure
-		LDA		#$02							; this is the main player want to open it
+		LDX		_tmp1						; here is the additional test to be sure
+		LDA		#$02						; this is the main player want to open it
 		JSR		_obj_to_room_door_distance_test
 		BCS		loc_16419
 		SEC
@@ -4233,39 +4233,39 @@ loc_16419:
 		CLC
 		RTS
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_opened:
-		NJSR			_nsub_door00_open_draw	; skip sound and open animation
+		NJSR			_nsub_door00_open_draw			; skip sound and open animation
 		SJMP			_ssub_door00_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_door00_open_draw
-		SPR_IDX_SET		6,$00					; there are only one additional
-		SPR_IDX_SET		0,$FF					; phase for door opening, then disable sprite
+		SPR_IDX_SET		6,$00							; there are only one additional
+		SPR_IDX_SET		0,$FF							; phase for door opening, then disable sprite
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_wait:
 		SJSR			_ssub_wait_for_door_is_inactive	; now wait for players leave the door area
-		NJSR			_nsub_apu_snd_load_safe	; in this case play shut down sound
+		NJSR			_nsub_apu_snd_load_safe			; in this case play shut down sound
 			NARGB		$06
-		SPR_IDX_SET		6,$00					; and animate door close the same way it was
-		SPR_IDX_SET		0,$FF					; animated open
-		NJSR			_nsub_door00_close_draw	; now draw meta tile for closed door
+		SPR_IDX_SET		6,$00							; and animate door close the same way it was
+		SPR_IDX_SET		0,$FF							; animated open
+		NJSR			_nsub_door00_close_draw			; now draw meta tile for closed door
 		SRET
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_wait_for_door_is_inactive:
-		SDELAY			$01						; common routine for waiting the players to
+		SDELAY			$01								; common routine for waiting the players to
 		NJSR			_nsub_is_players_near_active_door	; leave active door area
 		SBCC			_ssub_wait_for_door_is_inactive
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door00_open_draw:
 		LDA		#<[_mac_door00_open]
 		LDX		#>[_mac_door00_open]
@@ -4273,7 +4273,7 @@ _nsub_door00_open_draw:
 _mac_door00_open:
 		.BYTE	$14,$14,$14,$14
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door00_close_draw:
 		LDA		#<[_mac_door00_close]
 		LDX		#>[_mac_door00_close]
@@ -4281,7 +4281,7 @@ _nsub_door00_close_draw:
 _mac_door00_close:
 		.BYTE	$0A,$1A,$0B,$1B
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _door_macro_drawA:
 		STA		_ptr06						; draw the face oriented doors (2x2)
 		STX		_ptr06+1					; based on the object sprite coordinates
@@ -4340,12 +4340,12 @@ _spr_nlib01_00:
 		.BYTE	$00,$33,$03,$F0
 		.BYTE	$F0,$31,$03,$F0
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_opened:
 		NJSR			_nsub_door01_open_draw
 		SJMP			_ssub_door01_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4355,7 +4355,7 @@ _ssub_door01_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4365,7 +4365,7 @@ _ssub_door01_wait:
 		NJSR			_nsub_door01_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door01_open_draw:
 		LDA		#<[_mac_door01_open]
 		LDX		#>[_mac_door01_open]
@@ -4373,7 +4373,7 @@ _nsub_door01_open_draw:
 _mac_door01_open:
 		.BYTE	$00,$00
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door01_close_draw:
 		LDA		#<[_mac_door01_close]
 		LDX		#>[_mac_door01_close]
@@ -4381,7 +4381,7 @@ _nsub_door01_close_draw:
 _mac_door01_close:
 		.BYTE	$29,$29
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; TODO: this routine may be merged with common routine if rearranged the
 ; deltas tables and you may use just one sub with different Y as argument
 ; Y=1 for 1x2 tiles and Y=3 for 2x2 tiles
@@ -4431,24 +4431,24 @@ _spr_nlib01_01:
 		.BYTE	$F0,$EF,$83,$00
 		.BYTE	$00,$EF,$03,$00
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_opened:
 		NJSR			_nsub_door02_open_draw
 		SJMP			_ssub_door02_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_door02_open_draw
-		SPR_IDX_SET		2,$02						; this is a mine door, it has
-		SPR_IDX_INC		2							; a lot more detailed animation
+		SPR_IDX_SET		2,$02							; this is a mine door, it has
+		SPR_IDX_INC		2								; a lot more detailed animation
 		SPR_IDX_INC		2
 		SPR_IDX_SET		0,$FF
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4460,11 +4460,11 @@ _ssub_door02_wait:
 		NJSR			_nsub_door02_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door02_open_draw:
-		LDY		#$01								; also there is a custom routine
-loc_1655C:											; to draw horizontal arranged door
-		TYA											; tiles (2x1)
+		LDY		#$01						; also there is a custom routine
+loc_1655C:									; to draw horizontal arranged door
+		TYA									; tiles (2x1)
 		PHA
 		LDA		_scr_trds_x_pos_lo+1
 		CLC
@@ -4476,8 +4476,8 @@ loc_1655C:											; to draw horizontal arranged door
 		LDY		_scr_trds_y_pos_lo+1
 		LDA		_scr_trds_y_pos_hi+1
 		STA		_tmp_var1
-		LDA		#$14								; both open macros are the same here
-		JSR		_ppu_macro_block_draw				; hardcoded as a constant
+		LDA		#$14						; both open macros are the same here
+		JSR		_ppu_macro_block_draw		; hardcoded as a constant
 		PLA
 		TAY
 		DEY
@@ -4488,7 +4488,7 @@ _door02_x_lo_deltaA:
 _door02_x_hi_deltaA:
 		.BYTE	$FF,$00
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door02_close_draw:
 ; BUG: here routine to draw 2x1 macro tile blocks fetches arrays out of range
 ; all arrays here size 2, but this initialization set it for 4. so with first
@@ -4504,12 +4504,12 @@ _nsub_door02_close_draw:
 ;
 		LDY		#$01
 #else
-		LDY		#$03								; another custom routine to draw custom
+		LDY		#$03						; another custom routine to draw custom
 #endif
-loc_16585:											; mine doors in horizontal arrangement
+loc_16585:									; mine doors in horizontal arrangement
 		TYA
 		PHA
-		LDA		_mac_door2_closed,Y					; two macroses hardcoded in array
+		LDA		_mac_door2_closed,Y			; two macroses hardcoded in array
 		PHA
 		LDA		_scr_trds_x_pos_lo+1
 		CLC
@@ -4550,23 +4550,23 @@ _spr_nlib01_04:
 		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F4,$CB,$03,$F1
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_opened:
 		NJSR			_nsub_door03_open_draw
 		SJMP			_ssub_door03_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
 		NJSR			_nsub_door03_open_draw
-		SPR_IDX_SET		3,$05					; this is a door for train
-		SPR_IDX_INC		3						; aprt of lvl2
+		SPR_IDX_SET		3,$05							; this is a door for train
+		SPR_IDX_INC		3								; aprt of lvl2
 		SPR_IDX_SET		0,$FF
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4577,15 +4577,15 @@ _ssub_door03_wait:
 		NJSR			_nsub_door03_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door03_open_draw:
-		LDA		#<[_mac_door03_open]			; this is 1x2 door so utilizes
-		LDX		#>[_mac_door03_open]			; one of common routines to draw
-		JMP		_door_macro_drawB				; vertical 1x2 macroses
+		LDA		#<[_mac_door03_open]		; this is 1x2 door so utilizes
+		LDX		#>[_mac_door03_open]		; one of common routines to draw
+		JMP		_door_macro_drawB			; vertical 1x2 macroses
 _mac_door03_open:
 		.BYTE	$2C,$14
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door03_close_draw:
 		LDA		#<[_mac_door03_close]
 		LDX		#>[_mac_door03_close]
@@ -4600,12 +4600,12 @@ _spr_nlib01_06:
 		.BYTE	$01
 		.BYTE	$00,$E9,$03,$FF
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_opened:
 		NJSR			_nsub_door04_open_draw
 		SJMP			_ssub_door04_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4615,7 +4615,7 @@ _ssub_door04_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4625,7 +4625,7 @@ _ssub_door04_wait:
 		NJSR			_nsub_door04_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door04_open_draw:
 		LDA		#<[_mac_door04_open]
 		LDX		#>[_mac_door04_open]
@@ -4633,7 +4633,7 @@ _nsub_door04_open_draw:
 _mac_door04_open:
 		.BYTE	$87,$97,$88,$98
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door04_close_draw:
 		LDA		#<[_mac_door04_close]
 		LDX		#>[_mac_door04_close]
@@ -4646,12 +4646,12 @@ _spr_nlib01_07:
 		.BYTE	$F0,$AF,$40,$F8
 		.BYTE	$00,$8B,$40,$F8
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_opened:
 		NJSR			_nsub_door05_open_draw
 		SJMP			_sloc_1666E
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4661,7 +4661,7 @@ _ssub_door05_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _sloc_1666E:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4671,7 +4671,7 @@ _sloc_1666E:
 		NJSR			_nsub_door05_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door05_open_draw:
 		LDA		#<[_mac_door05_open]
 		LDX		#>[_mac_door05_open]
@@ -4679,7 +4679,7 @@ _nsub_door05_open_draw:
 _mac_door05_open:
 		.BYTE	$01,$01,$01,$01
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door05_close_draw:
 		LDA		#<[_mac_door05_close]
 		LDX		#>[_mac_door05_close]
@@ -4694,12 +4694,12 @@ _spr_nlib01_08:
 		.BYTE	$F0,$41,$42,$F0
 		.BYTE	$00,$43,$42,$F0
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_opened:
 		NJSR			_nsub_door06_open_draw
 		SJMP			_ssub_door06_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4709,7 +4709,7 @@ _ssub_door06_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4719,7 +4719,7 @@ _ssub_door06_wait:
 		NJSR			_nsub_door06_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door06_open_draw:
 		LDA		#<[_mac_door06_open]
 		LDX		#>[_mac_door06_open]
@@ -4727,7 +4727,7 @@ _nsub_door06_open_draw:
 _mac_door06_open:
 		.BYTE	$00,$00,$00,$00
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door06_close_draw:
 		LDA		#<[_mac_door06_close]
 		LDX		#>[_mac_door06_close]
@@ -4742,12 +4742,12 @@ _spr_nlib01_09:
 		.BYTE	$00,$33,$02,$F0
 		.BYTE	$F0,$31,$02,$F0
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_opened:
 		NJSR			_nsub_door07_open_draw
 		SJMP			_ssub_door07_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4757,17 +4757,17 @@ _ssub_door07_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$06
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_door06_close_draw		; closed state for both doors are
-		SRET										; the same here, open are different
+		NJSR			_nsub_door06_close_draw			; closed state for both doors are
+		SRET											; the same here, open are different
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door07_open_draw:
 		LDA		#<[_mac_door07_open]
 		LDX		#>[_mac_door07_open]
@@ -4775,12 +4775,12 @@ _nsub_door07_open_draw:
 _mac_door07_open:
 		.BYTE	$26,$26,$26,$26
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_opened:
 		NJSR			_nsub_door08_open_draw
 		SJMP			_ssub_door08_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4790,7 +4790,7 @@ _ssub_door08_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4800,7 +4800,7 @@ _ssub_door08_wait:
 		NJSR			_nsub_door08_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door08_open_draw:
 		LDA		#<[_mac_door08_open]
 		LDX		#>[_mac_door08_open]
@@ -4808,7 +4808,7 @@ _nsub_door08_open_draw:
 _mac_door08_open:
 		.BYTE	$20,$20,$96,$97
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door08_close_draw:
 		LDA		#<[_mac_door08_close]
 		LDX		#>[_mac_door08_close]
@@ -4832,24 +4832,24 @@ _spr_nlib01_0A:
 ; carefully and maybe switch all to such cases or in the other hand
 ; convert all to previous methods of sending data.
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door09_opened:
 		SARG_SET		SARG0,$00
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_lvl4_doos_openedB:
 		NJSR			_nsub_lvl4_doors_open_drawB
 		SJMP			_ssub_lvl4_doos_waitB
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door09_anim:
 		SARG_SET		SARG0,$00
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_lvl4_doos_animB:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -4859,7 +4859,7 @@ _ssub_lvl4_doos_animB:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_lvl4_doos_waitB:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -4874,14 +4874,14 @@ _mac_door09_open:
 _mac_door09_close:
 		.BYTE	$95,$91
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_lvl4_doors_open_drawB:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_args0,X
 
 ; !FALLTHROUGH!
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_lvl4_doors_open_drawB_ex:
 		LDA		_lvl4_mac_open_lib_lo,Y
 		LDX		_lvl4_mac_open_lib_hi,Y
@@ -4897,7 +4897,7 @@ _lvl4_mac_open_lib_hi:
 		.BYTE	>[_mac_door0B_open]
 		.BYTE	>[_mac_door0C_open]
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; NOTE: manual selection of the door open routines to be used in pause
 ; screen to restore currently opened door after return from pause mode
 ; since they optimized it with indexed arrays instead of using
@@ -4907,22 +4907,22 @@ _nsub_door09_open_draw:
 		LDY		#$00
 		BEQ		_nsub_lvl4_doors_open_drawB_ex
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0A_open_draw:
 		LDY		#$01
 		BNE		_nsub_lvl4_doors_open_drawB_ex
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0B_open_draw:
 		LDY		#$02
 		BNE		_nsub_lvl4_doors_open_drawB_ex
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0C_open_draw:
 		LDY		#$03
 		BNE		_nsub_lvl4_doors_open_drawB_ex
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; no need to call it from any wrappers this time
 ;
 _nsub_lvl4_doors_close_drawB:
@@ -4947,12 +4947,12 @@ _spr_nlib01_0B:
 		.BYTE	$F0,$DD,$00,$00
 		.BYTE	$00,$DF,$00,$00
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0A_opened:
 		SARG_SET		SARG0,$01
 		SJMP			_ssub_lvl4_doos_openedB
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0A_anim:
 		SARG_SET		SARG0,$01
 		SJMP			_ssub_lvl4_doos_animB
@@ -4962,12 +4962,12 @@ _mac_door0A_open:
 _mac_door0A_close:
 		.BYTE	$99,$91
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0B_opened:
 		SARG_SET		SARG0,$02
 		SJMP			_ssub_lvl4_doos_openedB
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0B_anim:
 		SARG_SET		SARG0,$02
 		SJMP			_ssub_lvl4_doos_animB
@@ -4977,12 +4977,12 @@ _mac_door0B_open:
 _mac_door0B_close:
 		.BYTE	$8F,$9A
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0C_opened:
 		SARG_SET		SARG0,$03
 		SJMP			_ssub_lvl4_doos_openedB
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0C_anim:
 		SARG_SET		SARG0,$03
 		SJMP			_ssub_lvl4_doos_animB
@@ -4992,12 +4992,12 @@ _mac_door0C_open:
 _mac_door0C_close:
 		.BYTE	$90,$91
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0D_opened:
 		NJSR			_nsub_door0D_open_draw
 		SJMP			_sloc_1680B
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; the difference between previous doors and this one in
 ; open animation scprite. it's different now, so they put it
 ; in a separate script case...
@@ -5011,7 +5011,7 @@ _ssub_door0D_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _sloc_1680B:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -5021,7 +5021,7 @@ _sloc_1680B:
 		NJSR			_nsub_door0D_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0D_open_draw:
 		LDA		#<[_mac_door0D_open]
 		LDX		#>[_mac_door0D_open]
@@ -5029,7 +5029,7 @@ _nsub_door0D_open_draw:
 _mac_door0D_open:
 		.BYTE	$20,$96
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0D_close_draw:
 		LDA		#<[_mac_door0D_close]
 		LDX		#>[_mac_door0D_close]
@@ -5042,12 +5042,12 @@ _spr_nlib01_0C:
 		.BYTE	$00,$CF,$00,$08
 		.BYTE	$00,$CF,$00,$00
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_opened:
 		NJSR			_nsub_door10_open_draw
 		SJMP			_ssub_door10_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -5057,7 +5057,7 @@ _ssub_door10_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -5067,7 +5067,7 @@ _ssub_door10_wait:
 		NJSR			_nsub_door10_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door10_open_draw:
 		LDA		#<[_mac_door10_open]
 		LDX		#>[_mac_door10_open]
@@ -5075,7 +5075,7 @@ _nsub_door10_open_draw:
 _mac_door10_open:
 		.BYTE	$22,$9E
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door10_close_draw:
 		LDA		#<[_mac_door10_close]
 		LDX		#>[_mac_door10_close]
@@ -5088,12 +5088,12 @@ _spr_nlib01_0D:
 		.BYTE	$F0,$DD,$00,$08
 		.BYTE	$00,$DF,$00,$08
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_opened:
 		NJSR			_nsub_door0E_open_draw
 		SJMP			_ssub_door0E_wait
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -5105,7 +5105,7 @@ _ssub_door0E_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -5117,7 +5117,7 @@ _ssub_door0E_wait:
 		NJSR			_nsub_door0E_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0E_open_draw:
 		LDA		#<[_mac_door0E_open]
 		LDX		#>[_mac_door0E_open]
@@ -5125,7 +5125,7 @@ _nsub_door0E_open_draw:
 _mac_door0E_open:
 		.BYTE	$14,$14,$55,$55
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0E_close_draw:
 		LDA		#<[_mac_door0E_close]
 		LDX		#>[_mac_door0E_close]
@@ -5156,12 +5156,12 @@ _spr_nlib01_10:
 		.BYTE	$00,$7D,$00,$F8
 		.BYTE	$00,$7D,$00,$F0
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_opened:
 		NJSR			_nsub_door0F_open_draw
 		SJMP			_sloc_16901
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_anim:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$07
@@ -5174,7 +5174,7 @@ _ssub_door0F_anim:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _sloc_16901:
 		SJSR			_ssub_wait_for_door_is_inactive
 		NJSR			_nsub_apu_snd_load_safe
@@ -5187,7 +5187,7 @@ _sloc_16901:
 		NJSR			_nsub_door0F_close_draw
 		SRET
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0F_open_draw:
 		LDA		#<[_mac_door0F_open]
 		LDX		#>[_mac_door0F_open]
@@ -5195,7 +5195,7 @@ _nsub_door0F_open_draw:
 _mac_door0F_open:
 		.BYTE	$00,$00
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_door0F_close_draw:
 		LDA		#<[_mac_door0F_close]
 		LDX		#>[_mac_door0F_close]
@@ -5223,7 +5223,7 @@ _spr_nlib01_14:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr0D_money_bag:
 ; NOTE: there are unreferenced sprites below, intended to draw rotating coin
 ; judging from the starting section of this script there may be a different
@@ -5248,34 +5248,34 @@ _spr_unref_2:
 		.BYTE	$01
 		.BYTE	$F8,$BF,$40,$FC
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr0D_money_bagA:
 		SARG_SET		SARG0,$00
 _sloc_16969:
 		SDELAY			$01
 		NJSR			_nsub_prize_sequence_completed_test	; wait for prize sequence completed
 		SBCC			_sloc_16969
-		SARG_SET		SARG2,$1E							; set the money amount for this bonus.
-		NBG_HNDL_SET	_nbgsub_money_bag_collision_test	; now load collision test routine
+		SARG_SET		SARG2,$1E						; set the money amount for this bonus.
+		NBG_HNDL_SET	_nbgsub_money_bag_collision_test; now load collision test routine
 _sloc_16977:
-		SPR_IDX_SET		2,$19								; and just wait it it happens in infinite loop
+		SPR_IDX_SET		2,$19							; and just wait it it happens in infinite loop
 		SPR_IDX_INC		2
 		SJMP			_sloc_16977
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_money_bag_collision_test:
 ; TODO: this is the only place we use this routine, this has a redundancy because
 ; routine mostly the same as regular one but with money add at the end.
 ; may be optimized
-		LDX		#$0D										; fixed dimensions for collision test.
+		LDX		#$0D						; fixed dimensions for collision test.
 		LDY		#$0E
 		JMP		_money_prize_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_prize_sequence_completed_test:
-		LDA		_room_prize_sequence_ptr					; prize sequence handled in catch routine
-		ORA		_room_prize_sequence_ptr+1					; when done, zeroes the pointer, so the
-		BNE		loc_1698C									; prize script check if it zero or not
+		LDA		_room_prize_sequence_ptr	; prize sequence handled in catch routine
+		ORA		_room_prize_sequence_ptr+1	; when done, zeroes the pointer, so the
+		BNE		loc_1698C					; prize script check if it zero or not
 		SEC
 		RTS
 loc_1698C:

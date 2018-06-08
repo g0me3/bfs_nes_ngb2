@@ -3,7 +3,9 @@
 
 		BANK_START $03
 
-; =============== S C R I P T ===============================================
+		SECTION_START
+
+; =============== S C R I P T ==========================s====================
 _scr1A_lvl1_boss_judges:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
@@ -26,7 +28,7 @@ _sloc_2C014:
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C029:
 		SPR_IDX_SET		4,$04
 		SPR_IDX_INC		4
@@ -64,11 +66,11 @@ _sloc_2C054:
 		SPR_IDX_ADD_IMM 6,$04
 		SPR_IDX_ADD_IMM 6,$FC
 		SLOOP_END
-		NJSR			_nsub_62ABE
+		NJSR			_nsub_args1_obj_to_beamer_vector_set
 
 ; FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C06C:
 		NBG_HNDL_SET	_nbgsub_2C0D7
 _sloc_2C06F:
@@ -85,13 +87,13 @@ _sloc_2C06F:
 			NARGB		$10
 		SJMP			_sloc_2C06F
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C089:
 		NBG_HNDL_SET	_nbgsub_2C12E
 		SLOOP_BEGIN		$3C
 		SJSR			_ssub_2C0B5
-		NJSR			_nsub_62BFD
-		SBCS_BREAK	_sloc_2C054
+		NJSR			_nsub_wait_for_beam_hold
+		SBCS_BREAK		_sloc_2C054
 		SLOOP_END
 		SARG_SET		SARG0,$02
 		NJSR			_nsub_patch_pal_load
@@ -99,15 +101,15 @@ _scr_2C089:
 			NARGW		byte_2C0D3
 _sloc_2C0A1:
 		SJSR			_ssub_2C0B5
-		NJSR			_nsub_62BFD
+		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2C0A1
-		NJSR			_nsub_62C0B
+		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_sloc_2C054
 		SCASE			_scr_2C0BF
 		SCASE			_scr_2C0C5
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C0B5:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$09,$40
@@ -115,12 +117,12 @@ _ssub_2C0B5:
 		SPR_IDX_ADD_IMM 1,$08
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C0BF:
 		SARG_SET		SARG1,$15
 		SJMP			_sloc_62E25
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C0C5:
 		SARG_SET		SARG1,$17
 		SJMP			_sloc_62E2C
@@ -131,7 +133,7 @@ byte_2C0CF:
 byte_2C0D3:
 		.BYTE	$0F,$25,$15,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C0D7:
 		LDY		#$00
 		LDX		_scr_cur_trd_idx
@@ -185,9 +187,9 @@ loc_2C118:
 loc_2C127:
 		LDX		#$0F
 		LDY		#$12
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C12E:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -205,7 +207,7 @@ loc_2C142:
 locret_2C147:
 		RTS
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C148:
 		NBG_HNDL_SET	_nbgsub_2C23F
 		NJSR			_nsub_patch_pal_load
@@ -217,7 +219,7 @@ _sjmp_case_2C148:
 		SDELAY			$48
 		SJMP			_sloc_2C16B
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C160:
 		NJSR			_nsub_2C26F
 			NARGB		$B8,$80
@@ -232,7 +234,7 @@ _sloc_2C16B:
 		SLOOP_END
 		SJMP			_sloc_2C187
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C17C:
 		NJSR			_nsub_2C26F
 			NARGB		$2A,$72
@@ -247,7 +249,7 @@ _sloc_2C187:
 		SLOOP_END
 		SJMP			_sloc_2C1A3
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C198:
 		NJSR			_nsub_2C26F
 			NARGB		$7B,$7A
@@ -268,7 +270,7 @@ _sloc_2C1A3:
 		SLOOP_END
 		SJMP			_sloc_2C1A3
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C1C2:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
@@ -276,13 +278,13 @@ _scr_2C1C2:
 		SPR_IDX_ADD_IMM 6,$04
 		SJMP			_scr_2C1C2
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C1CE:
 		NBG_HNDL_SET	_nbgsub_2C255
 		SLOOP_BEGIN		$3C
 		SJSR			_ssub_2C1FA
-		NJSR			_nsub_62BFD
-		SBCS_BREAK	_sloc_2C1EF
+		NJSR			_nsub_wait_for_beam_hold
+		SBCS_BREAK		_sloc_2C1EF
 		SLOOP_END
 		SARG_SET		SARG0,$02
 		NJSR			_nsub_patch_pal_load
@@ -290,16 +292,16 @@ _scr_2C1CE:
 			NARGW		byte_2C0D3
 _sloc_2C1E6:
 		SJSR			_ssub_2C1FA
-		NJSR			_nsub_62BFD
+		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2C1E6
 _sloc_2C1EF:
-		NJSR			_nsub_62C0B
+		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_sjmp_case_2C204
 		SCASE			_scr_2C233
 		SCASE			_sjmp_case_2C239
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C1FA:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
@@ -307,7 +309,7 @@ _ssub_2C1FA:
 		SPR_IDX_ADD_IMM 1,$08
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C204:
 		SLOOP_BEGIN		$1E
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
@@ -327,7 +329,7 @@ _sjmp_case_2C204:
 		SCASE			_sjmp_case_2C17C
 		SCASE			_sjmp_case_2C198
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C228:
 		SLOOP_BEGIN		$1E
 		SPR_IDX_SET		1,$1B
@@ -336,17 +338,17 @@ _ssub_2C228:
 		NBG_HNDL_SET	_nbgsub_2C23F
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C233:
 		SARG_SET		SARG1,$25
 		SJMP			_sloc_62E25
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C239:
 		SARG_SET		SARG1,$27
 		SJMP			_sloc_62E2C
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C23F:
 		LDX		#$08
 		LDY		#$0E
@@ -358,9 +360,9 @@ _nbgsub_2C23F:
 loc_2C24E:
 		LDX		#$0B
 		LDY		#$12
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C255:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -378,7 +380,7 @@ loc_2C269:
 locret_2C26E:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2C26F:
 		LDX		_scr_cur_trd_idx
 		JSR		_scr_getc
@@ -695,7 +697,7 @@ _spr_nlib1A_18:
 		.BYTE	$FF,$CE,$42,$07
 		.BYTE	$FF,$DE,$42,$FF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr22_lvl2_boss_train_slime:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
@@ -705,7 +707,7 @@ _scr22_lvl2_boss_train_slime:
 		SCASE			_sjmp_case_2C97D
 		SCASE			_sjmp_case_2C8D1
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C658:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
@@ -723,7 +725,7 @@ _sjmp_case_2C658:
 		SLOOP_END
 		SJMP			_sjmp_case_2C658
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C67C:
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		0,$29
@@ -733,7 +735,7 @@ _ssub_2C67C:
 		SLOOP_END
 		SRET
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C686:
 		SPR_IDX_SET		7,$2C
 		SPR_IDX_INC		3
@@ -750,23 +752,23 @@ _ssub_2C686:
 		SPR_IDX_DEC		3
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C698:
 		NBG_HNDL_SET	_nbgsub_2C70D
 		SARG_SET		SARG0,$02
 		SSCRIPT1_SET	_scr_2C6B7
 _sloc_2C6A2:
 		SDELAY			$01
-		NJSR			_nsub_62BFD
+		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2C6A2
 		SSCRIPT1_OFF
-		NJSR			_nsub_62C0B
+		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_sjmp_case_2C658
 		SCASE			_scr_2C6D0
 		SCASE			_scr_2C6D9
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C6B7:
 		SLOOP_BEGIN		$01
 		SPR_IDX_SET		1,$29
@@ -783,22 +785,22 @@ _scr_2C6B7:
 		SPR_IDX_INC		1
 		NJSR			_nsub_626F1
 			NARGB		$03
-		NJSR			_nsub_60EF1
+		NJSR			_nsub_obj_to_beam_release_test
 		SSCRIPT0_OFF
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C6D0:
 		SJSR			_ssub_2C6E2
 		SARG_SET		SARG1,$32
-		SJMP			_sloc_62DD7
+		SJMP			_ssub_common_hor_catch_anim
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2C6D9:
 		SJSR			_ssub_2C6E2
 		SARG_SET		SARG1,$34
-		SJMP			_sloc_62E02
+		SJMP			_ssub_common_vert_catch_anim
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C6E2:
 		NJSR			_nsub_new_thread_start
 			NARGB		$22
@@ -813,7 +815,7 @@ _ssub_2C6E2:
 byte_2C6F3:
 		.BYTE	$0F,$36,$2B,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C6F7:
 		LDX		#$08
 		LDY		#$08
@@ -825,9 +827,9 @@ _nbgsub_2C6F7:
 loc_2C706:
 		LDX		#$0D
 		LDY		#$0E
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C70D:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -976,7 +978,7 @@ _spr_nlib1A_35:
 		.BYTE	$F8,$E4,$42,$08	; *--
 		.BYTE	$F8,$F6,$42,$00	; *--
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C8D1:
 		NJSR			_nsub_players_scr_suspend
 		SDELAY			$5A
@@ -1003,7 +1005,7 @@ _sjmp_case_2C8D1:
 byte_2C90A:
 		.BYTE	$0F,$0F,$0F,$07
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2C90E:
 		LDA		#$00
 		ASL
@@ -1014,7 +1016,7 @@ _nsub_2C90E:
 		STA		_scr_trds_nbgsub_ptr+1,X
 		RTS
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C91D:
 		NJSR			_nsub_2C952
 		NJSR			_nsub_new_thread_start
@@ -1042,13 +1044,13 @@ _sloc_2C932:
 		SLOOP_END
 		SSTOP
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C94B:
 		LDX		#$06
 		LDY		#$07
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2C952:
 		LDA		#$21
 		JSR		_rand
@@ -1073,17 +1075,17 @@ _spr_nlib1A_3A:
 		.BYTE	$01
 		.BYTE	$F8,$C8,$41,$FC
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C978:
 		SPR_IDX_SET		0,$36
 		SJMP			_sloc_2C932
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C97D:
 		SPR_IDX_SET		0,$38
 		SJMP			_sloc_2C932
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr2E_lvl4_boss_dragons:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
@@ -1109,7 +1111,7 @@ _sloc_2C99C:
 			NARGB		$00
 		SLOOP_END
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2C9AE:
 		NJSR			_nsub_2CB1B
 		SLOOP_BEGIN		$10
@@ -1140,7 +1142,7 @@ _sloc_2C9E4:
 		NJSR			_nsub_62B1E
 			NARGB		$02,$40
 		SBCC			_sloc_2C9BB
-		NJSR			_nsub_62CC4
+		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$14
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
@@ -1179,13 +1181,13 @@ _sloc_2C9E4:
 		NBG_HNDL_RESET
 		SJMP			_sloc_2C9BB
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2CA40:
 		NBG_HNDL_SET	_nbgsub_2CAC5
 		SLOOP_BEGIN		$5A
 		SJSR			_ssub_2CA91
-		NJSR			_nsub_62BFD
-		SBCS_BREAK	_sloc_2CA7E
+		NJSR			_nsub_wait_for_beam_hold
+		SBCS_BREAK		_sloc_2CA7E
 		SLOOP_END
 		NJSR			_nsub_62BE5
 		SBCS			_sloc_2CA66
@@ -1205,26 +1207,26 @@ _sloc_2CA66:
 			NARGW		byte_2CAAB
 _sloc_2CA6F:
 		SJSR			_ssub_2CA91
-		NJSR			_nsub_62BFD
+		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2CA6F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2CAA7
 _sloc_2CA7E:
-		NJSR			_nsub_62C0B
+		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_sjmp_case_2CA89
 		SCASE			_scr_2CA9B
 		SCASE			_scr_2CAA1
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CA89:
 		NBG_HNDL_RESET
 		SPR_IDX_ADD_IMM 6,$F4
 		SPR_IDX_ADD_IMM 6,$FC
 		SJMP			_sloc_2C9B8
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2CA91:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$44,$40
@@ -1232,12 +1234,12 @@ _ssub_2CA91:
 		SPR_IDX_ADD_IMM 1,$08
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2CA9B:
 		SARG_SET		SARG1,$50
 		SJMP			_sloc_62E25
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2CAA1:
 		SARG_SET		SARG1,$52
 		SJMP			_sloc_62E2C
@@ -1246,7 +1248,7 @@ byte_2CAA7:
 byte_2CAAB:
 		.BYTE	$0F,$36,$2B,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2CAAF:
 		LDX		#$10
 		LDY		#$10
@@ -1258,9 +1260,9 @@ _nbgsub_2CAAF:
 loc_2CABE:
 		LDX		#$15
 		LDY		#$16
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2CAC5:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -1278,7 +1280,7 @@ loc_2CAD9:
 locret_2CADE:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2CADF:
 		JSR		_scr_getc
 		STA		_tmp0
@@ -1295,7 +1297,7 @@ loc_2CAEE:
 		CPY		_tmp0
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2CAF6:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,Y
@@ -1319,7 +1321,7 @@ byte_2CB13:
 byte_2CB17:
 		.BYTE	$30,$FF,$A0,$FF
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2CB1B:
 		LDA		#$0B
 		JSR		_rand
@@ -1352,7 +1354,7 @@ _nsub_2CB1B:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2CB4F:
 		LDA		#$00
 		JSR		_rand
@@ -1604,22 +1606,22 @@ _spr_nlib1A_51:
 		.BYTE	$07,$BE,$03,$01
 		.BYTE	$07,$8E,$03,$F9
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CE6C:
 		SARG_SET		SARG0,$00
-		NJSR			_nsub_604CD
+		NJSR			_nsub_sarg1_direction_extract
 		SJMP_SW			$04
 		SCASE			_sjmp_case_2CE7C
 		SCASE			_sjmp_case_2CE8A
 		SCASE			_sjmp_case_2CE81
 		SCASE			_sjmp_case_2CE95
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CE7C:
 		POS_Y_MOVE		0,$CD
 		SJMP			_sloc_2CE83
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CE81:
 		POS_Y_MOVE		0,$22
 _sloc_2CE83:
@@ -1628,7 +1630,7 @@ _sloc_2CE83:
 		SPR_IDX_INC		2
 		SSTOP
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CE8A:
 		POS_X_MOVE	0,$2F
 		POS_Y_MOVE		0,$04
@@ -1637,7 +1639,7 @@ _sjmp_case_2CE8A:
 		SPR_IDX_INC		2
 		SSTOP
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CE95:
 		POS_X_MOVE	0,$D1
 		POS_Y_MOVE		0,$04
@@ -1646,17 +1648,17 @@ _sjmp_case_2CE95:
 		SPR_IDX_INC		2
 		SSTOP
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2CEA0:
 		LDX		#$09
 		LDY		#$24
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2CEA7:
 		LDX		#$23
 		LDY		#$0A
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 _spr_nlib1A_54:
 		.BYTE	$03
 		.BYTE	$E3,$92,$01,$FC
@@ -1688,7 +1690,7 @@ _spr_nlib1A_57:
 		.BYTE	$F7,$92,$41,$EC
 		.BYTE	$F3,$92,$01,$02
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr2F_lvl5_boss_key_keeper:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
@@ -1737,7 +1739,7 @@ _sloc_2CF51:
 			NARGB		$07
 			NARGW		byte_2D15C
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CF60:
 		SDELAY			$01
 		NJSR			_nsub_2D1F2
@@ -1755,7 +1757,7 @@ _sloc_2CF73:
 		SBCC			_sloc_2CF89
 		NJSR			_nsub_2D229
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CF81:
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2CFE3
@@ -1771,7 +1773,7 @@ _sloc_2CF89:
 		SBCC			_sloc_2CF30
 		SSTOP
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2CFA1:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
@@ -1783,7 +1785,7 @@ _scr_2CFA1:
 		SDELAY			$02
 		SJMP			_scr_2CFA1
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CFB4:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
@@ -1797,7 +1799,7 @@ _sjmp_case_2CFB4:
 		NJSR			_nsub_2D257
 		SJMP			_sloc_2CFED
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2CFCC:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
@@ -1815,7 +1817,7 @@ _sloc_2CFE3:
 		SDELAY			$28
 		NBG_HNDL_SET	_nbgsub_2D164
 _sloc_2CFED:
-		NJSR			_nsub_604CD
+		NJSR			_nsub_sarg1_direction_extract
 		SJSR_SW	$04
 		SCASE			_sjsr_case_2D07A
 		SCASE			_sjsr_case_2D01E
@@ -1825,7 +1827,7 @@ _sloc_2CFED:
 		SARG_ALU		SARG1,_ADC,$40
 		SJMP			_sloc_2CFED
 _sloc_2D002:
-		NJSR			_nsub_62ABE
+		NJSR			_nsub_args1_obj_to_beamer_vector_set
 		SDELAY			$01
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
@@ -1849,7 +1851,7 @@ _sloc_2D022:
 _sloc_2D02E:
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D02F:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5B
@@ -1875,7 +1877,7 @@ _sloc_2D050:
 _sloc_2D05C:
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D05D:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5D
@@ -1901,7 +1903,7 @@ _sloc_2D07E:
 _sloc_2D08A:
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D08B:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5A
@@ -1927,7 +1929,7 @@ _sloc_2D0AC:
 _sloc_2D0B8:
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D0B9:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5C
@@ -1943,7 +1945,7 @@ _scr_2D0B9:
 		SDELAY			$06
 		SJMP			_scr_2D0B9
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D0D6:
 		NBG_HNDL_SET	_nbgsub_2D17F
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
@@ -1951,8 +1953,8 @@ _scr_2D0D6:
 		SLOOP_BEGIN		$5A
 		SPR_IDX_ADD_IMM 1,$0C
 		SPR_IDX_ADD_IMM 1,$F4
-		NJSR			_nsub_62BFD
-		SBCS_BREAK	_sloc_2D112
+		NJSR			_nsub_wait_for_beam_hold
+		SBCS_BREAK		_sloc_2D112
 		SLOOP_END
 		SARG_SET		SARG0,$02
 		NJSR			_nsub_2D1A8
@@ -1961,7 +1963,7 @@ _scr_2D0D6:
 _sloc_2D0F6:
 		SPR_IDX_ADD_IMM 1,$04
 		SPR_IDX_ADD_IMM 1,$FC
-		NJSR			_nsub_62BFD
+		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2D0F6
 		SJMP			_sloc_2D112
 _sloc_2D103:
@@ -1969,21 +1971,21 @@ _sloc_2D103:
 			NARGB		$5A,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$76
-		NJSR			_nsub_62BFD
+		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2D103
 _sloc_2D112:
-		NJSR			_nsub_62C0B
+		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_sjmp_case_2D11D
 		SCASE			_scr_2D122
 		SCASE			_scr_2D139
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2D11D:
 		STORE8			byte_7DA,$00
 		SUSPEND
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D122:
 		NJSR			_nsub_2D23D
 		NJSR			_nsub_2D1A8
@@ -1997,7 +1999,7 @@ _sloc_2D133:
 		SARG_SET		SARG1,$72
 		SJMP			_sloc_62E25
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2D139:
 		NJSR			_nsub_2D23D
 		NJSR			_nsub_2D1A8
@@ -2017,7 +2019,7 @@ byte_2D15C:
 byte_2D160:
 		.BYTE	$0F,$0F,$0F,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2D164:
 		LDX		#$10
 		LDY		#$16
@@ -2031,9 +2033,9 @@ _nbgsub_2D164:
 loc_2D178:
 		LDX		#$0F
 		LDY		#$18
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2D17F:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -2051,13 +2053,13 @@ loc_2D193:
 locret_2D198:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D199:
 		LDA		byte_7DB
 		CMP		#$03
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D19F:
 		LDA		byte_7DB
 		BNE		loc_2D1A6
@@ -2067,7 +2069,7 @@ loc_2D1A6:
 		CLC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D1A8:
 		LDA		byte_7DB
 		CMP		#$01
@@ -2076,7 +2078,7 @@ _nsub_2D1A8:
 locret_2D1B0:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D1B1:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_spr_idx,X
@@ -2086,7 +2088,7 @@ _nsub_2D1B1:
 byte_2D1BB:
 		.BYTE	$5D,$5A,$5B,$5C
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D1BF:
 		JSR		_scr_getc
 		STA		_tmp0
@@ -2119,7 +2121,7 @@ loc_2D1EC:
 		BPL		loc_2D1CB
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D1F2:
 		LDA		byte_7DA
 		BEQ		locret_2D214
@@ -2143,7 +2145,7 @@ loc_2D212:
 locret_2D214:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D215:
 		LDY		#$02
 loc_2D217:
@@ -2158,7 +2160,7 @@ loc_2D225:
 		BPL		loc_2D217
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D229:
 		LDY		#$02
 loc_2D22B:
@@ -2173,7 +2175,7 @@ loc_2D239:
 		BPL		loc_2D22B
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D23D:
 		LDY		#$02
 loc_2D23F:
@@ -2191,7 +2193,7 @@ loc_2D24C:
 		STA		byte_7DA
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D257:
 		LDX		#$00
 loc_2D259:
@@ -2207,7 +2209,7 @@ loc_2D266:
 		STA		byte_7D7,X
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D26C:
 		LDA		#$FF
 		STA		byte_7D7
@@ -2219,7 +2221,7 @@ _nsub_2D26C:
 		STA		byte_7DB
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D282:
 		JSR		sub_2D2A7
 		TAY
@@ -2237,7 +2239,7 @@ _nsub_2D282:
 		STA		_scr_trds_args1,Y
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 sub_2D2A7:
 		LDY		#$02
 loc_2D2A9:
@@ -2253,7 +2255,7 @@ loc_2D2B4:
 byte_2D2B8:
 		.BYTE	$02,$00,$01
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D2BB:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
@@ -2268,7 +2270,7 @@ loc_2D2CA:
 		CLC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D2CC:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
@@ -2278,7 +2280,7 @@ _nsub_2D2CC:
 locret_2D2D7:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D2D8:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
@@ -2288,7 +2290,7 @@ _nsub_2D2D8:
 locret_2D2E3:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D2E4:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
@@ -2655,7 +2657,7 @@ _spr_nlib1A_75:
 		.BYTE	$F0,$90,$03,$00
 		.BYTE	$F0,$90,$43,$08
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2D7B1:
 		SARG_SET		SARG0,$00
 		SPR_IDX_SET		0,$76
@@ -2697,7 +2699,7 @@ _spr_nlib1A_79:
 		.BYTE	$F0,$A6,$43,$00
 		.BYTE	$F0,$A6,$03,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sjmp_case_2D81B:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_2D848
@@ -2716,14 +2718,14 @@ _sjmp_case_2D81B:
 			NARGB		$00,$03
 		SUSPEND
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2D83E:
 		LDX		#$09
 		LDY		#$0A
-		JSR		_player_to_obj_collision_test
+		JSR		_obj_to_player_collision_test
 		JMP		_cur_obj_out_of_screen_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2D848:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,Y
@@ -2786,7 +2788,7 @@ _spr_nlib1A_83:
 		.BYTE	$F8,$F0,$41,$00
 		.BYTE	$F8,$F0,$81,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr30_lvl6_boss_vega:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
@@ -2900,7 +2902,7 @@ _sloc_2D90E:
 		SDELAY			$10
 		SJMP			_sloc_2D90E
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_lvl6_boss_vega_blinker:
 		SDELAY			$01
 		NJSR			_nsub_obj_sarg_add_imm_test
@@ -2921,7 +2923,7 @@ byte_2D9B4:
 byte_2D9B8:
 		.BYTE	$0F,$20,$20,$20
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_lvl6_boss_vega_death:
 		NJSR			_nsub_gen_threads_off_except_cur
 		NJSR			_nsub_patch_pal_load
@@ -2987,11 +2989,11 @@ _scr_lvl6_boss_vega_death:
 		NJSR			_nsub_all_threads_off_except_cur
 		SSTOP
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_lvl6_boss_vega_damage_count:
 		LDX		#$15
 		LDY		#$26
-		JSR		_player_to_obj_collision_test
+		JSR		_obj_to_player_collision_test
 		LDX		#$10
 		LDY		#$18
 		JSR		_obj_to_beam_collision_test
@@ -3014,7 +3016,7 @@ _nbgsub_lvl6_boss_vega_damage_count:
 locret_2DA6F:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2DA70:
 		LDA		#$21
 		JSR		_rand
@@ -3024,7 +3026,7 @@ _nsub_2DA70:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2DA7D:
 		LDX		#$02
 		JSR		_thread_reload_param_ex
@@ -3369,7 +3371,7 @@ _spr_nlib1A_94:
 		.BYTE	$F1,$C5,$40,$F8
 		.BYTE	$F1,$C5,$00,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl6_boss_vega_sub1:
 		SARG_SET		SARG0,$00
 		SSCRIPT1_SET	_scr_2DF30
@@ -3398,19 +3400,19 @@ _lvl6_boss_vega_sub1:
 		SLOOP_END
 		SSTOP
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_2DF30:
 		SPR_IDX_SET		1,$8B
 		SPR_IDX_INC		1
 		SJMP			_scr_2DF30
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2DF36:
 		LDX		#$08
 		LDY		#$09
-		JMP		_player_to_obj_collision_test
+		JMP		_obj_to_player_collision_test
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_2DF3D:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -3419,7 +3421,7 @@ _nsub_2DF3D:
 		STA		_scr_trds_args1,X
 		RTS
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl6_boss_vega_sub2:
 		SARG_SET		SARG0,$00
 		SPR_IDX_SET		0,$8A
@@ -3436,7 +3438,7 @@ _lvl6_boss_vega_sub2:
 		SLOOP_END
 		SSTOP
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl6_boss_vega_sub3:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_2DF78
@@ -3455,11 +3457,11 @@ _sloc_2DF73:
 		SPR_IDX_INC		1
 		SJMP			_sloc_2DF73
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_2DF78:
 		LDX		#$08
 		LDY		#$09
-		JSR		_player_to_obj_collision_test
+		JSR		_obj_to_player_collision_test
 		JMP		_cur_obj_out_of_screen_test
 _spr_nlib1A_89:
 		.BYTE	$01
@@ -3490,7 +3492,7 @@ _spr_nlib1A_90:
 		.BYTE	$F8,$98,$40,$00
 		.BYTE	$F8,$98,$00,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _lvl6_boss_vega_sub4:
 		POS_Y_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$04
@@ -3660,6 +3662,8 @@ _spr_rlib1A:
 		.WORD	_spr_rlib1A_05
 		.WORD	_spr_rlib1A_06
 		.WORD	_spr_rlib1A_07
+
+		SECTION_END	"OBJECT SCRIPTS B (BOSSES)"
 
 		SECTION_START
 

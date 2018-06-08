@@ -8,7 +8,7 @@
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr00_intro_title_select:
 ; NOTE: if switch case index higher than maximum number of entries in table,
 ; then switch case skipped, so default branch is always just after the case
@@ -35,7 +35,7 @@ _scr00_intro_title_select:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 		NJSR			_nsub_mcmp						; default case for script startup
 			NARGW		_license_screen_display_flag	; check for special flag, set at reset
 			NARGB		$01								; preventing from show license screens
@@ -66,7 +66,7 @@ _scr00_intro_title_select:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sloc_title_start:
 		NJSR			_nsub_apu_mus_load				; start title music theme
 			NARGB		$05
@@ -171,7 +171,7 @@ _sloc_title_loop:
 		SJSR			_ssub_title_maskDB_fade_in		; fade in and do loop
 		SJMP			_sloc_title_loop
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_title_push_start_anim:
 		SLOOP_BEGIN		$02								; just does masked fade for
 		NJSR			_nsub_pal_fade_req_inc_by_mask	; particular paletter entry
@@ -190,7 +190,7 @@ _scr_title_push_start_anim:
 		SLOOP_END
 		SJMP			_scr_title_push_start_anim
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_title_maskDB_fade_out:
 		SLOOP_BEGIN		$04								; masked fade out for middle part
 		NJSR			_nsub_pal_fade_req_dec_by_mask	; of the title screen, excluding curtains
@@ -199,7 +199,7 @@ _ssub_title_maskDB_fade_out:
 		SLOOP_END
 		SRET
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_title_maskDB_fade_in:
 		SLOOP_BEGIN		$04								; fade in the same area
 		NJSR			_nsub_pal_fade_req_inc_by_mask
@@ -208,12 +208,12 @@ _ssub_title_maskDB_fade_in:
 		SLOOP_END
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_select_busters_start:
 		SJSR			_ssub_pal_fade_out				; TODO: this helper is redundant
 		SJMP			_scr_select_busters
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_secret_menu_start:
 		SJSR			_ssub_pal_fade_out				; TODO: this too, why not load directly?
 		SJMP			_scr_secret_menu
@@ -281,7 +281,7 @@ _tlm_title_text:
 		.BYTE	$20,$20,$20,$20,$42,$59,$20,$48,$41,$4C,$20,$4C,$41,$42,$4F,$52,$41,$54,$4F,$52,$59,$20,$20,$20
 ; -
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_title_input:
 		LDA		_pad0_pressed				; this is native background routine for
 		AND		#PAD_START					; title thread. when START pressed, test
@@ -299,7 +299,7 @@ loc_8534:
 locret_8539:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_title_attr_select:
 		JSR		_scr_getc					; TODO: if assign new _nsub_ppu_res_send_param
 		BNE		loc_8545					; routine, all this stuff may be called from
@@ -353,12 +353,12 @@ _spr_nlib00_01:
 		.BYTE	$00,$D2,$02,$10
 		.BYTE	$00,$B2,$02,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sub01_intro_slime:
-		SSCRIPT1_SET	_scr_intro_slime_anim	; run additionall parallel script for
-		POS_Y_DELTA_SET 6,$00,$01		; this object, while main script just
-		POS_Y_DELTA_SET 0,$80,$00		; set the moving parameters and then
-		SDELAY			$C8				; wait before stop
+		SSCRIPT1_SET	_scr_intro_slime_anim			; run additionall parallel script for
+		POS_Y_DELTA_SET 6,$00,$01						; this object, while main script just
+		POS_Y_DELTA_SET 0,$80,$00						; set the moving parameters and then
+		SDELAY			$C8								; wait before stop
 		SSTOP
 
 ; NOTE: don't know why they decided to use secondary script for some kind of
@@ -366,11 +366,11 @@ _sub01_intro_slime:
 ; which is actually used in many other times using loops/delays and delayed
 ; commands... probably this looks simplier.
 ;
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_intro_slime_anim:
-		SPR_IDX_SET		6,$02			; secondary slime script for sprite
-		SPR_IDX_INC		6				; animation. when main script
-		SJMP			_scr_intro_slime_anim	; stops, this will disable as well
+		SPR_IDX_SET		6,$02							; secondary slime script for sprite
+		SPR_IDX_INC		6								; animation. when main script
+		SJMP			_scr_intro_slime_anim			; stops, this will disable as well
 
 _spr_nlib00_02:
 		.BYTE	$04
@@ -385,33 +385,33 @@ _spr_nlib00_03:
 		.BYTE	$F0,$8C,$03,$F8
 		.BYTE	$F0,$8C,$43,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sub02_intro_busterA:
 		SPR_IDX_SET		0,$04
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sloc_intro_busters_delay:
 		POS_Y_DELTA_SET 0,$00,$02
 		SDELAY			$0C
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; all intro busters animations are the same difference only in initial sprite index
 ; and an appearance delay, every single buster script also set the starting position
 ;
 _sloc_intro_busters_no_delay:
-		SPR_IDX_INC		0					; +1 (5)
+		SPR_IDX_INC		0								; +1 (5)
 		POS_MOVE_STOP	0
 		SDELAY			$10
 		POS_Y_DELTA_SET 0,$80,$00
-		SLOOP_BEGIN		$06					; loop 6-5-7-5... period
-		SPR_IDX_INC		6					; +1 (6)
-		SPR_IDX_DEC		6					; -1 (5)
-		SPR_IDX_ADD_IMM 6,$02				; +2 (7)
-		SPR_IDX_ADD_IMM 6,$FE				; -2 (5)
+		SLOOP_BEGIN		$06								; loop 6-5-7-5... period
+		SPR_IDX_INC		6								; +1 (6)
+		SPR_IDX_DEC		6								; -1 (5)
+		SPR_IDX_ADD_IMM 6,$02							; +2 (7)
+		SPR_IDX_ADD_IMM 6,$FE							; -2 (5)
 		SLOOP_END
 		SSTOP
 
@@ -492,7 +492,7 @@ _spr_nlib00_0F:
 		.BYTE	$F0,$D8,$40,$F2
 		.BYTE	$F0,$C8,$40,$FA
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sub03_intro_busterB:
 		SPR_IDX_SET		0,$10
 		POS_X_DELTA_SET 0,$40,$FF
@@ -569,7 +569,7 @@ _spr_nlib00_1B:
 		.BYTE	$F0,$DC,$40,$F2
 		.BYTE	$F0,$CC,$40,$FA
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sub04_intro_busterC:
 		SPR_IDX_SET		0,$1C
 		POS_X_DELTA_SET 0,$C0,$00
@@ -646,7 +646,7 @@ _spr_nlib00_27:
 		.BYTE	$F0,$DE,$40,$F2
 		.BYTE	$F0,$CE,$40,$FA
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sub05_intro_busterD:
 		SPR_IDX_SET		0,$28
 		POS_Y_DELTA_SET 0,$00,$02
@@ -724,24 +724,24 @@ _spr_nlib00_33:
 		.BYTE	$F0,$DA,$40,$F2
 		.BYTE	$F0,$CA,$40,$FA
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _intro_sub0B_title_ghost:
-		POS_X_SET		0,$80,$00			; animation loop for small ghost
-		POS_Y_SET		0,$68,$00			; showing "victory" on the second
-		SLOOP_BEGIN		$05					; text portion of the title screen
-		SPR_IDX_SET		0,$46				; spr 46 start, repeat 6 times
+		POS_X_SET		0,$80,$00						; animation loop for small ghost
+		POS_Y_SET		0,$68,$00						; showing "victory" on the second
+		SLOOP_BEGIN		$05								; text portion of the title screen
+		SPR_IDX_SET		0,$46							; spr 46 start, repeat 6 times
 		SDELAY			$20
-		SPR_IDX_INC		6					; +1 (47)
-		SPR_IDX_INC		6					; +1 (48)
-		SPR_IDX_INC		6					; +1 (49)
-		SPR_IDX_INC		0					; +1 (4A)
+		SPR_IDX_INC		6								; +1 (47)
+		SPR_IDX_INC		6								; +1 (48)
+		SPR_IDX_INC		6								; +1 (49)
+		SPR_IDX_INC		0								; +1 (4A)
 		SDELAY			$10
-		SPR_IDX_INC		0					; +1 (4B)
+		SPR_IDX_INC		0								; +1 (4B)
 		SDELAY			$20
-		SPR_IDX_DEC		7					; -1 (4A)
-		SPR_IDX_DEC		6					; -1 (49)
-		SPR_IDX_DEC		6					; -1 (48)
-		SPR_IDX_DEC		6					; -1 (47)
+		SPR_IDX_DEC		7								; -1 (4A)
+		SPR_IDX_DEC		6								; -1 (49)
+		SPR_IDX_DEC		6								; -1 (48)
+		SPR_IDX_DEC		6								; -1 (47)
 		SLOOP_END
 		SSTOP
 
@@ -794,23 +794,23 @@ _spr_nlib00_4B:
 		.BYTE	$00,$1B,$02,$FC
 		.BYTE	$00,$CB,$02,$F4
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _intro_sub0C_title_new:
-		POS_X_SET		0,$30,$00				; set "NEW" sprite position
+		POS_X_SET		0,$30,$00						; set "NEW" sprite position
 		POS_Y_SET		0,$20,$00
-		SPR_IDX_SET		0,$4C					; select sprite index from lib00
+		SPR_IDX_SET		0,$4C							; select sprite index from lib00
 _sloc_8A65:
-		SARG_SET		SARG0,$00				; init tmp counter var
+		SARG_SET		SARG0,$00						; init tmp counter var
 		SLOOP_BEGIN		$06
-		NJSR			_nsub_patch_pal_blink	; read pal byte from selected array
-			NARGW		_pal_new_blink			; with index SARG0, put it on
-			NARGB		$16,SARG0				; selected position of palette buffer (16),
-		SARG_ALU		SARG0,_ADC,$01			; then blit it and increment idx
-		SDELAY			$01						; sync to fluch buffers, loop 6 times
+		NJSR			_nsub_patch_pal_blink			; read pal byte from selected array
+			NARGW		_pal_new_blink					; with index SARG0, put it on
+			NARGB		$16,SARG0						; selected position of palette buffer (16),
+		SARG_ALU		SARG0,_ADC,$01					; then blit it and increment idx
+		SDELAY			$01								; sync to fluch buffers, loop 6 times
 		SLOOP_END
-		SJMP			_sloc_8A65				; repeat infinitely
+		SJMP			_sloc_8A65						; repeat infinitely
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; NOTE: same blinking routine intended to blink black letters of the same "NEW"
 ; sprite instead of pink border. it uses different SARG1 variable for some reason
 ; but since it goes to infinite loop as well, they planned to run it separately
@@ -832,7 +832,7 @@ _pal_new_blink:
 _pal_new_blink_unused:
 		.BYTE	$0F,$10,$20,$30,$20,$10,$01
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_patch_pal_blink:
 		JSR		_scr_getc					; this is custom palette blink routine used
 		STA		_ptr06						; only for this place... in other cases they
@@ -870,7 +870,7 @@ _spr_nlib00_4C:
 		.BYTE	$00,$6F,$01,$E0
 		.BYTE	$F0,$6D,$01,$E0
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; this script replaces the main thread's 00 script at slot 00 when you press
 ; START at the title.
 ;
@@ -884,7 +884,7 @@ _scr_select_busters:
 			NARGW		_pal_select_busters
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$06
-		STORE8			_beamer_idxA,$FF			; no players selected yet, reset
+		STORE8			_beamer_idxA,$FF				; no players selected yet, reset
 		STORE8			_catcher_idxA,$FF
 		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
 		STORE8			_cur_room_x_pageB,$00			; not by its ingame meanings
@@ -946,7 +946,7 @@ _pal_select_busters:
 		.BYTE	$0F,$00,$16,$07,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$30,$0F,$0F
 		.BYTE	$0F,$36,$1C,$0F,$0F,$0F,$0F,$0F,$0F,$30,$0F,$0F,$0F,$0F,$0F,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_players_idx_init:
 		LDY		_beamer_idxA
 		LDA		byte_8BC3,Y
@@ -960,7 +960,7 @@ _nsub_players_idx_init:
 byte_8BC3:
 		.BYTE	$00,$10,$20,$30,$40
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_select_buster_input:
 		LDX		_scr_cur_trd_idx
 		LDA		_pad0_pressed				; test for L/R buttons press
@@ -976,7 +976,7 @@ loc_8BD5:
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8BE1:
-		CMP		_beamer_idxA			; skip if first player already selected
+		CMP		_beamer_idxA				; skip if first player already selected
 		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
 		LDA		_pad0_pressed
@@ -1000,7 +1000,7 @@ loc_8C00:
 		AND		#PAD_A
 		BEQ		loc_8C36
 		LDA		#$0C
-		JSR		_far_prg6_apu_snd_load_safe		; init one of two players indexes
+		JSR		_far_prg6_apu_snd_load_safe	; init one of two players indexes
 		LDA		_scr_trds_args0,X
 		LDY		_beamer_idxA
 		BPL		loc_8C17
@@ -1084,176 +1084,176 @@ _spr_nlib00_45:
 		.BYTE	$00,$EE,$00,$F8
 		.BYTE	$00,$EE,$40,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; PETER
 _sub06_select_peter:
 		SARG_SET		SARG0,$00
-		SARG_SET		SARG1,$08				; set default left-oriented sprite for this object
-		SPR_IDX_SET		0,$09					; set current anim walk start sprite
+		SARG_SET		SARG1,$08						; set default left-oriented sprite for this object
+		SPR_IDX_SET		0,$09							; set current anim walk start sprite
 		SJSR			_ssub_select_busters
 		SUSPEND
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_select_busters:
-		POS_X_DELTA_SET 0,$00,$FC				; first animate the entry of 4 busters
-		SDELAY			$20						; horizontally left without walk anim
-		SPR_IDX_ADD_IMM 3,$FE					; turn face to the screen while slowdown
-		POS_X_DELTA_SET 0,$00,$FE				; step by step in 14 frames
-		SDELAY			$03						;
+		POS_X_DELTA_SET 0,$00,$FC						; first animate the entry of 4 busters
+		SDELAY			$20								; horizontally left without walk anim
+		SPR_IDX_ADD_IMM 3,$FE							; turn face to the screen while slowdown
+		POS_X_DELTA_SET 0,$00,$FE						; step by step in 14 frames
+		SDELAY			$03
 		POS_X_DELTA_SET 0,$00,$FF
 		SDELAY			$04
 		POS_X_DELTA_SET 0,$80,$FF
 		SDELAY			$03
 		POS_X_DELTA_SET 0,$E0,$FF
 		SDELAY			$04
-		POS_MOVE_STOP	0						; stop move
-		SPR_IDX_ADD_IMM 0,$FE					; change sprite to step forward
-		SDELAY			$0F						; and move vertically down a little
+		POS_MOVE_STOP	0								; stop move
+		SPR_IDX_ADD_IMM 0,$FE							; change sprite to step forward
+		SDELAY			$0F								; and move vertically down a little
 		POS_Y_DELTA_SET 0,$00,$01
 		SDELAY			$04
-		SPR_IDX_INC		4						; return standing anim
+		SPR_IDX_INC		4								; return standing anim
 		SPR_IDX_DEC		0
-		POS_MOVE_STOP	0						; stop again
-		SLOOP_BEGIN		$02						; and then walk a little at the same pos
+		POS_MOVE_STOP	0								; stop again
+		SLOOP_BEGIN		$02								; and then walk a little at the same pos
 		SDELAY			$04
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 4,$FE
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		0
 		SLOOP_END
-		STORE8			_cur_room_x_pageA,$01	; now enable selection input
+		STORE8			_cur_room_x_pageA,$01			; now enable selection input
 _sloc_8D0C:
-		SDELAY			$01						; common portion for any object
+		SDELAY			$01								; common portion for any object
 		NJSR			_nsub_is_beamer_selected
-		SBCC			_sloc_8D0C				; wait if select is done
+		SBCC			_sloc_8D0C						; wait if select is done
 		NJSR			_nsub_is_cur_buster_select_for_beam_player
-		SBCS			_sloc_beamer_selected	; then test if this object selected
+		SBCS			_sloc_beamer_selected			; then test if this object selected
 _sloc_8D1A:
-		SDELAY			$01						; for both players one by one
+		SDELAY			$01								; for both players one by one
 		NJSR			_nsub_is_catcher_selected
 		SBCC			_sloc_8D1A
 		NJSR			_nsub_is_cur_buster_select_for_catch_player
 		SBCS			_sloc_catcher_selected
 		SUSPEND
-_sloc_beamer_selected:						; here is common beginning for step out
+_sloc_beamer_selected:									; here is common beginning for step out
 		SJSR			_ssub_buster_selected_step_out	; of selected regular busters
 		SPR_IDX_ADD_IMM 0,$03
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; here is common walk to pole anim for selected beam player
 _scr_beamer_walk_common:
-		POS_X_DELTA_SET 0,$00,$FF				; move left init
-		SSCRIPT1_SET	_scr_buster_walk_left_anim	; load secondary script for walk anim
+		POS_X_DELTA_SET 0,$00,$FF						; move left init
+		SSCRIPT1_SET	_scr_buster_walk_left_anim		; load secondary script for walk anim
 _sloc_8D35:
 		SDELAY			$01
-		NJSR			_nsub_cur_pos_x_lo_icmp	; move left to x=50
+		NJSR			_nsub_cur_pos_x_lo_icmp			; move left to x=50
 			NARGB		$50
 		SBCC			_sloc_8D35
-		SSCRIPT1_OFF							; stop animation
+		SSCRIPT1_OFF									; stop animation
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
-			NARGB		SARG1					; get sprite index for stand anim loaded
-		POS_MOVE_STOP	0						; at the thread start in SARG1
-		STORE8			_cur_room_x_pageA,$01	; raise anim busy flag
+			NARGB		SARG1							; get sprite index for stand anim loaded
+		POS_MOVE_STOP	0								; at the thread start in SARG1
+		STORE8			_cur_room_x_pageA,$01			; raise anim busy flag
 _sloc_8D49:
-		SDELAY			$01						; first selected player must wait until
-		NJSR			_nsub_mtest_bit0		; second player is step aside
-			NARGW		_cur_room_x_pageB		; when this occurs, the flag riased
+		SDELAY			$01								; first selected player must wait until
+		NJSR			_nsub_mtest_bit0				; second player is step aside
+			NARGW		_cur_room_x_pageB				; when this occurs, the flag riased
 		SBCC			_sloc_8D49
-		POS_X_DELTA_SET 0,$00,$FE				; finally start the pole jump up animation
-		POS_Y_DELTA_SET 0,$00,$FE				; move up left
+		POS_X_DELTA_SET 0,$00,$FE						; finally start the pole jump up animation
+		POS_Y_DELTA_SET 0,$00,$FE						; move up left
 		SDELAY			$0C
 		POS_MOVE_STOP	0
-		SCRL_Y_MOVE_SET 0,$00,$02				; adjust scroll pos
+		SCRL_Y_MOVE_SET 0,$00,$02						; adjust scroll pos
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _nsub_buster_slide_down:
-		POS_Y_DELTA_SET 0,$00,$02				; then setup constant scroll move down
-		SPR_IDX_ADD_IMM 0,$03					; busters jump up on the pole by linear
-		SDELAY			$05						; path, not ballistic. just touch the pole
-		SPR_IDX_INC		0						; then and go down
+		POS_Y_DELTA_SET 0,$00,$02						; then setup constant scroll move down
+		SPR_IDX_ADD_IMM 0,$03							; busters jump up on the pole by linear
+		SDELAY			$05								; path, not ballistic. just touch the pole
+		SPR_IDX_INC		0								; then and go down
 		SDELAY			$05
-		SPR_IDX_ADD_IMM 0,$03					; here is the trick to hide object while
-		SDELAY			$05						; sliding throught the floor. after a while
-		SPR_IDX_SET		0,$FF					; it disables the sprite but object continues
-		SDELAY			$19						; to move down. when he about to appear below
-		SPR_IDX_SET		0,$45					; draw small dummy sprite representing FOOT
-		SDELAY			$05						; show it for some time
+		SPR_IDX_ADD_IMM 0,$03							; here is the trick to hide object while
+		SDELAY			$05								; sliding throught the floor. after a while
+		SPR_IDX_SET		0,$FF							; it disables the sprite but object continues
+		SDELAY			$19								; to move down. when he about to appear below
+		SPR_IDX_SET		0,$45							; draw small dummy sprite representing FOOT
+		SDELAY			$05								; show it for some time
 		NJSR			_nsub_obj_spr_idx_set_from_sarg	; then load an actual sprite
-			NARGB		SARG1					; and continue to animate it... very tricky
-		SPR_IDX_ADD_IMM 0,$03					; but no need to make additional clipping!
+			NARGB		SARG1							; and continue to animate it... very tricky
+		SPR_IDX_ADD_IMM 0,$03							; but no need to make additional clipping!
 ; NOTE: this looks very funny in slo-mo when only the ass appears from below and move for some
 ; pixels down alone lol. then the whole sprite appears.
 _sloc_8D7B:
-		SDELAY			$08						; continue sliding till the end of second page
-		SLOOP_BEGIN		$03						; the main script will control the timing
+		SDELAY			$08								; continue sliding till the end of second page
+		SLOOP_BEGIN		$03								; the main script will control the timing
 		SPR_IDX_INC		0
 		SDELAY			$08
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$FD
 		SJMP			_sloc_8D7B
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _sloc_catcher_selected:
 		SJSR			_ssub_buster_selected_step_out
 		SPR_IDX_ADD_IMM 0,$03
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_catcher_walk_common:
-		POS_X_DELTA_SET 0,$00,$FF				; same start as for catch player, but...
+		POS_X_DELTA_SET 0,$00,$FF						; same start as for catch player, but...
 		SSCRIPT1_SET	_scr_buster_walk_left_anim
 _sloc_8D94:
-		NJSR			_nsub_cur_pos_x_lo_icmp	; he must stop earlier, at x=68
-			NARGB		$68						; TODO: for some reason, the structure of this
-		SBCS			_sloc_8DA0				; loop uses different SDELAY layout lol thus
-		SDELAY			$01						; need one more branch, very odd
+		NJSR			_nsub_cur_pos_x_lo_icmp			; he must stop earlier, at x=68
+			NARGB		$68								; TODO: for some reason, the structure of this
+		SBCS			_sloc_8DA0						; loop uses different SDELAY layout lol thus
+		SDELAY			$01								; need one more branch, very odd
 		SJMP			_sloc_8D94
 _sloc_8DA0:
-		STORE8			_cur_room_x_pageB,$01	; ok, second player is ready, start to slide down
+		STORE8			_cur_room_x_pageB,$01			; ok, second player is ready, start to slide down
 _sloc_8DA4:
 		SDELAY			$01
-		NJSR			_nsub_cur_pos_x_lo_icmp	; while first player is jumping up, he need
-			NARGB		$50						; to reach the same position x=50 first
+		NJSR			_nsub_cur_pos_x_lo_icmp			; while first player is jumping up, he need
+			NARGB		$50								; to reach the same position x=50 first
 		SBCC			_sloc_8DA4
-		SSCRIPT1_OFF							; now walk is over, start to jump up
+		SSCRIPT1_OFF									; now walk is over, start to jump up
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		SARG1
 		POS_MOVE_STOP	0
-		SDELAY			$02						; set the same move direction, animate
+		SDELAY			$02								; set the same move direction, animate
 		POS_X_DELTA_SET 0,$00,$FE
 		POS_Y_DELTA_SET 0,$00,$FE
 		SDELAY			$0C
-		POS_MOVE_STOP	0						; stop on the pole, then jump on common code
+		POS_MOVE_STOP	0								; stop on the pole, then jump on common code
 		SJMP			_nsub_buster_slide_down
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_buster_selected_step_out:
-		POS_Y_DELTA_SET 0,$00,$01				; every buster must step out of the line
-		SLOOP_BEGIN		$02						; setup y speed and walk anim, run
+		POS_Y_DELTA_SET 0,$00,$01						; every buster must step out of the line
+		SLOOP_BEGIN		$02								; setup y speed and walk anim, run
 		SDELAY			$04
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 0,$FE
 		SLOOP_END
-		POS_MOVE_STOP	0						; all animations uses frame based timings
+		POS_MOVE_STOP	0								; all animations uses frame based timings
 		SRET
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_buster_walk_left_anim:
-		SDELAY			$04						; secondary thread for constant walking animation
+		SDELAY			$04								; secondary thread for constant walking animation
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 0,$FE
 		SJMP			_scr_buster_walk_left_anim
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_is_beamer_selected:
 		LDA		_beamer_idxA				; names are selfexplanatory here and below
 		BPL		loc_8DE4
@@ -1263,7 +1263,7 @@ loc_8DE4:
 		SEC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_is_cur_buster_select_for_beam_player:
 		LDX		_scr_cur_trd_idx
 		LDA		_beamer_idxA
@@ -1275,7 +1275,7 @@ loc_8DF1:
 		SEC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_is_catcher_selected:
 		LDA		_catcher_idxA
 		BPL		loc_8DFA
@@ -1285,7 +1285,7 @@ loc_8DFA:
 		SEC
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_is_cur_buster_select_for_catch_player:
 		LDX		_scr_cur_trd_idx
 		LDA		_catcher_idxA
@@ -1297,23 +1297,23 @@ loc_8E07:
 		SEC
 		RTS
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; RAY
 _sub07_select_ray:
 		SARG_SET		SARG0,$01
-		SARG_SET		SARG1,$2C		; final sprite index for object as well
+		SARG_SET		SARG1,$2C						; final sprite index for object as well
 		SPR_IDX_SET		0,$2D
 		SJMP			_ssub_select_busters
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; EGON
 _sub08_select_egon:
 		SARG_SET		SARG0,$02
-		SARG_SET		SARG1,$14		; the same for all busters here
+		SARG_SET		SARG1,$14						; the same for all busters here
 		SPR_IDX_SET		0,$15
 		SJMP			_ssub_select_busters
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; WINSTON
 _sub09_select_winston:
 		SARG_SET		SARG0,$03
@@ -1321,43 +1321,43 @@ _sub09_select_winston:
 		SPR_IDX_SET		0,$21
 		SJMP			_ssub_select_busters
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 ; LOUIS
 _sub0A_select_louis:
-		SARG_SET		SARG0,$04			; this object has no animation on start
-		SARG_SET		SARG1,$38			; so it have it's own script handler
+		SARG_SET		SARG0,$04						; this object has no animation on start
+		SARG_SET		SARG1,$38						; so it have it's own script handler
 		SPR_IDX_SET		0,$34
 _sloc_8E32:
-		SDELAY			$01					; wait for beam player selected in main thread
+		SDELAY			$01								; wait for beam player selected in main thread
 		NJSR			_nsub_is_beamer_selected
-		SBCC			_sloc_8E32			; then there are two options
+		SBCC			_sloc_8E32						; then there are two options
 		NJSR			_nsub_is_cur_buster_select_for_beam_player
 		SBCS			_sloc_8E4F
 _sloc_8E40:
-		SDELAY			$01					; here goes if buster not selected as beam player
+		SDELAY			$01								; here goes if buster not selected as beam player
 		NJSR			_nsub_is_catcher_selected
-		SBCC			_sloc_8E40			; then we just wait for chatch player selection
+		SBCC			_sloc_8E40						; then we just wait for chatch player selection
 		NJSR			_nsub_is_cur_buster_select_for_catch_player
-		SBCS			_sloc_8E55			; again two options
-		SUSPEND								; suspend, if buster not selected for anything
-_sloc_8E4F:									; here goes if buster were selected for beam player
+		SBCS			_sloc_8E55						; again two options
+		SUSPEND											; suspend, if buster not selected for anything
+_sloc_8E4F:												; here goes if buster were selected for beam player
 		SJSR			_ssub_louis_selected_base_anim
 		SJMP			_scr_beamer_walk_common
-_sloc_8E55:									; here goest if buster were selected for catch player
+_sloc_8E55:												; here goest if buster were selected for catch player
 		SJSR			_ssub_louis_selected_base_anim
 		SJMP			_scr_catcher_walk_common
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_louis_selected_base_anim:
-		POS_X_DELTA_SET 0,$00,$FF			; first part of louis path common for any selection
-		SLOOP_BEGIN		$02					; move left,
+		POS_X_DELTA_SET 0,$00,$FF						; first part of louis path common for any selection
+		SLOOP_BEGIN		$02								; move left,
 		SPR_IDX_SET		4,$38
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		POS_Y_DELTA_SET 0,$00,$FF			; move up,
+		POS_Y_DELTA_SET 0,$00,$FF						; move up,
 		SLOOP_BEGIN		$02
 		SPR_IDX_SET		4,$35
 		SPR_IDX_INC		4
@@ -1365,7 +1365,7 @@ _ssub_louis_selected_base_anim:
 		SPR_IDX_ADD_IMM 4,$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		SPR_IDX_SET		0,$38				; prepare to move left to finish
+		SPR_IDX_SET		0,$38							; prepare to move left to finish
 		SRET
 
 _spr_nlib00_34:
@@ -1443,7 +1443,7 @@ _spr_nlib00_3F:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_secret_menu:
 		NJSR			_nsub_secret_menu_init			; init menu variables
 		NJSR			_nsub_all_threads_off_except_cur; kill all leftover threads
@@ -1465,7 +1465,7 @@ _sloc_8F5C:
 		NJSR			_nsub_secret_menu_AB_input
 		SJMP			_sloc_8F5C
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_title_restart:
 		SJSR			_ssub_pal_fade_out
 		SJMP			_sloc_title_start
@@ -1473,7 +1473,7 @@ _scr_title_restart:
 _pal_secret_menu:
 		.BYTE	$0F,$11,$11,$11,$0F,$30,$30,$30,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_secret_menu_exit_wait:
 		LDA		_pad0_pressed				; background native sub to wait
 		AND		#PAD_START					; if START is pressed
@@ -1499,7 +1499,7 @@ _ab_controls_:
 _ba_controls_:
 		.BYTE	PAD_B,PAD_A
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_init:
 		LDX		#$00
 		STX		_cur_room_doors_cnt			; this var used here as a menu index
@@ -1510,7 +1510,7 @@ _nsub_secret_menu_init:
 		STX		_menu_difficulty_idx
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_UD_input:
 		LDA		_pad0_pressed
 		AND		#PAD_U
@@ -1537,7 +1537,7 @@ loc_8FE6:
 locret_8FEC:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsum_menu_option_attr_highlight:
 		JSR		_ppu_res_send_param_repeat
 		.WORD	_res_attr_clear
@@ -1576,7 +1576,7 @@ _res_attr_option3:
 		.WORD	$23E8
 		.BYTE	$08,$01,$50
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_LR_input:
 		LDX		_cur_room_doors_cnt
 		LDA		_pad0_pressed
@@ -1607,7 +1607,7 @@ locret_9056:
 _menu_controls_max_val_list:
 		.BYTE	$01,$03,$0C,$23
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _menu_update_draw:
 		LDA		off_9068,X
 		STA		_ptr06
@@ -1626,7 +1626,7 @@ off_906C:
 		.BYTE	>[_sound_test_mus_draw]
 		.BYTE	>[_sound_test_se_draw]
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _controls_draw:
 		LDA		_menu_controls_idx
 		BNE		loc_907B
@@ -1641,7 +1641,7 @@ loc_907B:
 		TXT		$20EA,"A-BEAM  B-TRAP",	_tlm_ab_controls
 		TXT		$20EA,"B-BEAM  A-TRAP",	_tlm_ba_controls
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _difficult_draw:
 		LDX		_menu_difficulty_idx
 		LDA		off_90C9,X
@@ -1731,7 +1731,7 @@ word_9174:
 		.BYTE	"     "
 		.BYTE	"50000"
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _sound_test_mus_draw:
 		LDA		_sound_test_mus_idx
 		LDX		#$00
@@ -1740,7 +1740,7 @@ _sound_test_mus_draw:
 		LDY		#$15
 		JMP		_print_num99999
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _sound_test_se_draw:
 		LDA		_sound_test_snd_idx
 		LDX		#$00
@@ -1749,7 +1749,7 @@ _sound_test_se_draw:
 		LDY		#$17
 		JMP		_print_num99999
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_AB_input:
 		LDA		_pad0_pressed				; buttons used if sound test options
 		AND		#PAD_A						; are selected
@@ -1870,7 +1870,7 @@ _spr_nlib00:
 
 		SECTION_START
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr07_ending:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
@@ -1900,27 +1900,27 @@ _scr07_ending:
 
 ; !FALLTRHOUGH!
 
-; =============== S C R I P T ===============================================
-		STORE8			_scr_trds_out_of_screen_test,$00	; default
-		SDELAY			$5A									; delay before start
-		NJSR			_nsub_mmc1_chr1_set					; setup CHR for BG
+; =============== S C R I P T ==========================s====================
+		STORE8			_scr_trds_out_of_screen_test,$00; default
+		SDELAY			$5A								; delay before start
+		NJSR			_nsub_mmc1_chr1_set				; setup CHR for BG
 			NARGB		$09
-		NJSR			_nsub_scroll_page_set				; setup NT page
+		NJSR			_nsub_scroll_page_set			; setup NT page
 			NARGB		$00
-		NJSR			_nsub_far_prg0_tlm_lib_unpack		; unpack starr screen
-			NARGB		_tlm7_staff_idx						; similar to title curtains
+		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack starr screen
+			NARGB		_tlm7_staff_idx					; similar to title curtains
 		NJSR			_nsub_full_pal_load
 			NARGW		_pal_ending
-		NJSR			_nsub_apu_mus_load					; misc setups.. whatever
+		NJSR			_nsub_apu_mus_load				; misc setups.. whatever
 			NARGB		$05
-		SDELAY			$64									; more delay to let music begin
-		SJSR			_ssub_pal_fade_in					; show screen
-		POS_X_SET		0,$80,$00							; set base offset for main object
+		SDELAY			$64								; more delay to let music begin
+		SJSR			_ssub_pal_fade_in				; show screen
+		POS_X_SET		0,$80,$00						; set base offset for main object
 		POS_Y_SET		0,$80,$00
-		NJSR			_nsub_sarg01_load_data_ofs			; load scenario data offset
+		NJSR			_nsub_sarg01_load_data_ofs		; load scenario data offset
 			NARGW		_ending_scenario_data
 _sloc_92E5:
-		NJSR			_nsub_ending_scenario_data_fetch	; play it continuosly
+		NJSR			_nsub_ending_scenario_data_fetch; play it continuosly
 		SJSR_SW			$04
 		SCASE			_sjsr_scenario_player_sub0_thread_start
 		SCASE			_sjsr_scenario_player_sub1_delay
@@ -1928,82 +1928,82 @@ _sloc_92E5:
 		SCASE			_sjsr_scenario_player_sub3_scores_draw
 		SJMP			_sloc_92E5
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; default option for all non-zero
 _sjsr_scenario_player_sub0_thread_start:
-		NJSR			_nsub_chain_thread_lib_load_enemy	; fetch and load new thread
+		NJSR			_nsub_chain_thread_lib_load_enemy; fetch and load new thread
 		SRET
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; set delay for ARG*16 frames
 _sjsr_scenario_player_sub1_delay:
 		NJSR			_nsub_next_scenario_byte_sarg2_store; fetch byte from scenario data
-		SLOOP_BEGIN		$10									; put it to SARG2
-		NJSR			_nsub_obj_delay_set_from_sarg		; then write it to delay...
-			NARGB		SARG2								; 16 times for every value
+		SLOOP_BEGIN		$10								; put it to SARG2
+		NJSR			_nsub_obj_delay_set_from_sarg	; then write it to delay...
+			NARGB		SARG2							; 16 times for every value
 		SLOOP_END
 		SRET
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _sjsr_scenario_player_sub2_text_draw:
-		SLOOP_BEGIN		$04									; fade out palette for window
-		NJSR			_nsub_pal_fade_req_dec_by_mask		; only, keep curtains shown
+		SLOOP_BEGIN		$04								; fade out palette for window
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; only, keep curtains shown
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
 		SARG_SET		SARG2,$00
 		SLOOP_BEGIN		$12
-		NJSR			_nsub_window_line_clear				; clear frame window line by line
-		SDELAY			$01									; $18x$12 area
+		NJSR			_nsub_window_line_clear			; clear frame window line by line
+		SDELAY			$01								; $18x$12 area
 		SLOOP_END
-		NJSR			_nsub_scenario_txt_lib_ptr_load		; fetch current screen text lib ptr
+		NJSR			_nsub_scenario_txt_lib_ptr_load	; fetch current screen text lib ptr
 _sloc_931B:
-		SDELAY			$01									; draw line by line the text until
-		NJSR			_nsub_scenario_txt_lib_line_draw	; end of strings
+		SDELAY			$01								; draw line by line the text until
+		NJSR			_nsub_scenario_txt_lib_line_draw; end of strings
 		SBCC			_sloc_931B
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask		; fade in again to show it
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; fade in again to show it
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
 		SRET
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; last finishes command, shows the final scores and wait for START to
 ; return to the main game.
 ;
 _sjsr_scenario_player_sub3_scores_draw:
-		SLOOP_BEGIN		$15									; long delay $15x$3C = 21 sec
+		SLOOP_BEGIN		$15								; long delay $15x$3C = 21 sec
 		SDELAY			$3C
 		SLOOP_END
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask		; fade out window
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; fade out window
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
-		SARG_SET		SARG2,$00							; clear window
+		SARG_SET		SARG2,$00						; clear window
 		SLOOP_BEGIN		$12
 		NJSR			_nsub_window_line_clear
 		SDELAY			$01
 		SLOOP_END
-		NJSR			_nsub_bg_pal_load					; screen setup
+		NJSR			_nsub_bg_pal_load				; screen setup
 			NARGW		_pal_ending_scores
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$1C
-		NJSR			_nsub_ending_scores_draw			; sraw hi-scores
+		NJSR			_nsub_ending_scores_draw		; sraw hi-scores
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_inc_by_mask		; show screen
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; show screen
 			NARGB		$D0
 		SDELAY			$04
 		SLOOP_END
-		NBG_HNDL_SET	_nbgsub_ending_scores_exit			; load native bg input handler
+		NBG_HNDL_SET	_nbgsub_ending_scores_exit		; load native bg input handler
 		SUSPEND
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_close:
-		SJSR			_ssub_pal_fade_out					; fade out the screen
-		STORE8			_game_flags,$00						; then set main loop flag to
-		SSTOP												; jump to main entry
+		SJSR			_ssub_pal_fade_out				; fade out the screen
+		STORE8			_game_flags,$00					; then set main loop flag to
+		SSTOP											; jump to main entry
 
 _pal_ending:
 		.BYTE	$0F,$20,$15,$29,$0F,$20,$01,$29,$0F,$21,$11,$01,$0F,$20,$10,$00
@@ -2070,7 +2070,7 @@ _ending_scenario_data:
 		ECMD_THRED	_scr_ending_sub15,$00,$E0,$00
 		ECMD_WAIT
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nbgsub_ending_scores_exit:
 		LDA		_pad0_pressed				; wait if START is pressed
 		AND		#PAD_START
@@ -2080,7 +2080,7 @@ _nbgsub_ending_scores_exit:
 locret_941E:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_ending_scores_draw:
 		LDA		#$FF						; disable lives bonus vars
 		STA		_scores_to_next_live
@@ -2107,20 +2107,20 @@ loc_9436:
 		TXT		$20E7,"TOP SCORE      00",	_res_top_score
 		TXT		$21E9,  "SCORE      00",	_res_score
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_ending_scenario_data_fetch:
 		LDA		_scr_trds_args0
 		STA		_ptr06
 		LDA		_scr_trds_args1
 		STA		_ptr06+1
 		LDY		#$00
-		LDA		(_ptr06),Y				; any value in this script below 80 is
-		BMI		loc_9484				; thread start data, fetches with sub0
-		TYA								; of the player
+		LDA		(_ptr06),Y					; any value in this script below 80 is
+		BMI		loc_9484					; thread start data, fetches with sub0
+		TYA									; of the player
 		RTS
 loc_9484:
-		AND		#$7F					; any other values are other subs calls
-		CLC								; sub_idx = (cmd & 0x7F) + 1
+		AND		#$7F						; any other values are other subs calls
+		CLC									; sub_idx = (cmd & 0x7F) + 1
 		ADC		#$01
 		PHA
 		INC		_scr_trds_args0
@@ -2130,13 +2130,13 @@ loc_9490:
 		PLA
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_next_scenario_byte_sarg2_store:
 		JSR		_next_scenario_byte_get
 		STA		_scr_trds_args2
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_window_line_clear:
 		LDA		#$20
 		STA		_tmp_buf+4
@@ -2156,7 +2156,7 @@ _nsub_window_line_clear:
 		INC		_scr_trds_args2,X
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _next_scenario_byte_get:
 		LDA		_scr_trds_args0
 		STA		_ptr06
@@ -2170,7 +2170,7 @@ _next_scenario_byte_get:
 locret_94CE:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_scenario_txt_lib_ptr_load:
 		JSR		_next_scenario_byte_get
 		STA		_lvl_rooms_lib_ptr
@@ -2178,7 +2178,7 @@ _nsub_scenario_txt_lib_ptr_load:
 		STA		_lvl_rooms_lib_ptr+1
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_scenario_txt_lib_line_draw:
 		LDY		#$00
 		LDA		(_lvl_rooms_lib_ptr),Y
@@ -2287,7 +2287,7 @@ _res_all_test_players:
 		TXT		$21AC,"YOU TOO/",	_res_you_too
 		TXT		$2267,"BY HAL LABORATORY",	_res_by_hal_laboratory
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub01:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$19
@@ -2373,7 +2373,7 @@ _spr_nlib07_06:
 		.BYTE	$F0,$E4,$22,$F8
 		.BYTE	$F0,$F4,$22,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub02:
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$04
@@ -2466,7 +2466,7 @@ _spr_nlib07_0D:
 		.BYTE	$E8,$D4,$03,$00
 		.BYTE	$E8,$C4,$03,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub03:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
@@ -2508,7 +2508,7 @@ _scr_ending_sub03:
 byte_9910:
 		.BYTE	$0F,$36,$2B,$0F
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub04:
 		POS_X_DELTA_SET 0,$00,$FF
 		SPR_IDX_SET		0,$0E
@@ -2583,7 +2583,7 @@ _spr_nlib07_13:
 		.BYTE	$F0,$CA,$62,$00
 		.BYTE	$F0,$DA,$62,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub05:
 		SDELAY			$60
 		POS_X_DELTA_SET 0,$40,$01
@@ -2647,7 +2647,7 @@ _spr_nlib07_52:
 		.BYTE	$F4,$00,$60,$00
 		.BYTE	$F4,$10,$60,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub06:
 		SDELAY			$70
 		POS_X_DELTA_SET 0,$40,$01
@@ -2712,7 +2712,7 @@ _spr_nlib07_55:
 		.BYTE	$F4,$12,$20,$00
 		.BYTE	$F4,$02,$20,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub07:
 		SDELAY			$50
 		SJSR			_ssub_9B0B
@@ -2740,7 +2740,7 @@ _scr_ending_sub07:
 		SJSR			_ssub_9B0B
 		SSTOP
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_9B0B:
 		SLOOP_BEGIN		$06
 		POS_X_DELTA_SET 0,$00,$02
@@ -2805,7 +2805,7 @@ _spr_nlib07_5D:
 		.BYTE	$F0,$AA,$22,$F8
 		.BYTE	$F0,$BA,$22,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub08:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
@@ -2868,7 +2868,7 @@ _scr_ending_sub08:
 		SLOOP_END
 		SSTOP
 
-; =============== S C R I P T  S U B R O U T I N E ==========================
+; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_9C15:
 		SPR_IDX_SET		4,$C5
 		SPR_IDX_INC		4
@@ -3209,7 +3209,7 @@ _spr_rlib07_12_A:
 		.BYTE	$F8,$DA,$23,$F4
 		.BYTE	$F8,$EA,$23,$FC
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub09:
 		POS_X_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$04
@@ -3256,7 +3256,7 @@ _spr_nlib07_5E:
 		.BYTE	$F5,$5E,$23,$00
 		.BYTE	$F5,$5E,$23,$FB
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub0A:
 		POS_X_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$04
@@ -3301,7 +3301,7 @@ _spr_nlib07_5F:
 		.BYTE	$F5,$5E,$63,$F8
 		.BYTE	$F5,$5E,$23,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub0B:
 		POS_X_DELTA_SET 0,$40,$FF
 		SLOOP_BEGIN		$0E
@@ -3415,7 +3415,7 @@ _spr_nlib07_68:
 		.BYTE	$F0,$3D,$23,$00
 		.BYTE	$F0,$3B,$23,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub0C:
 		SPR_IDX_SET		0,$69
 		POS_X_DELTA_SET 6,$00,$02
@@ -3442,7 +3442,7 @@ _spr_nlib07_69:
 		.BYTE	$F8,$BB,$23,$00
 		.BYTE	$F8,$AB,$23,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub0D:
 		POS_X_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$05
@@ -3550,7 +3550,7 @@ _spr_nlib07_70:
 		.BYTE	$F0,$20,$20,$F8
 		.BYTE	$F0,$30,$20,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub16:
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_dec_by_mask
@@ -3578,7 +3578,7 @@ _scr_ending_sub16:
 		SLOOP_END
 		SSTOP
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_ending_logo_attr_load:
 		JSR		_ppu_res_send_param
 		.WORD	_attr_ending_logo
@@ -3612,7 +3612,7 @@ _tlm_ending_logo:
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub0E:
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$06
@@ -3651,7 +3651,7 @@ _scr_ending_sub0E:
 byte_A547:
 		.BYTE	$0F,$10,$05,$0F
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub0F:
 		POS_X_DELTA_SET 0,$80,$FF
 		SLOOP_BEGIN		$06
@@ -3716,7 +3716,7 @@ _spr_nlib07_AF:
 		.BYTE	$F1,$82,$00,$F8
 		.BYTE	$F1,$92,$00,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub10:
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$78,$00
@@ -3732,7 +3732,7 @@ _spr_nlib07_B3:
 		.BYTE	$01
 		.BYTE	$FC,$6E,$41,$FD
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub11:
 		SDELAY			$06
 		POS_X_DELTA_SET 0,$80,$00
@@ -3771,7 +3771,7 @@ _spr_nlib07_B4:
 		.BYTE	$F0,$0A,$40,$00
 		.BYTE	$F0,$0A,$00,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub12:
 		SDELAY			$06
 		POS_X_DELTA_SET 0,$80,$FF
@@ -3810,7 +3810,7 @@ _spr_nlib07_B5:
 		.BYTE	$F0,$0C,$00,$F8
 		.BYTE	$F0,$0C,$40,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub13:
 		SDELAY			$40
 		POS_X_DELTA_SET 0,$80,$FF
@@ -3849,7 +3849,7 @@ _spr_nlib07_B6:
 		.BYTE	$F0,$0E,$00,$F8
 		.BYTE	$F0,$0E,$40,$00
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub14:
 		SDELAY			$40
 		POS_X_DELTA_SET 0,$80,$00
@@ -3934,7 +3934,7 @@ _spr_nlib07_BB:
 		.BYTE	$F8,$4C,$C0,$00
 		.BYTE	$F8,$4C,$80,$F8
 
-; =============== S C R I P T ===============================================
+; =============== S C R I P T ==========================s====================
 _scr_ending_sub15:
 		SPR_IDX_SET		0,$BC
 _sloc_A784:
@@ -3945,7 +3945,7 @@ _sloc_A784:
 		SLOOP_END
 		SJMP			_sloc_A784
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _nsub_end_spr_pal_anim:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
@@ -4560,7 +4560,7 @@ _spr_rlib07:
 
 		SECTION_START
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _tlm_lib_unpack:
 		PHA
 		JSR		_ppu_vblank_off
@@ -4598,7 +4598,7 @@ _tlm_pak_lib:
 		TLM_PAK	_tlm8_HAL,$2000
 		TLM_PAK	_tlm9_secret_menu,$2000
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 ; since this is a HAL game, they used similar packer routine
 ; as in Kirby later on... the same LZ/RLE mix algo with a lot of
 ; various options
@@ -4619,8 +4619,8 @@ _tlm_unpack:
 		CMP		#$E0						; x - cmd index
 		BNE		.short_cmd					; c - counter
 		LDA		(_ptr06),Y					; x = 111 (E0) - special case
-		ASL								; format changes: 111xxxcc cccccccc
-		ASL								; coounter always less than value by 1
+		ASL									; format changes: 111xxxcc cccccccc
+		ASL									; coounter always less than value by 1
 		ASL
 		AND		#$E0
 		PHA
@@ -4788,7 +4788,7 @@ loc_AEF0:
 		BPL		.cmdC0
 		JMP		.unpack_loop
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _hi_cmd_cnt_init:
 		LDX		_ptr08
 		LDA		_ptr08+1
@@ -4798,7 +4798,7 @@ loc_AF3C:
 		STX		_tmp1
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _hi_cmd_ppu_byte_read_reverse:
 		LDA		_var1
 		STA		_PPU_ADDR
@@ -4812,7 +4812,7 @@ loc_AF4C:
 		BNE		loc_AF4C
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _hi_cmd_ppu_data_writeback:
 		LDX		_tmp1
 		LDA		_ptr0A+1
@@ -4834,7 +4834,7 @@ loc_AF62:
 locret_AF78:
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _hi_cmd_invert_data:
 		LDX		_tmp1
 loc_AF7B:
@@ -4851,7 +4851,7 @@ loc_AF82:
 		BNE		loc_AF7B
 		RTS
 
-; =============== S U B R O U T I N E =======================================
+; =============== S U B R O U T I N E ======n================================
 _hi_cmd_ppu_byte_read:
 		STX		_var4
 		DEC		_var4
