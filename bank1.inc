@@ -5408,6 +5408,15 @@ _lvl1_objects_list:
 		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,$01,_NON,_NON
 		OBJ_SET	_scr1B_court_chair,					$48,$02,$58,$01,$02,_NON,_NON
 		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,$03,_NON,_NON
+; ADDED, here may be 5th chair object with different pattern, but currently game
+; engine allows to add 4 enemies on the screen at once maximum. so this chair
+; does may not appear at all if'd used. try to uncomment this and just wait until
+; chair in the middle goes up and disappears out of the screen, then fifth chair
+; will appear.
+#if DEBUG==1
+		OBJ_SET	_scr1B_court_chair,					$38,$02,$18,$01,$04,_NON,_NON
+#endif
+; -
 		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,$00,_NON,_NON
 		OBJ_END
 

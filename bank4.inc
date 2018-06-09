@@ -648,9 +648,9 @@ _nsub_court_chair_move:
 		LDY		_scr_trds_args1,X			; NOTE, sarg1 is a parameter of object list data
 		LDA		off_384BF,Y					; there are total 4 chair used (0-3)
 		STA		_ptr06						; the array for animation data is 5 items long
-		LDA		off_384C4,Y					; so one is unused. there were 5 chairs in this area
-		STA		_ptr06+1					; at some point..
-		LDY		_scr_trds_args2,X			; here is the anim data pos
+		LDA		off_384C4,Y					; so one is unused. seems they planned 5 chairs
+		STA		_ptr06+1					; in this place, but only 4 are allowed at once
+		LDY		_scr_trds_args2,X			; in the released version.
 loc_38491:
 		TYA
 		PHA
@@ -881,19 +881,19 @@ _scr_miner_vert_catch_anim:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_air_hammer_miner_collision_test:
-		JSR		_nsub_obj_to_room_x_collision_testA	; NOTE: fin case of this object,
+		JSR		_nsub_obj_to_room_x_collision_testA	; NOTE: in case of this object
 		BCC		loc_38611					; they handle its collisions at native
 		LDX		_scr_cur_trd_idx			; bg subroutine, while all others objects
-		LDA		#$00						; doing this in active section of script!
-		STA		_scr_trds_x_move_speed,X	; when reach obstacles, stop
+		LDA		#$00						; doing this in active section of its scripts!
+		STA		_scr_trds_x_move_speed,X	; when reach obstacles, stop in this direction!
 		STA		_scr_trds_x_move_delta,X
 loc_38611:
 		JSR		_nsub_obj_to_room_y_collision_testA
 		BCC		loc_38620					; when stopped, just wait to next retarget
 		LDX		_scr_cur_trd_idx			; move again
 		LDA		#$00
-		STA		_scr_trds_y_move_speed,X
-		STA		_scr_trds_y_move_delta,X
+		STA		_scr_trds_y_move_speed,X	; there are a script commands to write imm to delta
+		STA		_scr_trds_y_move_delta,X	; X/Y separately which may be used same way
 loc_38620:
 		LDX		#$0A
 		LDY		#$0E
@@ -1536,7 +1536,7 @@ _nsub_empty_miner_trolley_path_select:
 		JSR		_far_lvl_room_ofs_calc		; read the current rail macro from level data
 		LDY		#$0B
 loc_38C71:
-		CMP		byte_38CAD,Y				; check if this tile is valid rail macro
+		CMP		_mac_rails_list,Y				; check if this tile is valid rail macro
 		BEQ		loc_38C7B
 		DEY
 		BPL		loc_38C71
@@ -1550,9 +1550,9 @@ loc_38C7B:
 		ROL
 		ROL
 		TAX
-		LDA		off_38CB9,X					; and read corresponding patterns list
+		LDA		_mac_rails_allow_lib_lo,X					; and read corresponding patterns list
 		STA		_ptr06
-		LDA		off_38CBD,X
+		LDA		_mac_rails_allow_lib_hi,X
 		STA		_ptr06+1
 		LDA		(_ptr06),Y					; find valid destination point based on
 		STA		_var0						; current tile and destination.
@@ -1576,30 +1576,36 @@ loc_38CA5:
 		LDX		_scr_cur_trd_idx
 		STA		_scr_trds_args1,X			; update direction parameter
 		RTS
-byte_38CAD:
-		.BYTE	$01,$10
-		.BYTE	$02,$12
-		.BYTE	$03,$13
-		.BYTE	$04,$C4
-		.BYTE	$05,$15
-		.BYTE	$06,$16
-off_38CB9:
-		.BYTE	<[byte_38CC1]
-		.BYTE	<[byte_38CCD]
-		.BYTE	<[byte_38CD9]
-		.BYTE	<[byte_38CE5]
-off_38CBD:
-		.BYTE	>[byte_38CC1]
-		.BYTE	>[byte_38CCD]
-		.BYTE	>[byte_38CD9]
-		.BYTE	>[byte_38CE5]
-byte_38CC1:
+_mac_rails_list:
+		.BYTE	$01	; vert plain
+		.BYTE	$10	; vert gap
+		.BYTE	$02	; vert up-right turn
+		.BYTE	$12	; vert up-left turn
+		.BYTE	$03 ; vert down-right turn
+		.BYTE	$13 ; vert down-left turn
+		.BYTE	$04 ; up-right turn
+		.BYTE	$C4 ; up-left turn
+		.BYTE	$05 ; down-right turn
+		.BYTE	$15 ; down-left turn
+		.BYTE	$06 ; hor plain
+		.BYTE	$16 ; hor gap
+_mac_rails_allow_lib_lo:
+		.BYTE	<[_mac_rails_allow_up]
+		.BYTE	<[_mac_rails_allow_left]
+		.BYTE	<[_mac_rails_allow_down]
+		.BYTE	<[_mac_rails_allow_right]
+_mac_rails_allow_lib_hi:
+		.BYTE	>[_mac_rails_allow_up]
+		.BYTE	>[_mac_rails_allow_left]
+		.BYTE	>[_mac_rails_allow_down]
+		.BYTE	>[_mac_rails_allow_right]
+_mac_rails_allow_up:
 		.BYTE	$00,$00,$81,$83,$00,$00,$01,$03,$40,$40,$40,$40
-byte_38CCD:
+_mac_rails_allow_left:
 		.BYTE	$40,$40,$40,$02,$40,$00,$40,$02,$40,$00,$01,$01
-byte_38CD9:
+_mac_rails_allow_down:
 		.BYTE	$02,$02,$02,$02,$89,$8B,$40,$40,$01,$03,$40,$40
-byte_38CE5:
+_mac_rails_allow_right:
 		.BYTE	$40,$40,$02,$40,$00,$40,$02,$40,$00,$40,$03,$03
 
 _spr_nlib0E_56:
@@ -2068,12 +2074,12 @@ _scr_train_ghost_projectile:
 		NJSR			_nsub_train_ghost_projectile_target_set
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
 			NARGB		$00,$01							; target is random
-		SLOOP_BEGIN		$08								; first part of move is fast
+		SLOOP_BEGIN		$08								; first its move
 		SPR_IDX_SET		4,$7A
 		SPR_IDX_INC		4
 		SLOOP_END
-		POS_MOVE_STOP	0								; second part two times slower
-		SLOOP_BEGIN		$04
+		POS_MOVE_STOP	0								; at the end it stops
+		SLOOP_BEGIN		$04								; but keeps pulsating for a while
 		SPR_IDX_SET		2,$7A
 		SPR_IDX_INC		2
 		SLOOP_END
@@ -2109,58 +2115,58 @@ _scr2B_still_throw_ballistic_slime:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_39173
+		SCASE			_scr_slime_ballistic_projectile
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-		SLOOP_BEGIN		$10
-		SPR_IDX_SET		1,$05
+		SLOOP_BEGIN		$10								; here is the main slime script init
+		SPR_IDX_SET		1,$05							; blink for a while
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3910D:
-		NJSR			_nsub_apu_snd_load_safe
+_scr_still_throw_ballistic_slime_active:
+		NJSR			_nsub_apu_snd_load_safe			; also laughs
 			NARGB		$08
-		NBG_HNDL_SET	_nbgsub_39143
+		NBG_HNDL_SET	_nbgsub_still_throw_ballistic_slime_collision_test
 _sloc_39114:
-		NJSR			_nsub_args1_obj_to_beamer_vector_set
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_args1_obj_to_beamer_vector_set	; target on beamer as well
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; calc sprite idx for slime
 			NARGB		$04,$40
 		SDELAY			$07
-		SPR_IDX_ADD_IMM 7,$04
-		NJSR			_nsub_new_thread_start
-			NARGB		$2B
+		SPR_IDX_ADD_IMM 7,$04							; throw animation
+		NJSR			_nsub_new_thread_start			; deploy projectile
+			NARGB		_scr2B_still_throw_ballistic_slime_idx
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_scr_slime_ballistic_projectile_idx+1
 			NARGB		$00
-		SLOOP_BEGIN		$05
+		SLOOP_BEGIN		$05								; after throw anim
 		SPR_IDX_ADD_IMM 7,$FC
 		SPR_IDX_ADD_IMM 7,$04
 		SLOOP_END
 		SJMP			_sloc_39114
 
 ; =============== S C R I P T ==========================s====================
-_scr_39132:
-		NBG_HNDL_SET	_nbgsub_39159
-		SJSR			_ssub_slime_stun_in_process
+_scr_still_throw_ballistic_slime_stun:
+		NBG_HNDL_SET	_nbgsub_still_throw_ballistic_slime_catch_test
+		SJSR			_ssub_slime_stun_in_process		; regular enemy stun handler
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3910D
+		SCASE			_scr_still_throw_ballistic_slime_active
 		SCASE			_scr_slime_hor_catch_anim
 		SCASE			_scr_slime_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39143:
+_nbgsub_still_throw_ballistic_slime_collision_test:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_39152
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_39132
+		.WORD	_scr_still_throw_ballistic_slime_stun
 		RTS
 loc_39152:
 		LDX		#$0A
@@ -2168,12 +2174,12 @@ loc_39152:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39159:
+_nbgsub_still_throw_ballistic_slime_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_39172
 		LSR
-		LDA		#$05
+		LDA		#$05						; middle valued slime here
 		STA		_scores_obj_value
 		BCS		loc_3916D
 		JSR		_cur_thread_reload_param
@@ -2186,16 +2192,16 @@ locret_39172:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39173:
+_scr_slime_ballistic_projectile:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_3919C
-		NJSR			_nsub_391A6
-		SSCRIPT1_SET	_scr_39194
+		NBG_HNDL_SET	_nbgsub_slime_ballistic_projectile_collision_test
+		NJSR			_nsub_slime_ballistic_projectile_spr_idx_select
+		SSCRIPT1_SET	_nsub_slime_ballistic_projectile_spr_anim
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
-			NARGB		$40,$02
-		POS_Y_DELTA_ADD 0,$00,$FD
-		SLOOP_BEGIN		$48
-		POS_Y_DELTA_ADD 1,$18,$00
+			NARGB		$40,$02							; sarg1 inherited from main object!
+		POS_Y_DELTA_ADD 0,$00,$FD						; ballistic trajectory delta Y init
+		SLOOP_BEGIN		$48								; then slowly increment, first go up
+		POS_Y_DELTA_ADD 1,$18,$00						; then start go down...
 		SLOOP_END
 		POS_MOVE_STOP	0
 		SSCRIPT1_OFF
@@ -2203,22 +2209,22 @@ _sjmp_case_39173:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_39194:
+_nsub_slime_ballistic_projectile_spr_anim:
 		SPR_IDX_INC		4
 		SPR_IDX_INC		4
 		SPR_IDX_INC		4
 		SPR_IDX_ADD_IMM 4,$FD
-		SJMP			_scr_39194
+		SJMP			_nsub_slime_ballistic_projectile_spr_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3919C:
+_nbgsub_slime_ballistic_projectile_collision_test:
 		LDX		#$06
 		LDY		#$07
 		JSR		_obj_to_player_collision_test
 		JMP		_cur_obj_out_of_screen_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_391A6:
+_nsub_slime_ballistic_projectile_spr_idx_select:
 		LDA		#$07
 		JSR		_rand
 		ASL
@@ -2227,6 +2233,10 @@ _nsub_391A6:
 		LDX		_scr_cur_trd_idx
 		STA		_scr_trds_spr_idx,X
 		RTS
+
+; NOTE: the same case for these projectile... most objects are animated in
+; 4 frame as rotaded sprite. but 3 out of 7 objects doesn't
+;
 _spr_nlib0E_7C:
 		.BYTE	$02
 		.BYTE	$F8,$98,$00,$00
@@ -2405,7 +2415,7 @@ locret_392FE:
 _sjmp_case_392FF:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_39315
-		NJSR			_nsub_391A6
+		NJSR			_nsub_slime_ballistic_projectile_spr_idx_select
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
 			NARGB		$80,$01
 _sloc_3930D:
@@ -2548,31 +2558,31 @@ _spr_nlib0E:
 		.WORD	_spr_nlib0E_79
 		.WORD	_spr_nlib0E_7A
 		.WORD	_spr_nlib0E_7B
-		.WORD	_spr_nlib0E_7C
+		.WORD	_spr_nlib0E_7C	; bottle
 		.WORD	_spr_nlib0E_7D
 		.WORD	_spr_nlib0E_7E
 		.WORD	_spr_nlib0E_7F
-		.WORD	_spr_nlib0E_80
+		.WORD	_spr_nlib0E_80	; key
 		.WORD	_spr_nlib0E_81
 		.WORD	_spr_nlib0E_82
 		.WORD	_spr_nlib0E_83
-		.WORD	_spr_nlib0E_84
+		.WORD	_spr_nlib0E_84	; coat rack
 		.WORD	_spr_nlib0E_85
 		.WORD	_spr_nlib0E_86
 		.WORD	_spr_nlib0E_87
-		.WORD	_spr_nlib0E_88
+		.WORD	_spr_nlib0E_88	; hammer
 		.WORD	_spr_nlib0E_89
 		.WORD	_spr_nlib0E_8A
 		.WORD	_spr_nlib0E_8B
+		.WORD	_spr_nlib0E_8F	; pan
 		.WORD	_spr_nlib0E_8F
 		.WORD	_spr_nlib0E_8F
 		.WORD	_spr_nlib0E_8F
-		.WORD	_spr_nlib0E_8F
+		.WORD	_spr_nlib0E_93	; rock
 		.WORD	_spr_nlib0E_93
 		.WORD	_spr_nlib0E_93
 		.WORD	_spr_nlib0E_93
-		.WORD	_spr_nlib0E_93
-		.WORD	_spr_nlib0E_97
+		.WORD	_spr_nlib0E_97	; brick
 		.WORD	_spr_nlib0E_97
 		.WORD	_spr_nlib0E_97
 		.WORD	_spr_nlib0E_97

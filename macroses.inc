@@ -18,6 +18,10 @@ PAD_D			EQU		$04
 PAD_L			EQU		$02
 PAD_R			EQU		$01
 
+DEBUG_MAX_ENEMY	EQU		$0C
+DEBUG_LEVEL		EQU		$00
+DEBUG_CHKPOINT	EQU		$04
+
 ;-------------------F-O-N-T-S-------------------
 
 ;--------------------A-P-U----------------------

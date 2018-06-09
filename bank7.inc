@@ -113,9 +113,9 @@ _GAME_ENTRY:
 		LDA		#$04
 		STA		_continues
 #if DEBUG==1
-		LDA		#$01
+		LDA		#DEBUG_LEVEL
 		STA		_level
-		LDA		#$01
+		LDA		#DEBUG_CHKPOINT
 		STA		_lvl_last_checkpoint_idx
 #else
 		LDA		#$00
@@ -3956,7 +3956,11 @@ loc_61D53:
 		LDY		_tmp2
 		LDA		#$06
 		STA		_var4						; start from slot 6
+#if DEBUG==1
+		LDA		#DEBUG_MAX_ENEMY
+#else
 		LDA		#$0A						; up to slot 9, so max 4 objects at a time on the screen
+#endif
 		STA		_var5
 		LDA		_tmp0
 		JSR		_thread_lib_load			; return C=1 if can't add any objects
@@ -4127,7 +4131,11 @@ loc_61E5F:
 		CMP		_var1
 		BCS		locret_61E6B
 		LDA		_collision_flag
+#if DEBUG==1
+;		ORA		#$00
+#else
 		ORA		#$01
+#endif
 		STA		_collision_flag
 locret_61E6B:
 		RTS
