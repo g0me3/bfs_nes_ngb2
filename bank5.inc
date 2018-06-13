@@ -9,29 +9,29 @@ _lvl5_objects_list:
 		CHECKPOINT
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$01,_NON
 		ROOM	$01
-		OBJ_SET	_scr24_flying_wing_elephant,		$88,$02,$88,$05,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$28,$02,$48,$05,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$08,$03,$D8,$05,$00,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$78,$03,$88,$05,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$B8,$03,$D8,$05,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$88,$02,$88,$05,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$88,$02,$88,$05,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$28,$02,$48,$05,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$08,$03,$D8,$05,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$78,$03,$88,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$B8,$03,$D8,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$88,$02,$88,$05,$40,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
 		ROOM	$02
 		OBJ_SET	_scr1C_girl_and_floaters,			$98,$04,$88,$05,_NON,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
 		ROOM	$03
 		CHECKPOINT
-		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$88,$04,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$D8,$04,$00,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$28,$03,$40,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$68,$04,$08,$04,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$28,$03,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$48,$04,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$C8,$04,$D8,$04,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$98,$03,$00,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$88,$04,$88,$03,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$A8,$04,$D8,$03,$00,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$38,$04,$B8,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$88,$04,$88,$04,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$A8,$04,$D8,$04,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$38,$04,$28,$03,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$68,$04,$08,$04,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$A8,$04,$28,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$88,$04,$48,$04,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$C8,$04,$D8,$04,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$38,$04,$98,$03,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$88,$04,$88,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$A8,$04,$D8,$03,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$38,$04,$B8,$03,$80,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$04,_NON
 		ROOM	$04

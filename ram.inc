@@ -212,9 +212,9 @@ _scr_trds_y_move_speed:
 _scr_trds_nbgsub_ptr:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_x_move_clk:
+_scr_trds_x_center:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_move_clk:
+_scr_trds_y_center:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0

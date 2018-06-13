@@ -1605,7 +1605,11 @@ loc_9050:
 locret_9056:
 		RTS
 _menu_controls_max_val_list:
+#if DEBUG==1
+		.BYTE	$01,$03,$0D,$23
+#else
 		.BYTE	$01,$03,$0C,$23
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _menu_update_draw:
@@ -1922,21 +1926,21 @@ _scr07_ending:
 _sloc_92E5:
 		NJSR			_nsub_ending_scenario_data_fetch; play it continuosly
 		SJSR_SW			$04
-		SCASE			_sjsr_scenario_player_sub0_thread_start
-		SCASE			_sjsr_scenario_player_sub1_delay
-		SCASE			_sjsr_scenario_player_sub2_text_draw
-		SCASE			_sjsr_scenario_player_sub3_scores_draw
+		SCASE			_ssub_scenario_player_sub0_thread_start
+		SCASE			_ssub_scenario_player_sub1_delay
+		SCASE			_ssub_scenario_player_sub2_text_draw
+		SCASE			_ssub_scenario_player_sub3_scores_draw
 		SJMP			_sloc_92E5
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; default option for all non-zero
-_sjsr_scenario_player_sub0_thread_start:
+_ssub_scenario_player_sub0_thread_start:
 		NJSR			_nsub_chain_thread_lib_load_enemy; fetch and load new thread
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; set delay for ARG*16 frames
-_sjsr_scenario_player_sub1_delay:
+_ssub_scenario_player_sub1_delay:
 		NJSR			_nsub_next_scenario_byte_sarg2_store; fetch byte from scenario data
 		SLOOP_BEGIN		$10								; put it to SARG2
 		NJSR			_nsub_obj_delay_set_from_sarg	; then write it to delay...
@@ -1945,7 +1949,7 @@ _sjsr_scenario_player_sub1_delay:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_sjsr_scenario_player_sub2_text_draw:
+_ssub_scenario_player_sub2_text_draw:
 		SLOOP_BEGIN		$04								; fade out palette for window
 		NJSR			_nsub_pal_fade_req_dec_by_mask	; only, keep curtains shown
 			NARGB		$D0
@@ -1972,7 +1976,7 @@ _sloc_931B:
 ; last finishes command, shows the final scores and wait for START to
 ; return to the main game.
 ;
-_sjsr_scenario_player_sub3_scores_draw:
+_ssub_scenario_player_sub3_scores_draw:
 		SLOOP_BEGIN		$15								; long delay $15x$3C = 21 sec
 		SDELAY			$3C
 		SLOOP_END
@@ -2016,17 +2020,17 @@ _pal_ending_scores:
 		ENDM
 
 		MAC	ECMD_DELAY
-		.BYTE	[_sjsr_scenario_player_sub1_delay_idx-1]|$80
+		.BYTE	[_ssub_scenario_player_sub1_delay_idx-1]|$80
 		.BYTE	{1}
 		ENDM
 
 		MAC	ECMD_PRINT
-		.BYTE	[_sjsr_scenario_player_sub2_text_draw_idx-1]|$80
+		.BYTE	[_ssub_scenario_player_sub2_text_draw_idx-1]|$80
 		.WORD	{1}
 		ENDM
 
 		MAC	ECMD_WAIT
-		.BYTE	[_sjsr_scenario_player_sub3_scores_draw_idx-1]|$80
+		.BYTE	[_ssub_scenario_player_sub3_scores_draw_idx-1]|$80
 		ENDM
 
 _ending_scenario_data:

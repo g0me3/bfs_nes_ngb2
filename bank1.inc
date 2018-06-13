@@ -3805,42 +3805,42 @@ _spr_nlib01_18:
 		.BYTE	$F0,$71,$03,$00
 
 ; =============== S C R I P T ==========================s====================
-_scr_16111:
-		SJSR			_ssub_room_exit_pal_fade_out
-		NJSR			_nsub_all_threads_off_except_cur
-		NJSR			_nsub_far_prg0_tlm_lib_unpack
+_scr_game_over:
+		SJSR			_ssub_room_exit_pal_fade_out	; usual stuff here
+		NJSR			_nsub_all_threads_off_except_cur; disable threads,
+		NJSR			_nsub_far_prg0_tlm_lib_unpack	; draw picture
 			NARGB		_tlm3_game_over_idx
-		NJSR			_nsub_mmc1_chr1_set
+		NJSR			_nsub_mmc1_chr1_set				; setup CHR banks
 			NARGB		$05
-		NJSR			_nsub_full_pal_load
-			NARGW		byte_16176
+		NJSR			_nsub_full_pal_load				; and palettes
+			NARGW		_pal_game_over
 		NJSR			_nsub_scroll_page_set
 			NARGB		$00
-		NJSR			_nsub_game_over_draw
+		NJSR			_nsub_game_over_draw			; draw numeric values
 		SJSR			_ssub_pal_fade_in
-		STORE8			_apu_mus_volume,$FF
+		STORE8			_apu_mus_volume,$FF				; start game over music
 		NJSR			_nsub_apu_mus_load
 			NARGB		$02
-		NJSR			_nsub_mcmp
+		NJSR			_nsub_mcmp						; now check if we have any continues
 			NARGW		_continues
 			NARGB		$00
-		SBCS			_sloc_16162
-		POS_X_SET		0,$58,$00
-		SSCRIPT1_SET	_scr_1616A
+		SBCS			_sloc_16162						; if no, just skip to the dummy delay
+		POS_X_SET		0,$58,$00						; or else setup a sprite anims
+		SSCRIPT1_SET	_scr_game_over_exit_test
 _sloc_16146:
-		POS_X_DELTA_SET 0,$00,$01
-		SPR_IDX_SET		0,$15
+		POS_X_DELTA_SET 0,$00,$01						; animate ghost nanny at the gb to the right
+		SPR_IDX_SET		0,$15							; while polling the menu input native sub
 		SLOOP_BEGIN		$50
 		NJSR			_nsub_game_over_menu_item_input
 		SDELAY			$01
 		SLOOP_END
-		POS_X_DELTA_SET 0,$00,$FF
+		POS_X_DELTA_SET 0,$00,$FF						; invert delta, do the same to the left
 		SPR_IDX_INC		0
 		SLOOP_BEGIN		$50
 		NJSR			_nsub_game_over_menu_item_input
 		SDELAY			$01
 		SLOOP_END
-		SJMP			_sloc_16146
+		SJMP			_sloc_16146						; repeat until input done
 _sloc_16162:
 		SDELAY			$F0
 		SDELAY			$3C
@@ -3848,37 +3848,37 @@ _sloc_16162:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_1616A:
-		SDELAY			$01
+_scr_game_over_exit_test:
+		SDELAY			$01								; accept test in secondary script for this thread
 		NJSR			_nsub_game_over_menu_accept_test
-		SBCC			_scr_1616A
+		SBCC			_scr_game_over_exit_test
 		SJSR			_ssub_pal_fade_out
 		SSTOP
 
-byte_16176:
+_pal_game_over:
 		.BYTE	$0F,$30,$15,$03,$0F,$30,$10,$0F,$0F,$37,$27,$17,$0F,$0F,$0F,$0F
 		.BYTE	$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$31,$12,$0F,$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_game_over_draw:
-		LDA		_lvl_cur_checkpoint_idx
+		LDA		_lvl_cur_checkpoint_idx		; in case of continue, reload last accessed checkpoint
 		STA		_lvl_last_checkpoint_idx
-		LDA		_hi_scores
+		LDA		_hi_scores					; convert scores to decimal string
 		LDX		_hi_scores+1
 		JSR		_bin2dec
 		LDX		#$10
 		LDY		#$04
-		JSR		_print_num99999
+		JSR		_print_num99999				; and draw
 		LDA		_scores
 		LDX		_scores+1
 		JSR		_bin2dec
 		LDX		#$10
 		LDY		#$06
 		JSR		_print_num99999
-		DEC		_continues
-		BEQ		loc_161E3
-		LDA		_continues
-		ORA		#$30
+		DEC		_continues					; also continues
+		BEQ		loc_161E3					; but convert to string manually
+		LDA		_continues					; since the common routine
+		ORA		#$30						; handles 5-digit numbers only
 		STA		_tmp_buf+4
 		LDA		#$01
 		STA		_tmp_buf+2
@@ -3892,7 +3892,7 @@ _nsub_game_over_draw:
 		STA		_game_flags
 		RTS
 loc_161E3:
-		JSR		_ppu_res_send_param_repeat
+		JSR		_ppu_res_send_param_repeat	; draw empty area if no continues left
 		.WORD	word_161EE
 		LDA		#$00
 		STA		_game_flags

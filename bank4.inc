@@ -7,7 +7,7 @@
 
 ; =============== S C R I P T ==========================s====================
 _scr13_slow_moving_slime:
-		NJSR			_nsub_args1_rand08_mul8_set		; choose random initial direction
+		NJSR			_nsub_sarg1_rand08_mul8_set		; choose random initial direction
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc; calculate sprite idx from base and divider
 			NARGB		$04,$40							; base 04, divider 40
@@ -33,22 +33,22 @@ _sloc_38012:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _slow_moving_slime_move:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set	; calculate linear move params
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; calculate linear move params
 			NARGB		$80,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim				; load secondary animation script
 		SLOOP_BEGIN		$14
 		SDELAY			$01								; first tests for horizontal movements
 		NJSR			_nsub_obj_to_room_x_collision_testA; test for bounce if any obstacles in front
 		SBCC			_sloc_38048
-		NJSR			_nsub_cur_obj_args1_hor_complement	; if test pass, bounce move direction
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set	; recalclulate move params
+		NJSR			_nsub_cur_obj_sarg1_hor_complement	; if test pass, bounce move direction
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; recalclulate move params
 			NARGB		$80,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim				; also reinit animation
 _sloc_38048:
 		NJSR			_nsub_obj_to_room_y_collision_testA; continue the same for vertical movements
 		SBCC			_sloc_3805A
-		NJSR			_nsub_cur_obj_args1_vert_complement	; bounce
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_vert_complement	; bounce
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$00							; reset sprites again
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_3805A:
@@ -137,7 +137,7 @@ locret_380D1:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_args1_rand08_mul8_set:
+_nsub_sarg1_rand08_mul8_set:
 		LDA		#$08
 		JSR		_rand
 		ASL
@@ -264,7 +264,7 @@ _spr_nlib0E_13:
 
 ; =============== S C R I P T ==========================s====================
 _scr14_fast_moving_slime:
-		NJSR			_nsub_args1_obj_to_beamer_vector_set	; fast slime always targeted on player
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; fast slime always targeted on player
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; also do initial blink
 			NARGB		$04,$40
@@ -278,28 +278,28 @@ _scr14_fast_moving_slime:
 _scr_fast_moving_slime_active:
 		NBG_HNDL_SET	_nbgsub_fast_moving_slime_collision_test	; ai mostly the same as slow slime
 _sloc_38249:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 		SLOOP_BEGIN		$0A								; shorter retarget periods
 		SDELAY			$01
 		NJSR			_nsub_obj_to_room_x_collision_testA
 		SBCC			_sloc_38268
-		NJSR			_nsub_cur_obj_args1_hor_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_hor_complement
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00							; faster speed than slow slime
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_38268:
 		NJSR			_nsub_obj_to_room_y_collision_testA
 		SBCC			_sloc_3827A
-		NJSR			_nsub_cur_obj_args1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_vert_complement
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_3827A:
 		SLOOP_END
-		NJSR			_nsub_62AEC
-			NARGB		$08
+		NJSR			_nsub_obj_to_beamer_vector_adjust	; not sure now what this routine does
+			NARGB		$08									; but looks like some kind of readjust vectors
 		SJMP			_sloc_38249
 
 ; =============== S C R I P T ==========================s====================
@@ -457,7 +457,7 @@ _scr_still_throw_forward_slime_active:
 			NARGB		$08
 _sloc_38363:
 		SLOOP_BEGIN		$03
-		NJSR			_nsub_args1_obj_to_beamer_vector_set	; calcs to turn face to beamer
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; calcs to turn face to beamer
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; update directions
 			NARGB		$04,$40
 		SDELAY			$07
@@ -518,7 +518,7 @@ locret_383C1:
 _scr_still_throw_forward_slime_projectile:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_still_throw_forward_slime_projectile_collision_test
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$01
 		NJSR			_nsub_still_throw_forward_slime_projectile_spr_set
 _sloc_383D0:
@@ -836,13 +836,13 @@ _scr1D_air_hammer_miner:
 _nbgsub_air_hammer_miner_active:
 		NBG_HNDL_SET	_nbgsub_air_hammer_miner_collision_test
 _sloc_385BC:
-		NJSR			_nsub_args1_obj_to_beamer_vector_set	; object also tergeted on beamer
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; object also tergeted on beamer
 		POS_MOVE_STOP	0								; first we run animation while
 		SLOOP_BEGIN		$08								; standing still
 		SPR_IDX_SET		2,$2D
 		SPR_IDX_INC		2
 		SLOOP_END
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00							; then run in destination point
 		SLOOP_BEGIN		$1E
 		SPR_IDX_SET		2,$2D
@@ -1012,7 +1012,7 @@ _sloc_3871B:
 		SPR_IDX_ADD_IMM 6,$FC							; two beer or not two beer
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$08							; set high speed, to destination
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$01
 		SLOOP_BEGIN		$0A								; start moving while watching new obstacles
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
@@ -1266,7 +1266,7 @@ _sloc_389A2:
 		SPR_IDX_ADD_IMM 6,$FC
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$08							; then slide to destination
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set	; retarget at the end
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; retarget at the end
 			NARGB		$00,$01
 		SLOOP_BEGIN		$0A
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
@@ -1502,7 +1502,7 @@ _sloc_38C30:
 		SBCS			_sloc_38C46						; obstacles
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; or else move on them
 			NARGB		$54,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set	; very high speed
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; very high speed
 			NARGB		$00,$02
 		SDELAY			$08								; every 8 cycles stop and retarget
 		POS_MOVE_STOP	0								; you can't see when it constantly
@@ -1536,7 +1536,7 @@ _nsub_empty_miner_trolley_path_select:
 		JSR		_far_lvl_room_ofs_calc		; read the current rail macro from level data
 		LDY		#$0B
 loc_38C71:
-		CMP		_mac_rails_list,Y				; check if this tile is valid rail macro
+		CMP		_mac_rails_list,Y			; check if this tile is valid rail macro
 		BEQ		loc_38C7B
 		DEY
 		BPL		loc_38C71
@@ -1550,7 +1550,7 @@ loc_38C7B:
 		ROL
 		ROL
 		TAX
-		LDA		_mac_rails_allow_lib_lo,X					; and read corresponding patterns list
+		LDA		_mac_rails_allow_lib_lo,X	; and read corresponding patterns list
 		STA		_ptr06
 		LDA		_mac_rails_allow_lib_hi,X
 		STA		_ptr06+1
@@ -1629,7 +1629,7 @@ _sloc_38D16:
 		SBCS			_sloc_38D2C
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$58,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$08
 		POS_MOVE_STOP	0
@@ -1829,7 +1829,7 @@ _scr21_train_ghost:
 ; =============== S C R I P T ==========================s====================
 		NJSR			_nsub_train_ghost_spr_idx_select; select sprite idx based on SARG2 value
 		SARG_SET		SARG0,$00
-		NJSR			_nsub_args1_rand08_mul8_set		; now choose random move direction
+		NJSR			_nsub_sarg1_rand08_mul8_set		; now choose random move direction
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_obj_spr_idx_set_from_sarg	; but blink first
 			NARGB		SARG2
@@ -1872,20 +1872,20 @@ _ssub_train_ghost_shoot:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_train_ghost_move_anim:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$00							; slow speed
 		SLOOP_BEGIN		$14
 		SDELAY			$01
 		NJSR			_nsub_obj_to_room_x_collision_testA	; obstacle collision tests here
 		SBCC			_sloc_38F41
-		NJSR			_nsub_cur_obj_args1_hor_complement	; same as for slow slime
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_hor_complement	; same as for slow slime
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$00
 _sloc_38F41:
 		NJSR			_nsub_obj_to_room_y_collision_testA
 		SBCC			_sloc_38F4F
-		NJSR			_nsub_cur_obj_args1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_vert_complement
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$00
 _sloc_38F4F:
 		SLOOP_END
@@ -2072,7 +2072,7 @@ _scr_train_ghost_projectile:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_train_ghost_projectile_collision_test
 		NJSR			_nsub_train_ghost_projectile_target_set
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$01							; target is random
 		SLOOP_BEGIN		$08								; first its move
 		SPR_IDX_SET		4,$7A
@@ -2098,7 +2098,7 @@ _nsub_train_ghost_projectile_target_set:
 		LDA		#$21
 		JSR		_rand
 		CLC
-		ADC		#$70									; spit always down
+		ADC		#$70						; spit always goes down
 		LDX		_scr_cur_trd_idx
 		STA		_scr_trds_args1,X
 		RTS
@@ -2133,7 +2133,7 @@ _scr_still_throw_ballistic_slime_active:
 			NARGB		$08
 		NBG_HNDL_SET	_nbgsub_still_throw_ballistic_slime_collision_test
 _sloc_39114:
-		NJSR			_nsub_args1_obj_to_beamer_vector_set	; target on beamer as well
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; target on beamer as well
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; calc sprite idx for slime
 			NARGB		$04,$40
 		SDELAY			$07
@@ -2197,7 +2197,7 @@ _scr_slime_ballistic_projectile:
 		NBG_HNDL_SET	_nbgsub_slime_ballistic_projectile_collision_test
 		NJSR			_nsub_slime_ballistic_projectile_spr_idx_select
 		SSCRIPT1_SET	_nsub_slime_ballistic_projectile_spr_anim
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$40,$02							; sarg1 inherited from main object!
 		POS_Y_DELTA_ADD 0,$00,$FD						; ballistic trajectory delta Y init
 		SLOOP_BEGIN		$48								; then slowly increment, first go up
@@ -2285,14 +2285,23 @@ _spr_nlib0E_8B:
 		.BYTE	$02
 		.BYTE	$F8,$8A,$80,$F8
 		.BYTE	$F8,$9A,$80,$00
+_spr_nlib0E_8C:
+_spr_nlib0E_8D:
+_spr_nlib0E_8E:
 _spr_nlib0E_8F:
 		.BYTE	$02
 		.BYTE	$F8,$BA,$00,$00
 		.BYTE	$F8,$AA,$00,$F8
+_spr_nlib0E_90:
+_spr_nlib0E_91:
+_spr_nlib0E_92:
 _spr_nlib0E_93:
 		.BYTE	$02
 		.BYTE	$F8,$9C,$00,$00
 		.BYTE	$F8,$8C,$00,$F8
+_spr_nlib0E_94:
+_spr_nlib0E_95:
+_spr_nlib0E_96:
 _spr_nlib0E_97:
 		.BYTE	$02
 		.BYTE	$F8,$BC,$00,$00
@@ -2316,77 +2325,77 @@ _spr_nlib0E_87:
 
 ; =============== S C R I P T ==========================s====================
 _scr2C_fast_throw_forward_slime:
-		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		SARG0,$FF
-		SJMP_SW			$01
-		SCASE			_sjmp_case_392FF
+		NJSR			_nsub_obj_sarg_add_imm_test		; usual 2-branch script
+			NARGB		SARG0,$FF						; one is a main object, second is
+		SJMP_SW			$01								; its projectile
+		SCASE			_scr_fast_throw_forward_slime_projectile
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-		NJSR			_nsub_args1_obj_to_beamer_vector_set
-		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
-			NARGB		$04,$40
-		SDELAY			$01
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
+		SLOOP_BEGIN		$10								; target to beamer as usual
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc; calculate appearance sprite
+			NARGB		$04,$40							; blink, but this time while
+		SDELAY			$01								; tracking beamer position!
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39277:
-		NBG_HNDL_SET	_nbgsub_392CF
+_scr_fast_throw_forward_slime_active:
+		NBG_HNDL_SET	_nbgsub_fast_throw_forward_slime_collision_test
 _sloc_3927A:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
-			NARGB		$C0,$00
-		SSCRIPT1_SET	_scr_slime_spr_anim
-		SLOOP_BEGIN		$06
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+			NARGB		$C0,$00							; actually, this routine is more like SPEED calc
+		SSCRIPT1_SET	_scr_slime_spr_anim				; regular slime anim routine reused
+		SLOOP_BEGIN		$06								; two loops here
 		SLOOP_BEGIN		$0A
 		SDELAY			$01
-		NJSR			_nsub_obj_to_room_x_collision_testA
+		NJSR			_nsub_obj_to_room_x_collision_testA	; first object moves as usual fast slime
 		SBCC			_sloc_3929B
-		NJSR			_nsub_cur_obj_args1_hor_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_hor_complement
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_3929B:
 		NJSR			_nsub_obj_to_room_y_collision_testA
 		SBCC			_sloc_392AD
-		NJSR			_nsub_cur_obj_args1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_vert_complement
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_392AD:
 		SLOOP_END
-		NJSR			_nsub_62AEC
-			NARGB		$08
-		SLOOP_END
+		NJSR			_nsub_obj_to_beamer_vector_adjust	; this code mostly the same as for fast slime
+			NARGB		$08								; but with extra shoot cycles inside
+		SLOOP_END										; when move and readjust vectors, shoot
 		NJSR			_nsub_new_thread_start
-			NARGB		$2C
+			NARGB		_scr2C_fast_throw_forward_slime_idx	; deploy object
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_scr_fast_throw_forward_slime_projectile_idx+1
 			NARGB		$00
 		SJMP			_sloc_3927A
 
 ; =============== S C R I P T ==========================s====================
-_scr_392BE:
-		NBG_HNDL_SET	_nbgsub_392E5
-		SJSR			_ssub_slime_stun_in_process
+_scr_fast_throw_forward_slime_stun:
+		NBG_HNDL_SET	_nbgsub_fast_throw_forward_slime_catch_test
+		SJSR			_ssub_slime_stun_in_process		; very regular common handler
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_39277
+		SCASE			_scr_fast_throw_forward_slime_active
 		SCASE			_scr_slime_hor_catch_anim
 		SCASE			_scr_slime_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_392CF:
+_nbgsub_fast_throw_forward_slime_collision_test:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_392DE
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_392BE
+		.WORD	_scr_fast_throw_forward_slime_stun
 		RTS
 loc_392DE:
 		LDX		#$0A
@@ -2394,12 +2403,12 @@ loc_392DE:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_392E5:
+_nbgsub_fast_throw_forward_slime_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_392FE
 		LSR
-		LDA		#$02
+		LDA		#$02						; weird, same scores as for regular fast slime
 		STA		_scores_obj_value
 		BCS		loc_392F9
 		JSR		_cur_thread_reload_param
@@ -2412,21 +2421,21 @@ locret_392FE:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_392FF:
-		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_39315
+_scr_fast_throw_forward_slime_projectile:
+		SARG_SET		SARG0,$00						; uses the same init routines as ballistic projectile
+		NBG_HNDL_SET	_nbgsub_fast_throw_forward_slime_projectile_collision_test
 		NJSR			_nsub_slime_ballistic_projectile_spr_idx_select
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$01
 _sloc_3930D:
-		SPR_IDX_INC		4
+		SPR_IDX_INC		4								; but moving in linear direction...
 		SPR_IDX_INC		4
 		SPR_IDX_INC		4
 		SPR_IDX_ADD_IMM 4,$FD
 		SJMP			_sloc_3930D
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39315:
+_nbgsub_fast_throw_forward_slime_projectile_collision_test:
 		LDX		#$06
 		LDY		#$07
 		JSR		_obj_to_player_collision_test
@@ -2574,87 +2583,87 @@ _spr_nlib0E:
 		.WORD	_spr_nlib0E_89
 		.WORD	_spr_nlib0E_8A
 		.WORD	_spr_nlib0E_8B
-		.WORD	_spr_nlib0E_8F	; pan
-		.WORD	_spr_nlib0E_8F
-		.WORD	_spr_nlib0E_8F
-		.WORD	_spr_nlib0E_8F
-		.WORD	_spr_nlib0E_93	; rock
-		.WORD	_spr_nlib0E_93
-		.WORD	_spr_nlib0E_93
-		.WORD	_spr_nlib0E_93
-		.WORD	_spr_nlib0E_97	; brick
-		.WORD	_spr_nlib0E_97
-		.WORD	_spr_nlib0E_97
-		.WORD	_spr_nlib0E_97
+		.WORD	_spr_nlib0E_8F	; 8C pan
+		.WORD	_spr_nlib0E_8F	; 8D
+		.WORD	_spr_nlib0E_8F	; 8E
+		.WORD	_spr_nlib0E_8F	; 8F
+		.WORD	_spr_nlib0E_93	; 90 rock
+		.WORD	_spr_nlib0E_93	; 91
+		.WORD	_spr_nlib0E_93	; 92
+		.WORD	_spr_nlib0E_93	; 93
+		.WORD	_spr_nlib0E_97	; 94 brick
+		.WORD	_spr_nlib0E_97	; 95
+		.WORD	_spr_nlib0E_97	; 96
+		.WORD	_spr_nlib0E_97	; 97
 
 ; =============== S C R I P T ==========================s====================
 _scr23_halloween:
-		NJSR			_nsub_args1_obj_to_beamer_vector_set
-		SLOOP_BEGIN		$10
-		SPR_IDX_SET		1,$C2
-		SPR_IDX_SET		1,$FF
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
+		SLOOP_BEGIN		$10								; beamer targeting start
+		SPR_IDX_SET		1,$C2							; this is first objec t here using
+		SPR_IDX_SET		1,$FF							; extended sprires mode
 		SLOOP_END
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3945C:
-		NBG_HNDL_SET	_nbgsub_394DE
+_scr_halloween_active:
+		NBG_HNDL_SET	_nbgsub_halloween_collision_test
 _sloc_3945F:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
-		SSCRIPT1_SET	_scr_39498
+		SSCRIPT1_SET	_scr_halloween_spr_anim
 		SLOOP_BEGIN		$14
-		SDELAY			$01
+		SDELAY			$01								; regular collision tests
 		NJSR			_nsub_obj_to_room_x_collision_testA
-		SBCC			_sloc_3947E
-		NJSR			_nsub_cur_obj_args1_hor_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		SBCC			_sloc_3947E						; with restarting the animanions
+		NJSR			_nsub_cur_obj_sarg1_hor_complement;	if obstacle occured
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
-		SSCRIPT1_SET	_scr_39498
+		SSCRIPT1_SET	_scr_halloween_spr_anim
 _sloc_3947E:
 		NJSR			_nsub_obj_to_room_y_collision_testA
 		SBCC			_sloc_39490
-		NJSR			_nsub_cur_obj_args1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_sarg1_vert_complement
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$C0,$00
-		SSCRIPT1_SET	_scr_39498
+		SSCRIPT1_SET	_scr_halloween_spr_anim
 _sloc_39490:
 		SLOOP_END
-		NJSR			_nsub_62AEC
-			NARGB		$10
+		NJSR			_nsub_obj_to_beamer_vector_adjust	; retarget to beamer at the end
+			NARGB		$10									; ...period
 		SJMP			_sloc_3945F
 
 ; =============== S C R I P T ==========================s====================
-_scr_39498:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
-			NARGB		$C0,$40
+_scr_halloween_spr_anim:
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; recalc sprite idx
+			NARGB		$C0,$40							; at restart of this script
 _sloc_3949D:
-		SPR_IDX_ADD_IMM 0,$04
+		SPR_IDX_ADD_IMM 0,$04							; animate
 		SDELAY			$0A
 		SPR_IDX_ADD_IMM 0,$FC
 		SDELAY			$0A
 		SJMP			_sloc_3949D
 
 ; =============== S C R I P T ==========================s====================
-_scr_394A8:
-		NBG_HNDL_SET	_nbgsub_394F4
+_scr_halloween_stun:
+		NBG_HNDL_SET	_nbgsub_halloween_catch_test	; usual handler for most objects again
 		SARG_SET		SARG0,$02
 _sloc_394AE:
-		SJSR			_ssub_394C8
+		SJSR			_ssub_halloween_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_394AE
 		SLOOP_BEGIN		$14
-		SJSR			_ssub_394C8
+		SJSR			_ssub_halloween_shake_anim
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3945C
-		SCASE			_sjmp_case_394D2
-		SCASE			_sjmp_case_394D8
+		SCASE			_scr_halloween_active
+		SCASE			_scr_halloween_hor_catch_anim
+		SCASE			_scr_halloween_vert_catch_anim
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_394C8:
+_ssub_halloween_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$C0,$40
 		SDELAY			$01
@@ -2662,23 +2671,23 @@ _ssub_394C8:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_394D2:
+_scr_halloween_hor_catch_anim:
 		SARG_SET		SARG1,$04
 		SJMP			_ssub_common_hor_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_394D8:
+_scr_halloween_vert_catch_anim:
 		SARG_SET		SARG1,$06
 		SJMP			_ssub_common_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_394DE:
+_nbgsub_halloween_collision_test:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_394ED
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_394A8
+		.WORD	_scr_halloween_stun
 		RTS
 loc_394ED:
 		LDX		#$0A
@@ -2686,7 +2695,7 @@ loc_394ED:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_394F4:
+_nbgsub_halloween_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_3950D
@@ -2695,14 +2704,23 @@ _nbgsub_394F4:
 		STA		_scores_obj_value
 		BCS		loc_39508
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_394D2
+		.WORD	_scr_halloween_hor_catch_anim
 		RTS
 loc_39508:
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_394D8
+		.WORD	_scr_halloween_vert_catch_anim
 locret_3950D:
 		RTS
 
+; NOTE: the second type of sprites here used as an optimization for
+; very large objects with large parts being the same, so they split
+; such sprites and keep only one copy of common data and then just using
+; pointer links to them.
+; however, most of the time such method (if used) draws the same single
+; sprites! in this game they used such optimization only once! rest of
+; objects even if using this sprites type, doesn't have it split, only
+; single data chunks... so why do they even using it then?
+;
 _spr_rlib0F_00:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_00_A
@@ -2877,68 +2895,76 @@ _spr_nlib0F_07:
 		.BYTE	$FE,$7E,$43,$00
 
 ; =============== S C R I P T ==========================s====================
-_scr24_flying_wing_elephant:
-		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
-			NARGB		$CC,$40
-		SDELAY			$01
+_scr24_flying_elephant:
+		SLOOP_BEGIN		$10								; another object with extended
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; sprites mode
+			NARGB		$CC,$40							; starting directcion of each object
+		SDELAY			$01								; here is set in objects data extra agrs
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_396EE:
-		NBG_HNDL_SET	_nbgsub_39785
+_scr_flying_elephant_active:
+		NBG_HNDL_SET	_nbgsub_flying_elephant_collision_test
 _sloc_396F1:
-		NJSR			_nsub_sarg1_direction_extract
+		NJSR			_nsub_sarg1_direction_extract	; get the direction index
 		SJSR_SW	$04
-		SCASE			_sjsr_case_39706
-		SCASE			_sjsr_case_39716
-		SCASE			_sjsr_case_39726
-		SCASE			_sjsr_case_39736
+		SCASE			_ssub_flying_elephant_move_U	; do movement in given direction
+		SCASE			_ssub_flying_elephant_move_R
+		SCASE			_ssub_flying_elephant_move_D
+		SCASE			_ssub_flying_elephant_move_L
 		POS_MOVE_STOP	0
-		SARG_ALU		SARG1,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40					; turn clockwise, repeat
 		SJMP			_sloc_396F1
-_sjsr_case_39706:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_flying_elephant_move_U:
 		POS_Y_DELTA_SET 0,$80,$FE
 _sloc_39709:
-		SPR_IDX_SET		0,$CC
-		SJSR			_ssub_39746
+		SPR_IDX_SET		0,$CC							; this object flying on the
+		SJSR			_ssub_flying_elephant_spr_anim	; limited area, hardcoded in script
 		NJSR			_nsub_cur_pos_y_lo_icmp
 			NARGB		$50
 		SBCC			_sloc_39709
 		SRET
-_sjsr_case_39716:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_flying_elephant_move_R:
 		POS_X_DELTA_SET 0,$80,$01
 _sloc_39719:
 		SPR_IDX_SET		0,$CD
-		SJSR			_ssub_39746
+		SJSR			_ssub_flying_elephant_spr_anim
 		NJSR			_nsub_cur_pos_x_lo_icmp
 			NARGB		$B0
 		SBCS			_sloc_39719
 		SRET
-_sjsr_case_39726:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_flying_elephant_move_D:
 		POS_Y_DELTA_SET 0,$80,$01
 _sloc_39729:
 		SPR_IDX_SET		0,$CE
-		SJSR			_ssub_39746
+		SJSR			_ssub_flying_elephant_spr_anim
 		NJSR			_nsub_cur_pos_y_lo_icmp
 			NARGB		$A0
 		SBCS			_sloc_39729
 		SRET
-_sjsr_case_39736:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_flying_elephant_move_L:
 		POS_X_DELTA_SET 0,$80,$FE
 _sloc_39739:
 		SPR_IDX_SET		0,$CF
-		SJSR			_ssub_39746
+		SJSR			_ssub_flying_elephant_spr_anim
 		NJSR			_nsub_cur_pos_x_lo_icmp
 			NARGB		$50
 		SBCC			_sloc_39739
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_39746:
+_ssub_flying_elephant_spr_anim:
 		SDELAY			$04
 		SPR_IDX_ADD_IMM 4,$04
 		SPR_IDX_ADD_IMM 4,$04
@@ -2946,24 +2972,24 @@ _ssub_39746:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_3974F:
-		NBG_HNDL_SET	_nbgsub_3979B
+_scr_flying_elephant_stun:
+		NBG_HNDL_SET	_nbgsub_flying_elephant_catch_test
 		SARG_SET		SARG0,$02
 _sloc_39755:
-		SJSR			_ssub_3976F
+		SJSR			_sub_flying_elephant_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_39755
 		SLOOP_BEGIN		$14
-		SJSR			_ssub_3976F
+		SJSR			_sub_flying_elephant_shake_anim
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_396EE
-		SCASE			_sjmp_case_39779
-		SCASE			_sjmp_case_3977F
+		SCASE			_scr_flying_elephant_active
+		SCASE			_scr_flying_elephant_hor_catch_anim
+		SCASE			_scr_flying_elephant_vert_catch_anim
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_3976F:
+_sub_flying_elephant_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$CC,$40
 		SDELAY			$01
@@ -2971,23 +2997,23 @@ _ssub_3976F:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39779:
+_scr_flying_elephant_hor_catch_anim:
 		SARG_SET		SARG1,$08
 		SJMP			_ssub_common_hor_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3977F:
+_scr_flying_elephant_vert_catch_anim:
 		SARG_SET		SARG1,$0A
 		SJMP			_ssub_common_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39785:
+_nbgsub_flying_elephant_collision_test:
 		LDX		#$08
 		LDY		#$08
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_39794
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3974F
+		.WORD	_scr_flying_elephant_stun
 		RTS
 loc_39794:
 		LDX		#$0D
@@ -2995,7 +3021,7 @@ loc_39794:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3979B:
+_nbgsub_flying_elephant_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_397B4
@@ -3004,13 +3030,14 @@ _nbgsub_3979B:
 		STA		_scores_obj_value
 		BCS		loc_397AF
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_39779
+		.WORD	_scr_flying_elephant_hor_catch_anim
 		RTS
 loc_397AF:
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_3977F
+		.WORD	_scr_flying_elephant_vert_catch_anim
 locret_397B4:
 		RTS
+
 _spr_rlib0F_0C:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_0C_A
@@ -3219,16 +3246,16 @@ _spr_nlib0F_09:
 		.BYTE	$FD,$80,$03,$F2
 
 ; =============== S C R I P T ==========================s====================
-_scr25_stinging_wing_elephant:
-		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		SARG0,$FF
+_scr25_stinging_elephant:
+		NJSR			_nsub_obj_sarg_add_imm_test		; this elephant is not moving
+			NARGB		SARG0,$FF						; also direction set in objects data
 		SJMP_SW			$01
-		SCASE			_sjmp_case_39B86
+		SCASE			_scr_stinging_elephant_sting	; also have an additional "projectile"
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-		SLOOP_BEGIN		$10
+		SLOOP_BEGIN		$10								; start blinking here as usual
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$D8,$40
 		SDELAY			$01
@@ -3238,43 +3265,43 @@ _scr25_stinging_wing_elephant:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_399E6:
-		NBG_HNDL_SET	_nbgsub_39A2E
+_scr_stinging_elephant_active:
+		NBG_HNDL_SET	_nbgsub_stinging_elephant_collision_test
 _sloc_399E9:
-		SLOOP_BEGIN		$06
+		SLOOP_BEGIN		$06								; no special targeting
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$D8,$40
 		SDELAY			$04
-		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 4,$04							; idle anim
 		SPR_IDX_ADD_IMM 4,$04
 		SPR_IDX_ADD_IMM 4,$FC
 		SLOOP_END
-		NJSR			_nsub_new_thread_start
-			NARGB		$25
+		NJSR			_nsub_new_thread_start			; deploy sting
+			NARGB		_scr25_stinging_elephant_idx
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_scr_stinging_elephant_sting_idx+1
 			NARGB		$00
-		SJMP			_sloc_399E9
+		SJMP			_sloc_399E9						; repeat
 
 ; =============== S C R I P T ==========================s====================
-_scr_39A04:
-		NBG_HNDL_SET	_nbgsub_39A44
+_scr_stinging_elephant_stun:
+		NBG_HNDL_SET	_nbgsub_stinging_elephant_catch_test
 		SARG_SET		SARG0,$02
 _sloc_39A0A:
-		SJSR			_ssub_39A24
+		SJSR			_ssub_stinging_elephant_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_39A0A
 		SLOOP_BEGIN		$14
-		SJSR			_ssub_39A24
+		SJSR			_ssub_stinging_elephant_shake_anim
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_399E6
-		SCASE			_sjmp_case_39779
-		SCASE			_sjmp_case_3977F
+		SCASE			_scr_stinging_elephant_active
+		SCASE			_scr_flying_elephant_hor_catch_anim
+		SCASE			_scr_flying_elephant_vert_catch_anim
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_39A24:
+_ssub_stinging_elephant_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$D8,$40
 		SDELAY			$01
@@ -3282,13 +3309,13 @@ _ssub_39A24:
 		SRET
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39A2E:
+_nbgsub_stinging_elephant_collision_test:
 		LDX		#$08
 		LDY		#$08
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_39A3D
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_39A04
+		.WORD	_scr_stinging_elephant_stun
 		RTS
 loc_39A3D:
 		LDX		#$0D
@@ -3296,7 +3323,7 @@ loc_39A3D:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39A44:
+_nbgsub_stinging_elephant_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_39A5D
@@ -3305,13 +3332,17 @@ _nbgsub_39A44:
 		STA		_scores_obj_value
 		BCS		loc_39A58
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_39779
+		.WORD	_scr_flying_elephant_hor_catch_anim
 		RTS
 loc_39A58:
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_3977F
+		.WORD	_scr_flying_elephant_vert_catch_anim
 locret_39A5D:
 		RTS
+
+; NOTE: there are no object of such type set the DOWN direction
+; so there is no usage for corresponding sprites...
+;
 _spr_rlib0F_18:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_18_A
@@ -3331,14 +3362,14 @@ _spr_rlib0F_21:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_21_A
 _spr_rlib0F_1A:
-		.BYTE	$01		; *--
-		.WORD	_spr_rlib0F_1A_A	; *--
+		.BYTE	$01							; unused
+		.WORD	_spr_rlib0F_1A_A			; unused
 _spr_rlib0F_1E:
-		.BYTE	$01		; *--
-		.WORD	_spr_rlib0F_1E_A	; *--
+		.BYTE	$01							; unused
+		.WORD	_spr_rlib0F_1E_A			; unused
 _spr_rlib0F_22:
-		.BYTE	$01		; *--
-		.WORD	_spr_rlib0F_22_A	; *--
+		.BYTE	$01							; unused
+		.WORD	_spr_rlib0F_22_A			; unused
 _spr_rlib0F_1B:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_1B_A
@@ -3348,6 +3379,7 @@ _spr_rlib0F_1F:
 _spr_rlib0F_23:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_23_A
+
 _spr_rlib0F_18_A:
 		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8
@@ -3392,7 +3424,7 @@ _spr_rlib0F_21_A:
 		.BYTE	$F2,$A6,$43,$00
 		.BYTE	$F2,$86,$43,$F8
 _spr_rlib0F_1A_A:
-		.BYTE	$06		; *--
+		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8	; *--
 		.BYTE	$06,$3E,$00,$00	; *--
 		.BYTE	$E4,$8C,$43,$00	; *--
@@ -3400,7 +3432,7 @@ _spr_rlib0F_1A_A:
 		.BYTE	$F4,$9C,$03,$F8	; *--
 		.BYTE	$F4,$9C,$43,$00	; *--
 _spr_rlib0F_1E_A:
-		.BYTE	$06		; *--
+		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8	; *--
 		.BYTE	$06,$3E,$00,$00	; *--
 		.BYTE	$F3,$8A,$03,$F0	; *--
@@ -3408,7 +3440,7 @@ _spr_rlib0F_1E_A:
 		.BYTE	$F3,$9A,$43,$00	; *--
 		.BYTE	$F3,$9A,$03,$F8	; *--
 _spr_rlib0F_22_A:
-		.BYTE	$06		; *--
+		.BYTE	$06
 		.BYTE	$06,$3E,$40,$F8	; *--
 		.BYTE	$06,$3E,$00,$00	; *--
 		.BYTE	$F2,$88,$03,$F0	; *--
@@ -3436,53 +3468,53 @@ _spr_rlib0F_23_A:
 		.BYTE	$F2,$86,$03,$00
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39B86:
+_scr_stinging_elephant_sting:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_39BED
+		NBG_HNDL_SET	_nbgsub_stinging_elephant_sting_collision_test
 		NJSR			_nsub_sarg1_direction_extract
 		SJMP_SW			$04
-		SCASE			_sjmp_case_39B99
-		SCASE			_sjmp_case_39BAE
-		SCASE			_sjmp_case_39BC3
-		SCASE			_sjmp_case_39BD8
+		SCASE			_scr_stinging_elephant_U
+		SCASE			_scr_stinging_elephant_R
+		SCASE			_scr_stinging_elephant_D
+		SCASE			_scr_stinging_elephant_L
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39B99:
-		POS_X_MOVE	0,$02
+_scr_stinging_elephant_U:
+		POS_X_MOVE		0,$02							; set the relative position to object
 		POS_Y_MOVE		0,$EC
-		SPR_IDX_SET		2,$0C
-		SLOOP_BEGIN		$04
+		SPR_IDX_SET		2,$0C							; init sprite (inside of the object)
+		SLOOP_BEGIN		$04								; move sprite out of the object
 		POS_Y_MOVE		0,$F8
 		SPR_IDX_INC		2
 		SLOOP_END
-		SDELAY			$14
+		SDELAY			$14								; move it back
 		SLOOP_BEGIN		$04
 		POS_Y_MOVE		0,$08
 		SPR_IDX_DEC		4
 		SLOOP_END
-		SSTOP
+		SSTOP											; kill projectile
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39BAE:
-		POS_X_MOVE	0,$08
+_scr_stinging_elephant_R:
+		POS_X_MOVE		0,$08							; all the same with other directions
 		POS_Y_MOVE		0,$FE
 		SPR_IDX_SET		2,$11
 		SLOOP_BEGIN		$03
-		POS_X_MOVE	0,$08
+		POS_X_MOVE		0,$08
 		SPR_IDX_INC		2
 		SLOOP_END
 		SDELAY			$14
-		SLOOP_BEGIN		$03
-		POS_X_MOVE	0,$F8
+		SLOOP_BEGIN		$03								; NOTE, horizontal stings are shorter
+		POS_X_MOVE		0,$F8
 		SPR_IDX_DEC		4
 		SLOOP_END
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39BC3:
-		POS_X_MOVE	0,$FB
-		POS_Y_MOVE		0,$0B
-		SPR_IDX_SET		2,$15
+_scr_stinging_elephant_D:
+		POS_X_MOVE		0,$FB							; due to forementioned lack of
+		POS_Y_MOVE		0,$0B							; down directed object, this branch
+		SPR_IDX_SET		2,$15							; never used as well
 		SLOOP_BEGIN		$04
 		POS_Y_MOVE		0,$08
 		SPR_IDX_INC		2
@@ -3495,26 +3527,27 @@ _sjmp_case_39BC3:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39BD8:
-		POS_X_MOVE	0,$F2
+_scr_stinging_elephant_L:
+		POS_X_MOVE		0,$F2
 		POS_Y_MOVE		0,$FE
 		SPR_IDX_SET		2,$1A
 		SLOOP_BEGIN		$03
-		POS_X_MOVE	0,$F8
+		POS_X_MOVE		0,$F8
 		SPR_IDX_INC		2
 		SLOOP_END
 		SDELAY			$14
 		SLOOP_BEGIN		$03
-		POS_X_MOVE	0,$08
+		POS_X_MOVE		0,$08
 		SPR_IDX_DEC		4
 		SLOOP_END
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39BED:
+_nbgsub_stinging_elephant_sting_collision_test:
 		LDX		#$06
 		LDY		#$07
 		JMP		_obj_to_player_collision_test
+
 _spr_nlib0F_0C:
 		.BYTE	$01
 		.BYTE	$F8,$B8,$83,$FC
@@ -3603,49 +3636,51 @@ _spr_nlib0F_1D:
 		.BYTE	$F5,$84,$03,$F8
 
 ; =============== S C R I P T ==========================s====================
+; there is a second object after slime in LVL1 with different appearance method
+;
 _scr26_sword_ninja:
-		SDELAY			$01
-		NJSR			_nsub_39DA9
-		SBCS			_scr26_sword_ninja
-		SARG_SET		SARG1,$80
-		SJSR			_ssub_39D36
-		NBG_HNDL_SET	_nbgsub_39D79
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
+		SDELAY			$01								; first set the appearance point
+		NJSR			_nsub_ninja_appear_pos_set		; randomly, but not in any obstacles
+		SBCS			_scr26_sword_ninja				; loop while any valid positions calculated
+		SARG_SET		SARG1,$80						; appears always left-sided
+		SJSR			_ssub_sword_ninja_spr_blink
+		NBG_HNDL_SET	_nbgsub_swird_ninja_collision_test
+		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; target to beamer with diagonal forbid
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
 		SBCC			_sloc_39D06
-		SARG_ALU		SARG1,_ADC,$40
+		SARG_ALU		SARG1,_ADC,$40					; test if there is an obstacle in selected direction
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
-		SBCC			_sloc_39D06
+		SBCC			_sloc_39D06						; continue until...
 		SARG_ALU		SARG1,_ADC,$80
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
 		SBCC			_sloc_39D06
 		SARG_ALU		SARG1,_ADC,$C0
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
-		SBCS			_sloc_39D1A
+		SBCS			_sloc_39D1A						; no valid paths... then just shut down the object
 _sloc_39D06:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; if direction is valid, set speed
 			NARGB		$00,$02
-		SSCRIPT1_SET	_scr_39D26
+		SSCRIPT1_SET	_scr_sword_ninja_spr_anim		; set animation script
 		SLOOP_BEGIN		$0A
-		SDELAY			$04
+		SDELAY			$04								; then move with loccisions test as well
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
 		SBCS_BREAK		_sloc_39D1A
 		SLOOP_END
 _sloc_39D1A:
 		SSCRIPT1_OFF
-		POS_MOVE_STOP	0
+		POS_MOVE_STOP	0								; stop object
 
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39D1D:
+_scr_sword_ninja_hide:
 		NBG_HNDL_RESET
-		SJSR			_ssub_39D36
+		SJSR			_ssub_sword_ninja_spr_blink		; then hide it and set delay for 1 second
 		SDELAY			$3C
 		SJMP			_scr26_sword_ninja
 
 ; =============== S C R I P T ==========================s====================
-_scr_39D26:
+_scr_sword_ninja_spr_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$1E,$40
 _sloc_39D2B:
@@ -3656,7 +3691,7 @@ _sloc_39D2B:
 		SJMP			_sloc_39D2B
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_39D36:
+_ssub_sword_ninja_spr_blink:
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$1E,$40
@@ -3666,24 +3701,24 @@ _ssub_39D36:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_39D43:
-		NBG_HNDL_SET	_nbgsub_39D8F
+_scr_sword_ninja_stun:
+		NBG_HNDL_SET	_nbgsub_sword_ninja_catch_test
 		SARG_SET		SARG0,$02
 _sloc_39D49:
-		SJSR			_ssub_39D63
+		SJSR			_scr_sword_ninja_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_39D49
 		SLOOP_BEGIN		$14
-		SJSR			_ssub_39D63
+		SJSR			_scr_sword_ninja_shake_anim
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_39D1D
-		SCASE			_sjmp_case_39D6D
-		SCASE			_sjmp_case_39D73
+		SCASE			_scr_sword_ninja_hide
+		SCASE			_scr_ninja_hor_catch_anim
+		SCASE			_scr_ninja_vert_catch_anim
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_39D63:
+_scr_sword_ninja_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$2A,$40
 		SDELAY			$01
@@ -3691,23 +3726,23 @@ _ssub_39D63:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39D6D:
+_scr_ninja_hor_catch_anim:
 		SARG_SET		SARG1,$32
 		SJMP			_ssub_common_hor_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39D73:
+_scr_ninja_vert_catch_anim:
 		SARG_SET		SARG1,$34
 		SJMP			_ssub_common_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39D79:
+_nbgsub_swird_ninja_collision_test:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_39D88
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_39D43
+		.WORD	_scr_sword_ninja_stun
 		RTS
 loc_39D88:
 		LDX		#$0A
@@ -3715,7 +3750,7 @@ loc_39D88:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_39D8F:
+_nbgsub_sword_ninja_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_39DA8
@@ -3724,18 +3759,18 @@ _nbgsub_39D8F:
 		STA		_scores_obj_value
 		BCS		loc_39DA3
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_39D6D
+		.WORD	_scr_ninja_hor_catch_anim
 		RTS
 loc_39DA3:
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_39D73
+		.WORD	_scr_ninja_vert_catch_anim
 locret_39DA8:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_39DA9:
-		LDA		#$06
-		JSR		_rand
+_nsub_ninja_appear_pos_set:
+		LDA		#$06						; select two random points in area
+		JSR		_rand						; 80-160, 80-176
 		ASL
 		ASL
 		ASL
@@ -3752,16 +3787,18 @@ _nsub_39DA9:
 		TAX
 		PLA
 		TAY
-		JSR		sub_61A41
-		LDA		#<[byte_39DCD]
-		LDY		#>[byte_39DCD]
+		JSR		_obj_new_lvl_pos_set		; calculate object room pos
+		LDA		#<[_ninja_bounds_data]		; test if object not stuck in obstacles
+		LDY		#>[_ninja_bounds_data]		; at the beginning
 		JMP		_obj_to_room_bound_box_collision_test
-byte_39DCD:
+
+_ninja_bounds_data:
 		.BYTE	$04
 		.BYTE	$00,$00
 		.BYTE	$00,$08
 		.BYTE	$08,$00
 		.BYTE	$08,$08
+
 _spr_nlib0F_1E:
 		.BYTE	$04
 		.BYTE	$F1,$F8,$00,$00
@@ -3919,49 +3956,49 @@ _spr_nlib0F_33:
 
 ; =============== S C R I P T ==========================s====================
 _scr27_shuriken_ninja:
-		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		SARG0,$FF
+		NJSR			_nsub_obj_sarg_add_imm_test		; same as sword ninja
+			NARGB		SARG0,$FF						; but with projectile object
 		SJMP_SW			$01
-		SCASE			_sjmp_case_3A120
+		SCASE			_scr_shuriken_ninja_projectile
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sloc_39F9F:
-		SDELAY			$01
-		NJSR			_nsub_39DA9
-		SBCS			_sloc_39F9F
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
-		SJSR			_ssub_39FE1
-		NBG_HNDL_SET	_nbgsub_3A00E
+_scr_shuriken_ninja_active:
+		SDELAY			$01								; reused shuriken ninja script here
+		NJSR			_nsub_ninja_appear_pos_set
+		SBCS			_scr_shuriken_ninja_active
+		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; beamer targeted without diagonals
+		SJSR			_ssub_shuriken_ninja_spr_blink
+		NBG_HNDL_SET	_nbgsub_shuriken_ninja_collision_test
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$36,$40
-		SDELAY			$10
+		SDELAY			$10								; pause before shoot
 		SARG_ALU		SARG1,_ADC,$F0
 		SLOOP_BEGIN		$03
-		NJSR			_nsub_new_thread_start
-			NARGB		$27
+		NJSR			_nsub_new_thread_start			; deploy 3 objects
+			NARGB		_scr27_shuriken_ninja_idx		; while animate ninja itself
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_scr_shuriken_ninja_projectile_idx+1
 			NARGB		$00
 		SPR_IDX_ADD_IMM 5,$04
 		SPR_IDX_ADD_IMM 5,$04
 		SPR_IDX_ADD_IMM 5,$FC
 		SPR_IDX_ADD_IMM 5,$FC
-		SARG_ALU		SARG1,_ADC,$10
-		SLOOP_END
-		SARG_ALU		SARG1,_ADC,$F0
-		SDELAY			$10
+		SARG_ALU		SARG1,_ADC,$10					; change direction of shot, first -16
+		SLOOP_END										; then 0 ,then +16 from cur y delta
+		SARG_ALU		SARG1,_ADC,$F0					; set delta 0 again
+		SDELAY			$10								; wait before disappear
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_39FD8:
+_sloc_shuriken_ninja_hide:
 		NBG_HNDL_RESET
-		SJSR			_ssub_39FE1
+		SJSR			_ssub_shuriken_ninja_spr_blink
 		SDELAY			$3C
-		SJMP			_sloc_39F9F
+		SJMP			_scr_shuriken_ninja_active
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_39FE1:
+_ssub_shuriken_ninja_spr_blink:
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$36,$40
@@ -3971,35 +4008,36 @@ _ssub_39FE1:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_39FEE:
-		NBG_HNDL_SET	_nbgsub_39D8F
+_scr_shuriken_ninja_stun:
+		NBG_HNDL_SET	_nbgsub_sword_ninja_catch_test	; reused from swork ninja as well
 		SARG_SET		SARG0,$02
 _sloc_39FF4:
-		SJSR			_ssub_39D63
+		SJSR			_scr_sword_ninja_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_39FF4
 		SLOOP_BEGIN		$14
-		SJSR			_ssub_39D63
+		SJSR			_scr_sword_ninja_shake_anim
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_39FD8
-		SCASE			_sjmp_case_39D6D
-		SCASE			_sjmp_case_39D73
+		SCASE			_sloc_shuriken_ninja_hide
+		SCASE			_scr_ninja_hor_catch_anim
+		SCASE			_scr_ninja_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A00E:
+_nbgsub_shuriken_ninja_collision_test:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_3A01D
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_39FEE
+		.WORD	_scr_shuriken_ninja_stun
 		RTS
 loc_3A01D:
 		LDX		#$0A
 		LDY		#$0E
 		JMP		_obj_to_player_collision_test
+
 _spr_nlib0F_36:
 		.BYTE	$05
 		.BYTE	$F1,$F8,$00,$00
@@ -4086,13 +4124,13 @@ _spr_nlib0F_41:
 		.BYTE	$F1,$E4,$00,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A120:
+_scr_shuriken_ninja_projectile:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_3A134
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
-			NARGB		$00,$02
-		SLOOP_BEGIN		$04
-		SPR_IDX_SET		2,$42
+		NBG_HNDL_SET	_nbgsub_shuriken_ninja_projectile_collision_test
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+			NARGB		$00,$02							; calc direction from arg1
+		SLOOP_BEGIN		$04								; derived from main object
+		SPR_IDX_SET		2,$42							; simple short living projectile
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
@@ -4100,7 +4138,7 @@ _sjmp_case_3A120:
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A134:
+_nbgsub_shuriken_ninja_projectile_collision_test:
 		LDX		#$06
 		LDY		#$07
 		JSR		_obj_to_player_collision_test
@@ -4122,71 +4160,79 @@ _spr_nlib0F_45:
 
 ; =============== S C R I P T ==========================s====================
 _scr28_pink_goo:
-		SLOOP_BEGIN		$10
-		SPR_IDX_SET		1,$E8
+		SLOOP_BEGIN		$10								; pink goo also uses
+		SPR_IDX_SET		1,$E8							; alt sprite mode
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A15C:
-		NBG_HNDL_SET	_nbgsub_3A212
+_scr_pink_goo_active:
+		NBG_HNDL_SET	_nbgsub_pink_goo_active_collision_testA
 _sloc_3A15F:
-		SLOOP_BEGIN		$02
+		SLOOP_BEGIN		$02								; jelly bouncing before jump
 		SPR_IDX_SET		0,$E8
 		SDELAY			$10
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		5
 		SPR_IDX_ADD_IMM 4,$02
 		SLOOP_END
-		SPR_IDX_SET		5,$E8
+		SPR_IDX_SET		5,$E8							; prepare to jump
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		5
 		SPR_IDX_ADD_IMM 4,$02
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
-		NJSR			_nsub_3A242
+		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; target to beamer
+		NJSR			_nsub_pink_goo_bounds_test		; test for valid location to jump
 		SBCC			_sloc_3A197
 		SARG_ALU		SARG1,_ADC,$40
-		NJSR			_nsub_3A242
+		NJSR			_nsub_pink_goo_bounds_test
 		SBCC			_sloc_3A197
 		SARG_ALU		SARG1,_ADC,$80
-		NJSR			_nsub_3A242
+		NJSR			_nsub_pink_goo_bounds_test
 		SBCC			_sloc_3A197
 		SARG_ALU		SARG1,_ADC,$C0
-		NJSR			_nsub_3A242
-		SBCS			_sloc_3A15F
+		NJSR			_nsub_pink_goo_bounds_test
+		SBCS			_sloc_3A15F						; if no such direction, repeat bouncing forever
 _sloc_3A197:
-		NBG_HNDL_SET	_nbgsub_3A221
+		NBG_HNDL_SET	_nbgsub_pink_goo_active_collision_testB	; while jumping, can't be catched
 		SPR_IDX_SET		0,$EB
-		NJSR			_nsub_sarg1_direction_extract
+		NJSR			_nsub_sarg1_direction_extract	; select jumping anim sub-routine
 		SJSR_SW	$04
-		SCASE			_sjsr_case_3A1B0
-		SCASE			_sjsr_case_3A1BD
-		SCASE			_sjsr_case_3A1CA
-		SCASE			_sjsr_case_3A1D7
-		POS_MOVE_STOP	0
-		NBG_HNDL_SET	_nbgsub_3A212
-		SJMP			_sloc_3A15F
-_sjsr_case_3A1B0:
+		SCASE			_ssub_pink_goo_jump_U
+		SCASE			_ssub_pink_goo_jump_R
+		SCASE			_ssub_pink_goo_jump_D
+		SCASE			_ssub_pink_goo_jump_L
+		POS_MOVE_STOP	0								; return to still state
+		NBG_HNDL_SET	_nbgsub_pink_goo_active_collision_testA	; TODO: redundant usage of NBG_HNDL_SET,
+		SJMP			_sloc_3A15F						; just jump to _scr_pink_goo_active instead!
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_pink_goo_jump_U:
 		POS_Y_DELTA_ADD 0,$80,$FE
 		POS_Y_DELTA_ADD 4,$00,$FE
 		POS_Y_DELTA_ADD 2,$40,$00
 		POS_Y_DELTA_ADD 6,$00,$04
 		SRET
-_sjsr_case_3A1BD:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_pink_goo_jump_R:
 		POS_X_DELTA_ADD 0,$80,$01
 		POS_Y_DELTA_ADD 4,$00,$FE
 		POS_X_DELTA_ADD 2,$C0,$FF
 		POS_Y_DELTA_ADD 6,$00,$04
 		SRET
-_sjsr_case_3A1CA:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_pink_goo_jump_D:
 		POS_Y_DELTA_ADD 0,$80,$01
 		POS_Y_DELTA_ADD 4,$00,$FE
 		POS_Y_DELTA_ADD 2,$C0,$FF
 		POS_Y_DELTA_ADD 6,$00,$04
 		SRET
-_sjsr_case_3A1D7:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_pink_goo_jump_L:
 		POS_X_DELTA_ADD 0,$80,$FE
 		POS_Y_DELTA_ADD 4,$00,$FE
 		POS_X_DELTA_ADD 2,$40,$00
@@ -4194,11 +4240,11 @@ _sjsr_case_3A1D7:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A1E4:
-		NBG_HNDL_SET	_nbgsub_3A228
+_scr_pink_goo_stun:
+		NBG_HNDL_SET	_nbgsub_pink_goo_catch_test
 		SARG_SET		SARG0,$02
 _sloc_3A1EA:
-		SPR_IDX_SET		1,$E8
+		SPR_IDX_SET		1,$E8							; shake anim inline
 		SPR_IDX_SET		1,$46
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_3A1EA
@@ -4208,38 +4254,38 @@ _sloc_3A1EA:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3A15C
-		SCASE			_sjmp_case_3A206
-		SCASE			_sjmp_case_3A20C
+		SCASE			_scr_pink_goo_active
+		SCASE			_sloc_pink_goo_hor_catch_anim
+		SCASE			_sloc_pink_goo_vert_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A206:
+_sloc_pink_goo_hor_catch_anim:
 		SARG_SET		SARG1,$47
 		SJMP			_ssub_common_hor_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A20C:
+_sloc_pink_goo_vert_catch_anim:
 		SARG_SET		SARG1,$49
 		SJMP			_ssub_common_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A212:
+_nbgsub_pink_goo_active_collision_testA:
 		LDX		#$0A
 		LDY		#$0A
 		JSR		_obj_to_beam_collision_test
-		BCC		_nbgsub_3A221
+		BCC		_nbgsub_pink_goo_active_collision_testB
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A1E4
+		.WORD	_scr_pink_goo_stun
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A221:
+_nbgsub_pink_goo_active_collision_testB:
 		LDX		#$09
 		LDY		#$0A
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A228:
+_nbgsub_pink_goo_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_3A241
@@ -4248,21 +4294,22 @@ _nbgsub_3A228:
 		STA		_scores_obj_value
 		BCS		loc_3A23C
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_3A206
+		.WORD	_sloc_pink_goo_hor_catch_anim
 		RTS
 loc_3A23C:
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_3A20C
+		.WORD	_sloc_pink_goo_vert_catch_anim
 locret_3A241:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_3A242:
+_nsub_pink_goo_bounds_test:
 		JSR		_nsub_sarg1_direction_extract
 		TAX
 		LDA		off_3A24F,X
 		LDY		off_3A253,X
 		JMP		_obj_to_room_bound_box_collision_test
+
 off_3A24F:
 		.BYTE	<[byte_3A257]
 		.BYTE	<[byte_3A260]
@@ -4297,6 +4344,7 @@ byte_3A272:
 		.BYTE	$F0,$F8
 		.BYTE	$E8,$00
 		.BYTE	$F0,$00
+
 _spr_rlib0F_28:
 		.BYTE	$01
 		.WORD	_spr_rlib0F_28_A
@@ -4346,10 +4394,10 @@ _spr_nlib0F_48:
 
 ; =============== S C R I P T ==========================s====================
 _scr29_sewer_worm:
-		NJSR			_nsub_obj_sarg_add_imm_test
+		NJSR			_nsub_obj_sarg_add_imm_test		; also has a projectile
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_3A515
+		SCASE			_scr_sewer_worm_projectile
 
 ; !FALLTHROUGH!
 
@@ -4358,16 +4406,29 @@ _scr29_sewer_worm:
 		SPR_IDX_SET		1,$4B
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-_sloc_3A2E0:
-		NBG_HNDL_SET	_nbgsub_3A39E
-		NJSR			_nsub_62CE8
-_sloc_3A2E6:
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_sloc_sewer_worm_state_loop:
+		NBG_HNDL_SET	_nbgsub_sewer_worm_collision_testA
+; NOTE: for some reason, there is the only place this routine ever used
+; for anything except player's object. this vars are used to keep players
+; object in the middle of the screen and adjust screen scrolls according
+; to movement direction. this never used for any other objects at all
+; seems here we have some kind of early leftover...
+		NJSR			_nsub_cur_center_reset
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_sloc_sewer_worm_active:
 		SDELAY			$01
-		NJSR			_nsub_3A3FE
-		SBCS			_sloc_3A2E6
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_sewer_worm_move_anim		; select direction and test
+		SBCS			_sloc_sewer_worm_active			; untile it could swim there
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; set speed in given direction
 			NARGB		$40,$00
-		SPR_IDX_SET		0,$4B
+		SPR_IDX_SET		0,$4B							; move slowly
 		SDELAY			$22
 		SPR_IDX_INC		5
 		SPR_IDX_INC		5
@@ -4375,20 +4436,20 @@ _sloc_3A2E6:
 		SPR_IDX_INC		5
 		SPR_IDX_DEC		5
 		SPR_IDX_ADD_IMM 5,$02
-		POS_MOVE_STOP	0
-		NJSR			_nsub_62879
+		POS_MOVE_STOP	0								; stop
+		NJSR			_nsub_get_rand_probability		; test 1/4 probability for shot
 			NARGB		$04
-		SBCC			_sloc_3A2E6
-		SPR_IDX_SET		0,$4B
+		SBCC			_sloc_sewer_worm_active			; if not, then repeat swim phase
+		SPR_IDX_SET		0,$4B							; if yes, show up the head
 		SDELAY			$28
-		SPR_IDX_SET		6,$53
-		NBG_HNDL_SET	_nbgsub_3A3CE
-		POS_Y_MOVE		0,$F8
+		SPR_IDX_SET		6,$53							; then full extent
+		NBG_HNDL_SET	_ngbsub_sewer_worm_collision_testB	; bounding box settings are changed then
+		POS_Y_MOVE		0,$F8							; animate shoot
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_new_thread_start
-			NARGB		$29
+		NJSR			_nsub_new_thread_start			; shot 4 projectiles
+			NARGB		_scr29_sewer_worm_idx
 			NARGB		$00,$F8
-			NARGB		$01
+			NARGB		_scr_sewer_worm_projectile_idx+1
 			NARGB		$00
 		SLOOP_BEGIN		$02
 		SPR_IDX_SET		6,$54
@@ -4396,28 +4457,29 @@ _sloc_3A2E6:
 		SPR_IDX_INC		6
 		SLOOP_END
 		SLOOP_END
-		POS_Y_MOVE		0,$08
+		POS_Y_MOVE		0,$08							; return to swim mode
 		SPR_IDX_SET		0,$53
-		SJMP			_sloc_3A2E0
+		SJMP			_sloc_sewer_worm_state_loop
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A32B:
-		NBG_HNDL_SET	_nbgsub_3A39E
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+;
+_scr_sewer_worm_active_after_stun:
+		NBG_HNDL_SET	_nbgsub_sewer_worm_collision_testA
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$40,$00
 		SPR_IDX_SET		0,$4B
 _sloc_3A335:
-		NJSR			_nsub_3A449
-		SBCS			_sloc_3A2E6
+		NJSR			_nsub_sewer_worm_pos_test		; wait for position resets
+		SBCS			_sloc_sewer_worm_active			; then return to main active state
 		SDELAY			$01
 		SJMP			_sloc_3A335
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A340:
-		NBG_HNDL_SET	_nbgsub_3A3B4
+_scr_sewer_worm_stunA:
+		NBG_HNDL_SET	_nbgsub_sewer_worm_catch_testA
 		SARG_SET		SARG0,$02
 _sloc_3A346:
-		SPR_IDX_SET		1,$4B
+		SPR_IDX_SET		1,$4B							; inline shake anim
 		SPR_IDX_SET		1,$4E
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_3A346
@@ -4427,13 +4489,15 @@ _sloc_3A346:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3A32B
-		SCASE			_scr_3A386
-		SCASE			_scr_3A38C
+		SCASE			_scr_sewer_worm_active_after_stun
+		SCASE			_scr_sewer_worm_hor_catch_animA
+		SCASE			_scr_sewer_worm_vert_catch_animA
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A362:
-		NBG_HNDL_SET	_nbgsub_3A3E4
+; when beamed in secondary state, it should return to floating state immediately
+; after release, so there is only one difference
+_scr_sewer_worm_stunB:
+		NBG_HNDL_SET	_nbgsub_sewer_worm_catch_testB
 		SARG_SET		SARG0,$02
 _sloc_3A368:
 		SPR_IDX_SET		1,$54
@@ -4444,41 +4508,41 @@ _sloc_3A368:
 		SPR_IDX_SET		1,$54
 		SPR_IDX_SET		1,$57
 		SLOOP_END
-		POS_Y_MOVE		0,$08
-		NJSR			_nsub_get_obj_stun_state
+		POS_Y_MOVE		0,$08							; here adjust Y pos to set object
+		NJSR			_nsub_get_obj_stun_state		; on water when shrinked
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3A32B
-		SCASE			_scr_3A392
-		SCASE			_scr_3A398
+		SCASE			_scr_sewer_worm_active_after_stun
+		SCASE			_scr_sewer_worm_hor_catch_animB
+		SCASE			_scr_sewer_worm_vert_catch_animB
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A386:
+_scr_sewer_worm_hor_catch_animA:
 		SARG_SET		SARG1,$4F
 		SJMP			_ssub_common_hor_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A38C:
+_scr_sewer_worm_vert_catch_animA:
 		SARG_SET		SARG1,$51
 		SJMP			_ssub_common_vert_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A392:
+_scr_sewer_worm_hor_catch_animB:
 		SARG_SET		SARG1,$58
 		SJMP			_ssub_common_hor_catch_anim
 
 ; =============== S C R I P T ==========================s====================
-_scr_3A398:
+_scr_sewer_worm_vert_catch_animB:
 		SARG_SET		SARG1,$5A
 		SJMP			_ssub_common_vert_catch_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A39E:
+_nbgsub_sewer_worm_collision_testA:
 		LDX		#$08
 		LDY		#$08
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_3A3AD
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A340
+		.WORD	_scr_sewer_worm_stunA
 		RTS
 loc_3A3AD:
 		LDX		#$0B
@@ -4486,7 +4550,7 @@ loc_3A3AD:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A3B4:
+_nbgsub_sewer_worm_catch_testA:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_3A3CD
@@ -4495,22 +4559,22 @@ _nbgsub_3A3B4:
 		STA		_scores_obj_value
 		BCS		loc_3A3C8
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A386
+		.WORD	_scr_sewer_worm_hor_catch_animA
 		RTS
 loc_3A3C8:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A38C
+		.WORD	_scr_sewer_worm_vert_catch_animA
 locret_3A3CD:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A3CE:
+_ngbsub_sewer_worm_collision_testB:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_collision_test
 		BCC		loc_3A3DD
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A362
+		.WORD	_scr_sewer_worm_stunB
 		RTS
 loc_3A3DD:
 		LDX		#$0B
@@ -4518,7 +4582,7 @@ loc_3A3DD:
 		JMP		_obj_to_player_collision_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A3E4:
+_nbgsub_sewer_worm_catch_testB:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_3A3FD
@@ -4527,26 +4591,26 @@ _nbgsub_3A3E4:
 		STA		_scores_obj_value
 		BCS		loc_3A3F8
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A392
+		.WORD	_scr_sewer_worm_hor_catch_animB
 		RTS
 loc_3A3F8:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3A398
+		.WORD	_scr_sewer_worm_vert_catch_animB
 locret_3A3FD:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_3A3FE:
-		LDA		#$04
+_nsub_sewer_worm_move_anim:
+		LDA		#$04						; select random direction
 		JSR		_rand
 		LDX		_scr_cur_trd_idx
 		TAY
 		LSR
 		ROR
 		ROR
-		STA		_scr_trds_args1,X
-		LDA		_scr_trds_x_pos_lo,X
-		CLC
+		STA		_scr_trds_args1,X			; store it to SARG1
+		LDA		_scr_trds_x_pos_lo,X		; calculate next tile position
+		CLC									; in given direction
 		ADC		byte_3A439,Y
 		PHA
 		LDA		_scr_trds_x_pos_hi,X
@@ -4563,10 +4627,10 @@ _nsub_3A3FE:
 		TAY
 		PLA
 		TAX
-		JSR		_far_lvl_room_ofs_calc
-		BEQ		loc_3A437
-		CMP		#$0D
-		BCS		loc_3A437
+		JSR		_far_lvl_room_ofs_calc		; calculate room offset, read out
+		BEQ		loc_3A437					; macro tile data
+		CMP		#$0D						; macros $01-$0C are streams,
+		BCS		loc_3A437					; which is only allowed to swim
 		RTS
 loc_3A437:
 		SEC
@@ -4581,17 +4645,17 @@ byte_3A445:
 		.BYTE	$FF,$00,$00,$00
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_3A449:
+_nsub_sewer_worm_pos_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo,X
 		AND		#$0F
 		CMP		#$08
 		BEQ		locret_3A45C
-		LDA		_scr_trds_y_pos_lo,X ; *--
-		AND		#$0F		; *--
-		CMP		#$08		; *--
-		BEQ		locret_3A45C	; *--
-		CLC				; *--
+		LDA		_scr_trds_y_pos_lo,X
+		AND		#$0F
+		CMP		#$08
+		BEQ		locret_3A45C
+		CLC
 locret_3A45C:
 		RTS
 
@@ -4671,36 +4735,37 @@ _spr_nlib0F_52:
 		.BYTE	$05,$CE,$43,$FF
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A515:
+_scr_sewer_worm_projectile:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_3A531
-		NJSR			_nsub_3A53B
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
-			NARGB		$00,$01
-		POS_Y_DELTA_ADD 0,$00,$FE
+		NBG_HNDL_SET	_nbgsub_sewer_worm_projectile_collision_test
+		NJSR			_nsub_sewer_worm_projectile_direction_select
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+			NARGB		$00,$01							; select random destination
+		POS_Y_DELTA_ADD 0,$00,$FE						; ballistic animate
 		SPR_IDX_SET		0,$5C
 		SLOOP_BEGIN		$3C
 		POS_Y_DELTA_ADD 1,$10,$00
 		SLOOP_END
-		POS_MOVE_STOP	0
+		POS_MOVE_STOP	0								; final splash spr set
 		SPR_IDX_INC		4
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3A531:
+_nbgsub_sewer_worm_projectile_collision_test:
 		LDX		#$06
 		LDY		#$07
 		JSR		_obj_to_player_collision_test
 		JMP		_cur_obj_out_of_screen_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_3A53B:
+_nsub_sewer_worm_projectile_direction_select:
 		LDA		#$00
 		JSR		_rand
 		AND		#$E0
 		LDX		_scr_cur_trd_idx
 		STA		_scr_trds_args1,X
 		RTS
+
 _spr_nlib0F_5C:
 		.BYTE	$01
 		.BYTE	$FC,$FE,$01,$FD
@@ -4718,7 +4783,7 @@ _scr2D_rotator:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A558:
+_sloc_case_3A558:
 		NBG_HNDL_SET	_nbgsub_3A5E3
 _sloc_3A55B:
 		SPR_IDX_SET		5,$5E
@@ -4748,7 +4813,7 @@ _sloc_3A55B:
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
 		SBCS			_sloc_3A5AB
 _sloc_3A597:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$01
 		SLOOP_BEGIN		$0A
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
@@ -4781,7 +4846,7 @@ _sloc_3A5BB:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3A558
+		SCASE			_sloc_case_3A558
 		SCASE			_scr_3A5D7
 		SCASE			_scr_3A5DD
 
@@ -4922,7 +4987,7 @@ _scr0F_candle:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_3A739
+		SCASE			_sloc_case_3A739
 
 ; !FALLTHROUGH!
 
@@ -4941,10 +5006,10 @@ _scr0F_candle:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A739:
+_sloc_case_3A739:
 		SDELAY			$01
 		NJSR			_nsub_3A74D
-		SBCC			_sjmp_case_3A739
+		SBCC			_sloc_case_3A739
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$23
 _sloc_3A745:
@@ -5206,9 +5271,9 @@ _scr_3A909:
 		NBG_HNDL_SET	_nbgsub_3A9B3
 		NJSR			_nsub_sarg1_direction_extract
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3A930
-		SCASE			_sjmp_case_3A948
-		SCASE			_sjmp_case_3A960
+		SCASE			_sloc_case_3A930
+		SCASE			_sloc_case_3A948
+		SCASE			_sloc_case_3A960
 _sloc_3A918:
 		POS_X_DELTA_SET 0,$80,$FE
 		SPR_IDX_SET		0,$10
@@ -5223,7 +5288,7 @@ _sloc_3A918:
 		SJMP			_sloc_3A918
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A930:
+_sloc_case_3A930:
 		POS_Y_DELTA_SET 0,$80,$FE
 		SPR_IDX_SET		0,$04
 		SDELAY			$08
@@ -5234,10 +5299,10 @@ _sjmp_case_3A930:
 		SDELAY			$08
 		POS_Y_DELTA_SET 0,$00,$FF
 		SPR_IDX_INC		6
-		SJMP			_sjmp_case_3A930
+		SJMP			_sloc_case_3A930
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A948:
+_sloc_case_3A948:
 		POS_X_DELTA_SET 0,$80,$01
 		SPR_IDX_SET		0,$08
 		SDELAY			$08
@@ -5248,10 +5313,10 @@ _sjmp_case_3A948:
 		SDELAY			$08
 		POS_X_DELTA_SET 0,$00,$01
 		SPR_IDX_INC		6
-		SJMP			_sjmp_case_3A948
+		SJMP			_sloc_case_3A948
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3A960:
+_sloc_case_3A960:
 		POS_Y_DELTA_SET 0,$80,$01
 		SPR_IDX_SET		0,$0C
 		SDELAY			$08
@@ -5262,7 +5327,7 @@ _sjmp_case_3A960:
 		SDELAY			$08
 		POS_Y_DELTA_SET 0,$00,$01
 		SPR_IDX_INC		6
-		SJMP			_sjmp_case_3A960
+		SJMP			_sloc_case_3A960
 
 ; =============== S C R I P T ==========================s====================
 _scr_3A978:
@@ -5577,7 +5642,7 @@ _sloc_3AC3B:
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
 		SBCS			_sloc_3AC3B
 _sloc_3AC65:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$80,$00
 		SDELAY			$10
 		NJSR			_nsub_62B1E
@@ -5587,7 +5652,7 @@ _sloc_3AC65:
 		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
 		SJSR			_ssub_3ACA6
 		SSCRIPT1_SET	_scr_3AC9A
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$01
 		SLOOP_BEGIN		$06
 		NJSR			_nsub_obj_to_room_sarg1_square_collision_test
@@ -5600,7 +5665,7 @@ _sloc_3AC91:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3AC93:
+_sloc_case_3AC93:
 		SJSR			_ssub_3ACA6
 		NBG_HNDL_RESET
 		SJMP			_scr18_chain_saw
@@ -5638,7 +5703,7 @@ _sloc_3ACBA:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3AC93
+		SCASE			_sloc_case_3AC93
 		SCASE			_scr_3ACDE
 		SCASE			_scr_3ACE4
 
@@ -5691,6 +5756,7 @@ loc_3AD14:
 		.WORD	_scr_3ACE4
 locret_3AD19:
 		RTS
+
 _spr_nlib11_1C:
 		.BYTE	$07
 		.BYTE	$08,$3E,$42,$F8
@@ -5939,7 +6005,7 @@ _sloc_3AFDF:
 		SDELAY			$2D
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B003:
+_sloc_case_3B003:
 		NBG_HNDL_RESET
 		POS_Y_MOVE		0,$FD
 		SPR_IDX_SET		0,$3B
@@ -5972,7 +6038,7 @@ _sloc_3B023:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3B003
+		SCASE			_sloc_case_3B003
 		SCASE			_scr_3B03F
 		SCASE			_scr_3B045
 
@@ -6017,6 +6083,7 @@ loc_3B075:
 		.WORD	_scr_3B045
 locret_3B07A:
 		RTS
+
 _spr_nlib11_35:
 		.BYTE	$01
 		.BYTE	$F8,$F8,$02,$FC
@@ -6144,7 +6211,7 @@ _scr2A_morning_star_troll:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_3B4E6
+		SCASE			_sloc_case_3B4E6
 
 ; !FALLTHROUGH!
 
@@ -6157,27 +6224,27 @@ _scr2A_morning_star_troll:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B214:
+_sloc_case_3B214:
 		NBG_HNDL_SET	_nbgsub_3B281
 		SSCRIPT1_SET	_scr_3B24C
 _sloc_3B21B:
 		NJSR			_nsub_3B2B1
 		SJSR_SW	$03
-		SCASE			_sjsr_case_3B237
-		SCASE			_sjsr_case_3B229
-		SCASE			_sjsr_case_3B230
+		SCASE			_ssub_case_3B237
+		SCASE			_ssub_case_3B229
+		SCASE			_ssub_case_3B230
 		SJMP			_sloc_3B21B
-_sjsr_case_3B229:
+_ssub_case_3B229:
 		POS_X_DELTA_SET 0,$80,$00
 		SDELAY			$10
 		POS_MOVE_STOP	0
 		SRET
-_sjsr_case_3B230:
+_ssub_case_3B230:
 		POS_X_DELTA_SET 0,$80,$FF
 		SDELAY			$10
 		POS_MOVE_STOP	0
 		SRET
-_sjsr_case_3B237:
+_ssub_case_3B237:
 		SDELAY			$18
 		SSCRIPT1_OFF
 		SPR_IDX_SET		0,$C8
@@ -6213,7 +6280,7 @@ _sloc_3B25B:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3B214
+		SCASE			_sloc_case_3B214
 		SCASE			_scr_3B275
 		SCASE			_scr_3B27B
 
@@ -6308,6 +6375,7 @@ byte_3B2EF:
 		.BYTE	$02
 		.BYTE	$08,$F8
 		.BYTE	$08,$00
+
 _spr_rlib11_00:
 		.BYTE	$01
 		.WORD	_spr_rlib11_00_A
@@ -6482,7 +6550,7 @@ _spr_nlib11_43:
 		.BYTE	$F6,$E0,$03,$FA
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B4E6:
+_sloc_case_3B4E6:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3B4FE
 		SPR_IDX_SET		2,$44
@@ -6587,9 +6655,9 @@ _scr1C_girl_and_floaters:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3B71F
-		SCASE			_sjmp_case_3B9C4
-		SCASE			_sjmp_case_3BA43
+		SCASE			_sloc_case_3B71F
+		SCASE			_sloc_case_3B9C4
+		SCASE			_sloc_case_3BA43
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_3B6D6
@@ -6614,13 +6682,13 @@ _scr1C_girl_and_floaters:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B631:
+_sloc_case_3B631:
 		NBG_HNDL_SET	_nbgsub_3B6DA
 _sloc_3B634:
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$4C,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$F8
@@ -6628,7 +6696,7 @@ _sloc_3B634:
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$50,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$F8
@@ -6648,7 +6716,7 @@ _sloc_3B663:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3B631
+		SCASE			_sloc_case_3B631
 		SCASE			_scr_3B687
 		SCASE			_scr_3B68D
 
@@ -6775,7 +6843,7 @@ locret_3B71E:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B71F:
+_sloc_case_3B71F:
 		SARG_SET		SARG0,$00
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$4C
@@ -6785,13 +6853,13 @@ _sjmp_case_3B71F:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B729:
+_sloc_case_3B729:
 		NBG_HNDL_SET	_nbgsub_3B775
 _sloc_3B72C:
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$4C,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$08
@@ -6799,7 +6867,7 @@ _sloc_3B72C:
 		SLOOP_BEGIN		$02
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$50,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$08
@@ -6819,7 +6887,7 @@ _sloc_3B75B:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3B729
+		SCASE			_sloc_case_3B729
 		SCASE			_scr_3B687
 		SCASE			_scr_3B68D
 
@@ -6837,6 +6905,7 @@ loc_3B784:
 		LDY		#$0C
 		JSR		_obj_to_player_collision_test
 		JMP		sub_3B6F0
+
 _spr_nlib11_4C:
 		.BYTE	$06
 		.BYTE	$10,$E8,$00,$F8
@@ -7026,7 +7095,7 @@ _spr_nlib11_65:
 		.BYTE	$E4,$48,$00,$F4
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3B9C4:
+_sloc_case_3B9C4:
 		SARG_SET		SARG0,$00
 _sloc_3B9C7:
 		SPR_IDX_SET		6,$66
@@ -7042,6 +7111,7 @@ _sloc_3B9C7:
 		SDELAY			$1E
 		SLOOP_END
 		SSTOP
+
 _spr_nlib11_66:
 		.BYTE	$04
 		.BYTE	$00,$BA,$00,$00
@@ -7080,7 +7150,7 @@ _spr_nlib11_6B:
 		.BYTE	$F0,$AC,$40,$00
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3BA43:
+_sloc_case_3BA43:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_3BAC9
 _sloc_3BA49:
@@ -7089,32 +7159,32 @@ _sloc_3BA49:
 		SBCS			_sloc_3BA49
 		NBG_HNDL_SET	_nbgsub_3BAD8
 		SJSR_SW	$04
-		SCASE			_sjsr_case_3BA69
-		SCASE			_sjsr_case_3BA72
-		SCASE			_sjsr_case_3BA7E
-		SCASE			_sjsr_case_3BA87
+		SCASE			_ssub_case_3BA69
+		SCASE			_ssub_case_3BA72
+		SCASE			_ssub_case_3BA7E
+		SCASE			_ssub_case_3BA87
 		NBG_HNDL_SET	_nbgsub_3BAC9
 		SPR_IDX_ADD_IMM 0,$FC
 		POS_MOVE_STOP	0
 		SDELAY			$1E
 		SJMP			_sloc_3BA49
-_sjsr_case_3BA69:
+_ssub_case_3BA69:
 		SPR_IDX_SET		0,$70
 		POS_Y_DELTA_SET 4,$00,$FA
 		POS_Y_DELTA_SET 4,$00,$02
 		SRET
-_sjsr_case_3BA72:
+_ssub_case_3BA72:
 		SPR_IDX_SET		0,$71
 		POS_X_DELTA_SET 0,$00,$02
 		POS_Y_DELTA_SET 4,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$02
 		SRET
-_sjsr_case_3BA7E:
+_ssub_case_3BA7E:
 		SPR_IDX_SET		0,$72
 		POS_Y_DELTA_SET 4,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$06
 		SRET
-_sjsr_case_3BA87:
+_ssub_case_3BA87:
 		SPR_IDX_SET		0,$73
 		POS_X_DELTA_SET 0,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$FE
@@ -7134,7 +7204,7 @@ _sloc_3BA99:
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_3BA43
+		SCASE			_sloc_case_3BA43
 		SCASE			_scr_3BABD
 		SCASE			_scr_3BAC3
 
@@ -7290,8 +7360,8 @@ _scr11_lvl2_ghost_nanny:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$02
-		SCASE			_sjmp_case_3BC8A
-		SCASE			_sjmp_case_3BCAF
+		SCASE			_sloc_case_3BC8A
+		SCASE			_sloc_case_3BCAF
 		NJSR			_nsub_3BBF3
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$14
@@ -7358,6 +7428,7 @@ _nsub_3BBF3:
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_60FCB
 		RTS
+
 _spr_nlib11_7C:
 		.BYTE	$04
 		.BYTE	$08,$B4,$00,$00
@@ -7408,7 +7479,7 @@ _spr_nlib11_83:
 		.BYTE	$F9,$82,$00,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3BC8A:
+_sloc_case_3BC8A:
 		SARG_SET		SARG0,$00
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$A0,$02
@@ -7419,6 +7490,7 @@ _sjmp_case_3BC8A:
 		SPR_IDX_SET		7,$84
 		SPR_IDX_INC		3
 		SSTOP
+
 _spr_nlib11_84:
 		.BYTE	$02
 		.BYTE	$F8,$F0,$00,$00
@@ -7429,7 +7501,7 @@ _spr_nlib11_85:
 		.BYTE	$F8,$A0,$00,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_3BCAF:
+_sloc_case_3BCAF:
 		SARG_SET		SARG0,$00
 		POS_X_SET		0,$70,$00
 		POS_Y_SET		0,$00,$02
@@ -7458,6 +7530,7 @@ _sjmp_case_3BCAF:
 		SPR_IDX_SET		0,$87
 		SDELAY			$50
 		SSTOP
+
 _spr_nlib11_86:
 		.BYTE	$0C
 		.BYTE	$F0,$F8,$43,$F0

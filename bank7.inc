@@ -335,7 +335,7 @@ _sloc_6028E:
 		NBG_HNDL_SET	_nbgsub_60307
 		SUSPEND
 _sloc_6029B:
-		NBG_HNDL_SET	_nbgsub_collision_flag_test
+		NBG_HNDL_SET	_nbgsub_player_collision_flag_test
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
@@ -405,7 +405,7 @@ _nbgsub_60307:
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_collision_flag_test:
+_nbgsub_player_collision_flag_test:
 		LDA		_collision_flag
 		LSR
 		BCC		loc_60316
@@ -501,7 +501,7 @@ _nsub_player_hit_action:
 		BNE		loc_603B7
 		LDX		#$00
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_16111
+		.WORD	_scr_game_over
 		SEC
 		RTS
 loc_603B7:
@@ -547,8 +547,8 @@ loc_603ED:
 		BCC		loc_60410
 loc_60406:
 		LDA		#$80
-		STA		_scr_trds_x_move_clk+2
-		STA		_scr_trds_y_move_clk+2
+		STA		_scr_trds_x_center+2
+		STA		_scr_trds_y_center+2
 		BNE		locret_6041C
 loc_60410:
 		LDA		_tmp7B0
@@ -741,35 +741,35 @@ sub_6050D:
 		LDX		_scr_cur_trd_idx
 		TAY
 		BNE		loc_60523
-		LDA		_scr_trds_y_move_clk,X
+		LDA		_scr_trds_y_center,X
 		SEC
 		SBC		_var0
-		STA		_scr_trds_y_move_clk,X
+		STA		_scr_trds_y_center,X
 		BCS		loc_60550
 		BCC		loc_6054E
 loc_60523:
 		DEY
 		BNE		loc_60533
-		LDA		_scr_trds_x_move_clk,X
+		LDA		_scr_trds_x_center,X
 		CLC
 		ADC		_var0
-		STA		_scr_trds_x_move_clk,X
+		STA		_scr_trds_x_center,X
 		BCC		loc_60550
 		BCS		loc_6054E
 loc_60533:
 		DEY
 		BNE		loc_60543
-		LDA		_scr_trds_y_move_clk,X
+		LDA		_scr_trds_y_center,X
 		CLC
 		ADC		_var0
-		STA		_scr_trds_y_move_clk,X
+		STA		_scr_trds_y_center,X
 		BCC		loc_60550
 		BCS		loc_6054E
 loc_60543:
-		LDA		_scr_trds_x_move_clk,X
+		LDA		_scr_trds_x_center,X
 		SEC
 		SBC		_var0
-		STA		_scr_trds_x_move_clk,X
+		STA		_scr_trds_x_center,X
 		BCS		loc_60550
 loc_6054E:
 		INC		_var1
@@ -1618,7 +1618,7 @@ _nsub_beam_target_and_spr_idx_update:
 		ADC		byte_60D23,Y
 		STA		_beam_target_y_pos
 		TAY
-		JSR		sub_61A41
+		JSR		_obj_new_lvl_pos_set
 		LDA		_nmi_counter
 		AND		#$07
 		STA		_tmp0
@@ -1753,8 +1753,8 @@ loc_60DE8:
 		ASL
 		TAX
 		LDA		#$80
-		STA		_scr_trds_x_move_clk+3
-		STA		_scr_trds_y_move_clk+3
+		STA		_scr_trds_x_center+3
+		STA		_scr_trds_y_center+3
 		LDA		#$05
 		STA		_var1
 		LDY		_spr_buf_pos
@@ -1787,17 +1787,17 @@ loc_60E12:
 		STA		_ppu_spr_buf,Y
 		INY
 loc_60E3D:
-		LDA		_scr_trds_x_move_clk+3
+		LDA		_scr_trds_x_center+3
 		CLC
 		ADC		_scr_trds_x_move_speed+3
-		STA		_scr_trds_x_move_clk+3
+		STA		_scr_trds_x_center+3
 		LDA		_scr_trds_x_pos_lo+3
 		ADC		_scr_trds_x_move_delta+3
 		STA		_scr_trds_x_pos_lo+3
-		LDA		_scr_trds_y_move_clk+3
+		LDA		_scr_trds_y_center+3
 		CLC
 		ADC		_scr_trds_y_move_speed+3
-		STA		_scr_trds_y_move_clk+3
+		STA		_scr_trds_y_center+3
 		LDA		_scr_trds_y_pos_lo+3
 		ADC		_scr_trds_y_move_delta+3
 		STA		_scr_trds_y_pos_lo+3
@@ -2019,8 +2019,8 @@ loc_61040:
 		BPL		loc_6105A
 loc_61050:
 		LDA		#$80
-		STA		_scr_trds_x_move_clk+4
-		STA		_scr_trds_y_move_clk+4
+		STA		_scr_trds_x_center+4
+		STA		_scr_trds_y_center+4
 		BNE		locret_61063
 loc_6105A:
 		JSR		_nsub_sarg1_direction_extract
@@ -2050,7 +2050,7 @@ _player_catch_obj_insert_test:
 		CLC
 		ADC		byte_610AA,X
 		TAX
-		JSR		sub_61A59
+		JSR		_obj_new_lvl_pos_calc
 		LDA		#$00
 		STA		_tmp7AF
 		STA		_var0
@@ -3496,8 +3496,8 @@ loc_61A3F:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61A41:
-		JSR		sub_61A59
+_obj_new_lvl_pos_set:
+		JSR		_obj_new_lvl_pos_calc
 		TXA
 		PHA
 		LDX		_scr_cur_trd_idx
@@ -3512,7 +3512,7 @@ sub_61A41:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61A59:
+_obj_new_lvl_pos_calc:
 		TXA
 		CLC
 		ADC		_ppu_scroll_pos_x
@@ -5393,7 +5393,7 @@ loc_62877:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_62879:
+_nsub_get_rand_probability:
 		JSR		_scr_getc
 		JSR		_rand
 		BEQ		loc_62883
@@ -5440,7 +5440,7 @@ _nsub_room_page_set_unref:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_cur_obj_linear_dst_pos_from_args1_set:
+_nsub_cur_obj_linear_dst_pos_from_sarg1_set:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
@@ -5712,7 +5712,7 @@ _nsub_get_checkpoint_tmp_idx:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_args1_obj_to_beamer_vector_set:
+_nsub_sarg1_obj_to_beamer_vector_set:
 		JSR		_obj_to_beamer_vector_calc
 		STA		_scr_trds_args1,X
 		RTS
@@ -5740,7 +5740,7 @@ _nsub_cur_obj_linear_dst_pos_to_beamer_set_unref:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_62AEC:
+_nsub_obj_to_beamer_vector_adjust:
 		JSR		_scr_getc
 		PHA
 		PHA
@@ -6079,7 +6079,7 @@ byte_62CAB:
 		.BYTE	$04,$04
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_cur_obj_args1_hor_complement:
+_nsub_cur_obj_sarg1_hor_complement:
 		LDX		_scr_cur_trd_idx
 		LDA		#$00
 		SEC
@@ -6088,7 +6088,7 @@ _nsub_cur_obj_args1_hor_complement:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_cur_obj_args1_vert_complement:
+_nsub_cur_obj_sarg1_vert_complement:
 		LDX		_scr_cur_trd_idx
 		LDA		#$80
 		SEC
@@ -6133,11 +6133,11 @@ off_62CE4:
 		.BYTE	>[byte_62C70]
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_62CE8:
+_nsub_cur_center_reset:
 		LDX		_scr_cur_trd_idx
 		LDA		#$80
-		STA		_scr_trds_x_move_clk,X
-		STA		_scr_trds_y_move_clk,X
+		STA		_scr_trds_x_center,X
+		STA		_scr_trds_y_center,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6460,8 +6460,8 @@ loc_62EBD:
 		LDA		_var2
 		STA		_scr_trds_args2,X
 		LDA		#$80
-		STA		_scr_trds_x_move_clk,X
-		STA		_scr_trds_y_move_clk,X
+		STA		_scr_trds_x_center,X
+		STA		_scr_trds_y_center,X
 		LDA		_tmp0
 		STA		_scr_trds_idx,X
 		BMI		_nbgsub_dummy
@@ -6696,6 +6696,11 @@ loc_63032:
 ; sprite insert routine. this fixes the original japanese version BUG
 ; when object clipped with the left corner of the screen appears at the
 ; right side.
+;		LDA		#$00
+;		STA		_tmpD8
+;		STA		_tmpD9
+;		JSR		_spr_clip_insert_ex
+; -
 		DEC		_tmp2
 		LDY		#$00
 		LDA		(_ptr08),Y
@@ -6730,11 +6735,6 @@ loc_6306F:
 		DEC		_var0
 		BNE		loc_6306F
 		STX		_spr_buf_pos
-; -
-;		LDA		#$00
-;		STA		_tmpD8
-;		STA		_tmpD9
-;		JSR		_spr_clip_insert_ex
 ; -
 locret_6309C:
 		RTS
@@ -6887,10 +6887,10 @@ loc_63178:
 		BPL		loc_6317F
 		DEC		_var1
 loc_6317F:
-		LDA		_scr_trds_x_move_clk,X
+		LDA		_scr_trds_x_center,X
 		CLC
 		ADC		_scr_trds_x_move_speed,X
-		STA		_scr_trds_x_move_clk,X
+		STA		_scr_trds_x_center,X
 		LDA		_scr_trds_x_pos_lo,X
 		ADC		_scr_trds_x_move_delta,X
 		STA		_scr_trds_x_pos_lo,X
@@ -6899,8 +6899,8 @@ loc_6317F:
 		STA		_scr_trds_x_pos_hi,X
 		LDA		_scr_trds_y_move_speed,X
 		CLC
-		ADC		_scr_trds_y_move_clk,X
-		STA		_scr_trds_y_move_clk,X
+		ADC		_scr_trds_y_center,X
+		STA		_scr_trds_y_center,X
 		LDA		_scr_trds_y_move_delta,X
 		BMI		loc_631B4
 		ADC		_scr_trds_y_pos_lo,X
@@ -7023,8 +7023,8 @@ _scmd_lib_lo:
 		CMD_IDX_LO	_scmd0E_smem_alu
 		CMD_IDX_LO	_scmd0F_sarg_set
 		CMD_IDX_LO	_scmd10_nbg_hndl_reset
-		CMD_IDX_LO	_scmd11_sjmp_sw
-		CMD_IDX_LO	_scmd12_sjsr_sw
+		CMD_IDX_LO	_scmd11_sloc_sw
+		CMD_IDX_LO	_scmd12_ssub_sw
 		CMD_IDX_LO	_scmd13_store8
 		CMD_IDX_LO	_scmd14_script1_off
 		CMD_IDX_LO	_scmd15_sarg_alu
@@ -7049,8 +7049,8 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd0E_smem_alu
 		CMD_IDX_HI	_scmd0F_sarg_set
 		CMD_IDX_HI	_scmd10_nbg_hndl_reset
-		CMD_IDX_HI	_scmd11_sjmp_sw
-		CMD_IDX_HI	_scmd12_sjsr_sw
+		CMD_IDX_HI	_scmd11_sloc_sw
+		CMD_IDX_HI	_scmd12_ssub_sw
 		CMD_IDX_HI	_scmd13_store8
 		CMD_IDX_HI	_scmd14_script1_off
 		CMD_IDX_HI	_scmd15_sarg_alu
@@ -7238,7 +7238,7 @@ _dcmd01_pos_x_set:
 		JSR		_scr_getc
 		STA		_scr_trds_x_pos_hi,X
 		LDA		#$80
-		STA		_scr_trds_x_move_clk,X
+		STA		_scr_trds_x_center,X
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
@@ -7249,7 +7249,7 @@ _dcmd02_pos_y_set:
 		JSR		_scr_getc
 		STA		_scr_trds_y_pos_hi,X
 		LDA		#$80
-		STA		_scr_trds_y_move_clk,X
+		STA		_scr_trds_y_center,X
 		JMP		_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
@@ -7497,7 +7497,7 @@ _scmd0B_bcs:
 		BCS		_scr_pc_set
 
 ; =============== S U B R O U T I N E ======n================================
-_scmd11_sjmp_sw:
+_scmd11_sloc_sw:
 		JSR		_scr_getc
 		JSR		_scr_pc_inc
 		CMP		_nsub_return_value
@@ -7529,7 +7529,7 @@ _cmd_switch_case:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_scmd12_sjsr_sw:
+_scmd12_ssub_sw:
 		JSR		_scr_getc
 		JSR		_scr_pc_inc
 		CMP		_nsub_return_value
@@ -8769,8 +8769,8 @@ _scr_lib_lo:
 		SCR_IDX_LO	_scr21_train_ghost
 		SCR_IDX_LO	_scr22_lvl2_boss_train_slime
 		SCR_IDX_LO	_scr23_halloween
-		SCR_IDX_LO	_scr24_flying_wing_elephant
-		SCR_IDX_LO	_scr25_stinging_wing_elephant
+		SCR_IDX_LO	_scr24_flying_elephant
+		SCR_IDX_LO	_scr25_stinging_elephant
 		SCR_IDX_LO	_scr26_sword_ninja
 		SCR_IDX_LO	_scr27_shuriken_ninja
 		SCR_IDX_LO	_scr28_pink_goo
@@ -8819,8 +8819,8 @@ _scr_lib_hi:
 		SCR_IDX_HI	_scr21_train_ghost
 		SCR_IDX_HI	_scr22_lvl2_boss_train_slime
 		SCR_IDX_HI	_scr23_halloween
-		SCR_IDX_HI	_scr24_flying_wing_elephant
-		SCR_IDX_HI	_scr25_stinging_wing_elephant
+		SCR_IDX_HI	_scr24_flying_elephant
+		SCR_IDX_HI	_scr25_stinging_elephant
 		SCR_IDX_HI	_scr26_sword_ninja
 		SCR_IDX_HI	_scr27_shuriken_ninja
 		SCR_IDX_HI	_scr28_pink_goo

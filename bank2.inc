@@ -528,11 +528,11 @@ _lvl3_objects_list:
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$02,_NON
 		ROOM	$02
 		CHECKPOINT
-		OBJ_SET	_scr25_stinging_wing_elephant,		$A8,$02,$80,$00,$40,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$A8,$02,$80,$00,$40,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$48,$02,$48,$00,_NON,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$98,$02,$C8,$00,_NON,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$48,$02,$A0,$01,$C0,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$70,$02,$60,$01,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$48,$02,$A0,$01,$C0,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$70,$02,$60,$01,$00,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr28_pink_goo,					$A8,$02,$A8,$01,_NON,_NON,_NON
 ; -
@@ -569,14 +569,14 @@ _lvl3_objects_list:
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$06,_NON
 		ROOM	$06
 		OBJ_SET	_scr26_sword_ninja,					$90,$05,$A0,$02,_NON,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$05,$60,$02,$00,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$04,$60,$02,$00,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$60,$05,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$F8,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$98,$04,$60,$02,$00,_NON,_NON
 ; REGION, changed in the EU version
-;		OBJ_SET	_scr25_stinging_wing_elephant,		$78,$04,$60,$02,$00,_NON,_NON
+;		OBJ_SET	_scr25_stinging_elephant,			$78,$04,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr26_sword_ninja,					$78,$04,$60,$02,_NON,_NON,_NON
 ; -
-		OBJ_SET	_scr25_stinging_wing_elephant,		$42,$04,$60,$02,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$42,$04,$60,$02,$00,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$80,$04,$90,$02,_NON,_NON,_NON
 ; REGION, added in the EU version
 ;		OBJ_SET	_scr26_sword_ninja,					$90,$04,$A0,$02,_NON,_NON,_NON
@@ -620,19 +620,19 @@ _lvl3_objects_list:
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0B,_NON
 		ROOM	$0B
 		CHECKPOINT
-		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$90,$03,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$01,$00,$04,$00,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$A0,$04,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$30,$01,$90,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$A0,$01,$00,$04,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$30,$01,$A0,$04,$40,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0C,_NON
 		ROOM	$0C
-		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$00,$68,$05,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$A0,$00,$68,$05,$00,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$58,$00,$98,$05,_NON,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$30,$01,$A0,$05,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$70,$01,$80,$05,$40,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$D0,$00,$30,$05,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$30,$01,$A0,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$70,$01,$80,$05,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$D0,$00,$30,$05,$40,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$98,$01,$A8,$05,_NON,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$C0,$01,$68,$05,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$50,$00,$B0,$05,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$C0,$01,$68,$05,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$50,$00,$B0,$05,$00,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$B0,$00,$B0,$05,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0D,_NON
 		ROOM	$0D
@@ -645,23 +645,23 @@ _lvl3_objects_list:
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0E,_NON
 		ROOM	$0E
 		CHECKPOINT
-		OBJ_SET	_scr24_flying_wing_elephant,		$40,$02,$30,$03,$80,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$60,$02,$C0,$03,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$80,$02,$90,$03,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$40,$02,$30,$03,$80,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$60,$02,$C0,$03,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$80,$02,$90,$03,$00,_NON,_NON
 		OBJ_SET	_scr28_pink_goo,					$88,$02,$18,$04,_NON,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$30,$02,$30,$04,$40,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$A0,$02,$A0,$04,$00,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$48,$02,$A0,$04,$C0,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$C0,$02,$80,$04,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$30,$02,$30,$04,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$A0,$02,$A0,$04,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$48,$02,$A0,$04,$C0,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$C0,$02,$80,$04,$40,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$C8,$02,$98,$04,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$0F,_NON
 		ROOM	$0F
-		OBJ_SET	_scr25_stinging_wing_elephant,		$F8,$02,$60,$05,$00,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$98,$02,$60,$05,$00,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$80,$03,$90,$05,$40,_NON,_NON
-		OBJ_SET	_scr24_flying_wing_elephant,		$00,$03,$50,$05,$80,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$C0,$03,$60,$05,$00,_NON,_NON
-		OBJ_SET	_scr25_stinging_wing_elephant,		$60,$03,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$F8,$02,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$98,$02,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$80,$03,$90,$05,$40,_NON,_NON
+		OBJ_SET	_scr24_flying_elephant,				$00,$03,$50,$05,$80,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$C0,$03,$60,$05,$00,_NON,_NON
+		OBJ_SET	_scr25_stinging_elephant,			$60,$03,$60,$05,$00,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$10,_NON
 		ROOM	$10
 		OBJ_SET	_scr2A_morning_star_troll,			$68,$03,$A8,$03,_NON,_NON,_NON

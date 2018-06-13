@@ -19,8 +19,8 @@ PAD_L			EQU		$02
 PAD_R			EQU		$01
 
 DEBUG_MAX_ENEMY	EQU		$0C
-DEBUG_LEVEL		EQU		$00
-DEBUG_CHKPOINT	EQU		$04
+DEBUG_LEVEL		EQU		$03
+DEBUG_CHKPOINT	EQU		$01
 
 ;-------------------F-O-N-T-S-------------------
 
@@ -368,13 +368,13 @@ SARG2	EQU	2
 	ENDM
 
 	MAC	SJMP_SW
-		.BYTE	_scmd11_sjmp_sw_idx
+		.BYTE	_scmd11_sloc_sw_idx
 		.BYTE	{1}
 _SW_START	SET	.
 	ENDM
 
 	MAC	SJSR_SW
-		.BYTE	_scmd12_sjsr_sw_idx
+		.BYTE	_scmd12_ssub_sw_idx
 		.BYTE	{1}
 _SW_START	SET	.
 	ENDM

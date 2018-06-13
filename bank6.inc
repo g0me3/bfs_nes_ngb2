@@ -1068,9 +1068,10 @@ _apu_freq_table_ofs:
 ; on a second thought, there is possible they did it later based on
 ; short looped jingle of the Stage 3 ending but never actually used
 ;
-;_musD:
-;		INCLUDE	"..\mus\musD_ntsc.inc"
-;-
+#if DEBUG==1
+_musD:
+		INCLUDE	"..\mus\musD_ntsc.inc"
+#endif
 
 _musC:
 		INCLUDE	"..\mus\musC_ntsc.inc"
@@ -3286,9 +3287,10 @@ _music_lib:
 		.WORD	_musA
 		.WORD	_musB
 		.WORD	_musC
+#if DEBUG==1
 ; REGION, re-added an unused missing music track here in future
-;		.WORD	_musD
-; -
+		.WORD	_musD
+#endif
 _snd_lib:
 		.WORD	_snd00
 		.WORD	_snd01

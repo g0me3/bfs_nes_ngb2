@@ -10,12 +10,12 @@ _scr1A_lvl1_boss_judges:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_2C148
+		SCASE			_sloc_case_2C148
 		SPR_IDX_SET		0,$04
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG2,$FF
 		SJMP_SW			$01
-		SCASE			_sjmp_case_2C029
+		SCASE			_sloc_case_2C029
 _sloc_2C014:
 		SDELAY			$01
 		NJSR			_nsub_mcmp
@@ -29,7 +29,7 @@ _sloc_2C014:
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C029:
+_sloc_case_2C029:
 		SPR_IDX_SET		4,$04
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		4
@@ -49,7 +49,7 @@ _sjmp_case_2C029:
 			NARGB		$38,$40
 			NARGB		$01
 			NARGB		$00
-		POS_X_MOVE	0,$C0
+		POS_X_MOVE		0,$C0
 		POS_Y_MOVE		0,$40
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
@@ -66,7 +66,7 @@ _sloc_2C054:
 		SPR_IDX_ADD_IMM 6,$04
 		SPR_IDX_ADD_IMM 6,$FC
 		SLOOP_END
-		NJSR			_nsub_args1_obj_to_beamer_vector_set
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
 
 ; FALLTHROUGH!
 
@@ -74,7 +74,7 @@ _sloc_2C054:
 _scr_2C06C:
 		NBG_HNDL_SET	_nbgsub_2C0D7
 _sloc_2C06F:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$01
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$09,$40
@@ -83,7 +83,7 @@ _sloc_2C06F:
 		SPR_IDX_ADD_IMM 6,$04
 		SPR_IDX_ADD_IMM 0,$FC
 		SLOOP_END
-		NJSR			_nsub_62AEC
+		NJSR			_nsub_obj_to_beamer_vector_adjust
 			NARGB		$10
 		SJMP			_sloc_2C06F
 
@@ -208,7 +208,7 @@ locret_2C147:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C148:
+_sloc_case_2C148:
 		NBG_HNDL_SET	_nbgsub_2C23F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
@@ -220,7 +220,7 @@ _sjmp_case_2C148:
 		SJMP			_sloc_2C16B
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C160:
+_sloc_case_2C160:
 		NJSR			_nsub_2C26F
 			NARGB		$B8,$80
 		SARG_SET		SARG1,$80
@@ -228,14 +228,14 @@ _sjmp_case_2C160:
 _sloc_2C16B:
 		SLOOP_BEGIN		$10
 		SARG_ALU		SARG1,_ADC,$08
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$07
 		SLOOP_END
 		SJMP			_sloc_2C187
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C17C:
+_sloc_case_2C17C:
 		NJSR			_nsub_2C26F
 			NARGB		$2A,$72
 		SARG_SET		SARG1,$00
@@ -243,14 +243,14 @@ _sjmp_case_2C17C:
 _sloc_2C187:
 		SLOOP_BEGIN		$10
 		SARG_ALU		SARG1,_ADC,$08
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$04
 		SLOOP_END
 		SJMP			_sloc_2C1A3
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C198:
+_sloc_case_2C198:
 		NJSR			_nsub_2C26F
 			NARGB		$7B,$7A
 		SARG_SET		SARG1,$00
@@ -258,13 +258,13 @@ _sjmp_case_2C198:
 _sloc_2C1A3:
 		SLOOP_BEGIN		$20
 		SARG_ALU		SARG1,_ADC,$F8
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
 		SLOOP_BEGIN		$20
 		SARG_ALU		SARG1,_ADC,$08
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
@@ -297,9 +297,9 @@ _sloc_2C1E6:
 _sloc_2C1EF:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_2C204
+		SCASE			_sloc_case_2C204
 		SCASE			_scr_2C233
-		SCASE			_sjmp_case_2C239
+		SCASE			_sloc_case_2C239
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C1FA:
@@ -310,7 +310,7 @@ _ssub_2C1FA:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C204:
+_sloc_case_2C204:
 		SLOOP_BEGIN		$1E
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
@@ -322,12 +322,12 @@ _sjmp_case_2C204:
 			NARGB		$07
 			NARGW		byte_2C0CF
 		SSCRIPT1_SET	_scr_2C1C2
-		NJSR			_nsub_62879
+		NJSR			_nsub_get_rand_probability
 			NARGB		$03
 		SJMP_SW			$03
-		SCASE			_sjmp_case_2C160
-		SCASE			_sjmp_case_2C17C
-		SCASE			_sjmp_case_2C198
+		SCASE			_sloc_case_2C160
+		SCASE			_sloc_case_2C17C
+		SCASE			_sloc_case_2C198
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C228:
@@ -344,7 +344,7 @@ _scr_2C233:
 		SJMP			_sloc_62E25
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C239:
+_sloc_case_2C239:
 		SARG_SET		SARG1,$27
 		SJMP			_sloc_62E2C
 
@@ -376,7 +376,7 @@ _nbgsub_2C255:
 		RTS
 loc_2C269:
 		JSR		_cur_thread_reload_param
-		.WORD	_sjmp_case_2C239
+		.WORD	_sloc_case_2C239
 locret_2C26E:
 		RTS
 
@@ -702,13 +702,13 @@ _scr22_lvl2_boss_train_slime:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$04
-		SCASE			_sjmp_case_2C91D
-		SCASE			_sjmp_case_2C978
-		SCASE			_sjmp_case_2C97D
-		SCASE			_sjmp_case_2C8D1
+		SCASE			_sloc_case_2C91D
+		SCASE			_sloc_case_2C978
+		SCASE			_sloc_case_2C97D
+		SCASE			_sloc_case_2C8D1
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C658:
+_sloc_case_2C658:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2C6F3
@@ -723,7 +723,7 @@ _sjmp_case_2C658:
 		SLOOP_BEGIN		$03
 		SJSR			_ssub_2C686
 		SLOOP_END
-		SJMP			_sjmp_case_2C658
+		SJMP			_sloc_case_2C658
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_2C67C:
@@ -764,7 +764,7 @@ _sloc_2C6A2:
 		SSCRIPT1_OFF
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_2C658
+		SCASE			_sloc_case_2C658
 		SCASE			_scr_2C6D0
 		SCASE			_scr_2C6D9
 
@@ -979,7 +979,7 @@ _spr_nlib1A_35:
 		.BYTE	$F8,$F6,$42,$00	; *--
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C8D1:
+_sloc_case_2C8D1:
 		NJSR			_nsub_players_scr_suspend
 		SDELAY			$5A
 		NJSR			_nsub_2C90E
@@ -1017,7 +1017,7 @@ _nsub_2C90E:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C91D:
+_sloc_case_2C91D:
 		NJSR			_nsub_2C952
 		NJSR			_nsub_new_thread_start
 			NARGB		$22
@@ -1033,7 +1033,7 @@ _sjmp_case_2C91D:
 _sloc_2C932:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_2C94B
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$18
 		SLOOP_BEGIN		$03
@@ -1076,12 +1076,12 @@ _spr_nlib1A_3A:
 		.BYTE	$F8,$C8,$41,$FC
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C978:
+_sloc_case_2C978:
 		SPR_IDX_SET		0,$36
 		SJMP			_sloc_2C932
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C97D:
+_sloc_case_2C97D:
 		SPR_IDX_SET		0,$38
 		SJMP			_sloc_2C932
 
@@ -1090,8 +1090,8 @@ _scr2E_lvl4_boss_dragons:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$02
-		SCASE			_sjmp_case_2C9AE
-		SCASE			_sjmp_case_2CE6C
+		SCASE			_sloc_case_2C9AE
+		SCASE			_sloc_case_2CE6C
 		SJSR			_ssub_62E33
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
@@ -1112,7 +1112,7 @@ _sloc_2C99C:
 		SLOOP_END
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2C9AE:
+_sloc_case_2C9AE:
 		NJSR			_nsub_2CB1B
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$3B
@@ -1135,7 +1135,7 @@ _sloc_2C9BB:
 		NJSR			_nsub_2CAF6
 		SBCS			_sloc_2C9BB
 _sloc_2C9E4:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$01
 		SDELAY			$10
 		POS_MOVE_STOP	0
@@ -1215,12 +1215,12 @@ _sloc_2CA6F:
 _sloc_2CA7E:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_2CA89
+		SCASE			_sloc_case_2CA89
 		SCASE			_scr_2CA9B
 		SCASE			_scr_2CAA1
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CA89:
+_sloc_case_2CA89:
 		NBG_HNDL_RESET
 		SPR_IDX_ADD_IMM 6,$F4
 		SPR_IDX_ADD_IMM 6,$FC
@@ -1607,22 +1607,22 @@ _spr_nlib1A_51:
 		.BYTE	$07,$8E,$03,$F9
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CE6C:
+_sloc_case_2CE6C:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_sarg1_direction_extract
 		SJMP_SW			$04
-		SCASE			_sjmp_case_2CE7C
-		SCASE			_sjmp_case_2CE8A
-		SCASE			_sjmp_case_2CE81
-		SCASE			_sjmp_case_2CE95
+		SCASE			_sloc_case_2CE7C
+		SCASE			_sloc_case_2CE8A
+		SCASE			_sloc_case_2CE81
+		SCASE			_sloc_case_2CE95
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CE7C:
+_sloc_case_2CE7C:
 		POS_Y_MOVE		0,$CD
 		SJMP			_sloc_2CE83
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CE81:
+_sloc_case_2CE81:
 		POS_Y_MOVE		0,$22
 _sloc_2CE83:
 		NBG_HNDL_SET	_nbgsub_2CEA0
@@ -1631,8 +1631,8 @@ _sloc_2CE83:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CE8A:
-		POS_X_MOVE	0,$2F
+_sloc_case_2CE8A:
+		POS_X_MOVE		0,$2F
 		POS_Y_MOVE		0,$04
 		NBG_HNDL_SET	_nbgsub_2CEA7
 		SPR_IDX_SET		1,$58
@@ -1640,8 +1640,8 @@ _sjmp_case_2CE8A:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CE95:
-		POS_X_MOVE	0,$D1
+_sloc_case_2CE95:
+		POS_X_MOVE		0,$D1
 		POS_Y_MOVE		0,$04
 		NBG_HNDL_SET	_nbgsub_2CEA7
 		SPR_IDX_SET		1,$56
@@ -1695,10 +1695,10 @@ _scr2F_lvl5_boss_key_keeper:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$04
-		SCASE			_sjmp_case_2CFB4
-		SCASE			_sjmp_case_2CFCC
-		SCASE			_sjmp_case_2D7B1
-		SCASE			_sjmp_case_2D81B
+		SCASE			_sloc_case_2CFB4
+		SCASE			_sloc_case_2CFCC
+		SCASE			_sloc_case_2D7B1
+		SCASE			_sloc_case_2D81B
 		SJSR			_ssub_62E33
 		NJSR			_nsub_2D26C
 		NJSR			_nsub_spr_pal_load
@@ -1740,12 +1740,12 @@ _sloc_2CF51:
 			NARGW		byte_2D15C
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CF60:
+_sloc_case_2CF60:
 		SDELAY			$01
 		NJSR			_nsub_2D1F2
 		SJMP_SW			$02
-		SCASE			_sjmp_case_2CF60
-		SCASE			_sjmp_case_2CF81
+		SCASE			_sloc_case_2CF60
+		SCASE			_sloc_case_2CF81
 		NJSR			_nsub_2D215
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2D002
@@ -1758,10 +1758,10 @@ _sloc_2CF73:
 		NJSR			_nsub_2D229
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CF81:
+_sloc_case_2CF81:
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2CFE3
-		SJMP			_sjmp_case_2CF60
+		SJMP			_sloc_case_2CF60
 _sloc_2CF89:
 		NJSR			_nsub_mcmp
 			NARGW		byte_7DA
@@ -1786,7 +1786,7 @@ _scr_2CFA1:
 		SJMP			_scr_2CFA1
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CFB4:
+_sloc_case_2CFB4:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
@@ -1800,7 +1800,7 @@ _sjmp_case_2CFB4:
 		SJMP			_sloc_2CFED
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2CFCC:
+_sloc_case_2CFCC:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
@@ -1819,15 +1819,15 @@ _sloc_2CFE3:
 _sloc_2CFED:
 		NJSR			_nsub_sarg1_direction_extract
 		SJSR_SW	$04
-		SCASE			_sjsr_case_2D07A
-		SCASE			_sjsr_case_2D01E
-		SCASE			_sjsr_case_2D0A8
-		SCASE			_sjsr_case_2D04C
+		SCASE			_ssub_case_2D07A
+		SCASE			_ssub_case_2D01E
+		SCASE			_ssub_case_2D0A8
+		SCASE			_ssub_case_2D04C
 		POS_MOVE_STOP	0
 		SARG_ALU		SARG1,_ADC,$40
 		SJMP			_sloc_2CFED
 _sloc_2D002:
-		NJSR			_nsub_args1_obj_to_beamer_vector_set
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
 		SDELAY			$01
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
@@ -1840,7 +1840,7 @@ _sloc_2D002:
 			NARGB		$00
 		SDELAY			$3C
 		SJMP			_sloc_2D002
-_sjsr_case_2D01E:
+_ssub_case_2D01E:
 		SSCRIPT1_SET	_scr_2D02F
 _sloc_2D022:
 		NJSR			_nsub_2D2BB
@@ -1866,7 +1866,7 @@ _scr_2D02F:
 		SPR_IDX_SET		0,$5F
 		SDELAY			$06
 		SJMP			_scr_2D02F
-_sjsr_case_2D04C:
+_ssub_case_2D04C:
 		SSCRIPT1_SET	_scr_2D05D
 _sloc_2D050:
 		NJSR			_nsub_2D2CC
@@ -1892,7 +1892,7 @@ _scr_2D05D:
 		SPR_IDX_SET		0,$61
 		SDELAY			$06
 		SJMP			_scr_2D05D
-_sjsr_case_2D07A:
+_ssub_case_2D07A:
 		SSCRIPT1_SET	_scr_2D08B
 _sloc_2D07E:
 		NJSR			_nsub_2D2D8
@@ -1918,7 +1918,7 @@ _scr_2D08B:
 		SPR_IDX_SET		0,$5E
 		SDELAY			$06
 		SJMP			_scr_2D08B
-_sjsr_case_2D0A8:
+_ssub_case_2D0A8:
 		SSCRIPT1_SET	_scr_2D0B9
 _sloc_2D0AC:
 		NJSR			_nsub_2D2E4
@@ -1976,12 +1976,12 @@ _sloc_2D103:
 _sloc_2D112:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sjmp_case_2D11D
+		SCASE			_sloc_case_2D11D
 		SCASE			_scr_2D122
 		SCASE			_scr_2D139
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2D11D:
+_sloc_case_2D11D:
 		STORE8			byte_7DA,$00
 		SUSPEND
 
@@ -2658,7 +2658,7 @@ _spr_nlib1A_75:
 		.BYTE	$F0,$90,$43,$08
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2D7B1:
+_sloc_case_2D7B1:
 		SARG_SET		SARG0,$00
 		SPR_IDX_SET		0,$76
 		SDELAY			$20
@@ -2700,7 +2700,7 @@ _spr_nlib1A_79:
 		.BYTE	$F0,$A6,$03,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sjmp_case_2D81B:
+_sloc_case_2D81B:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_2D848
 		SLOOP_BEGIN		$03
@@ -2714,7 +2714,7 @@ _sjmp_case_2D81B:
 		NBG_HNDL_SET	_nbgsub_2D83E
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$7C,$20
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SUSPEND
 
@@ -3035,6 +3035,7 @@ _nsub_2DA7D:
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_60FEE
 		RTS
+
 _spr_rlib1A_00:
 		.BYTE	$02
 		.WORD	_spr_rlib1A_00_A
@@ -3241,6 +3242,7 @@ _spr_rlib1A_07_B:
 		.BYTE	$C8,$80,$02,$F8
 		.BYTE	$D8,$82,$02,$F8
 		.BYTE	$E8,$B4,$02,$F8
+
 _spr_nlib1A_84:
 		.BYTE	$1F
 		.BYTE	$DA,$92,$42,$0C
@@ -3376,14 +3378,14 @@ _lvl6_boss_vega_sub1:
 		SARG_SET		SARG0,$00
 		SSCRIPT1_SET	_scr_2DF30
 		NBG_HNDL_SET	_nbgsub_2DF36
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$04
 		SDELAY			$10
 		POS_MOVE_STOP	0
 		SDELAY			$4E
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_BEGIN		$80
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$06
 		SDELAY			$01
 		SARG_ALU		SARG1,_ADC,$04
@@ -3391,7 +3393,7 @@ _lvl6_boss_vega_sub1:
 		SARG_SET		SARG2,$04
 		SLOOP_BEGIN		$07
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$06
 		SDELAY			$01
 		NJSR			_nsub_2DF3D
@@ -3442,7 +3444,7 @@ _lvl6_boss_vega_sub2:
 _lvl6_boss_vega_sub3:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_2DF78
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_args1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SPR_IDX_SET		0,$8A
 		SLOOP_BEGIN		$03
