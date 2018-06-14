@@ -179,7 +179,7 @@ loc_2C10F:
 loc_2C118:
 		LDX		#$0C
 		LDY		#$0E
-		JSR		_obj_to_beam_collision_test
+		JSR		_obj_to_beam_ctest
 		BCC		loc_2C127
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C089
@@ -187,7 +187,7 @@ loc_2C118:
 loc_2C127:
 		LDX		#$0F
 		LDY		#$12
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C12E:
@@ -352,7 +352,7 @@ _sloc_case_2C239:
 _nbgsub_2C23F:
 		LDX		#$08
 		LDY		#$0E
-		JSR		_obj_to_beam_collision_test
+		JSR		_obj_to_beam_ctest
 		BCC		loc_2C24E
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C1CE
@@ -360,7 +360,7 @@ _nbgsub_2C23F:
 loc_2C24E:
 		LDX		#$0B
 		LDY		#$12
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C255:
@@ -819,7 +819,7 @@ byte_2C6F3:
 _nbgsub_2C6F7:
 		LDX		#$08
 		LDY		#$08
-		JSR		_obj_to_beam_collision_test
+		JSR		_obj_to_beam_ctest
 		BCC		loc_2C706
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_2C698
@@ -827,7 +827,7 @@ _nbgsub_2C6F7:
 loc_2C706:
 		LDX		#$0D
 		LDY		#$0E
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_2C70D:
@@ -1048,7 +1048,7 @@ _sloc_2C932:
 _nbgsub_2C94B:
 		LDX		#$06
 		LDY		#$07
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_2C952:
@@ -1139,7 +1139,7 @@ _sloc_2C9E4:
 			NARGB		$00,$01
 		SDELAY			$10
 		POS_MOVE_STOP	0
-		NJSR			_nsub_62B1E
+		NJSR			_nsub_obj_to_obj_in_range_test
 			NARGB		$02,$40
 		SBCC			_sloc_2C9BB
 		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
@@ -1189,7 +1189,7 @@ _scr_2CA40:
 		NJSR			_nsub_wait_for_beam_hold
 		SBCS_BREAK		_sloc_2CA7E
 		SLOOP_END
-		NJSR			_nsub_62BE5
+		NJSR			_nsub_is_any_enemy_active
 		SBCS			_sloc_2CA66
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$22
@@ -1252,7 +1252,7 @@ byte_2CAAB:
 _nbgsub_2CAAF:
 		LDX		#$10
 		LDY		#$10
-		JSR		_obj_to_beam_collision_test
+		JSR		_obj_to_beam_ctest
 		BCC		loc_2CABE
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_2CA40
@@ -1260,7 +1260,7 @@ _nbgsub_2CAAF:
 loc_2CABE:
 		LDX		#$15
 		LDY		#$16
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_2CAC5:
@@ -1652,13 +1652,13 @@ _sloc_case_2CE95:
 _nbgsub_2CEA0:
 		LDX		#$09
 		LDY		#$24
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_2CEA7:
 		LDX		#$23
 		LDY		#$0A
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 _spr_nlib1A_54:
 		.BYTE	$03
 		.BYTE	$E3,$92,$01,$FC
@@ -2023,7 +2023,7 @@ byte_2D160:
 _nbgsub_2D164:
 		LDX		#$10
 		LDY		#$16
-		JSR		_obj_to_beam_collision_test
+		JSR		_obj_to_beam_ctest
 		BCC		loc_2D178
 		LDA		#$01
 		STA		byte_7DA
@@ -2033,7 +2033,7 @@ _nbgsub_2D164:
 loc_2D178:
 		LDX		#$0F
 		LDY		#$18
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_2D17F:
@@ -2722,7 +2722,7 @@ _sloc_case_2D81B:
 _nbgsub_2D83E:
 		LDX		#$09
 		LDY		#$0A
-		JSR		_obj_to_player_collision_test
+		JSR		_obj_to_player_ctest
 		JMP		_cur_obj_out_of_screen_test
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2993,10 +2993,10 @@ _scr_lvl6_boss_vega_death:
 _nbgsub_lvl6_boss_vega_damage_count:
 		LDX		#$15
 		LDY		#$26
-		JSR		_obj_to_player_collision_test
+		JSR		_obj_to_player_ctest
 		LDX		#$10
 		LDY		#$18
-		JSR		_obj_to_beam_collision_test
+		JSR		_obj_to_beam_ctest
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BEQ		locret_2DA6F
@@ -3412,7 +3412,7 @@ _scr_2DF30:
 _nbgsub_2DF36:
 		LDX		#$08
 		LDY		#$09
-		JMP		_obj_to_player_collision_test
+		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_2DF3D:
@@ -3463,7 +3463,7 @@ _sloc_2DF73:
 _nbgsub_2DF78:
 		LDX		#$08
 		LDY		#$09
-		JSR		_obj_to_player_collision_test
+		JSR		_obj_to_player_ctest
 		JMP		_cur_obj_out_of_screen_test
 _spr_nlib1A_89:
 		.BYTE	$01
@@ -3671,10 +3671,10 @@ _spr_rlib1A:
 
 _lvl6_objects_list:
 		CHECKPOINT
-		OBJ_SET	_scr0F_candle,$80,$00,$5C,$03,_NON,_NON,_NON
-		OBJ_SET	_scr0F_candle,$80,$00,$5C,$02,_NON,_NON,_NON
+		OBJ_SET	_scr0F_candle,						$80,$00,$5C,$03,_NON,_NON,_NON
+		OBJ_SET	_scr0F_candle,						$80,$00,$5C,$02,_NON,_NON,_NON
 		ROOM	$01
-		OBJ_SET	_scr30_lvl6_boss_vega,$80,$00,$48,$00,_NON,_NON,_NON
+		OBJ_SET	_scr30_lvl6_boss_vega,				$80,$00,$48,$00,_NON,_NON,_NON
 		OBJ_END
 
 _lvl6_collisions:

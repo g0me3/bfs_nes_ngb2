@@ -107,6 +107,9 @@ _lvl5_objects_list:
 		OBJ_SET	_scr17_runner,						$48,$00,$48,$02,_NON,_NON,_NON
 		OBJ_SET	_scr19_toilet_snake,				$64,$01,$20,$02,_NON,_NON,_NON
 		OBJ_SET	_scr19_toilet_snake,				$24,$01,$20,$02,_NON,_NON,_NON
+; NOTE: this runner start position is inside the wall, so it would
+; hang there if they didn't manage this case in collision test
+; routine for this object.
 		OBJ_SET	_scr17_runner,						$88,$01,$88,$02,_NON,_NON,_NON
 		OBJ_SET	_scr0D_money_bag,					$30,$00,$90,$02,$01,_NON,_NON
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$0E,_NON

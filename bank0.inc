@@ -52,7 +52,16 @@ _scr00_intro_title_select:
 		NJSR			_nsub_bg_pal_load				; load actual palette into pal buf
 			NARGW		_pal0
 		SJSR			_ssub_pal_fade_in				; show the picture, wait for 90 frames (1.5 sec)
+#if DEBUG==1
+		SLOOP_BEGIN		$5A
+		SDELAY			$01
+		NJSR			_nsub_intro_skip
+		SBCS_BREAK		_hal_logo_skip
+		SLOOP_END
+_hal_logo_skip:
+#else
 		SDELAY			$5A
+#endif
 		SJSR			_ssub_pal_fade_out				; shut down the picture
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; load new packed tilemap with license info
 			NARGB		_tlm6_copyrights_idx
@@ -61,7 +70,16 @@ _scr00_intro_title_select:
 		NJSR			_nsub_bg_pal_load				; load another palette
 			NARGW		_pal1							; NOTE: both palettes are the same
 		SJSR			_ssub_pal_fade_in				; and again show it for 1.5 seconds
+#if DEBUG==1
+		SLOOP_BEGIN		$5A
+		SDELAY			$01
+		NJSR			_nsub_intro_skip
+		SBCS_BREAK		_copyrights_skip
+		SLOOP_END
+_copyrights_skip:
+#else
 		SDELAY			$5A
+#endif
 		SJSR			_ssub_pal_fade_out
 
 ; !FALLTHROUGH!
@@ -281,10 +299,27 @@ _tlm_title_text:
 		.BYTE	$20,$20,$20,$20,$42,$59,$20,$48,$41,$4C,$20,$4C,$41,$42,$4F,$52,$41,$54,$4F,$52,$59,$20,$20,$20
 ; -
 
+#if DEBUG==1
+; =============== S U B R O U T I N E ======n================================
+_nsub_intro_skip:
+		LDA		_pad0_pressed				; this is native background routine for
+		AND		#PAD_START|PAD_A
+		BEQ		locret_853A					; additionally for A+B held
+		SEC
+		RTS
+locret_853A:
+		CLC
+		RTS
+#endif
+
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_title_input:
 		LDA		_pad0_pressed				; this is native background routine for
+#if DEBUG==1
+		AND		#PAD_START|PAD_A
+#else
 		AND		#PAD_START					; title thread. when START pressed, test
+#endif
 		BEQ		locret_8539					; additionally for A+B held
 		LDA		_pad0_held
 		AND		#PAD_A|PAD_B
@@ -997,7 +1032,11 @@ loc_8C00:
 ; TODO: very annoying, title accepts only START, select busters only A
 ; maybe fix it with allow START to be input here a well
 		LDA		_pad0_pressed				; select with A
+#if DEBUG==1
+		AND		#PAD_START|PAD_A
+#else
 		AND		#PAD_A
+#endif
 		BEQ		loc_8C36
 		LDA		#$0C
 		JSR		_far_prg6_apu_snd_load_safe	; init one of two players indexes

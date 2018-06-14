@@ -3958,7 +3958,7 @@ _spr_nlib01_16:
 ; =============== S C R I P T ==========================s====================
 _scr0C_room_doors_handler:
 		NBG_HNDL_SET	_nbgsub_room_doors_data_load	; initialize the doors data on start
-		NJSR			_nsub_player_to_doors_collision_test	; now test if player appears at the door
+		NJSR			_nsub_player_to_doors_ctest		; now test if player appears at the door
 		SBCC			_sloc_16284						; in this case draw it open manually
 		SJSR_SW	$11										; without animation and sounds
 		SCASE			_ssub_door00_opened				; lvl1 face 2x2 regular
@@ -3980,7 +3980,7 @@ _scr0C_room_doors_handler:
 		SCASE			_ssub_door10_opened 			; lvl4
 _sloc_16284:
 		SDELAY			$01								; or else skip to the main door handler loop
-		NJSR			_nsub_player_to_doors_collision_test	; test if players get near any door
+		NJSR			_nsub_player_to_doors_ctest		; test if players get near any door
 		SBCC			_sloc_16284						; then execute the door animation script
 		SJSR_SW	$11
 		SCASE			_ssub_door00_anim				; all dors has a sepatate ones
@@ -4074,7 +4074,7 @@ _nsub_room_doors_handler_and_data_init:
 		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_player_to_doors_collision_test:
+_nsub_player_to_doors_ctest:
 		LDA		#$00						; now doors thread constantly polling
 		STA		_active_door_data_pos		; this routine
 loc_16341:
@@ -5256,20 +5256,20 @@ _sloc_16969:
 		NJSR			_nsub_prize_sequence_completed_test	; wait for prize sequence completed
 		SBCC			_sloc_16969
 		SARG_SET		SARG2,$1E						; set the money amount for this bonus.
-		NBG_HNDL_SET	_nbgsub_money_bag_collision_test; now load collision test routine
+		NBG_HNDL_SET	_nbgsub_money_bag_ctest			; now load collision test routine
 _sloc_16977:
 		SPR_IDX_SET		2,$19							; and just wait it it happens in infinite loop
 		SPR_IDX_INC		2
 		SJMP			_sloc_16977
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_money_bag_collision_test:
+_nbgsub_money_bag_ctest:
 ; TODO: this is the only place we use this routine, this has a redundancy because
 ; routine mostly the same as regular one but with money add at the end.
 ; may be optimized
 		LDX		#$0D						; fixed dimensions for collision test.
 		LDY		#$0E
-		JMP		_money_prize_collision_test
+		JMP		_money_prize_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_prize_sequence_completed_test:

@@ -702,7 +702,7 @@ sub_604E0:
 		PHA
 		LDA		off_604F1,X
 		LDY		off_604F5,X
-		JSR		_obj_to_room_bound_box_collision_test
+		JSR		_obj_to_room_bound_box_ctest
 		PLA
 		TAY
 		PLA
@@ -2287,7 +2287,7 @@ loc_61217:
 
 ; =============== S U B R O U T I N E ======n================================
 sub_6121E:
-		JSR		sub_61C5E
+		JSR		_obj_to_obj_in_range_test
 		BCC		locret_61238
 		LDA		_tmp7BB
 		CMP		#$02
@@ -3063,7 +3063,7 @@ _spr_nlib09:
 		.WORD	_spr_nlib09_2F
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_room_bound_box_collision_test:
+_obj_to_room_bound_box_ctest:
 		STA		_ptr08
 		STY		_ptr08+1
 		TXA
@@ -3087,7 +3087,7 @@ loc_617E1:
 		LDY		_tmp2
 		LDA		_var0
 		PHA
-		JSR		_obj_to_room_macro_collision_test_box
+		JSR		_obj_to_room_macro_ctest_box
 		PLA
 		ROL
 		STA		_var0
@@ -3108,7 +3108,7 @@ loc_61809:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_room_doors_collision_test:
+_room_doors_ctest:
 		STY		_tmp2
 		LDY		_cur_room_doors_cnt
 		BEQ		loc_61860
@@ -3163,7 +3163,7 @@ loc_61861:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_room_macro_collision_test_box:
+_obj_to_room_macro_ctest_box:
 		LDA		#$00
 		STA		_tmp_var0
 		STA		_tmp_var1
@@ -3204,8 +3204,8 @@ loc_61896:
 		TAX
 
 ; =============== S U B R O U T I N E ======n================================
-_room_macro_collision_test_ex:
-		JSR		_room_doors_collision_test
+_room_macro_ctest_ex:
+		JSR		_room_doors_ctest
 		BCC		loc_618A6
 		RTS
 loc_618A6:
@@ -3805,7 +3805,7 @@ byte_61C4D:
 		.BYTE	$14
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61C5E:
+_obj_to_obj_in_range_test:
 		STY		_tmp0
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo,Y
@@ -4045,7 +4045,7 @@ loc_61DC8:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_beam_collision_test:
+_obj_to_beam_ctest:
 		LDA		_scr_trds_idx+3				; check if beam object deployed
 		BMI		loc_61E28
 		LDA		_scr_trds_args0+3			; also check if nothing is catched already
@@ -4102,7 +4102,7 @@ byte_61E2E:
 		.BYTE	$14,$01,$14,$01
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_player_collision_test:
+_obj_to_player_ctest:
 		LDA		_player_inv_timer
 		BNE		locret_61E6B
 		STX		_var0
@@ -4149,7 +4149,7 @@ locret_61E6B:
 ; like boots and wests... this is the reason they uses scores to be
 ; passed  to this routine from object itself...
 ;
-_money_prize_collision_test:
+_money_prize_ctest:
 		STX		_var0
 		STY		_var1
 		LDX		#$02
@@ -5291,12 +5291,12 @@ loc_627B7:
 		PLA
 		JSR		_thread_lib_load_gen_ex
 		TXA
-		LSR
-		LSR
-		TAX
-		LDA		_scr_cur_trd_idx
+		LSR									; X here is last added slot idx *4
+		LSR									; so div it back
+		TAX									; store current thread idx into SARG2
+		LDA		_scr_cur_trd_idx			; to link it
 		STA		_scr_trds_args2,X
-		TXA
+		TXA									; and return back the new object IDX
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5775,13 +5775,13 @@ locret_62B1D:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_62B1E:
+_nsub_obj_to_obj_in_range_test:
 		JSR		_scr_getc
 		TAX
 		JSR		_scr_getc
 		TAY
 		INY
-		JMP		sub_61C5E
+		JMP		_obj_to_obj_in_range_test
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_spr_idx_set_from_sarg:
@@ -5920,7 +5920,7 @@ _nsub_obj_sarg_set_from_nsub_return_value:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_62BE5:
+_nsub_is_any_enemy_active:
 		LDX		#$06
 loc_62BE7:
 		LDA		_scr_trds_idx,X
@@ -5999,7 +5999,7 @@ _nsub_catcher_handler_start:
 		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_obj_to_room_x_collision_testA:
+_nsub_obj_to_room_x_ctestA:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo,Y
 		AND		#$07
@@ -6014,7 +6014,7 @@ _nsub_obj_to_room_x_collision_testA:
 loc_62C5E:
 		LDA		off_62C6C,X
 		LDY		off_62C6E,X
-		JSR		_obj_to_room_bound_box_collision_test
+		JSR		_obj_to_room_bound_box_ctest
 		PLA
 		TAX
 		RTS
@@ -6038,7 +6038,7 @@ byte_62C75:
 		.BYTE	$04,$04
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_obj_to_room_y_collision_testA:
+_nsub_obj_to_room_y_ctestA:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_y_pos_lo,Y
 		AND		#$07
@@ -6056,7 +6056,7 @@ _nsub_obj_to_room_y_collision_testA:
 loc_62C94:
 		LDA		off_62CA2,X
 		LDY		off_62CA4,X
-		JSR		_obj_to_room_bound_box_collision_test
+		JSR		_obj_to_room_bound_box_ctest
 		PLA
 		TAX
 		RTS
@@ -6114,12 +6114,12 @@ _nsub_sarg1_obj_to_beamer_sqare_vector_set:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_obj_to_room_sarg1_square_collision_test:
+_nsub_obj_to_room_sarg1_square_ctest:
 		JSR		_nsub_sarg1_direction_extract
 		TAX
 		LDA		off_62CE0,X
 		LDY		off_62CE4,X
-		JMP		_obj_to_room_bound_box_collision_test
+		JMP		_obj_to_room_bound_box_ctest
 
 off_62CE0:
 		.BYTE	<[byte_62CA6]
@@ -6222,7 +6222,7 @@ loc_62D76:
 		JMP		_scr_cur_trd_off
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_room_macro_collision_test_raw:
+_obj_to_room_macro_ctest_raw:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_hi,X
 		STA		_tmp_var0
@@ -6231,7 +6231,7 @@ _obj_to_room_macro_collision_test_raw:
 		LDY		_scr_trds_y_pos_lo,X
 		LDA		_scr_trds_x_pos_lo,X
 		TAX
-		JSR		_room_macro_collision_test_ex
+		JSR		_room_macro_ctest_ex
 		BCS		loc_62D90
 		RTS
 loc_62D90:
