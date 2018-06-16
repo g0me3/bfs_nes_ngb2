@@ -19,8 +19,8 @@ PAD_L			EQU		$02
 PAD_R			EQU		$01
 
 DEBUG_MAX_ENEMY	EQU		$0C		; ($0A default)
-DEBUG_LEVEL		EQU		$02
-DEBUG_CHKPOINT	EQU		$02
+DEBUG_LEVEL		EQU		$01
+DEBUG_CHKPOINT	EQU		$05
 
 ;-------------------F-O-N-T-S-------------------
 

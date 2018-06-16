@@ -71,8 +71,8 @@ _scr_slow_moving_slime_stun:
 		NJSR			_nsub_get_obj_stun_state		; now test what current state of obj
 		SJMP_SW			$03
 		SCASE			_scr_slow_moving_slime_active	; if released, keed going as usual
-		SCASE			_scr_slime_hor_catch_anim		; if catched, do anim
-		SCASE			_scr_slime_vert_catch_anim
+		SCASE			_scr_slime_catch_anim_L			; if catched, do anim
+		SCASE			_scr_slime_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_slime_stun_in_process:
@@ -95,14 +95,14 @@ _ssub_slime_spr_stun_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_slime_hor_catch_anim:
+_scr_slime_catch_anim_L:
 		SARG_SET		SARG1,$10						; base catch anim for all slimes in hor orientation
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_slime_vert_catch_anim:
+_scr_slime_catch_anim_R:
 		SARG_SET		SARG1,$12						; same for vert orientation
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_slow_moving_slime_ctest:
@@ -128,11 +128,11 @@ _nbgsub_slow_moving_slime_catch_test:
 		STA		_scores_obj_value			; set the corresponding script
 		BCS		loc_380CC					; when beamed
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_hor_catch_anim
+		.WORD	_scr_slime_catch_anim_L
 		RTS
 loc_380CC:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_vert_catch_anim
+		.WORD	_scr_slime_catch_anim_R
 locret_380D1:
 		RTS
 
@@ -309,8 +309,8 @@ _scr_fast_moving_slime_stun:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_fast_moving_slime_active
-		SCASE			_scr_slime_hor_catch_anim
-		SCASE			_scr_slime_vert_catch_anim
+		SCASE			_scr_slime_catch_anim_L
+		SCASE			_scr_slime_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_fast_moving_slime_ctest:
@@ -336,11 +336,11 @@ _nbgsub_fast_moving_slime_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_382BD					; TODO: large portions of code here may be
 		JSR		_cur_thread_reload_param	; merged and redundancy removed
-		.WORD	_scr_slime_hor_catch_anim
+		.WORD	_scr_slime_catch_anim_L
 		RTS
 loc_382BD:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_vert_catch_anim
+		.WORD	_scr_slime_catch_anim_R
 locret_382C2:
 		RTS
 
@@ -353,7 +353,7 @@ _scr15_trolley_kick_slime:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SARG_SET		SARG1,$40						; he is not moving, keep
 		SLOOP_BEGIN		$10								; face in one particular direction
 		SPR_IDX_SET		1,$05							; sprite also fixed, easy
@@ -384,8 +384,8 @@ _scr_trolley_kick_slime_stun:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_trolley_kick_slime_active
-		SCASE			_scr_slime_hor_catch_anim
-		SCASE			_scr_slime_vert_catch_anim
+		SCASE			_scr_slime_catch_anim_L
+		SCASE			_scr_slime_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_trolley_kick_slime_ctest:
@@ -411,11 +411,11 @@ _nbgsub_trolley_kick_slime_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_38326
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_hor_catch_anim
+		.WORD	_scr_slime_catch_anim_L
 		RTS
 loc_38326:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_vert_catch_anim
+		.WORD	_scr_slime_catch_anim_R
 locret_3832B:
 		RTS
 
@@ -450,7 +450,7 @@ _scr16_still_throw_forward_slime:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 _scr_still_throw_forward_slime_active:
 		NBG_HNDL_SET	_nbgsub_still_throw_forward_slime_ctest
 		NJSR			_nsub_apu_snd_load_safe			; they when appear
@@ -479,8 +479,8 @@ _scr_still_throw_forward_slime_stun:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_still_throw_forward_slime_active
-		SCASE			_scr_slime_hor_catch_anim
-		SCASE			_scr_slime_vert_catch_anim
+		SCASE			_scr_slime_catch_anim_L
+		SCASE			_scr_slime_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_still_throw_forward_slime_ctest:
@@ -506,11 +506,11 @@ _nbgsub_still_throw_forward_slime_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_383BC
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_hor_catch_anim
+		.WORD	_scr_slime_catch_anim_L
 		RTS
 loc_383BC:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_vert_catch_anim
+		.WORD	_scr_slime_catch_anim_R
 locret_383C1:
 		RTS
 
@@ -866,18 +866,18 @@ _sloc_385DA:
 		NJSR			_nsub_get_obj_stun_state		; return to one of the states
 		SJMP_SW			$03
 		SCASE			_nbgsub_air_hammer_miner_active
-		SCASE			_scr_miner_hor_catch_anim
-		SCASE			_scr_miner_vert_catch_anim
+		SCASE			_scr_miner_catch_anim_L
+		SCASE			_scr_miner_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_miner_hor_catch_anim:
+_scr_miner_catch_anim_L:
 		SARG_SET		SARG1,$30
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_miner_vert_catch_anim:
+_scr_miner_catch_anim_R:
 		SARG_SET		SARG1,$32
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_air_hammer_miner_ctest:
@@ -917,11 +917,11 @@ _scr_air_hammer_miner_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3864A
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_hor_catch_anim
+		.WORD	_scr_miner_catch_anim_L
 		RTS
 loc_3864A:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_vert_catch_anim
+		.WORD	_scr_miner_catch_anim_R
 locret_3864F:
 		RTS
 
@@ -1036,8 +1036,8 @@ _sloc_38742:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_pick_axe_miner_active
-		SCASE			_scr_miner_hor_catch_anim
-		SCASE			_scr_miner_vert_catch_anim
+		SCASE			_scr_miner_catch_anim_L
+		SCASE			_scr_miner_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_pick_axe_miner_spr_anim:
@@ -1071,11 +1071,11 @@ _nbgsub_pick_axe_miner_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_38790
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_hor_catch_anim
+		.WORD	_scr_miner_catch_anim_L
 		RTS
 loc_38790:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_vert_catch_anim
+		.WORD	_scr_miner_catch_anim_R
 locret_38795:
 		RTS
 
@@ -1290,8 +1290,8 @@ _sloc_389C9:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_hammer_miner_active
-		SCASE			_scr_miner_hor_catch_anim
-		SCASE			_scr_miner_vert_catch_anim
+		SCASE			_scr_miner_catch_anim_L
+		SCASE			_scr_miner_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_hammer_miner_spr_anim:
@@ -1325,11 +1325,11 @@ _nbgsub_hammer_miner_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_38A17
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_hor_catch_anim
+		.WORD	_scr_miner_catch_anim_L
 		RTS
 loc_38A17:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_vert_catch_anim
+		.WORD	_scr_miner_catch_anim_R
 locret_38A1C:
 		RTS
 
@@ -1675,8 +1675,8 @@ _sloc_38D59:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_trolley_miner_disappear
-		SCASE			_scr_miner_hor_catch_anim
-		SCASE			_scr_miner_vert_catch_anim
+		SCASE			_scr_miner_catch_anim_L
+		SCASE			_scr_miner_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_trolley_miner_shake_anim:
@@ -1710,11 +1710,11 @@ _nbgsub_trolley_miner_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_38DA7
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_hor_catch_anim
+		.WORD	_scr_miner_catch_anim_L
 		RTS
 loc_38DA7:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_miner_vert_catch_anim
+		.WORD	_scr_miner_catch_anim_R
 locret_38DAC:
 		RTS
 
@@ -1826,7 +1826,7 @@ _scr21_train_ghost:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_train_ghost_spr_idx_select; select sprite idx based on SARG2 value
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_sarg1_rand08_mul8_set		; now choose random move direction
@@ -1905,8 +1905,8 @@ _sloc_38F57:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_train_ghost_active
-		SCASE			_scr_train_ghost_hor_catch_anim
-		SCASE			_scr_train_ghost_vert_catch_anim
+		SCASE			_scr_train_ghost_catch_anim_L
+		SCASE			_scr_train_ghost_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_train_ghost_shake_anim:
@@ -1917,14 +1917,14 @@ _scr_train_ghost_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_train_ghost_hor_catch_anim:
+_scr_train_ghost_catch_anim_L:
 		SARG_SET		SARG1,$76
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_train_ghost_vert_catch_anim:
+_scr_train_ghost_catch_anim_R:
 		SARG_SET		SARG1,$78
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_train_ghost_ctest:
@@ -1950,11 +1950,11 @@ _nbgsub_train_ghost_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_38FAF
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_train_ghost_hor_catch_anim
+		.WORD	_scr_train_ghost_catch_anim_L
 		RTS
 loc_38FAF:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_train_ghost_vert_catch_anim
+		.WORD	_scr_train_ghost_catch_anim_R
 locret_38FB4:
 		RTS
 
@@ -2119,7 +2119,7 @@ _scr2B_still_throw_ballistic_slime:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SLOOP_BEGIN		$10								; here is the main slime script init
 		SPR_IDX_SET		1,$05							; blink for a while
 		SPR_IDX_SET		1,$FF
@@ -2156,8 +2156,8 @@ _scr_still_throw_ballistic_slime_stun:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_still_throw_ballistic_slime_active
-		SCASE			_scr_slime_hor_catch_anim
-		SCASE			_scr_slime_vert_catch_anim
+		SCASE			_scr_slime_catch_anim_L
+		SCASE			_scr_slime_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_still_throw_ballistic_slime_ctest:
@@ -2183,11 +2183,11 @@ _nbgsub_still_throw_ballistic_slime_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3916D
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_hor_catch_anim
+		.WORD	_scr_slime_catch_anim_L
 		RTS
 loc_3916D:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_vert_catch_anim
+		.WORD	_scr_slime_catch_anim_R
 locret_39172:
 		RTS
 
@@ -2332,7 +2332,7 @@ _scr2C_fast_throw_forward_slime:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
 		SLOOP_BEGIN		$10								; target to beamer as usual
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc; calculate appearance sprite
@@ -2385,8 +2385,8 @@ _scr_fast_throw_forward_slime_stun:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_fast_throw_forward_slime_active
-		SCASE			_scr_slime_hor_catch_anim
-		SCASE			_scr_slime_vert_catch_anim
+		SCASE			_scr_slime_catch_anim_L
+		SCASE			_scr_slime_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_fast_throw_forward_slime_ctest:
@@ -2412,11 +2412,11 @@ _nbgsub_fast_throw_forward_slime_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_392F9
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_hor_catch_anim
+		.WORD	_scr_slime_catch_anim_L
 		RTS
 loc_392F9:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_slime_vert_catch_anim
+		.WORD	_scr_slime_catch_anim_R
 locret_392FE:
 		RTS
 
@@ -2659,8 +2659,8 @@ _sloc_394AE:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_halloween_active
-		SCASE			_scr_halloween_hor_catch_anim
-		SCASE			_scr_halloween_vert_catch_anim
+		SCASE			_scr_halloween_catch_anim_L
+		SCASE			_scr_halloween_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_halloween_shake_anim:
@@ -2671,14 +2671,14 @@ _ssub_halloween_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_halloween_hor_catch_anim:
+_scr_halloween_catch_anim_L:
 		SARG_SET		SARG1,$04
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_halloween_vert_catch_anim:
+_scr_halloween_catch_anim_R:
 		SARG_SET		SARG1,$06
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_halloween_ctest:
@@ -2704,11 +2704,11 @@ _nbgsub_halloween_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_39508
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_halloween_hor_catch_anim
+		.WORD	_scr_halloween_catch_anim_L
 		RTS
 loc_39508:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_halloween_vert_catch_anim
+		.WORD	_scr_halloween_catch_anim_R
 locret_3950D:
 		RTS
 
@@ -2985,8 +2985,8 @@ _sloc_39755:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_flying_elephant_active
-		SCASE			_scr_flying_elephant_hor_catch_anim
-		SCASE			_scr_flying_elephant_vert_catch_anim
+		SCASE			_scr_flying_elephant_catch_anim_L
+		SCASE			_scr_flying_elephant_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _sub_flying_elephant_shake_anim:
@@ -2997,14 +2997,14 @@ _sub_flying_elephant_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_flying_elephant_hor_catch_anim:
+_scr_flying_elephant_catch_anim_L:
 		SARG_SET		SARG1,$08
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_flying_elephant_vert_catch_anim:
+_scr_flying_elephant_catch_anim_R:
 		SARG_SET		SARG1,$0A
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_flying_elephant_ctest:
@@ -3030,11 +3030,11 @@ _nbgsub_flying_elephant_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_397AF
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_flying_elephant_hor_catch_anim
+		.WORD	_scr_flying_elephant_catch_anim_L
 		RTS
 loc_397AF:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_flying_elephant_vert_catch_anim
+		.WORD	_scr_flying_elephant_catch_anim_R
 locret_397B4:
 		RTS
 
@@ -3254,7 +3254,7 @@ _scr25_stinging_elephant:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SLOOP_BEGIN		$10								; start blinking here as usual
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$D8,$40
@@ -3297,8 +3297,8 @@ _sloc_39A0A:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_stinging_elephant_active
-		SCASE			_scr_flying_elephant_hor_catch_anim
-		SCASE			_scr_flying_elephant_vert_catch_anim
+		SCASE			_scr_flying_elephant_catch_anim_L
+		SCASE			_scr_flying_elephant_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_stinging_elephant_shake_anim:
@@ -3332,11 +3332,11 @@ _nbgsub_stinging_elephant_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_39A58
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_flying_elephant_hor_catch_anim
+		.WORD	_scr_flying_elephant_catch_anim_L
 		RTS
 loc_39A58:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_flying_elephant_vert_catch_anim
+		.WORD	_scr_flying_elephant_catch_anim_R
 locret_39A5D:
 		RTS
 
@@ -3714,8 +3714,8 @@ _sloc_39D49:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_sword_ninja_hide
-		SCASE			_scr_ninja_hor_catch_anim
-		SCASE			_scr_ninja_vert_catch_anim
+		SCASE			_scr_ninja_catch_anim_L
+		SCASE			_scr_ninja_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_sword_ninja_shake_anim:
@@ -3726,14 +3726,14 @@ _scr_sword_ninja_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_ninja_hor_catch_anim:
+_scr_ninja_catch_anim_L:
 		SARG_SET		SARG1,$32
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_ninja_vert_catch_anim:
+_scr_ninja_catch_anim_R:
 		SARG_SET		SARG1,$34
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_swird_ninja_ctest:
@@ -3759,11 +3759,11 @@ _nbgsub_sword_ninja_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_39DA3
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_ninja_hor_catch_anim
+		.WORD	_scr_ninja_catch_anim_L
 		RTS
 loc_39DA3:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_ninja_vert_catch_anim
+		.WORD	_scr_ninja_catch_anim_R
 locret_39DA8:
 		RTS
 
@@ -3963,7 +3963,7 @@ _scr27_shuriken_ninja:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 _scr_shuriken_ninja_active:
 		SDELAY			$01								; reused shuriken ninja script here
 		NJSR			_nsub_ninja_appear_pos_set
@@ -4021,8 +4021,8 @@ _sloc_39FF4:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_sloc_shuriken_ninja_hide
-		SCASE			_scr_ninja_hor_catch_anim
-		SCASE			_scr_ninja_vert_catch_anim
+		SCASE			_scr_ninja_catch_anim_L
+		SCASE			_scr_ninja_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_shuriken_ninja_ctest:
@@ -4255,18 +4255,18 @@ _sloc_3A1EA:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_pink_goo_active
-		SCASE			_sloc_pink_goo_hor_catch_anim
-		SCASE			_sloc_pink_goo_vert_catch_anim
+		SCASE			_sloc_pink_goo_catch_anim_L
+		SCASE			_sloc_pink_goo_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_sloc_pink_goo_hor_catch_anim:
+_sloc_pink_goo_catch_anim_L:
 		SARG_SET		SARG1,$47
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_sloc_pink_goo_vert_catch_anim:
+_sloc_pink_goo_catch_anim_R:
 		SARG_SET		SARG1,$49
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_pink_goo_active_ctestA:
@@ -4294,11 +4294,11 @@ _nbgsub_pink_goo_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3A23C
 		JSR		_cur_thread_reload_param
-		.WORD	_sloc_pink_goo_hor_catch_anim
+		.WORD	_sloc_pink_goo_catch_anim_L
 		RTS
 loc_3A23C:
 		JSR		_cur_thread_reload_param
-		.WORD	_sloc_pink_goo_vert_catch_anim
+		.WORD	_sloc_pink_goo_catch_anim_R
 locret_3A241:
 		RTS
 
@@ -4401,7 +4401,7 @@ _scr29_sewer_worm:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SLOOP_BEGIN		$10
 		SPR_IDX_SET		1,$4B
 		SPR_IDX_SET		1,$FF
@@ -4490,8 +4490,8 @@ _sloc_3A346:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_sewer_worm_active_after_stun
-		SCASE			_scr_sewer_worm_hor_catch_animA
-		SCASE			_scr_sewer_worm_vert_catch_animA
+		SCASE			_scr_sewer_worm_catch_anim_LA
+		SCASE			_scr_sewer_worm_catch_anim_RA
 
 ; =============== S C R I P T ==========================s====================
 ; when beamed in secondary state, it should return to floating state immediately
@@ -4512,28 +4512,28 @@ _sloc_3A368:
 		NJSR			_nsub_get_obj_stun_state		; on water when shrinked
 		SJMP_SW			$03
 		SCASE			_scr_sewer_worm_active_after_stun
-		SCASE			_scr_sewer_worm_hor_catch_animB
-		SCASE			_scr_sewer_worm_vert_catch_animB
+		SCASE			_scr_sewer_worm_catch_anim_LB
+		SCASE			_scr_sewer_worm_catch_anim_RB
 
 ; =============== S C R I P T ==========================s====================
-_scr_sewer_worm_hor_catch_animA:
+_scr_sewer_worm_catch_anim_LA:
 		SARG_SET		SARG1,$4F
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_sewer_worm_vert_catch_animA:
+_scr_sewer_worm_catch_anim_RA:
 		SARG_SET		SARG1,$51
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_sewer_worm_hor_catch_animB:
+_scr_sewer_worm_catch_anim_LB:
 		SARG_SET		SARG1,$58
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_sewer_worm_vert_catch_animB:
+_scr_sewer_worm_catch_anim_RB:
 		SARG_SET		SARG1,$5A
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_sewer_worm_ctestA:
@@ -4559,11 +4559,11 @@ _nbgsub_sewer_worm_catch_testA:
 		STA		_scores_obj_value
 		BCS		loc_3A3C8
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_sewer_worm_hor_catch_animA
+		.WORD	_scr_sewer_worm_catch_anim_LA
 		RTS
 loc_3A3C8:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_sewer_worm_vert_catch_animA
+		.WORD	_scr_sewer_worm_catch_anim_RA
 locret_3A3CD:
 		RTS
 
@@ -4591,11 +4591,11 @@ _nbgsub_sewer_worm_catch_testB:
 		STA		_scores_obj_value
 		BCS		loc_3A3F8
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_sewer_worm_hor_catch_animB
+		.WORD	_scr_sewer_worm_catch_anim_LB
 		RTS
 loc_3A3F8:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_sewer_worm_vert_catch_animB
+		.WORD	_scr_sewer_worm_catch_anim_RB
 locret_3A3FD:
 		RTS
 
@@ -4847,18 +4847,18 @@ _sloc_3A5BB:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_rotator_active
-		SCASE			_scr_rotator_hor_catch_anim
-		SCASE			_scr_rotator_vert_catch_anim
+		SCASE			_scr_rotator_catch_anim_L
+		SCASE			_scr_rotator_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_rotator_hor_catch_anim:
+_scr_rotator_catch_anim_L:
 		SARG_SET		SARG1,$67
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_rotator_vert_catch_anim:
+_scr_rotator_catch_anim_R:
 		SARG_SET		SARG1,$69
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_rotator_ctest:
@@ -4884,11 +4884,11 @@ _nbgsub_rotator_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3A60D
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_rotator_hor_catch_anim
+		.WORD	_scr_rotator_catch_anim_L
 		RTS
 loc_3A60D:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_rotator_vert_catch_anim
+		.WORD	_scr_rotator_catch_anim_R
 locret_3A612:
 		RTS
 
@@ -4995,7 +4995,7 @@ _scr0F_candle:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_new_thread_start			; default entry for every base object
 			NARGB		_scr0F_candle_idx				; the second object in first room
 			NARGB		$00,$B0							; adds three candles as well, but the last
@@ -5288,7 +5288,7 @@ _scr_runner_active:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 _scr_runner_move_L:
 		POS_X_DELTA_SET 0,$80,$FE
 		SPR_IDX_SET		0,$10
@@ -5358,8 +5358,8 @@ _sloc_3A97E:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_runner_active
-		SCASE			_scr_runner_hor_catch_anim
-		SCASE			_scr_runner_vert_catch_anim
+		SCASE			_scr_runner_catch_anim_L
+		SCASE			_scr_runner_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_runner_shake_anim:
@@ -5372,14 +5372,14 @@ _ssub_runner_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_runner_hor_catch_anim:
+_scr_runner_catch_anim_L:
 		SARG_SET		SARG1,$18
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_runner_vert_catch_anim:
+_scr_runner_catch_anim_R:
 		SARG_SET		SARG1,$1A
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_runner_ctest:
@@ -5468,11 +5468,11 @@ _nbgsub_runner_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3AA45
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_runner_hor_catch_anim
+		.WORD	_scr_runner_catch_anim_L
 		RTS
 loc_3AA45:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_runner_vert_catch_anim
+		.WORD	_scr_runner_catch_anim_R
 locret_3AA4A:
 		RTS
 
@@ -5723,8 +5723,8 @@ _sloc_3ACBA:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_chain_saw_turn_invisible
-		SCASE			_scr_chain_saw_hor_catch_anim
-		SCASE			_scr_chain_saw_vert_catch_anim
+		SCASE			_scr_chain_saw_catch_anim_L
+		SCASE			_scr_chain_saw_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_chain_saw_shake_anim:
@@ -5735,14 +5735,14 @@ _ssub_chain_saw_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_chain_saw_hor_catch_anim:
+_scr_chain_saw_catch_anim_L:
 		SARG_SET		SARG1,$30
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_chain_saw_vert_catch_anim:
+_scr_chain_saw_catch_anim_R:
 		SARG_SET		SARG1,$32
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_chain_saw_ctest:
@@ -5768,11 +5768,11 @@ _nbgsub_chain_saw_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3AD14
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_chain_saw_hor_catch_anim
+		.WORD	_scr_chain_saw_catch_anim_L
 		RTS
 loc_3AD14:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_chain_saw_vert_catch_anim
+		.WORD	_scr_chain_saw_catch_anim_R
 locret_3AD19:
 		RTS
 
@@ -6060,18 +6060,18 @@ _sloc_3B023:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_toilet_snake_hide
-		SCASE			_scr_toilet_snake_hor_catch_anim
-		SCASE			_scr_toilet_snake_vert_catch_anim
+		SCASE			_scr_toilet_snake_catch_anim_L
+		SCASE			_scr_toilet_snake_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_toilet_snake_hor_catch_anim:
+_scr_toilet_snake_catch_anim_L:
 		SARG_SET		SARG1,$3E
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_toilet_snake_vert_catch_anim:
+_scr_toilet_snake_catch_anim_R:
 		SARG_SET		SARG1,$40
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_toilet_snake_ctest:
@@ -6097,11 +6097,11 @@ _nbgsub_toilet_snake_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3B075
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_toilet_snake_hor_catch_anim
+		.WORD	_scr_toilet_snake_catch_anim_L
 		RTS
 loc_3B075:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_toilet_snake_vert_catch_anim
+		.WORD	_scr_toilet_snake_catch_anim_R
 locret_3B07A:
 		RTS
 
@@ -6236,7 +6236,7 @@ _scr2A_morning_star_troll:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SLOOP_BEGIN		$10								; blink as usual
 		SPR_IDX_SET		1,$C0
 		SPR_IDX_SET		1,$FF
@@ -6308,18 +6308,18 @@ _sloc_3B25B:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_morning_start_troll_active
-		SCASE			_scr_morning_start_troll_hor_catch_anim
-		SCASE			_scr_morning_start_troll_vert_catch_anim
+		SCASE			_scr_morning_start_troll_catch_anim_L
+		SCASE			_scr_morning_start_troll_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_morning_start_troll_hor_catch_anim:
+_scr_morning_start_troll_catch_anim_L:
 		SARG_SET		SARG1,$42
-		SJMP			_sloc_62E25
+		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_morning_start_troll_vert_catch_anim:
+_scr_morning_start_troll_catch_anim_R:
 		SARG_SET		SARG1,$42
-		SJMP			_sloc_62E2C
+		SJMP			_ssub_common_catch_anim_R_snd19
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_morning_start_troll_ctest:
@@ -6345,11 +6345,11 @@ _nbgsub_morning_star_troll_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_3B2AB
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_morning_start_troll_hor_catch_anim
+		.WORD	_scr_morning_start_troll_catch_anim_L
 		RTS
 loc_3B2AB:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_morning_start_troll_vert_catch_anim
+		.WORD	_scr_morning_start_troll_catch_anim_R
 locret_3B2B0:
 		RTS
 
@@ -6691,7 +6691,7 @@ _scr1C_girl_and_floaters:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_patch_pal_load			; main object default handler
 			NARGB		$06
 			NARGW		_pal_girl_floaters_patch
@@ -6717,29 +6717,29 @@ _scr1C_girl_and_floaters:
 
 ; =============== S C R I P T ==========================s====================
 _scr_floaterA_active:
-		NBG_HNDL_SET	_nbgsub_floaterA_ctest
+		NBG_HNDL_SET	_nbgsub_floaterA_ctest			; both floaters has the same scripts...
 _sloc_3B634:
-		SLOOP_BEGIN		$02
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		SLOOP_BEGIN		$02								; adjust spite idx according to
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; face direction
 			NARGB		$4C,$40
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
-			NARGB		$00,$03
+			NARGB		$00,$03							; set vector position with given radius
 		SDELAY			$03
-		SARG_ALU		SARG1,_ADC,$F8
-		SLOOP_END
+		SARG_ALU		SARG1,_ADC,$F8					; ...with one exception. they move in opposite
+		SLOOP_END										; directions
 		SLOOP_BEGIN		$02
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; repeat the same for secondary sprite idx
 			NARGB		$50,$40
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$F8
 		SLOOP_END
-		SJMP			_sloc_3B634
+		SJMP			_sloc_3B634						; repeat floating in circles
 
 ; =============== S C R I P T ==========================s====================
 _scr_floaterA_stun:
-		NBG_HNDL_SET	_nbgsub_floaterA_catch_test
+		NBG_HNDL_SET	_nbgsub_floaterA_catch_test		; regular stun routine here
 		SARG_SET		SARG0,$02
 _sloc_3B663:
 		SJSR			_scr_floaterA_shake_anim
@@ -6751,8 +6751,8 @@ _sloc_3B663:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_floaterA_active
-		SCASE			_scr_floaterA_hor_catch_anim
-		SCASE			_scr_floaterA_vert_catch_anim
+		SCASE			_scr_floaterA_catch_anim_L
+		SCASE			_scr_floaterA_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_floaterA_shake_anim:
@@ -6763,20 +6763,20 @@ _scr_floaterA_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_floaterA_hor_catch_anim:
+_scr_floaterA_catch_anim_L:
 		SARG_SET		SARG1,$58
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_floaterA_vert_catch_anim:
+_scr_floaterA_catch_anim_R:
 		SARG_SET		SARG1,$5A
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S C R I P T ==========================s====================
 _scr_floater_start_to_evolve:
-		SPR_IDX_SET		7,$4C
-		SPR_IDX_INC		7
-		SPR_IDX_INC		7
+		SPR_IDX_SET		7,$4C							; this script is called by enemy why
+		SPR_IDX_INC		7								; second floater is catched, first
+		SPR_IDX_INC		7								; spin up
 		SPR_IDX_INC		7
 		SPR_IDX_SET		6,$4C
 		SPR_IDX_INC		6
@@ -6798,8 +6798,8 @@ _scr_floater_start_to_evolve:
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
-		SSCRIPT1_SET	_scr_floater_deploy_jumpers
-		SLOOP_BEGIN		$14
+		SSCRIPT1_SET	_scr_floater_deploy_jumpers		; then start to deploy jumpers
+		SLOOP_BEGIN		$14								; and then spin up slow down
 		SPR_IDX_SET		1,$5C
 		SPR_IDX_INC		1
 		SPR_IDX_INC		1
@@ -6813,13 +6813,13 @@ _scr_floater_start_to_evolve:
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
 		SPR_IDX_INC		2
-		SSTOP
+		SSTOP											; and finally disappear
 
 ; =============== S C R I P T ==========================s====================
 _scr_floater_deploy_jumpers:
 		SLOOP_BEGIN		$06
 		NJSR			_nsub_new_thread_start
-			NARGB		_scr1C_girl_and_floaters_idx
+			NARGB		_scr1C_girl_and_floaters_idx	; deploy 6 jumpers here
 			NARGB		$00,$00
 			NARGB		_scr_girl_and_floaters_jumpers_idx+1
 			NARGB		$00
@@ -6848,11 +6848,11 @@ loc_3B6E9:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_floater_pairing_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args2,X
+		LDX		_scr_cur_trd_idx			; common additional test if other
+		LDA		_scr_trds_args2,X			; paired object is not active anymore
 		BPL		locret_3B6FB
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_floater_start_to_evolve
+		.WORD	_scr_floater_start_to_evolve; turn current active floater into jumpers then
 locret_3B6FB:
 		RTS
 
@@ -6862,8 +6862,8 @@ _nbgsub_floaterA_catch_test:
 		LDA		_scr_trds_args0,X
 		BPL		locret_3B71E
 		LSR
-		LDY		_scr_trds_args2,X
-		BMI		loc_3B70C
+		LDY		_scr_trds_args2,X			; this is extra initialization, when one
+		BMI		loc_3B70C					; of floaters being catched, remove link
 		LDA		#$FF
 		STA		_scr_trds_args2,Y
 loc_3B70C:
@@ -6871,11 +6871,11 @@ loc_3B70C:
 		STA		_scores_obj_value
 		BCS		loc_3B719
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_floaterA_hor_catch_anim
+		.WORD	_scr_floaterA_catch_anim_L
 		RTS
 loc_3B719:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_floaterA_vert_catch_anim
+		.WORD	_scr_floaterA_catch_anim_R
 locret_3B71E:
 		RTS
 
@@ -6925,8 +6925,8 @@ _sloc_3B75B:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_floaterB_active
-		SCASE			_scr_floaterA_hor_catch_anim
-		SCASE			_scr_floaterA_vert_catch_anim
+		SCASE			_scr_floaterA_catch_anim_L
+		SCASE			_scr_floaterA_catch_anim_R
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_floaterB_ctest:
@@ -7189,32 +7189,32 @@ _spr_nlib11_6B:
 ; =============== S C R I P T ==========================s====================
 _scr_girl_and_floaters_jumpers:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_3BAC9
+		NBG_HNDL_SET	_nbgsub_jumpers_ctestA
 _sloc_3BA49:
-		SDELAY			$01
-		NJSR			_nsub_3BAF9
+		SDELAY			$01								; decide the jumping direction
+		NJSR			_nsub_jumpers_dst_select		; randomly if there are no obstacles
 		SBCS			_sloc_3BA49
-		NBG_HNDL_SET	_nbgsub_3BAD8
-		SJSR_SW	$04
-		SCASE			_ssub_case_3BA69
-		SCASE			_ssub_case_3BA72
-		SCASE			_ssub_case_3BA7E
-		SCASE			_ssub_case_3BA87
-		NBG_HNDL_SET	_nbgsub_3BAC9
+		NBG_HNDL_SET	_nbgsub_jumpers_ctestB			; while in mid-air change collision test
+		SJSR_SW	$04										; to non-catchable, only harmful
+		SCASE			_ssub_floaters_move_U			; do anim in calculated direction
+		SCASE			_ssub_floaters_move_R
+		SCASE			_ssub_floaters_move_D
+		SCASE			_ssub_floaters_move_L
+		NBG_HNDL_SET	_nbgsub_jumpers_ctestA			; when jumped, restore regular collision test
 		SPR_IDX_ADD_IMM 0,$FC
 		POS_MOVE_STOP	0
 		SDELAY			$1E
-		SJMP			_sloc_3BA49
+		SJMP			_sloc_3BA49						; stop and wait for a next jump
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_case_3BA69:
+_ssub_floaters_move_U:
 		SPR_IDX_SET		0,$70
 		POS_Y_DELTA_SET 4,$00,$FA
 		POS_Y_DELTA_SET 4,$00,$02
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_case_3BA72:
+_ssub_floaters_move_R:
 		SPR_IDX_SET		0,$71
 		POS_X_DELTA_SET 0,$00,$02
 		POS_Y_DELTA_SET 4,$00,$FE
@@ -7222,14 +7222,14 @@ _ssub_case_3BA72:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_case_3BA7E:
+_ssub_floaters_move_D:
 		SPR_IDX_SET		0,$72
 		POS_Y_DELTA_SET 4,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$06
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_case_3BA87:
+_ssub_floaters_move_L:
 		SPR_IDX_SET		0,$73
 		POS_X_DELTA_SET 0,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$FE
@@ -7237,24 +7237,24 @@ _ssub_case_3BA87:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_3BA93:
-		NBG_HNDL_SET	_nbgsub_3BADF
+_scr_jumpers_stun:
+		NBG_HNDL_SET	_nbgsub_jumpers_catch_test
 		SARG_SET		SARG0,$02
 _sloc_3BA99:
-		SJSR			_ssub_3BAB3
+		SJSR			_ssub_jumpers_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_3BA99
 		SLOOP_BEGIN		$0F
-		SJSR			_ssub_3BAB3
+		SJSR			_ssub_jumpers_shake_anim
 		SLOOP_END
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_girl_and_floaters_jumpers
-		SCASE			_scr_3BABD
-		SCASE			_scr_3BAC3
+		SCASE			_scr_jumpers_catch_anim_L
+		SCASE			_scr_jumpers_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_3BAB3:
+_ssub_jumpers_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$70,$40
 		SDELAY			$01
@@ -7262,33 +7262,33 @@ _ssub_3BAB3:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_3BABD:
+_scr_jumpers_catch_anim_L:
 		SARG_SET		SARG1,$78
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_3BAC3:
+_scr_jumpers_catch_anim_R:
 		SARG_SET		SARG1,$7A
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3BAC9:
+_nbgsub_jumpers_ctestA:
 		LDX		#$08
 		LDY		#$08
 		JSR		_obj_to_beam_ctest
-		BCC		_nbgsub_3BAD8
+		BCC		_nbgsub_jumpers_ctestB
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3BA93
+		.WORD	_scr_jumpers_stun
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3BAD8:
+_nbgsub_jumpers_ctestB:
 		LDX		#$08
 		LDY		#$09
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_3BADF:
+_nbgsub_jumpers_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_3BAF8
@@ -7297,16 +7297,16 @@ _nbgsub_3BADF:
 		STA		_scores_obj_value
 		BCS		loc_3BAF3
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3BABD
+		.WORD	_scr_jumpers_catch_anim_L
 		RTS
 loc_3BAF3:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_3BAC3
+		.WORD	_scr_jumpers_catch_anim_R
 locret_3BAF8:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_3BAF9:
+_nsub_jumpers_dst_select:
 		LDA		#$00
 		JSR		_rand
 		AND		#$03
@@ -7317,6 +7317,7 @@ _nsub_3BAF9:
 		JSR		_obj_to_room_bound_box_ctest
 		PLA
 		RTS
+
 off_3BB0D:
 		.BYTE	<[byte_3BB15]
 		.BYTE	<[byte_3BB1E]
@@ -7351,6 +7352,7 @@ byte_3BB30:
 		.BYTE	$F0,$00
 		.BYTE	$E8,$F8
 		.BYTE	$E8,$00
+
 _spr_nlib11_6C:
 		.BYTE	$01
 		.BYTE	$FC,$A6,$02,$FC
@@ -7401,57 +7403,68 @@ _spr_nlib11_79:
 		.BYTE	$02,$A4,$02,$FA
 
 ; =============== S C R I P T ==========================s====================
+; pure automated script animation with no harm to the player...
+;
 _scr11_lvl2_ghost_nanny:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$02
-		SCASE			_sloc_case_3BC8A
-		SCASE			_sloc_case_3BCAF
-		NJSR			_nsub_3BBF3
+		SCASE			_scr_ghost_nanny_baby
+		SCASE			_scr_ghost_nanny_itself
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
+; main script body handles the mother animation
+;
+		NJSR			_nsub_lvl3_players_auto_scripts_set
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$14
-		NJSR			_nsub_apu_mus_load
+#if DEBUG==1
+#else
+		NJSR			_nsub_apu_mus_load				; start music
 			NARGB		$0C
-		NJSR			_nsub_new_thread_start
-			NARGB		$11
+#endif
+		NJSR			_nsub_new_thread_start			; set baby animated object
+			NARGB		_scr11_lvl2_ghost_nanny_idx
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_scr_ghost_nanny_baby_idx+1
 			NARGB		$00
 		POS_X_SET		0,$90,$00
 		POS_Y_SET		0,$C0,$02
-		SLOOP_BEGIN		$02
-		SJSR			_ssub_3BBE1
+		SLOOP_BEGIN		$02								; do mother walk two times
+		SJSR			_ssub_ghost_nanny_mother_anim
 		SLOOP_END
-		NJSR			_nsub_new_thread_start
-			NARGB		$11
+		NJSR			_nsub_new_thread_start			; nanny appears
+			NARGB		_scr11_lvl2_ghost_nanny_idx
 			NARGB		$00,$00
-			NARGB		$02
+			NARGB		_scr_ghost_nanny_itself_idx+1
 			NARGB		$00
 		SLOOP_BEGIN		$04
-		SJSR			_ssub_3BBE1
+		SJSR			_ssub_ghost_nanny_mother_anim	; mother continues to walk
 		SLOOP_END
-		POS_MOVE_STOP	0
-		SPR_IDX_SET		0,$7E
-		SDELAY			$10
+		POS_MOVE_STOP	0								; when ghost kidnap the baby
+		SPR_IDX_SET		0,$7E							; mother runs to the right edge
+		SDELAY			$10								; of the roof...
 		POS_X_DELTA_SET 0,$80,$01
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		6,$7D
 		SPR_IDX_INC		6
 		SPR_IDX_INC		6
 		SLOOP_END
-		SPR_IDX_SET		0,$FF
+		SPR_IDX_SET		0,$FF							; ...then disappears
 		POS_MOVE_STOP	0
 		SLOOP_BEGIN		$80
-		SMEM_ALU		_apu_mus_volume,_ADC,$FF
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF		; music now fades
 		SDELAY			$01
 		SLOOP_END
-		NJSR			_nsub_62BA9
+		NJSR			_nsub_stage_complete_force		; force stage complete script
 		SSTOP
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_3BBE1:
-		POS_MOVE_STOP	0
-		SPR_IDX_SET		6,$7C
+_ssub_ghost_nanny_mother_anim:
+		POS_MOVE_STOP	0								; just walk left, then right
+		SPR_IDX_SET		6,$7C							; once for one cycle
 		POS_X_DELTA_SET 0,$C0,$00
 		SPR_IDX_INC		6
 		SPR_IDX_INC		6
@@ -7465,13 +7478,13 @@ _ssub_3BBE1:
 		SRET
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_3BBF3:
+_nsub_lvl3_players_auto_scripts_set:
 		LDX		#$02
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_602CB
+		.WORD	_scr_lvl3_beamer_auto_script
 		LDX		#$04
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_60FCB
+		.WORD	_scr_lvl3_catcher_auto_script
 		RTS
 
 _spr_nlib11_7C:
@@ -7524,17 +7537,17 @@ _spr_nlib11_83:
 		.BYTE	$F9,$82,$00,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_3BC8A:
-		SARG_SET		SARG0,$00
+_scr_ghost_nanny_baby:
+		SARG_SET		SARG0,$00						; baby waving the hands for a while
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$A0,$02
 		SLOOP_BEGIN		$0F
 		SPR_IDX_SET		7,$84
 		SPR_IDX_INC		7
 		SLOOP_END
-		SPR_IDX_SET		7,$84
-		SPR_IDX_INC		3
-		SSTOP
+		SPR_IDX_SET		7,$84							; do two final wavings before being
+		SPR_IDX_INC		3								; grabbed by nanny and then disappear
+		SSTOP											; from roow, now it's drawn by nanny sprite
 
 _spr_nlib11_84:
 		.BYTE	$02
@@ -7546,9 +7559,9 @@ _spr_nlib11_85:
 		.BYTE	$F8,$A0,$00,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_3BCAF:
-		SARG_SET		SARG0,$00
-		POS_X_SET		0,$70,$00
+_scr_ghost_nanny_itself:
+		SARG_SET		SARG0,$00						; ghost nanny appears from the top
+		POS_X_SET		0,$70,$00						; descent carefully
 		POS_Y_SET		0,$00,$02
 		POS_Y_DELTA_SET 0,$40,$01
 		SPR_IDX_SET		0,$86
@@ -7560,19 +7573,19 @@ _sloc_case_3BCAF:
 		SPR_IDX_INC		0
 		SDELAY			$0A
 		POS_MOVE_STOP	0
-		SPR_IDX_INC		0
+		SPR_IDX_INC		0								; extend it's hand
 		SDELAY			$0A
 		SPR_IDX_INC		0
 		SDELAY			$0A
-		SPR_IDX_INC		4
+		SPR_IDX_INC		4								; grab baby
 		SPR_IDX_INC		0
 		SDELAY			$10
 		SPR_IDX_INC		0
 		SDELAY			$0A
 		SPR_IDX_INC		0
-		SDELAY			$0A
-		POS_X_DELTA_SET 0,$40,$01
-		SPR_IDX_SET		0,$87
+		SDELAY			$0A								; shrink the hand
+		POS_X_DELTA_SET 0,$40,$01						; set movement to the right
+		SPR_IDX_SET		0,$87							; disable the baby sprite also
 		SDELAY			$50
 		SSTOP
 

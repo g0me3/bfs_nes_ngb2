@@ -909,7 +909,7 @@ _lvl2_full_pal:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$10,$00,$0F,$0F,$36,$27,$0F
 _lvl2_bg_palA:
 		.BYTE	$0F,$30,$10,$00,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$01,$00,$07
-; NOTE, this is a leftover from full paletter for train part of the level 2
+; NOTE, this is a leftover from full palette for train part of the level 2
 ; however, the final version uses only first part of it for background
 ; as you may see, the only difference in sprites palettes is two last palettes
 ; are swapped.
@@ -1145,7 +1145,7 @@ _lvl3_room4_handler:
 			NARGW		_lvl3_room4_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_room4_prize_seq
 		NJSR			_nsub_apu_mus_load				; here is the special room with
-			NARGB		$04								; middle boss, as well as special
+			NARGB		$04								; mid-boss, as well as special
 		NJSR			_nsub_patch_pal_load			; music and palettes for it
 			NARGB		$07
 			NARGW		_lvl3_roomsAE_patch_pal
@@ -1866,8 +1866,12 @@ _lvl3_room16_handler:
 		NJSR			_nsub_room_doors_handler_and_data_init
 			NARGW		_lvl3_room16_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_room16_prize_seq
-		NJSR			_nsub_apu_mus_load
+		NJSR			_nsub_apu_mus_load				; start intermedia music
+#if DEBUG==1
+			NARGB		$0D
+#else
 			NARGB		$01
+#endif
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15086:
 		SDELAY			$01
@@ -1920,6 +1924,10 @@ _sloc_150EE:
 			NARGB		$01
 			NARGB		$30,$00,$F8,$02
 		SBCC			_sloc_150EE
+; TODO: this is a final boss/cutscene room for LVL3, there is a door in it
+; but it is always colsed. you couldn't exit this door as well because
+; there is an automated scripted cutscene and automatic jump to the next
+; level. so this branch never executed at all. may be removed.
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$01
@@ -3403,7 +3411,7 @@ _lvl6_room1_handler:
 		SDELAY			$03
 		SLOOP_END
 		STORE8			_scr_trds_pause_mode,$00		; not sure why they disable pause here
-		NJSR			_nsub_players_auto_walk_init	; reload players scripts with auto walk
+		NJSR			_nsub_lvl6_players_auto_scriptsA_set	; reload players scripts with auto walk
 		SCRL_Y_MOVE_SET 0,$80,$FF						; set scroll animation parameter
 		SDELAY			$F0								; do animation while scrolling and walking up
 		SDELAY			$F0
@@ -3452,13 +3460,15 @@ _j_nbgsub_lvl_room_objects_handler_2:
 		JMP		_nbgsub_lvl_room_objects_handler
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_players_auto_walk_init:
+; do walk to the boss painting
+;
+_nsub_lvl6_players_auto_scriptsA_set:
 		LDX		#$02
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_beamer_auto_walk
+		.WORD	_scr_lvl6_beamer_auto_scriptA
 		LDX		#$04
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_catcher_auto_walk
+		.WORD	_scr_lvl6_catcher_auto_scriptA
 		RTS
 
 		SECTION_END	"LVL6 SCRIPTS"

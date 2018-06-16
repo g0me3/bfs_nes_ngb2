@@ -362,7 +362,7 @@ _scr_hit_anim:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_602CB:
+_scr_lvl3_beamer_auto_script:
 		POS_X_SET		0,$40,$00
 		POS_Y_SET		0,$C8,$02
 		SARG_SET		SARG0,$00
@@ -371,7 +371,7 @@ _scr_602CB:
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
-_scr_beamer_auto_walk:
+_scr_lvl6_beamer_auto_scriptA:
 		POS_Y_DELTA_SET 0,$80,$FF						; setup anim for slow walk up
 		SLOOP_BEGIN		$F0								; do walk for 240 cycles
 		SARG_ALU		SARG0,_ADC,$01					; set players spr type (walk up)
@@ -382,7 +382,7 @@ _scr_beamer_auto_walk:
 		SJMP			_scr08_beamer_handler			; to the main beamer script
 
 ; =============== S C R I P T ==========================s====================
-_scr_602EE:
+_scr_lvl6_beamer_auto_scriptB:
 		NJSR			_nsub_beamer_spr_idx_calc
 		SDELAY			$78
 		SARG_SET		SARG1,$80
@@ -1945,7 +1945,7 @@ _scr0A_catcher_handler:
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
-_scr_60FCB:
+_scr_lvl3_catcher_auto_script:
 		POS_X_SET		0,$30,$00
 		POS_Y_SET		0,$C8,$02
 		SARG_SET		SARG0,$00
@@ -1954,7 +1954,7 @@ _scr_60FCB:
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
-_scr_catcher_auto_walk:
+_scr_lvl6_catcher_auto_scriptA:
 		POS_Y_DELTA_SET 0,$80,$FF						; same as for beamer
 		SLOOP_BEGIN		$F0								; just walk up, then jump to
 		SARG_ALU		SARG0,_ADC,$01					; common handler, returning
@@ -1965,7 +1965,7 @@ _scr_catcher_auto_walk:
 		SJMP			_scr0A_catcher_handler
 
 ; =============== S C R I P T ==========================s====================
-_scr_60FEE:
+_scr_lvl6_catcher_auto_scriptB:
 		NJSR			_nsub_catcher_spr_idx_calc
 		SDELAY			$78
 		SARG_SET		SARG1,$80
@@ -3203,6 +3203,8 @@ loc_61896:
 		PLA
 		TAX
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _room_macro_ctest_ex:
 		JSR		_room_doors_ctest
@@ -3460,6 +3462,8 @@ loc_619FB:
 _cur_obj_screen_pos_calc:
 		LDX		_scr_cur_trd_idx
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _obj_screen_pos_calc:
 		LDA		_scr_trds_x_pos_hi,X
@@ -3469,6 +3473,8 @@ _obj_screen_pos_calc:
 		LDY		_scr_trds_y_pos_lo,X
 		LDA		_scr_trds_x_pos_lo,X
 		TAX
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _screen_pos_calc_ex:
@@ -5121,7 +5127,7 @@ _nsub_full_pal_load:
 		JMP		_full_pal_load
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_626F1:
+_nsub_thread_off:
 		JSR		_scr_getc
 		TAX
 		LDA		#$FF
@@ -5440,6 +5446,7 @@ _nsub_room_page_set_unref:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; calculates
 _nsub_cur_obj_linear_dst_pos_from_sarg1_set:
 		JSR		_scr_getc
 		PHA
@@ -5876,7 +5883,11 @@ loc_62BA4:
 		INX
 		CPX		#$0E
 		BCC		loc_62B9B
-_nsub_62BA9:
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_nsub_stage_complete_force:
 		LDX		#$00
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_stage_complete
@@ -6296,10 +6307,12 @@ _ssub_room_exit_pal_fade_out_ex:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_common_hor_catch_anim:
+_ssub_common_catch_anim_L_snd02:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$02
-_sloc_62DDB:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_common_catch_anim_L_ex:
 		SLOOP_BEGIN		$03
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		SARG1
@@ -6326,10 +6339,12 @@ _ssub_common_catch_finish:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_common_vert_catch_anim:
+_ssub_common_catch_anim_R_snd02:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$02
-_sloc_62E06:
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_common_catch_anim_R_ex:
 		SLOOP_BEGIN		$03
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		SARG1
@@ -6348,19 +6363,19 @@ _sloc_62E06:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 
-_sloc_62E25:
+_ssub_common_catch_anim_L_snd19:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$19
-		SJMP			_sloc_62DDB
+		SJMP			_ssub_common_catch_anim_L_ex
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_sloc_62E2C:
+_ssub_common_catch_anim_R_snd19:
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$19
-		SJMP			_sloc_62E06
+		SJMP			_ssub_common_catch_anim_R_ex
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_62E33:
+_ssub_boss_music_fade_and_load:
 		SLOOP_BEGIN		$80
 		SMEM_ALU		_apu_mus_volume,_ADC,$FF
 		SDELAY			$01

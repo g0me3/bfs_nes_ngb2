@@ -35,7 +35,7 @@ _scr00_intro_title_select:
 
 ; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_mcmp						; default case for script startup
 			NARGW		_license_screen_display_flag	; check for special flag, set at reset
 			NARGB		$01								; preventing from show license screens
@@ -150,7 +150,7 @@ _sloc_title_loop:
 			NARGB		$01
 		NJSR			_nsub_hi_scores_display			; draw additional hi-scores
 			NARGB		$0F,$0A
-		NJSR			_nsub_full_pal_load				; load new paletter for this portion
+		NJSR			_nsub_full_pal_load				; load new palette for this portion
 			NARGW		_pal3
 		NJSR			_nsub_mmc1_chr1_set				; and change the CHR page, pages 00 and 09 shares
 			NARGB		$09								; title curtain graphics, so nothing is changes there
@@ -192,7 +192,7 @@ _sloc_title_loop:
 ; =============== S C R I P T ==========================s====================
 _scr_title_push_start_anim:
 		SLOOP_BEGIN		$02								; just does masked fade for
-		NJSR			_nsub_pal_fade_req_inc_by_mask	; particular paletter entry
+		NJSR			_nsub_pal_fade_req_inc_by_mask	; particular palette entry
 			NARGB		$40
 		SDELAY			$04
 		SLOOP_END
@@ -243,7 +243,7 @@ _chain_title_anim_scripts_data:
 		.BYTE	_sub04_intro_busterC_idx+1,	$08,$10,$20
 		.BYTE	_sub05_intro_busterD_idx+1,	$00,$10,$00
 
-; TODO: both paletters are the same for released versions, however, the prototype
+; TODO: both palettes are the same for released versions, however, the prototype
 ; version uses different palettes, so they just not changed scripts but changed
 ; only palettes
 _pal0:
@@ -1941,9 +1941,9 @@ _scr07_ending:
 		SCASE			_scr_ending_sub15
 		SCASE			_scr_ending_sub16
 
-; !FALLTRHOUGH!
+; !FALLTHROUGH!
 
-; =============== S C R I P T ==========================s====================
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		STORE8			_scr_trds_out_of_screen_test,$00; default
 		SDELAY			$5A								; delay before start
 		NJSR			_nsub_mmc1_chr1_set				; setup CHR for BG

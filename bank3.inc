@@ -7,32 +7,40 @@
 
 ; =============== S C R I P T ==========================s====================
 _scr1A_lvl1_boss_judges:
-		NJSR			_nsub_obj_sarg_add_imm_test
+		NJSR			_nsub_obj_sarg_add_imm_test		; two instances of the object existed
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_sloc_case_2C148
-		SPR_IDX_SET		0,$04
-		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		SARG2,$FF
-		SJMP_SW			$01
-		SCASE			_sloc_case_2C029
+		SCASE			_scr_lvl1_boss_judges_tall
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
+		SPR_IDX_SET		0,$04							; default instance set the "hat" sprite
+		NJSR			_nsub_obj_sarg_add_imm_test		; this is an additional branch for using
+			NARGB		SARG2,$FF						; this object on LVL5
+		SJMP_SW			$01								; only for LVL1 _sloc_2C014 is executed
+		SCASE			_scr_boss_judges_intro			; for the rest this branch is skipped
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 _sloc_2C014:
-		SDELAY			$01
-		NJSR			_nsub_mcmp
-			NARGW		_ppu_scroll_pos_y
+		SDELAY			$01								; special branch for LVL1, wait for
+		NJSR			_nsub_mcmp						; scroll of the room reach particular
+			NARGW		_ppu_scroll_pos_y				; value
 			NARGB		$00
 		SBCC			_sloc_2C014
-		STORE8			_cur_room_x_pageB,$00
-		NJSR			_nsub_gen_threads_off_except_cur
-		SJSR			_ssub_62E33
+		STORE8			_cur_room_x_pageB,$00			; force pageB
+		NJSR			_nsub_gen_threads_off_except_cur; remove all other object (chairs maybe)
+		SJSR			_ssub_boss_music_fade_and_load	; fade out music and start boss theme
 
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C029:
-		SPR_IDX_SET		4,$04
-		SPR_IDX_INC		4
-		SPR_IDX_DEC		4
+_scr_boss_judges_intro:
+		SPR_IDX_SET		4,$04							; finally, start to anim "hat" on the table
+		SPR_IDX_INC		4								; (actually i DONT KNOW what is it and how
+		SPR_IDX_DEC		4								; they called it)
 		SPR_IDX_SET		4,$06
 		SPR_IDX_SET		0,$04
 		SDELAY			$14
@@ -43,74 +51,78 @@ _sloc_case_2C029:
 		SPR_IDX_SET		1,$07
 		SPR_IDX_INC		5
 		SPR_IDX_DEC		4
-		SPR_IDX_SET		0,$FF
-		NJSR			_nsub_new_thread_start
-			NARGB		$1A
+		SPR_IDX_SET		0,$FF							; hat disappears, this object turns to fat
+		NJSR			_nsub_new_thread_start			; judge, the other instance loaded for
+			NARGB		_scr1A_lvl1_boss_judges_idx		; tall judge
 			NARGB		$38,$40
-			NARGB		$01
+			NARGB		_scr_lvl1_boss_judges_tall_idx+1
 			NARGB		$00
-		POS_X_MOVE		0,$C0
-		POS_Y_MOVE		0,$40
-		NJSR			_nsub_patch_pal_load
-			NARGB		$06
-			NARGW		byte_2C0CB
-		SARG_SET		SARG1,$80
-_sloc_2C054:
-		NBG_HNDL_SET	_nbgsub_2C0D7
-		NJSR			_nsub_patch_pal_load
-			NARGB		$06
-			NARGW		byte_2C0CF
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
-			NARGB		$09,$40
-		SLOOP_BEGIN		$06
-		SPR_IDX_ADD_IMM 6,$04
-		SPR_IDX_ADD_IMM 6,$FC
-		SLOOP_END
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
+		POS_X_MOVE		0,$C0							; position of the fat judge x-64, y+64 of the
+		POS_Y_MOVE		0,$40							; main object position
+		NJSR			_nsub_patch_pal_load			; NOTE: this is a default value for LVL1 palette
+			NARGB		$06								; for this object, this is already there, so not
+			NARGW		_pal_lvl1_boss_default_patch	; sure why this palette aplied here...
+		SARG_SET		SARG1,$80						; face down
 
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C06C:
-		NBG_HNDL_SET	_nbgsub_2C0D7
+_sct_boss_judes_fat_restart:
+		NBG_HNDL_SET	_nbgsub_fat_judge_ctest			; init bg native collision test
+		NJSR			_nsub_patch_pal_load			; NOTE: to previous, this is actual palette for
+			NARGB		$06								; this enemy
+			NARGW		_pal_lvl1_boss_active_patch
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; set sprite
+			NARGB		$09,$40
+		SLOOP_BEGIN		$06								; at the beginning stand still animation
+		SPR_IDX_ADD_IMM 6,$04
+		SPR_IDX_ADD_IMM 6,$FC
+		SLOOP_END
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; now targeting on beamer
+
+; FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_sct_boss_judes_fat_active:
+		NBG_HNDL_SET	_nbgsub_fat_judge_ctest			; not sure why they set the same handler here twice
 _sloc_2C06F:
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
-			NARGB		$00,$01
+			NARGB		$00,$01							; set destination
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
-			NARGB		$09,$40
+			NARGB		$09,$40							; refresh sprite idx
 		SLOOP_BEGIN		$02
-		SDELAY			$06
+		SDELAY			$06								; start to move animated
 		SPR_IDX_ADD_IMM 6,$04
 		SPR_IDX_ADD_IMM 0,$FC
 		SLOOP_END
-		NJSR			_nsub_obj_to_beamer_vector_adjust
+		NJSR			_nsub_obj_to_beamer_vector_adjust	; adjust targeting to beamer
 			NARGB		$10
-		SJMP			_sloc_2C06F
+		SJMP			_sloc_2C06F						; repeat
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C089:
-		NBG_HNDL_SET	_nbgsub_2C12E
+_sct_boss_judes_fat_stun:
+		NBG_HNDL_SET	_nbgsub_boss_judges_fat_catch_test
 		SLOOP_BEGIN		$3C
-		SJSR			_ssub_2C0B5
-		NJSR			_nsub_wait_for_beam_hold
-		SBCS_BREAK		_sloc_2C054
-		SLOOP_END
-		SARG_SET		SARG0,$02
-		NJSR			_nsub_patch_pal_load
-			NARGB		$06
-			NARGW		byte_2C0D3
+		SJSR			_ssub_boss_judges_fat_shake_anim
+		NJSR			_nsub_wait_for_beam_hold		; unles most of regular enemies
+		SBCS_BREAK		_sct_boss_judes_fat_restart		; when beam released, boss continues
+		SLOOP_END										; to be active immediately
+		SARG_SET		SARG0,$02						; after 1 sec boss turns red,
+		NJSR			_nsub_patch_pal_load			; also catch flag is raized, may
+			NARGB		$06								; be catched now as usual
+			NARGW		_pal_boss_judges_red_patch
 _sloc_2C0A1:
-		SJSR			_ssub_2C0B5
-		NJSR			_nsub_wait_for_beam_hold
+		SJSR			_ssub_boss_judges_fat_shake_anim; the rest is the same as regular
+		NJSR			_nsub_wait_for_beam_hold		; enemy stun handler
 		SBCC			_sloc_2C0A1
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sloc_2C054
-		SCASE			_scr_2C0BF
-		SCASE			_scr_2C0C5
+		SCASE			_sct_boss_judes_fat_restart
+		SCASE			_scr_boss_judges_fat_catch_anim_L
+		SCASE			_scr_boss_judges_fat_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2C0B5:
+_ssub_boss_judges_fat_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$09,$40
 		SDELAY			$01
@@ -118,27 +130,28 @@ _ssub_2C0B5:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C0BF:
+_scr_boss_judges_fat_catch_anim_L:
 		SARG_SET		SARG1,$15
-		SJMP			_sloc_62E25
+		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C0C5:
+_scr_boss_judges_fat_catch_anim_R:
 		SARG_SET		SARG1,$17
-		SJMP			_sloc_62E2C
-byte_2C0CB:
+		SJMP			_ssub_common_catch_anim_R_snd19
+
+_pal_lvl1_boss_default_patch:
 		.BYTE	$0F,$31,$25,$0F
-byte_2C0CF:
+_pal_lvl1_boss_active_patch:
 		.BYTE	$0F,$36,$22,$0F
-byte_2C0D3:
+_pal_boss_judges_red_patch:
 		.BYTE	$0F,$25,$15,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C0D7:
+_nbgsub_fat_judge_ctest:
 		LDY		#$00
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo,X
-		CMP		#$10
+		LDX		_scr_cur_trd_idx			; there is no room obstacles test,
+		LDA		_scr_trds_x_pos_lo,X		; just limit the min-max X range for
+		CMP		#$10						; movement
 		BCS		loc_2C0E5
 		LDA		#$10
 		BNE		loc_2C0EB
@@ -147,14 +160,14 @@ loc_2C0E5:
 		BCC		loc_2C0F5
 		LDA		#$EF
 loc_2C0EB:
-		STA		_scr_trds_x_pos_lo,X
-		INY
-		LDA		#$00
+		STA		_scr_trds_x_pos_lo,X		; when edges reached, bounce in opposite
+		INY									; direction on the same vector
+		LDA		#$00						; also set the flag that direction is changed
 		SEC
 		SBC		_scr_trds_args1,X
 		STA		_scr_trds_args1,X
 loc_2C0F5:
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_scr_trds_y_pos_lo,X		; the same for Y
 		CMP		#$10
 		BCS		loc_2C0FF
 		LDA		#$10
@@ -165,16 +178,16 @@ loc_2C0FF:
 		LDA		#$DF
 loc_2C105:
 		STA		_scr_trds_y_pos_lo,X
-		INY
+		INY									; also sets the change signal
 		LDA		#$80
 		SEC
 		SBC		_scr_trds_args1,X
 		STA		_scr_trds_args1,X
 loc_2C10F:
 		TYA
-		BEQ		loc_2C118
-		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C06C
+		BEQ		loc_2C118					; if direction is changed need to recalc sprites
+		JSR		_cur_thread_reload_param	; so reload current current script from beginning
+		.WORD	_sct_boss_judes_fat_active
 		RTS
 loc_2C118:
 		LDX		#$0C
@@ -182,7 +195,7 @@ loc_2C118:
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2C127
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C089
+		.WORD	_sct_boss_judes_fat_stun
 		RTS
 loc_2C127:
 		LDX		#$0F
@@ -190,7 +203,7 @@ loc_2C127:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C12E:
+_nbgsub_boss_judges_fat_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C147
@@ -199,66 +212,78 @@ _nbgsub_2C12E:
 		STA		_scores_obj_value
 		BCS		loc_2C142
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C0BF
+		.WORD	_scr_boss_judges_fat_catch_anim_L
 		RTS
 loc_2C142:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C0C5
+		.WORD	_scr_boss_judges_fat_catch_anim_R
 locret_2C147:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C148:
-		NBG_HNDL_SET	_nbgsub_2C23F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		byte_2C0CF
+_scr_lvl1_boss_judges_tall:
+		NBG_HNDL_SET	_nbgsub_boss_judge_tall_ctest		; regular init, set regular
+		NJSR			_nsub_patch_pal_load			; palette immediately without any
+			NARGB		$07								; redundant calls this time
+			NARGW		_pal_lvl1_boss_active_patch
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$80
-		SSCRIPT1_SET	_scr_2C1C2
+		SSCRIPT1_SET	_scr_boss_judges_tall_spr_anim	; automatic boss, set constant anim
 		SDELAY			$48
-		SJMP			_sloc_2C16B
+		SJMP			_scr_boss_judge_tall_activeA
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C160:
-		NJSR			_nsub_2C26F
-			NARGB		$B8,$80
-		SARG_SET		SARG1,$80
-		SJSR			_ssub_2C228
-_sloc_2C16B:
-		SLOOP_BEGIN		$10
-		SARG_ALU		SARG1,_ADC,$08
+_scr_boss_judge_tall_restart_posA:
+		NJSR			_nsub_boss_judges_tall_pos_set	; one of three restart points for tall boss
+			NARGB		$B8,$80							; right side of the screen, the same as for
+		SARG_SET		SARG1,$80						; appearance point
+		SJSR			_ssub_boss_judge_tall_reappear
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_boss_judge_tall_activeA:
+		SLOOP_BEGIN		$10								; do half large cirle right till the
+		SARG_ALU		SARG1,_ADC,$08					; left side of the screen
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$07
 		SLOOP_END
-		SJMP			_sloc_2C187
+		SJMP			_scr_boss_judge_tall_activeB
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C17C:
-		NJSR			_nsub_2C26F
+_scr_boss_judge_tall_restart_posB:						; second reappearance point
+		NJSR			_nsub_boss_judges_tall_pos_set	; left side of the screen
 			NARGB		$2A,$72
 		SARG_SET		SARG1,$00
-		SJSR			_ssub_2C228
-_sloc_2C187:
-		SLOOP_BEGIN		$10
-		SARG_ALU		SARG1,_ADC,$08
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		SJSR			_ssub_boss_judge_tall_reappear
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_boss_judge_tall_activeB:
+		SLOOP_BEGIN		$10								; here start a small half circle to the
+		SARG_ALU		SARG1,_ADC,$08					; middle, the same start for second reappearance
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; point
 			NARGB		$00,$02
 		SDELAY			$04
 		SLOOP_END
-		SJMP			_sloc_2C1A3
+		SJMP			_scr_boss_judge_tall_activeC
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C198:
-		NJSR			_nsub_2C26F
+_scr_boss_judge_tall_restart_posC:
+		NJSR			_nsub_boss_judges_tall_pos_set	; finally middle of the screen reappearance point
 			NARGB		$7B,$7A
 		SARG_SET		SARG1,$00
-		SJSR			_ssub_2C228
-_sloc_2C1A3:
-		SLOOP_BEGIN		$20
-		SARG_ALU		SARG1,_ADC,$F8
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		SJSR			_ssub_boss_judge_tall_reappear
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_boss_judge_tall_activeC:
+		SLOOP_BEGIN		$20								; here is the main loop, two full circles
+		SARG_ALU		SARG1,_ADC,$F8					; with start in the middle point, also
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; third reappearance point
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
@@ -268,41 +293,41 @@ _sloc_2C1A3:
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
-		SJMP			_sloc_2C1A3
+		SJMP			_scr_boss_judge_tall_activeC
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C1C2:
+_scr_boss_judges_tall_spr_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
 		SDELAY			$06
 		SPR_IDX_ADD_IMM 6,$04
-		SJMP			_scr_2C1C2
+		SJMP			_scr_boss_judges_tall_spr_anim
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C1CE:
-		NBG_HNDL_SET	_nbgsub_2C255
+_scr_boss_judges_tall_stun:
+		NBG_HNDL_SET	_nbgsub_boss_judges_tall_catch_test	; same as for other boss object
 		SLOOP_BEGIN		$3C
-		SJSR			_ssub_2C1FA
-		NJSR			_nsub_wait_for_beam_hold
-		SBCS_BREAK		_sloc_2C1EF
+		SJSR			_scr_boss_judges_tall_shake_anim; beam for a second, then set
+		NJSR			_nsub_wait_for_beam_hold		; catch active flag, turn sprite red
+		SBCS_BREAK		_sloc_2C1EF						; and continue with regular stun handler
 		SLOOP_END
 		SARG_SET		SARG0,$02
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_2C0D3
+			NARGW		_pal_boss_judges_red_patch
 _sloc_2C1E6:
-		SJSR			_ssub_2C1FA
+		SJSR			_scr_boss_judges_tall_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2C1E6
 _sloc_2C1EF:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sloc_case_2C204
-		SCASE			_scr_2C233
-		SCASE			_sloc_case_2C239
+		SCASE			_scr_boss_judge_tall_disappear
+		SCASE			_scr_boss_judges_tall_catch_anim_L
+		SCASE			_scr_boss_judges_tall_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2C1FA:
+_scr_boss_judges_tall_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
 		SDELAY			$01
@@ -310,52 +335,52 @@ _ssub_2C1FA:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C204:
-		SLOOP_BEGIN		$1E
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+_scr_boss_judge_tall_disappear:
+		SLOOP_BEGIN		$1E								; start to blinking
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; in current sprite state
 			NARGB		$19,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-		SDELAY			$3C
+		SDELAY			$3C								; delay, reload active pal patch
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_2C0CF
-		SSCRIPT1_SET	_scr_2C1C2
-		NJSR			_nsub_get_rand_probability
+			NARGW		_pal_lvl1_boss_active_patch
+		SSCRIPT1_SET	_scr_boss_judges_tall_spr_anim	; restart regular animation
+		NJSR			_nsub_get_rand_probability		; get random unmber in range 0-2
 			NARGB		$03
 		SJMP_SW			$03
-		SCASE			_sloc_case_2C160
-		SCASE			_sloc_case_2C17C
-		SCASE			_sloc_case_2C198
+		SCASE			_scr_boss_judge_tall_restart_posA	; restarting boss from a particular
+		SCASE			_scr_boss_judge_tall_restart_posB	; location on its movement trajectory
+		SCASE			_scr_boss_judge_tall_restart_posC	; to keep it move on the same area
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2C228:
-		SLOOP_BEGIN		$1E
+_ssub_boss_judge_tall_reappear:
+		SLOOP_BEGIN		$1E								; blink while reappearing
 		SPR_IDX_SET		1,$1B
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-		NBG_HNDL_SET	_nbgsub_2C23F
+		NBG_HNDL_SET	_nbgsub_boss_judge_tall_ctest
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C233:
+_scr_boss_judges_tall_catch_anim_L:
 		SARG_SET		SARG1,$25
-		SJMP			_sloc_62E25
+		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C239:
+_scr_boss_judges_tall_catch_anim_R:
 		SARG_SET		SARG1,$27
-		SJMP			_sloc_62E2C
+		SJMP			_ssub_common_catch_anim_R_snd19
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C23F:
+_nbgsub_boss_judge_tall_ctest:
 		LDX		#$08
 		LDY		#$0E
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2C24E
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C1CE
+		.WORD	_scr_boss_judges_tall_stun
 		RTS
 loc_2C24E:
 		LDX		#$0B
@@ -363,7 +388,7 @@ loc_2C24E:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C255:
+_nbgsub_boss_judges_tall_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C26E
@@ -372,22 +397,23 @@ _nbgsub_2C255:
 		STA		_scores_obj_value
 		BCS		loc_2C269
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C233
+		.WORD	_scr_boss_judges_tall_catch_anim_L
 		RTS
 loc_2C269:
 		JSR		_cur_thread_reload_param
-		.WORD	_sloc_case_2C239
+		.WORD	_scr_boss_judges_tall_catch_anim_R
 locret_2C26E:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2C26F:
-		LDX		_scr_cur_trd_idx
+_nsub_boss_judges_tall_pos_set:
+		LDX		_scr_cur_trd_idx			; read hardcoded positions from script
 		JSR		_scr_getc
 		STA		_scr_trds_x_pos_lo,X
 		JSR		_scr_getc
 		STA		_scr_trds_y_pos_lo,X
 		RTS
+
 _spr_nlib1A_04:
 		.BYTE	$02
 		.BYTE	$F8,$CA,$02,$F8
@@ -699,34 +725,36 @@ _spr_nlib1A_18:
 
 ; =============== S C R I P T ==========================s====================
 _scr22_lvl2_boss_train_slime:
-		NJSR			_nsub_obj_sarg_add_imm_test
-			NARGB		SARG0,$FF
+		NJSR			_nsub_obj_sarg_add_imm_test		; boss slime looking simple, but
+			NARGB		SARG0,$FF						; uses 4 different entities
 		SJMP_SW			$04
-		SCASE			_sloc_case_2C91D
-		SCASE			_sloc_case_2C978
-		SCASE			_sloc_case_2C97D
-		SCASE			_sloc_case_2C8D1
+		SCASE			_scr_boss_train_slime_projectileA
+		SCASE			_scr_boss_train_slime_projectileB
+		SCASE			_scr_boss_train_slime_projectileC
+		SCASE			_scr_boss_train_slime_dead
 
-; =============== S C R I P T ==========================s====================
-_sloc_case_2C658:
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
+_scr_boss_train_slime_active:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		byte_2C6F3
-		NBG_HNDL_SET	_nbgsub_2C6F7
-		SJSR			_ssub_2C67C
+			NARGW		_pal_boss_train_slime_patch
+		NBG_HNDL_SET	_nbgsub_boss_train_slime_ctest
+		SJSR			_ssub_boss_train_slime_idle_anim; idle anim
 		SLOOP_BEGIN		$02
-		SJSR			_ssub_2C686
+		SJSR			_ssub_boss_train_slime_shot_anim; two shots in row
 		SLOOP_END
-		SJSR			_ssub_2C67C
-		SJSR			_ssub_2C686
-		SJSR			_ssub_2C67C
+		SJSR			_ssub_boss_train_slime_idle_anim; idle
+		SJSR			_ssub_boss_train_slime_shot_anim; one shot
+		SJSR			_ssub_boss_train_slime_idle_anim; idle
 		SLOOP_BEGIN		$03
-		SJSR			_ssub_2C686
+		SJSR			_ssub_boss_train_slime_shot_anim; three shots in row
 		SLOOP_END
-		SJMP			_sloc_case_2C658
+		SJMP			_scr_boss_train_slime_active
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2C67C:
+_ssub_boss_train_slime_idle_anim:
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		0,$29
 		SDELAY			$0C
@@ -736,41 +764,41 @@ _ssub_2C67C:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2C686:
-		SPR_IDX_SET		7,$2C
+_ssub_boss_train_slime_shot_anim:
+		SPR_IDX_SET		7,$2C							; turn to the player
 		SPR_IDX_INC		3
 		SPR_IDX_INC		3
 		SPR_IDX_INC		3
-		NJSR			_nsub_new_thread_start
-			NARGB		$22
+		NJSR			_nsub_new_thread_start			; deploy projectile
+			NARGB		_scr22_lvl2_boss_train_slime_idx
 			NARGB		$00,$F8
-			NARGB		$01
+			NARGB		_scr_boss_train_slime_projectileA_idx+1
 			NARGB		$00
-		SPR_IDX_INC		7
+		SPR_IDX_INC		7								; turn back
 		SPR_IDX_DEC		3
 		SPR_IDX_DEC		3
 		SPR_IDX_DEC		3
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C698:
-		NBG_HNDL_SET	_nbgsub_2C70D
+_scr_boss_train_slime_stun:
+		NBG_HNDL_SET	_nbgsub_boss_train_slime_catch_test
 		SARG_SET		SARG0,$02
-		SSCRIPT1_SET	_scr_2C6B7
+		SSCRIPT1_SET	_scr_boss_train_slime_dodge_anim; slime dodges the beam
 _sloc_2C6A2:
-		SDELAY			$01
-		NJSR			_nsub_wait_for_beam_hold
-		SBCC			_sloc_2C6A2
-		SSCRIPT1_OFF
+		SDELAY			$01								; it is possible to catch only
+		NJSR			_nsub_wait_for_beam_hold		; while dodge script starts
+		SBCC			_sloc_2C6A2						; when secondary script finishes
+		SSCRIPT1_OFF									; all reloaded to active state
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sloc_case_2C658
-		SCASE			_scr_2C6D0
-		SCASE			_scr_2C6D9
+		SCASE			_scr_boss_train_slime_active
+		SCASE			_scr_boss_train_slime_catch_anim_L
+		SCASE			_scr_boss_train_slime_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C6B7:
-		SLOOP_BEGIN		$01
+_scr_boss_train_slime_dodge_anim:
+		SLOOP_BEGIN		$01								; dodge anim play
 		SPR_IDX_SET		1,$29
 		SPR_IDX_SET		1,$31
 		SLOOP_END
@@ -783,46 +811,47 @@ _scr_2C6B7:
 		SPR_IDX_DEC		1
 		SPR_IDX_INC		1
 		SPR_IDX_INC		1
-		NJSR			_nsub_626F1
-			NARGB		$03
-		NJSR			_nsub_obj_to_beam_release_test
-		SSCRIPT0_OFF
+		NJSR			_nsub_thread_off				; custom native thread off
+			NARGB		$03								; disables beam completely
+		NJSR			_nsub_obj_to_beam_release_test	; then reset corresponding flags.
+		SSCRIPT0_OFF									; shut down
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C6D0:
-		SJSR			_ssub_2C6E2
+_scr_boss_train_slime_catch_anim_L:
+		SJSR			_ssub_boss_train_slime_catch_extra
 		SARG_SET		SARG1,$32
-		SJMP			_ssub_common_hor_catch_anim
+		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_2C6D9:
-		SJSR			_ssub_2C6E2
+_scr_boss_train_slime_catch_anim_R:
+		SJSR			_ssub_boss_train_slime_catch_extra
 		SARG_SET		SARG1,$34
-		SJMP			_ssub_common_vert_catch_anim
+		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2C6E2:
+_ssub_boss_train_slime_catch_extra:
 		NJSR			_nsub_new_thread_start
-			NARGB		$22
+			NARGB		_scr22_lvl2_boss_train_slime_idx
 			NARGB		$00,$00
-			NARGB		$04
+			NARGB		_scr_boss_train_slime_dead_idx+1
 			NARGB		$00
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$19
 		SRET
-byte_2C6F3:
+
+_pal_boss_train_slime_patch:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C6F7:
+_nbgsub_boss_train_slime_ctest:
 		LDX		#$08
 		LDY		#$08
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2C706
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C698
+		.WORD	_scr_boss_train_slime_stun
 		RTS
 loc_2C706:
 		LDX		#$0D
@@ -830,7 +859,7 @@ loc_2C706:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C70D:
+_nbgsub_boss_train_slime_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C72B
@@ -842,13 +871,14 @@ _nbgsub_2C70D:
 		LSR
 		BCS		loc_2C726
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C6D0
+		.WORD	_scr_boss_train_slime_catch_anim_L
 		RTS
 loc_2C726:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2C6D9
+		.WORD	_scr_boss_train_slime_catch_anim_R
 locret_2C72B:
 		RTS
+
 _spr_nlib1A_29:
 		.BYTE	$0B
 		.BYTE	$FD,$E7,$00,$0A
@@ -969,19 +999,19 @@ _spr_nlib1A_33:
 		.BYTE	$F8,$F6,$02,$F8
 		.BYTE	$F8,$E4,$02,$F0
 _spr_nlib1A_34:
-		.BYTE	$03		; *--
-		.BYTE	$00,$C6,$42,$00	; *--
-		.BYTE	$F0,$E6,$42,$00	; *--
-		.BYTE	$F0,$D6,$42,$08	; *--
+		.BYTE	$03
+		.BYTE	$00,$C6,$42,$00
+		.BYTE	$F0,$E6,$42,$00
+		.BYTE	$F0,$D6,$42,$08
 _spr_nlib1A_35:
-		.BYTE	$02		; *--
-		.BYTE	$F8,$E4,$42,$08	; *--
-		.BYTE	$F8,$F6,$42,$00	; *--
+		.BYTE	$02
+		.BYTE	$F8,$E4,$42,$08
+		.BYTE	$F8,$F6,$42,$00
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C8D1:
-		NJSR			_nsub_players_scr_suspend
-		SDELAY			$5A
+_scr_boss_train_slime_dead:
+		NJSR			_nsub_players_scr_suspend		; when boss dead, there is another
+		SDELAY			$5A								; scenery, first players are auto controlled
 		NJSR			_nsub_2C90E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$02
@@ -1000,7 +1030,7 @@ _sloc_case_2C8D1:
 		SCRL_Y_SET	0,$00,$06
 		POS_Y_SET		1,$00,$06
 		SLOOP_END
-		NJSR			_nsub_62BA9
+		NJSR			_nsub_stage_complete_force
 		SSTOP
 byte_2C90A:
 		.BYTE	$0F,$0F,$0F,$07
@@ -1017,11 +1047,11 @@ _nsub_2C90E:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C91D:
-		NJSR			_nsub_2C952
-		NJSR			_nsub_new_thread_start
-			NARGB		$22
-			NARGB		$F8,$00
+_scr_boss_train_slime_projectileA:
+		NJSR			_nsub_boss_train_slime_projectile_dir_select
+		NJSR			_nsub_new_thread_start			; set random direction up
+			NARGB		$22								; then deploy two more projectiles
+			NARGB		$F8,$00							; to the left and to the right
 			NARGB		$02
 			NARGB		$E0
 		NJSR			_nsub_new_thread_start
@@ -1030,12 +1060,16 @@ _sloc_case_2C91D:
 			NARGB		$03
 			NARGB		$20
 		SPR_IDX_SET		0,$37
-_sloc_2C932:
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_boss_train_slime_projectile_common:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_2C94B
+		NBG_HNDL_SET	_nbgsub_boss_train_slime_projectile_ctest
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
-			NARGB		$00,$02
-		SDELAY			$18
+			NARGB		$00,$02							; small projectile in the beginning
+		SDELAY			$18								; then getting bigger and finally disappear
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		1,$39
 		SPR_IDX_SET		1,$FF
@@ -1045,13 +1079,13 @@ _sloc_2C932:
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2C94B:
+_nbgsub_boss_train_slime_projectile_ctest:
 		LDX		#$06
 		LDY		#$07
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2C952:
+_nsub_boss_train_slime_projectile_dir_select:
 		LDA		#$21
 		JSR		_rand
 		CLC
@@ -1059,6 +1093,7 @@ _nsub_2C952:
 		LDX		_scr_cur_trd_idx
 		STA		_scr_trds_args1,X
 		RTS
+
 _spr_nlib1A_36:
 		.BYTE	$01
 		.BYTE	$F8,$C0,$01,$FC
@@ -1076,14 +1111,14 @@ _spr_nlib1A_3A:
 		.BYTE	$F8,$C8,$41,$FC
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C978:
+_scr_boss_train_slime_projectileB:
 		SPR_IDX_SET		0,$36
-		SJMP			_sloc_2C932
+		SJMP			_scr_boss_train_slime_projectile_common
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C97D:
+_scr_boss_train_slime_projectileC:
 		SPR_IDX_SET		0,$38
-		SJMP			_sloc_2C932
+		SJMP			_scr_boss_train_slime_projectile_common
 
 ; =============== S C R I P T ==========================s====================
 _scr2E_lvl4_boss_dragons:
@@ -1092,7 +1127,11 @@ _scr2E_lvl4_boss_dragons:
 		SJMP_SW			$02
 		SCASE			_sloc_case_2C9AE
 		SCASE			_sloc_case_2CE6C
-		SJSR			_ssub_62E33
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
+		SJSR			_ssub_boss_music_fade_and_load
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_2CAA7
@@ -1237,12 +1276,12 @@ _ssub_2CA91:
 ; =============== S C R I P T ==========================s====================
 _scr_2CA9B:
 		SARG_SET		SARG1,$50
-		SJMP			_sloc_62E25
+		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
 _scr_2CAA1:
 		SARG_SET		SARG1,$52
-		SJMP			_sloc_62E2C
+		SJMP			_ssub_common_catch_anim_R_snd19
 byte_2CAA7:
 		.BYTE	$0F,$25,$16,$0F
 byte_2CAAB:
@@ -1699,7 +1738,11 @@ _scr2F_lvl5_boss_key_keeper:
 		SCASE			_sloc_case_2CFCC
 		SCASE			_sloc_case_2D7B1
 		SCASE			_sloc_case_2D81B
-		SJSR			_ssub_62E33
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
+		SJSR			_ssub_boss_music_fade_and_load
 		NJSR			_nsub_2D26C
 		NJSR			_nsub_spr_pal_load
 			NARGW		byte_2D150
@@ -1746,6 +1789,10 @@ _sloc_case_2CF60:
 		SJMP_SW			$02
 		SCASE			_sloc_case_2CF60
 		SCASE			_sloc_case_2CF81
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_2D215
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2D002
@@ -1997,7 +2044,7 @@ _scr_2D122:
 			NARGB		$00
 _sloc_2D133:
 		SARG_SET		SARG1,$72
-		SJMP			_sloc_62E25
+		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
 _scr_2D139:
@@ -2011,7 +2058,7 @@ _scr_2D139:
 			NARGB		$00
 _sloc_2D14A:
 		SARG_SET		SARG1,$74
-		SJMP			_sloc_62E2C
+		SJMP			_ssub_common_catch_anim_R_snd19
 byte_2D150:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$25,$15,$0F
 byte_2D15C:
@@ -2668,8 +2715,9 @@ _sloc_case_2D7B1:
 		SPR_IDX_INC		4
 		SPR_IDX_SET		0,$76
 		SDELAY			$3C
-		NJSR			_nsub_62BA9
+		NJSR			_nsub_stage_complete_force
 		SUSPEND
+
 _spr_nlib1A_76:
 		.BYTE	$04
 		.BYTE	$00,$36,$03,$00
@@ -2797,6 +2845,10 @@ _scr30_lvl6_boss_vega:
 		SCASE			_lvl6_boss_vega_sub2
 		SCASE			_lvl6_boss_vega_sub3
 		SCASE			_lvl6_boss_vega_sub4
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SLOOP_BEGIN		$C8							; default initialization
 		SMEM_ALU		_apu_mus_volume,_ADC,$FF	; slowly lower the music volume
 		SDELAY			$02							; in about 6 seconds
@@ -2909,6 +2961,10 @@ _scr_lvl6_boss_vega_blinker:
 			NARGB		SARG0,$00
 		SJMP_SW			$01
 		SCASE			_scr_lvl6_boss_vega_blinker
+
+; !FALLTHROUGH!
+
+; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_2D9B8
@@ -2948,7 +3004,7 @@ _scr_lvl6_boss_vega_death:
 		SPR_IDX_INC		4
 		SPR_IDX_SET		0,$FF
 		SDELAY			$5A
-		NJSR			_nsub_2DA7D
+		NJSR			_nsub_lvl6_players_auto_scriptsB_set
 		POS_X_SET		0,$80,$00
 		POS_Y_SET		0,$98,$00
 		SPR_IDX_SET		1,$91
@@ -3027,13 +3083,13 @@ _nsub_2DA70:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2DA7D:
+_nsub_lvl6_players_auto_scriptsB_set:
 		LDX		#$02
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_602EE
+		.WORD	_scr_lvl6_beamer_auto_scriptB
 		LDX		#$04
 		JSR		_thread_reload_param_ex
-		.WORD	_scr_60FEE
+		.WORD	_scr_lvl6_catcher_auto_scriptB
 		RTS
 
 _spr_rlib1A_00:
@@ -3558,8 +3614,8 @@ _spr_nlib1A:
 		.WORD	_spr_nlib1A_31
 		.WORD	_spr_nlib1A_32
 		.WORD	_spr_nlib1A_33
-		.WORD	_spr_nlib1A_34	; *--
-		.WORD	_spr_nlib1A_35	; *--
+		.WORD	_spr_nlib1A_34
+		.WORD	_spr_nlib1A_35
 		.WORD	_spr_nlib1A_36
 		.WORD	_spr_nlib1A_37
 		.WORD	_spr_nlib1A_38
