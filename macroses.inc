@@ -19,8 +19,17 @@ PAD_L			EQU		$02
 PAD_R			EQU		$01
 
 DEBUG_MAX_ENEMY	EQU		$0C		; ($0A default)
-DEBUG_LEVEL		EQU		$01
-DEBUG_CHKPOINT	EQU		$05
+; levels table:
+; N - CP
+; 0 - 1 2 3 4
+; 1 - 1 2 3 4 5
+; 2 - 1 2 3 4 5 6 7
+; 3 - 1 2 3 4 5 6
+; 4 - 1 2 3 4 5
+; 5 - 1
+;
+DEBUG_LEVEL		EQU		$03
+DEBUG_CHKPOINT	EQU		$06
 
 ;-------------------F-O-N-T-S-------------------
 

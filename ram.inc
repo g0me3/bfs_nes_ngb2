@@ -431,35 +431,33 @@ _beam_target_x_pos:
 		.BYTE	0
 _beam_target_y_pos:
 		.BYTE	0
-_tmp7AD:
+_catcher_turns_flags:
 		.BYTE	0,0
-_tmp7AF:
+_catcher_turns_count:
 		.BYTE	0
-_tmp7B0:
+_beamer_direction_idx:
 		.BYTE	0
-_tmp7B1:
-		.BYTE	0
-_tmp7B2:
-		.BYTE	0
-_tmp7B3:
+_beamer_speed:
+		.BYTE	0,0
+_catcher_speed:
 		.BYTE	0,0
 _tmp_idx:
 		.BYTE	0
-_tmp7B6:
+_catcher_direction_idx:
 		.BYTE	0
-_beamer_idxA:
+_beamer_spr_base_tmp:
 		.BYTE	0
-_catcher_idxA:
+_catcher_spr_base_tmp:
 		.BYTE	0
-_beamer_idxB:
+_beamer_spr_base:
 		.BYTE	0
-_catcher_idxB:
+_catcher_spr_base:
 		.BYTE	0
-_tmp7BB:
+_catcher_target_slot_idx:
 		.BYTE	0
-_tmp7BC:
+_catcher_target_distance:
 		.BYTE	0
-_collision_flag:
+_beamer_hit_flag:
 		.BYTE	0
 _cur_room_orientation_idx:
 		.BYTE	0
@@ -485,7 +483,7 @@ _hi_scores:
 		.BYTE	0,0
 _lives:
 		.BYTE	0
-_player_inv_timer:
+_beamer_inv_timer:
 		.BYTE	0
 _game_flags:
 		.BYTE	0
@@ -513,9 +511,9 @@ _license_screen_display_flag:
 		.BYTE	0
 _difficulty:
 		.BYTE	0
-_control_jump_button_code:
+_control_beam_button_code:
 		.BYTE	0
-_control_fire_button_code:
+_control_catch_button_code:
 		.BYTE	0
 _unused_15:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

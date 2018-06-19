@@ -61,9 +61,9 @@ loc_60020:
 		STA		_license_screen_display_flag
 		STA		_difficulty
 		LDA		#$80
-		STA		_control_jump_button_code
+		STA		_control_beam_button_code
 		LDA		#$40
-		STA		_control_fire_button_code
+		STA		_control_catch_button_code
 		LDA		_ram_signature
 		CMP		#$48
 		BNE		loc_6007C
@@ -154,7 +154,7 @@ loc_60123:
 		JSR		_ppu_spr_shuffle_pos
 		JSR		_threads_manager
 		JSR		_ppu_spr_clear
-		JSR		_obj_exit_arrow_activate_test
+		JSR		_obj_exit_arrow_position_adjust
 		JSR		sub_60166
 		LDA		_scr_trds_idx
 		BPL		loc_60123
@@ -174,7 +174,13 @@ loc_6015A:
 		JMP		_MAIN_ENTRY
 
 _lvl_scripts_list:
-		.BYTE	$01,$02,$03,$04,$05,$06,$07
+		.BYTE	_scr01_lvl1_handler_idx
+		.BYTE	_scr02_lvl2_handler_idx
+		.BYTE	_scr03_lvl3_handler_idx
+		.BYTE	_scr04_lvl4_handler_idx
+		.BYTE	_scr05_lvl5_handler_idx
+		.BYTE	_scr06_lvl6_handler_idx
+		.BYTE	_scr07_ending_idx
 
 ; =============== S U B R O U T I N E ======n================================
 sub_60166:
@@ -218,18 +224,18 @@ _scores_to_next_live_step_list_hi:
 		.BYTE	$00,$01,$01,$01
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_exit_arrow_activate_test:
-		LDA		#$FF
+_obj_exit_arrow_position_adjust:
+		LDA		#$FF						; signal flags reset
 		STA		_var0
 		STA		_var1
 		LDX		#$06
 loc_601B1:
-		LDA		_scr_trds_idx,X
+		LDA		_scr_trds_idx,X				; look for active objects
 		BMI		loc_601C4
-		CMP		#$13
-		BCS		loc_601C2
-		CMP		#$12
-		BNE		loc_601C4
+		CMP		#_scr13_slow_moving_slime_idx	; all above are enemies,
+		BCS		loc_601C2					; increment enemies counter
+		CMP		#_scr12_exit_arrow_idx		; also if arrow itself is appear
+		BNE		loc_601C4					; store it's slot number
 		STX		_var0
 		BEQ		loc_601C4
 loc_601C2:
@@ -239,18 +245,18 @@ loc_601C4:
 		CPX		#$0E
 		BCC		loc_601B1
 		LDA		_var1
-		BPL		locret_601F6
+		BPL		locret_601F6				; if any enemies in the room, skip
 		LDX		_var0
-		BMI		locret_601F6
-		LDA		_ppu_scroll_pos_x
-		CLC
-		ADC		#$80
-		STA		_scr_trds_x_pos_lo,X
+		BMI		locret_601F6				; if there are no arrow in the room, skip
+		LDA		_ppu_scroll_pos_x			; if arrow deployed, calculate current
+		CLC									; coordinates for screen center
+		ADC		#$80						; and set the arrow position there
+		STA		_scr_trds_x_pos_lo,X		; it is always positioned in the center
 		LDA		_ppu_scroll_pos_x+1
 		ADC		#$00
-		STA		_scr_trds_x_pos_hi,X
-		LDA		_ppu_scroll_pos_y
-		CLC
+		STA		_scr_trds_x_pos_hi,X		; so this method allows to show an arrow
+		LDA		_ppu_scroll_pos_y			; object in a particular cases, despite
+		CLC									; it's always active in room...
 		ADC		#$78
 		BCS		loc_601EA
 		CMP		#$F0
@@ -267,21 +273,25 @@ locret_601F6:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
+; NOTE: the arrow object is always in the room and always blinking, but
+; since it inserted to the room with zero cooridnates, it is always
+; clipped by the out-of-screen test routine. we actually not see it.
+;
 _scr12_exit_arrow:
-		NBG_HNDL_SET	_nbgsub_60205
+		NBG_HNDL_SET	_nbgsub_exit_arrow_off_test
 _sloc_601FA:
-		NJSR			_nsub_obj_spr_idx_set_from_sarg
+		NJSR			_nsub_obj_spr_idx_set_from_sarg	; blink sprite constantly
 			NARGB		SARG1
 		SDELAY			$07
 		SPR_IDX_SET		7,$FF
 		SJMP			_sloc_601FA
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_60205:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args2,X
-		CMP		_cur_lvl_room_idx
-		BEQ		loc_6020F
+_nbgsub_exit_arrow_off_test:
+		LDX		_scr_cur_trd_idx			; the arrow sarg2 parameter contains
+		LDA		_scr_trds_args2,X			; an index of next room where the
+		CMP		_cur_lvl_room_idx			; arrow should disappear, test it here
+		BEQ		loc_6020F					; and off current thread if test passed
 		RTS
 loc_6020F:
 		JMP		_scr_cur_trd_off
@@ -323,42 +333,47 @@ _spr_nlib08_AE:
 
 ; =============== S C R I P T ==========================s====================
 _scr08_beamer_handler:
-		STORE8			_collision_flag,$00
-		STORE8			_player_inv_timer,$00
-		STORE16			_tmp7B1,$180
-		NJSR			_nsub_603A2
-_sloc_6028E:
-		NJSR			_nsub_mcmp
-			NARGW		_scr_trds_idx
-			NARGB		$04
-		SBCC			_sloc_6029B
-		NBG_HNDL_SET	_nbgsub_60307
+		STORE8			_beamer_hit_flag,$00				; set when hit by ghost
+		STORE8			_beamer_inv_timer,$00			; set when restores after hit
+		STORE16			_beamer_speed,$180				; initial value for speed
+		NJSR			_nsub_beamer_spr_base_reset		; copy tmp value to current index
+
+; =============== S C R I P T ==========================s====================
+_scr_beamer_reinit:
+		NJSR			_nsub_mcmp						; special test for additional handler
+			NARGW		_scr_trds_idx					; after setting the control routines
+			NARGB		$04								; this thread is suspended
+		SBCC			_sloc_6029B						; but object still active and controlled
+		NBG_HNDL_SET	_nbgsub_beamer_controlB			; purely by native subroutine
 		SUSPEND
 _sloc_6029B:
-		NBG_HNDL_SET	_nbgsub_player_collision_flag_test
+		NBG_HNDL_SET	_nbgsub_beamer_controlA
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
-_scr_hit_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$04
+; called from native routine, replaces previously suspended thread
+; above, will return the control to it if has lives.
+;
+_scr_beamer_hit_anim:
+		NJSR			_nsub_apu_snd_load_safe			; start hit sound and do rotating
+			NARGB		$04								; animation
 		SLOOP_BEGIN		$1E
 		NJSR			_nsub_beamer_spr_idx_set
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_END
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
-			NARGB		$A0,$40
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; draw dead body in opposite
+			NARGB		$A0,$40							; direction you faced while being hit
 		SDELAY			$02
-		SPR_IDX_ADD_IMM 2,$04
-		SPR_IDX_ADD_IMM 4,$04
-		SPR_IDX_ADD_IMM 2,$FC
-		SPR_IDX_ADD_IMM 0,$FC
+		SPR_IDX_ADD_IMM 2,$04							; animate last breath, remove sprite.
+		SPR_IDX_ADD_IMM 4,$04							; beacause of that weird behaviour
+		SPR_IDX_ADD_IMM 2,$FC							; player will turn in opposite directions
+		SPR_IDX_ADD_IMM 0,$FC							; after every hit.
 		SDELAY			$28
 		SPR_IDX_SET		0,$FF
 		SDELAY			$3C
-		NJSR			_nsub_player_hit_action
-		SBCC			_sloc_6028E
+		NJSR			_nsub_beamer_decrement_lives	; if lives is over, stop thread
+		SBCC			_scr_beamer_reinit				; or restore object
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
@@ -399,56 +414,62 @@ _scr_suspend:
 		SUSPEND
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_60307:
-		JSR		sub_60327
+; only for lvl4 here additionaly adjusting the player speed according
+; to room meta tiles
+;
+_nbgsub_beamer_controlB:
+		JSR		_lvl4_beamer_speed_modifier_calc
 
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_player_collision_flag_test:
-		LDA		_collision_flag
-		LSR
+_nbgsub_beamer_controlA:
+		LDA		_beamer_hit_flag				; regular beamer player native handler
+		LSR									; test for collision flag is set
 		BCC		loc_60316
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_hit_anim
+		.WORD	_scr_beamer_hit_anim
 		RTS
 loc_60316:
-		LDA		_player_inv_timer
+		LDA		_beamer_inv_timer			; also run after hit timer
 		BEQ		loc_6031E
-		DEC		_player_inv_timer
+		DEC		_beamer_inv_timer
 loc_6031E:
-		JSR		sub_603C3
-		JSR		sub_605C7
-		JMP		_player_beam_obj_insert_test
+		JSR		_beamer_control_move_test
+		JSR		_beamer_spr_selector
+		JMP		_beamer_control_beam_test	; and finally insert the beam object
 
 ; =============== S U B R O U T I N E ======n================================
-sub_60327:
-		JSR		sub_6034F
-		STA		_tmp7B1
-		STY		_tmp7B2
-		LDA		_beamer_idxA
+_lvl4_beamer_speed_modifier_calc:
+		JSR		_lvl4_speed_modifier_calc
+		STA		_beamer_speed
+		STY		_beamer_speed+1
+		LDA		_beamer_spr_base_tmp
 		BCC		loc_60337
 		ADC		#$4F
 loc_60337:
-		STA		_beamer_idxB
+		STA		_beamer_spr_base
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6033B:
-		JSR		sub_6034F
-		STA		_tmp7B3
-		STY		_tmp7B3+1
-		LDA		_catcher_idxA
+_lvl4_catcher_speed_modifier_calc:
+		JSR		_lvl4_speed_modifier_calc
+		STA		_catcher_speed
+		STY		_catcher_speed+1
+		LDA		_catcher_spr_base_tmp
 		BCC		loc_6034B
 		ADC		#$4F
 loc_6034B:
-		STA		_catcher_idxB
+		STA		_catcher_spr_base
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6034F:
+; this routine used on sewers level to adjust (spped up or slow down) the
+; player's speed if they walking on a particular meta tiles.
+;
+_lvl4_speed_modifier_calc:
 		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_scr_trds_y_pos_lo,X		; calculate currently hovered meta pos
 		CLC
 		ADC		#$04
 		TAY
@@ -459,22 +480,22 @@ sub_6034F:
 		STA		_tmp_var0
 		LDA		_scr_trds_x_pos_lo,X
 		TAX
-		JSR		_far_lvl_room_ofs_calc
-		BEQ		loc_60388
+		JSR		_far_lvl_room_ofs_calc		; read room data, test if meta is in
+		BEQ		loc_60388					; needed range ($01-$0C)
 		CMP		#$0D
 		BCS		loc_60388
 		TAX
-		LDA		byte_6038E-1,X
+		LDA		byte_6038E-1,X				; get the corresponding speed movifier index
 		PHA
-		JSR		_nsub_sarg1_direction_extract
+		JSR		_nsub_sarg1_direction_extract	; also get the player's move direction
 		STA		_tmp0
 		PLA
 		SEC
-		SBC		_tmp0
+		SBC		_tmp0						; calculate final speed modifier
 		AND		#$03
 		TAX
-		LDA		byte_6039A,X
-		LDY		byte_6039E,X
+		LDA		byte_6039A,X				; read the speed value from table
+		LDY		byte_6039E,X				; 0-regular speed, 1,3 - slow, 2 - very slow
 		SEC
 		RTS
 loc_60388:
@@ -490,77 +511,77 @@ byte_6039E:
 		.BYTE	$01,$01,$00,$01
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_603A2:
-		LDA		_beamer_idxA
-		STA		_beamer_idxB
+_nsub_beamer_spr_base_reset:
+		LDA		_beamer_spr_base_tmp
+		STA		_beamer_spr_base
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_player_hit_action:
-		DEC		_lives
-		BNE		loc_603B7
-		LDX		#$00
+_nsub_beamer_decrement_lives:
+		DEC		_lives						; if lives is over, return C=1
+		BNE		loc_603B7					; to stop beamer thread also start
+		LDX		#$00						; game over script instatnly
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_game_over
 		SEC
 		RTS
 loc_603B7:
-		LDA		#$00
-		STA		_collision_flag
-		LDA		#$78
-		STA		_player_inv_timer
+		LDA		#$00						; otherwise, clear hit flag
+		STA		_beamer_hit_flag
+		LDA		#$78						; init temporary invulnerability
+		STA		_beamer_inv_timer
 		CLC
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_603C3:
-		LDA		_scr_trds_x_pos_lo+2
-		ORA		_scr_trds_y_pos_lo+2
-		AND		#$07
-		BNE		loc_603DC
+_beamer_control_move_test:
+		LDA		_scr_trds_x_pos_lo+2		; these objects moving only by 8
+		ORA		_scr_trds_y_pos_lo+2		; pixels at once, when start to
+		AND		#$07						; move, you couldn't control it unless
+		BNE		.beamer_speed_calc			; it reaches another gap
 		LDA		_pad0_held
 		AND		#$0F
-		BEQ		loc_60406
-		JSR		sub_60598
-		LDA		_tmp7B0
-		JSR		sub_6041D
-		BCS		loc_60406
-loc_603DC:
-		LDA		_tmp7B0
-		LDX		_tmp7B1
-		LDY		_tmp7B2
-		JSR		sub_6050D
+		BEQ		.beamer_speed_reset
+		JSR		_beamer_direction_calc		; get pressed button and calc new movement
+		LDA		_beamer_direction_idx		; direction
+		JSR		_beamer_room_obstacles_test	; then test if any obstacles there
+		BCS		.beamer_speed_reset
+.beamer_speed_calc:
+		LDA		_beamer_direction_idx		; according to speed and face direction
+		LDX		_beamer_speed				; adjust current position of players
+		LDY		_beamer_speed+1				; to be always at the middle of the screen
+		JSR		_players_speed_calc
 		TAY
-		BEQ		locret_6041C
-		BNE		loc_60410
-loc_603ED:
-		LDA		_scr_trds_x_pos_lo+2
-		ORA		_scr_trds_y_pos_lo+2
+		BEQ		.beamer_exit
+		BNE		.beamer_step
+.beamer_next_step:
+		LDA		_scr_trds_x_pos_lo+2		; while doing other steps, also test
+		ORA		_scr_trds_y_pos_lo+2		; controls only at 8x8 pixels grid
 		AND		#$07
-		BNE		loc_60410
+		BNE		.beamer_step
 		LDA		_pad0_held
 		AND		#$0F
-		BEQ		loc_60406
-		JSR		sub_60598
-		LDA		_tmp7B0
-		JSR		sub_6041D
-		BCC		loc_60410
-loc_60406:
+		BEQ		.beamer_speed_reset
+		JSR		_beamer_direction_calc
+		LDA		_beamer_direction_idx
+		JSR		_beamer_room_obstacles_test
+		BCC		.beamer_step
+.beamer_speed_reset:
 		LDA		#$80
 		STA		_scr_trds_x_center+2
 		STA		_scr_trds_y_center+2
-		BNE		locret_6041C
-loc_60410:
-		LDA		_tmp7B0
-		JSR		sub_60553
-		JSR		sub_6045A
-		DEY
-		BNE		loc_603ED
-locret_6041C:
+		BNE		.beamer_exit
+.beamer_step:
+		LDA		_beamer_direction_idx		; beamer direction determined only by
+		JSR		_players_move_step			; player's input, do one step in given
+		JSR		_beamer_scroll_step			; direction, additionally set scroll if
+		DEY									; available. Y here is number of steps
+		BNE		.beamer_next_step			; for starting move
+.beamer_exit:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6041D:
+_beamer_room_obstacles_test:
 		PHA
 		TYA
 		PHA
@@ -600,10 +621,10 @@ loc_60453:
 		RTS
 loc_60455:
 		LDA		_tmp0
-		JMP		sub_604E0
+		JMP		_players_bound_box_to_room_test
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6045A:
+_beamer_scroll_step:
 		TYA
 		PHA
 		JSR		_cur_obj_screen_pos_calc
@@ -684,7 +705,7 @@ _nsub_sarg1_direction_extract:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_604D5:
+_nsub_sarg1_direction_update:
 		PHA
 		LDY		_scr_cur_trd_idx
 		LSR
@@ -695,7 +716,7 @@ sub_604D5:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_604E0:
+_players_bound_box_to_room_test:
 		PHA
 		TAX
 		TYA
@@ -735,7 +756,7 @@ byte_60508:
 		.BYTE	$F0,$00
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6050D:
+_players_speed_calc:
 		STX		_var0
 		STY		_var1
 		LDX		_scr_cur_trd_idx
@@ -778,7 +799,7 @@ loc_60550:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_60553:
+_players_move_step:
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
 		DEC		_tmp0
@@ -824,9 +845,9 @@ loc_60595:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_60598:
-		LDA		_pad0_held
-		AND		#$08
+_beamer_direction_calc:
+		LDA		_pad0_held					; set base sprite direction as well
+		AND		#$08						; as update beaber direction tmp idx
 		BEQ		loc_605A2
 		LDA		#$00
 		BEQ		loc_605BE
@@ -852,14 +873,14 @@ loc_605BE:
 		ASL
 		ROL
 		ROL
-		STA		_tmp7B0
+		STA		_beamer_direction_idx
 locret_605C6:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_605C7:
-		LDA		_scr_trds_idx+3
-		BMI		loc_605D5
+_beamer_spr_selector:
+		LDA		_scr_trds_idx+3				; if beam is deployed
+		BMI		loc_605D5					; adjust the beamer sprite and direction
 		LDA		_scr_trds_args0+3
 		BMI		loc_605D5
 		JSR		_obj_to_obj_vector_calc
@@ -870,16 +891,16 @@ loc_605D5:
 		BEQ		loc_605DD
 		INC		_scr_trds_args0+2
 loc_605DD:
-		LDA		_player_inv_timer
-		LSR
-		BCC		_nsub_beamer_spr_idx_calc
-		LDA		#$FF
-		STA		_scr_trds_spr_idx+2
+		LDA		_beamer_inv_timer			; otherwise just select either empty
+		LSR									; sprite if blinked or actual beamer sprite
+		BCC		_nsub_beamer_spr_idx_calc	; beamer object will be displayed as
+		LDA		#$FF						; regular objects after thread manager finished
+		STA		_scr_trds_spr_idx+2			; with all other threads
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beamer_spr_idx_calc:
-		LDA		_beamer_idxB
+		LDA		_beamer_spr_base
 
 ; !FALLTHROUGH!
 
@@ -906,24 +927,24 @@ _players_spr_idx_calc:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_player_beam_obj_insert_test:
+_beamer_control_beam_test:
 		LDA		_pad0_pressed
-		AND		_control_jump_button_code
-		BEQ		locret_60622
-		LDA		_scr_trds_idx+3
+		AND		_control_beam_button_code	; reploy beam object if beam button
+		BEQ		locret_60622				; pressed, also if there is no
+		LDA		_scr_trds_idx+3				; beam object already deployed
 		BPL		locret_60622
-		LDA		#$03
+		LDA		#$03						; slot start (always here!)
 		STA		_var4
-		LDA		#$04
+		LDA		#$04						; slot max (only one slot)
 		STA		_var5
-		LDA		#$09
+		LDA		#_scr09_player_beam_idx
 		JSR		_thread_lib_load
 locret_60622:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beamer_spr_idx_set:
-		LDA		_beamer_idxB
+		LDA		_beamer_spr_base
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -1562,9 +1583,9 @@ _sloc_60C9F:
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_beam_input_control:
 		LDA		_pad0_held
-		AND		_control_jump_button_code
+		AND		_control_beam_button_code
 		BEQ		loc_60CD0
-		LDA		_collision_flag
+		LDA		_beamer_hit_flag
 		BNE		loc_60CD0
 		LDA		_tmp7C4
 		CMP		#$00
@@ -1936,12 +1957,12 @@ _spr_nlib09_0F:
 
 ; =============== S C R I P T ==========================s====================
 _scr0A_catcher_handler:
-		STORE8			_tmp7AF,$00
-		STORE8			_tmp7BB,$02
-		STORE8			_tmp7BC,$18
-		STORE16			_tmp7B3,$180
-		NJSR			_nsub_61347
-		NBG_HNDL_SET	_nbgsub_ingame_player_control
+		STORE8			_catcher_turns_count,$00						; mostly the same as for
+		STORE8			_catcher_target_slot_idx,$02	; beamer, but additional
+		STORE8			_catcher_target_distance,$18	; speed modifier called from other
+		STORE16			_catcher_speed,$180				; place now
+		NJSR			_nsub_catcher_spr_base_reset
+		NBG_HNDL_SET	_nbgsub_catcher_control
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
@@ -1978,73 +1999,73 @@ _scr_lvl6_catcher_auto_scriptB:
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_ingame_player_control:
-		LDA		_scr_trds_idx+5
+_nbgsub_catcher_control:
+		LDA		_scr_trds_idx+5				; do nothing, while catch is deployed
 		BPL		locret_6101E
-		LDA		_scr_trds_idx
+		LDA		_scr_trds_idx				; also additionally test if current level is 4
 		CMP		#$04
 		BNE		loc_61015
-		JSR		sub_6033B
+		JSR		_lvl4_catcher_speed_modifier_calc
 loc_61015:
-		JSR		_player_catch_obj_insert_test
-		JSR		sub_6101F
-		JMP		sub_610B2
+		JSR		_catcher_control_catch_test	; test if player pressed catch button
+		JSR		_catcher_control_move_test
+		JMP		_catcher_spr_selector
 locret_6101E:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6101F:
+_catcher_control_move_test:
 		LDA		_scr_trds_x_pos_lo+4
 		ORA		_scr_trds_y_pos_lo+4
 		AND		#$07
-		BNE		loc_6102F
-		JSR		sub_610BF
-		LDA		_tmp7B6
-		BMI		loc_61050
-loc_6102F:
+		BNE		.catcher_speed_calc
+		JSR		_catcher_target_follow
+		LDA		_catcher_direction_idx
+		BMI		.catcher_speed_reset
+.catcher_speed_calc:
 		JSR		_nsub_sarg1_direction_extract
-		LDX		_tmp7B3
-		LDY		_tmp7B3+1
-		JSR		sub_6050D
+		LDX		_catcher_speed
+		LDY		_catcher_speed+1
+		JSR		_players_speed_calc
 		TAY
-		BEQ		locret_61063
-		BNE		loc_6105A
-loc_61040:
+		BEQ		.catcher_exit
+		BNE		.catcher_step
+.catcher_next_step:
 		LDA		_scr_trds_x_pos_lo+4
 		ORA		_scr_trds_y_pos_lo+4
 		AND		#$07
-		BNE		loc_6105A
-		JSR		sub_610BF
-		LDA		_tmp7B6
-		BPL		loc_6105A
-loc_61050:
+		BNE		.catcher_step
+		JSR		_catcher_target_follow
+		LDA		_catcher_direction_idx
+		BPL		.catcher_step
+.catcher_speed_reset:
 		LDA		#$80
 		STA		_scr_trds_x_center+4
 		STA		_scr_trds_y_center+4
-		BNE		locret_61063
-loc_6105A:
+		BNE		.catcher_exit
+.catcher_step:
 		JSR		_nsub_sarg1_direction_extract
-		JSR		sub_60553
+		JSR		_players_move_step
 		DEY
-		BNE		loc_61040
-locret_61063:
+		BNE		.catcher_next_step
+.catcher_exit:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_player_catch_obj_insert_test:
-		LDA		_pad0_pressed
-		AND		_control_fire_button_code
+_catcher_control_catch_test:
+		LDA		_pad0_pressed				; only controllable by the player action here
+		AND		_control_catch_button_code
 		BEQ		locret_610A9
-		JSR		_cur_obj_screen_pos_calc
+		JSR		_cur_obj_screen_pos_calc	; get the current catcher position
 		BCS		locret_610A9
-		STX		_tmp1
+		STX		_tmp1						; store calculated position
 		STY		_tmp2
-		JSR		_nsub_sarg1_direction_extract
+		JSR		_nsub_sarg1_direction_extract; calculate its direction
 		PHA
 		TAX
 		LDA		_tmp2
 		CLC
-		ADC		byte_610AE,X
+		ADC		byte_610AE,X				; calculate destination point to catch object
 		TAY
 		LDA		_tmp1
 		CLC
@@ -2052,20 +2073,20 @@ _player_catch_obj_insert_test:
 		TAX
 		JSR		_obj_new_lvl_pos_calc
 		LDA		#$00
-		STA		_tmp7AF
+		STA		_catcher_turns_count
 		STA		_var0
 		PLA
 		LSR
 		ROR
 		ROR
-		STA		_var1
-		LDA		#$05
-		STA		_var4
+		STA		_var1						; now deploy new catch object
+		LDA		#$05						; also fixed single slot requested
+		STA		_var4						; position already calculated before
 		LDA		#$06
 		STA		_var5
-		LDA		#$0B
+		LDA		#_scr0B_player_catch_idx
 		JSR		_thread_lib_load
-		LDA		#$01
+		LDA		#$01						; and play sound
 		JMP		_far_prg6_apu_snd_load_safe
 locret_610A9:
 		RTS
@@ -2075,94 +2096,99 @@ byte_610AE:
 		.BYTE	$E8,$00,$0C,$00
 
 ; =============== S U B R O U T I N E ======n================================
-sub_610B2:
-		LDA		_tmp7B6
-		BMI		_nsub_catcher_spr_idx_calc
-		INC		_scr_trds_args0+4
+_catcher_spr_selector:
+		LDA		_catcher_direction_idx		; when catched stand still its direction idx
+		BMI		_nsub_catcher_spr_idx_calc	; =$FF.
+		INC		_scr_trds_args0+4			; otherwise run ai counter
 
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catcher_spr_idx_calc:
-		LDA		_catcher_idxB
+		LDA		_catcher_spr_base
 		JMP		_players_spr_idx_calc
 
 ; =============== S U B R O U T I N E ======n================================
-sub_610BF:
-		TYA
+; now, here is the main AI routine of the game. path search and target
+; selection for catcher. fully CPU controlled here
+;
+_catcher_target_follow:
+		TYA									; backup Y, now routine Y safe
 		PHA
-		LDX		_tmp7BB
-		CPX		#$02
-		BNE		loc_610CF
-		JSR		sub_6118D
-		BCS		loc_610F5
-		BCC		loc_610E2
-loc_610CF:
+		LDX		_catcher_target_slot_idx	; default mode is to follow beamer
+		CPX		#$02						; its slot is always 02, so do it
+		BNE		.catcher_beamed_follow		; skip to enemy test if beamed object
+		JSR		_beamed_enemy_lookup		; already targeted
+		BCS		.catcher_do_targeting
+		BCC		.catcher_beamed_found
+.catcher_beamed_follow:
 		LDA		_scr_trds_idx,X
-		BMI		loc_610DD
-		LDA		_scr_trds_args0,X
-		BEQ		loc_610DD
-		JSR		_obj_screen_pos_calc
-		BCC		loc_610F5
-loc_610DD:
-		JSR		sub_6118D
-		BCS		loc_610E6
-loc_610E2:
+		BMI		.catcher_beamed_lookup		; if already catched, restart lookup
+		LDA		_scr_trds_args0,X			; for other beamed objects
+		BEQ		.catcher_beamed_lookup
+		JSR		_obj_screen_pos_calc		; when still beamed, recalc its position
+		BCC		.catcher_do_targeting		; again. it won't change, but previously
+.catcher_beamed_lookup:						; calculated values are lost in tmp vars
+		JSR		_beamed_enemy_lookup		; finally, if beamed object inactive and
+		BCS		.catcher_beamer_follow		; no new beamed objects, reset targeting
+.catcher_beamed_found:
 		LDA		#$30
-		BNE		loc_610EA
-loc_610E6:
-		LDX		#$02
+		BNE		.catcher_follow_idx_update	; update targeting parameters with beamed
+.catcher_beamer_follow:						; object
+		LDX		#$02						; retarget to the beamer player
 		LDA		#$18
-loc_610EA:
-		STX		_tmp7BB
-		STA		_tmp7BC
+.catcher_follow_idx_update:
+		STX		_catcher_target_slot_idx	; update following parameters if any
+		STA		_catcher_target_distance
 		LDA		#$00
-		STA		_tmp7AF
-loc_610F5:
-		LDX		_tmp7BB
-		LDY		_tmp7BC
+		STA		_catcher_turns_count
+.catcher_do_targeting:
+		LDX		_catcher_target_slot_idx	; now let's test if we need to move
+		LDY		_catcher_target_distance
 		INY
-		JSR		sub_6121E
-		BCC		loc_6111B
-		LDA		_tmp7BB
-		CMP		#$02
+		JSR		_catcher_is_target_nearby_test	; test if we reached our target to closest
+		BCC		.catcher_search_path		; range
+		LDA		_catcher_target_slot_idx	; if in range, reset movements counter
+		CMP		#$02						; and direction variables,
+; TODO: remove it to target the beamer evein in the close range
 		BEQ		loc_61112
-		JSR		_obj_to_obj_vector_calc
-		CLC
-		ADC		#$20
-		AND		#$C0
-		STA		_scr_trds_args1+4
+; -
+		JSR		_obj_to_obj_vector_calc		; also if we targeted to beamed object
+		CLC									; position the face to the direction
+		ADC		#$20						; of the object. but actually I see it
+		AND		#$C0						; a lot more funnier when catcher always
+		STA		_scr_trds_args1+4			; turns to the beamer dynamically
 loc_61112:
-		LDA		#$00
-		STA		_tmp7AF
+		LDA		#$00						; for beamer target we don't have to face it
+		STA		_catcher_turns_count						; all the way.
 		LDA		#$FF
-		BNE		loc_61187
-loc_6111B:
-		LDA		_tmp7AF
-		BEQ		loc_61133
-		JSR		sub_61283
-		JSR		sub_604E0
+		BNE		.catcher_exit2
+.catcher_search_path:
+		LDA		_catcher_turns_count
+		BEQ		.catcher_start_move
+		JSR		_catchet_turn_test
+		JSR		_players_bound_box_to_room_test
 		BCS		loc_6112E
-		JSR		sub_61272
+		JSR		_catcher_turn_sub
 		JMP		loc_61184
 loc_6112E:
 		JSR		_nsub_sarg1_direction_extract
 		BPL		loc_61146
-loc_61133:
-		JSR		_nsub_sarg1_direction_extract
-		LDY		#$07
-		LDX		_tmp7BB
-		JSR		sub_6129F
+.catcher_start_move:
+		JSR		_nsub_sarg1_direction_extract; get current direction, test if
+		LDY		#$07						; target object in the same direction
+		LDX		_catcher_target_slot_idx	; or else retarget
+		JSR		_catcher_direction_to_target_test
 		BCC		loc_61146
-		LDY		_tmp7BB
-		JSR		sub_611A9
+		LDY		_catcher_target_slot_idx
+		JSR		_cur_obj_to_target_nearest_path_calc
 loc_61146:
 		STA		_var4
-		JSR		sub_604E0
+		JSR		_players_bound_box_to_room_test
 		BCC		loc_61184
-		JSR		sub_61239
-		LDY		_tmp7BB
-		JSR		sub_611A9
+		JSR		_catcher_turn_add
+		LDY		_catcher_target_slot_idx
+		JSR		_cur_obj_to_target_nearest_path_calc
 		STA		_tmp0
 		EOR		_var4
 		LSR
@@ -2173,52 +2199,55 @@ loc_61161:
 		LDA		_var5
 loc_61163:
 		STA		_var5
-		JSR		sub_604E0
+		JSR		_players_bound_box_to_room_test
 		BCC		loc_61184
 		ADC		#$01
 		AND		#$03
-		JSR		sub_604E0
+		JSR		_players_bound_box_to_room_test
 		BCC		loc_61184
 		LDA		_var5
-		JSR		sub_61239
+		JSR		_catcher_turn_add
 		LDA		_var4
 		CLC
 		ADC		#$02
 		AND		#$03
-		JSR		sub_604E0
+		JSR		_players_bound_box_to_room_test
 		BCS		loc_61112
 loc_61184:
-		JSR		sub_604D5
-loc_61187:
-		STA		_tmp7B6
+		JSR		_nsub_sarg1_direction_update
+.catcher_exit2:
+		STA		_catcher_direction_idx
 		PLA
 		TAY
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6118D:
-		LDX		#$06
+_beamed_enemy_lookup:
+		LDX		#$06						; look for enemy object in gen slots
 loc_6118F:
-		LDA		_scr_trds_idx,X
+		LDA		_scr_trds_idx,X				; with beamed active flag set
 		BMI		loc_611A3
 		LDA		_scr_trds_args0,X
 		CMP		#$02
 		BNE		loc_611A3
 		TXA
 		PHA
-		JSR		_obj_screen_pos_calc
+		JSR		_obj_screen_pos_calc		; if found, calc its screen pos
 		PLA
 		TAX
-		BCC		locret_611A8
+		BCC		locret_611A8				; return object slot idx in X and
 loc_611A3:
 		INX
 		CPX		#$0E
-		BCC		loc_6118F
+		BCC		loc_6118F					; C=1 if nothing found
 locret_611A8:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_611A9:
+; calculates distance between two objects (used for catcher/enemy test)
+; and choses shortest one.
+;
+_cur_obj_to_target_nearest_path_calc:
 		LDX		#$00
 		STX		_tmp1
 		INX
@@ -2286,32 +2315,32 @@ loc_61217:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6121E:
-		JSR		_obj_to_obj_in_range_test
-		BCC		locret_61238
-		LDA		_tmp7BB
-		CMP		#$02
-		BNE		loc_6122E
+_catcher_is_target_nearby_test:
+		JSR		_obj_to_obj_in_range_test	; test if selected target in range
+		BCC		locret_61238				; $18 for beamer, $30 for enemies
+		LDA		_catcher_target_slot_idx	; then if we in range, test fine
+		CMP		#$02						; tuned distance, not greater than
+		BNE		loc_6122E					; $07 for beamer, or $18 for enemy
 		LDA		#$18
 		BNE		loc_61230
 loc_6122E:
 		LDA		#$07
 loc_61230:
-		CMP		_tmp1
-		BCS		locret_61236
+		CMP		_tmp1						; tmp1/tmpw loaded with X/Y
+		BCS		locret_61236				; distance to the object
 		CMP		_tmp2
 locret_61236:
 		RTS
 _unref_1:
-		CLC
+		CLC									; NOTE, obviously redundant but not removed
 locret_61238:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61239:
+_catcher_turn_add:
 		PHA
 		STA		_tmp0
-		LDA		_tmp7AF
+		LDA		_catcher_turns_count
 		AND		#$03
 		TAX
 		TAY
@@ -2322,39 +2351,39 @@ loc_61245:
 		DEY
 		BNE		loc_61245
 loc_6124C:
-		LDA		_tmp7AF
+		LDA		_catcher_turns_count
 		LSR
 		LSR
 		TAY
-		LDA		_tmp7AD,Y
-		AND		byte_6126A,X
+		LDA		_catcher_turns_flags,Y
+		AND		_catcher_turns_masks,X
 		ORA		_tmp0
-		STA		_tmp7AD,Y
-		INC		_tmp7AF
-		LDA		_tmp7AF
+		STA		_catcher_turns_flags,Y
+		INC		_catcher_turns_count
+		LDA		_catcher_turns_count
 		AND		#$07
-		STA		_tmp7AF
+		STA		_catcher_turns_count
 		PLA
 		RTS
-byte_6126A:
+_catcher_turns_masks:
 		.BYTE	$FC,$F3,$CF,$3F
 byte_6126E:
 		.BYTE	$03,$0C,$30,$C0
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61272:
-		JSR		sub_61283
+_catcher_turn_sub:
+		JSR		_catchet_turn_test
 		PHA
-		DEC		_tmp7AF
-		LDA		_tmp7AF
+		DEC		_catcher_turns_count
+		LDA		_catcher_turns_count
 		AND		#$07
-		STA		_tmp7AF
+		STA		_catcher_turns_count
 		PLA
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61283:
-		LDX		_tmp7AF
+_catchet_turn_test:
+		LDX		_catcher_turns_count
 		DEX
 		TXA
 		PHA
@@ -2364,7 +2393,7 @@ sub_61283:
 		LSR
 		LSR
 		TAY
-		LDA		_tmp7AD,Y
+		LDA		_catcher_turns_flags,Y
 		AND		byte_6126E,X
 		DEX
 		BMI		locret_6129E
@@ -2377,83 +2406,83 @@ locret_6129E:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6129F:
-		PHA
-		STA		_var1
-		STY		_var0
+_catcher_direction_to_target_test:
+		PHA									; store current direction
+		STA		_var1						; tmp current direction
+		STY		_var0						; relative distance treshold (always $07)
 		DEC		_var1
-		BPL		loc_612C2
-		JSR		sub_61326
+		BPL		loc_612C2					; branch for catcher walk UP
+		JSR		_catcher_screen_y_pos_calc	; calculate catcher screen pos
 		BEQ		loc_612B1
-		BCC		loc_61314
-		BCS		loc_61317
+		BCC		.exit_true					; if out of screen, continue
+		BCS		.exit_false					; choose direction to next room
 loc_612B1:
-		JSR		sub_6133D
-		STA		_tmp0
-		TYA
+		JSR		_obj_screen_y_pos_calc		; now calculate object screen pos
+		STA		_tmp0						; which is already cannot be out
+		TYA									; of screen
 		SEC
 		SBC		_tmp0
-		BCC		loc_61314
-		CMP		_var0
-		BCC		loc_61314
-		BCS		loc_61317
+		BCC		.exit_true					; adjust new direction according
+		CMP		_var0						; to relative locations of two objects
+		BCC		.exit_true
+		BCS		.exit_false
 loc_612C2:
 		DEC		_var1
-		BPL		loc_612DF
-		JSR		sub_6131A
+		BPL		loc_612DF					; branch for catcher walk RIGHT
+		JSR		_catcher_screen_x_pos_calc	; all the same for other directions
 		BEQ		loc_612CF
-		BCS		loc_61314
-		BCC		loc_61317
+		BCS		.exit_true
+		BCC		.exit_false
 loc_612CF:
 		STY		_tmp0
-		JSR		sub_61337
+		JSR		_obj_screen_x_pos_calc
 		SEC
 		SBC		_tmp0
-		BCC		loc_61314
+		BCC		.exit_true
 		CMP		_var0
-		BCC		loc_61314
-		BCS		loc_61317
+		BCC		.exit_true
+		BCS		.exit_false
 loc_612DF:
 		DEC		_var1
-		BPL		loc_612FC
-		JSR		sub_61326
+		BPL		loc_612FC					; brantch for catcher walk DOWN
+		JSR		_catcher_screen_y_pos_calc
 		BEQ		loc_612EC
-		BCS		loc_61314
-		BCC		loc_61317
+		BCS		.exit_true
+		BCC		.exit_false
 loc_612EC:
 		STY		_tmp0
-		JSR		sub_6133D
+		JSR		_obj_screen_y_pos_calc
 		SEC
 		SBC		_tmp0
-		BCC		loc_61314
+		BCC		.exit_true
 		CMP		_var0
-		BCC		loc_61314
-		BCS		loc_61317
+		BCC		.exit_true
+		BCS		.exit_false
 loc_612FC:
-		JSR		sub_6131A
+		JSR		_catcher_screen_x_pos_calc	; what is left is walk LEFT
 		BEQ		loc_61305
-		BCC		loc_61314
-		BCS		loc_61317
+		BCC		.exit_true
+		BCS		.exit_false
 loc_61305:
-		JSR		sub_61337
+		JSR		_obj_screen_x_pos_calc
 		STA		_tmp0
 		TYA
 		SEC
 		SBC		_tmp0
-		BCC		loc_61314
+		BCC		.exit_true
 		CMP		_var0
-		BCS		loc_61317
-loc_61314:
+		BCS		.exit_false
+.exit_true:
 		PLA
 		SEC
 		RTS
-loc_61317:
+.exit_false:
 		PLA
 		CLC
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6131A:
+_catcher_screen_x_pos_calc:
 		LDA		_scr_trds_x_pos_lo+4
 		SEC
 		SBC		_ppu_scroll_pos_x
@@ -2463,7 +2492,7 @@ sub_6131A:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61326:
+_catcher_screen_y_pos_calc:
 		LDA		_scr_trds_y_pos_lo+4
 		SEC
 		SBC		_ppu_scroll_pos_y
@@ -2477,14 +2506,14 @@ loc_61330:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61337:
+_obj_screen_x_pos_calc:
 		LDA		_scr_trds_x_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_x
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_6133D:
+_obj_screen_y_pos_calc:
 		LDA		_scr_trds_y_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_y
@@ -2494,9 +2523,9 @@ locret_61346:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_61347:
-		LDA		_catcher_idxA
-		STA		_catcher_idxB
+_nsub_catcher_spr_base_reset:
+		LDA		_catcher_spr_base_tmp
+		STA		_catcher_spr_base
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -3812,15 +3841,15 @@ byte_61C4D:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_obj_in_range_test:
-		STY		_tmp0
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo,Y
+		STY		_tmp0						; store desired range value
+		LDY		_scr_cur_trd_idx			; load current object idx in Y
+		LDA		_scr_trds_x_pos_lo,Y		; X has already object target idx
 		SEC
-		SBC		_scr_trds_x_pos_lo,X
+		SBC		_scr_trds_x_pos_lo,X		; calculate X pos delta
 		STA		_tmp1
 		LDA		_scr_trds_x_pos_hi,Y
 		SBC		_scr_trds_x_pos_hi,X
-		BCS		loc_61C80
+		BCS		loc_61C80					; when negative, do ABS operation
 		PHA
 		LDA		_tmp1
 		EOR		#$FF
@@ -3830,16 +3859,16 @@ _obj_to_obj_in_range_test:
 		EOR		#$FF
 		ADC		#$00
 loc_61C80:
-		BNE		loc_61CD4
-		LDA		_tmp1
+		BNE		loc_61CD4					; if high nibble non zero, then too far
+		LDA		_tmp1						; if zero, then compare with desired dist
 		CMP		_tmp0
 		BCS		loc_61CD4
-		LDA		#$00
+		LDA		#$00						; if passed, do the same for Y delta
 		STA		_var0
-		LDA		_scr_trds_y_pos_lo,Y
-		SEC
-		SBC		_scr_trds_y_pos_lo,X
-		STA		_tmp2
+		LDA		_scr_trds_y_pos_lo,Y		; for Y is little bit harder since
+		SEC									; there is a case when both players
+		SBC		_scr_trds_y_pos_lo,X		; may be in different NT pages and
+		STA		_tmp2						; thus need the warp by 16 pixels
 		BCS		loc_61C98
 		INC		_var0
 loc_61C98:
@@ -3875,7 +3904,7 @@ loc_61CB4:
 		BNE		loc_61CD4
 		LDA		_tmp2
 		CMP		_tmp0
-		BCS		loc_61CD4
+		BCS		loc_61CD4					; then compare Y also
 		SEC
 		RTS
 loc_61CD4:
@@ -4109,7 +4138,7 @@ byte_61E2E:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_player_ctest:
-		LDA		_player_inv_timer
+		LDA		_beamer_inv_timer
 		BNE		locret_61E6B
 		STX		_var0
 		STY		_var1
@@ -4136,13 +4165,13 @@ loc_61E51:
 loc_61E5F:
 		CMP		_var1
 		BCS		locret_61E6B
-		LDA		_collision_flag
+		LDA		_beamer_hit_flag
 #if DEBUG==1
 ;		ORA		#$00
 #else
 		ORA		#$01
 #endif
-		STA		_collision_flag
+		STA		_beamer_hit_flag
 locret_61E6B:
 		RTS
 
@@ -5661,7 +5690,7 @@ _nsub_players_room_start_pos_init:
 		ROL
 		ASL
 		ASL
-		ADC		_beamer_idxA
+		ADC		_beamer_spr_base_tmp
 		STA		_scr_trds_spr_idx+2
 		LDA		_scr_trds_args1+4
 		ASL
@@ -5669,7 +5698,7 @@ _nsub_players_room_start_pos_init:
 		ROL
 		ASL
 		ASL
-		ADC		_catcher_idxA
+		ADC		_catcher_spr_base_tmp
 		STA		_scr_trds_spr_idx+4
 		PLA
 		STA		_tmp0

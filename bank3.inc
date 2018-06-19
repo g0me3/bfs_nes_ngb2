@@ -222,7 +222,7 @@ locret_2C147:
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl1_boss_judges_tall:
-		NBG_HNDL_SET	_nbgsub_boss_judge_tall_ctest		; regular init, set regular
+		NBG_HNDL_SET	_nbgsub_boss_judge_tall_ctest	; regular init, set regular
 		NJSR			_nsub_patch_pal_load			; palette immediately without any
 			NARGB		$07								; redundant calls this time
 			NARGW		_pal_lvl1_boss_active_patch
@@ -1012,31 +1012,32 @@ _spr_nlib1A_35:
 _scr_boss_train_slime_dead:
 		NJSR			_nsub_players_scr_suspend		; when boss dead, there is another
 		SDELAY			$5A								; scenery, first players are auto controlled
-		NJSR			_nsub_2C90E
+		NJSR			_nsub_lvl_native_handler_disable; custom routine to disable all bg work of level
 		NJSR			_nsub_patch_pal_load
 			NARGB		$02
-			NARGW		byte_2C90A
+			NARGW		_pal_train_slime_dead_patch
 		SDELAY			$50
-		NJSR			_nsub_apu_snd_load_safe
+		NJSR			_nsub_apu_snd_load_safe			; train whistle
 			NARGB		$13
 		SDELAY			$3C
 		SLOOP_BEGIN		$3C
-		STORE8			_scr_trds_y_pos_hi+2,$05
-		STORE8			_scr_trds_y_pos_hi+4,$05
-		SCRL_Y_SET	0,$00,$05
-		POS_Y_SET		1,$00,$05
-		STORE8			_scr_trds_y_pos_hi+2,$06
+		STORE8			_scr_trds_y_pos_hi+2,$05		; now do the scroll trick, set
+		STORE8			_scr_trds_y_pos_hi+4,$05		; level scroll to room 0 then 1,
+		SCRL_Y_SET		0,$00,$05						; do not forget to adjust player's scrolls
+		POS_Y_SET		1,$00,$05						; as well... looks like train
+		STORE8			_scr_trds_y_pos_hi+2,$06		; disappears.
 		STORE8			_scr_trds_y_pos_hi+4,$06
-		SCRL_Y_SET	0,$00,$06
+		SCRL_Y_SET		0,$00,$06
 		POS_Y_SET		1,$00,$06
 		SLOOP_END
-		NJSR			_nsub_stage_complete_force
+		NJSR			_nsub_stage_complete_force		; now stage is complete.
 		SSTOP
-byte_2C90A:
+
+_pal_train_slime_dead_patch:
 		.BYTE	$0F,$0F,$0F,$07
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2C90E:
+_nsub_lvl_native_handler_disable:
 		LDA		#$00
 		ASL
 		TAX
@@ -1050,14 +1051,14 @@ _nsub_2C90E:
 _scr_boss_train_slime_projectileA:
 		NJSR			_nsub_boss_train_slime_projectile_dir_select
 		NJSR			_nsub_new_thread_start			; set random direction up
-			NARGB		$22								; then deploy two more projectiles
+			NARGB		_scr22_lvl2_boss_train_slime_idx; then deploy two more projectiles
 			NARGB		$F8,$00							; to the left and to the right
-			NARGB		$02
+			NARGB		_scr_boss_train_slime_projectileB_idx+1
 			NARGB		$E0
 		NJSR			_nsub_new_thread_start
-			NARGB		$22
+			NARGB		_scr22_lvl2_boss_train_slime_idx
 			NARGB		$08,$00
-			NARGB		$03
+			NARGB		_scr_boss_train_slime_projectileC_idx+1
 			NARGB		$20
 		SPR_IDX_SET		0,$37
 
@@ -1122,74 +1123,80 @@ _scr_boss_train_slime_projectileC:
 
 ; =============== S C R I P T ==========================s====================
 _scr2E_lvl4_boss_dragons:
-		NJSR			_nsub_obj_sarg_add_imm_test
+		NJSR			_nsub_obj_sarg_add_imm_test		;
 			NARGB		SARG0,$FF
 		SJMP_SW			$02
-		SCASE			_sloc_case_2C9AE
-		SCASE			_sloc_case_2CE6C
+		SCASE			_scr_boss_dragon_active
+		SCASE			_scr_boss_dragon_flame
 
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
-		SJSR			_ssub_boss_music_fade_and_load
-		NJSR			_nsub_patch_pal_load
+		SJSR			_ssub_boss_music_fade_and_load	; boss init here, music, palette
+		NJSR			_nsub_patch_pal_load			; and CHR bank
 			NARGB		$07
-			NARGW		byte_2CAA7
+			NARGW		_pal_boss_dragons_patch
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$13
-		SLOOP_BEGIN		$08
+		SLOOP_BEGIN		$08								; now will deploy 8 objects
 _sloc_2C99C:
 		SDELAY			$01
-		NJSR			_nsub_2CADF
-			NARGB		$04
+		NJSR			_nsub_enemy_objects_number_test	; if objects count more than 3, then wait
+			NARGB		$04								; when you catch some
 		SBCS			_sloc_2C99C
-		NJSR			_nsub_new_thread_start
-			NARGB		$2E
+		NJSR			_nsub_new_thread_start			; or else deploy new clone
+			NARGB		_scr2E_lvl4_boss_dragons_idx
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_scr_boss_dragon_active_idx+1
 			NARGB		$00
 		SLOOP_END
 
+; !FALLTHROUGH!
+
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2C9AE:
-		NJSR			_nsub_2CB1B
-		SLOOP_BEGIN		$10
-		SPR_IDX_SET		1,$3B
+_scr_boss_dragon_active:
+		NJSR			_nsub_boss_dragon_start_pos_select	; set the appearance position and
+		SLOOP_BEGIN		$10								; direction,
+		SPR_IDX_SET		1,$3B							; then blink under water phase sprite
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-_sloc_2C9B8:
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_boss_dragon_restart:
 		SARG_SET		SARG0,$00
 _sloc_2C9BB:
-		SPR_IDX_SET		0,$3B
-		NJSR			_nsub_2CB4F
-		NJSR			_nsub_2CAF6
+		SPR_IDX_SET		0,$3B							; retarget at the beginning of the ai loop
+		NJSR			_nsub_boss_dragon_direction_update	; by random
+		NJSR			_nsub_boss_dragon_obstacle_test	; test if any obstacles in given direction
 		SBCC			_sloc_2C9E4
 		SARG_ALU		SARG1,_ADC,$40
-		NJSR			_nsub_2CAF6
+		NJSR			_nsub_boss_dragon_obstacle_test	; test all directions before start moving
 		SBCC			_sloc_2C9E4
 		SARG_ALU		SARG1,_ADC,$80
-		NJSR			_nsub_2CAF6
+		NJSR			_nsub_boss_dragon_obstacle_test
 		SBCC			_sloc_2C9E4
 		SARG_ALU		SARG1,_ADC,$C0
-		NJSR			_nsub_2CAF6
+		NJSR			_nsub_boss_dragon_obstacle_test
 		SBCS			_sloc_2C9BB
 _sloc_2C9E4:
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
-			NARGB		$00,$01
-		SDELAY			$10
+			NARGB		$00,$01							; now set speed
+		SDELAY			$10								; and move
 		POS_MOVE_STOP	0
-		NJSR			_nsub_obj_to_obj_in_range_test
+		NJSR			_nsub_obj_to_obj_in_range_test	; check for the beamer around
 			NARGB		$02,$40
-		SBCC			_sloc_2C9BB
+		SBCC			_sloc_2C9BB						; if no one, continue swimming
 		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$14
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_apu_snd_load_safe			; or else, target on it,
+			NARGB		$14								; play popping up sound
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; show up the dragon itself
 			NARGB		$3C,$40
 		SDELAY			$07
-		SPR_IDX_ADD_IMM 7,$04
-		NBG_HNDL_SET	_nbgsub_2CAAF
-		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 7,$04							; now start active phase, also
+		NBG_HNDL_SET	_nbgsub_boss_dragon_ctest		; catchable
+		SPR_IDX_ADD_IMM 4,$04							; animate popping up
 		SPR_IDX_ADD_IMM 0,$04
 		SDELAY			$18
 		SPR_IDX_ADD_IMM 5,$FC
@@ -1199,15 +1206,15 @@ _sloc_2C9E4:
 		SPR_IDX_ADD_IMM 0,$04
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 0,$FC
-		NJSR			_nsub_apu_snd_load_safe
+		NJSR			_nsub_apu_snd_load_safe			; play fire sound
 			NARGB		$15
 		SLOOP_BEGIN		$20
-		NJSR			_nsub_new_thread_start
-			NARGB		$2E
+		NJSR			_nsub_new_thread_start			; deploy fire projectile
+			NARGB		_scr2E_lvl4_boss_dragons_idx
 			NARGB		$00,$00
-			NARGB		$02
+			NARGB		_scr_boss_dragon_flame_idx+1
 			NARGB		$00
-		SDELAY			$03
+		SDELAY			$03								; hide back
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$04
 		SDELAY			$07
@@ -1217,56 +1224,56 @@ _sloc_2C9E4:
 		SPR_IDX_ADD_IMM 7,$FC
 		SPR_IDX_ADD_IMM 7,$FC
 		SPR_IDX_ADD_IMM 7,$FC
-		NBG_HNDL_RESET
+		NBG_HNDL_RESET									; disable collision test handler, loop
 		SJMP			_sloc_2C9BB
 
 ; =============== S C R I P T ==========================s====================
-_scr_2CA40:
-		NBG_HNDL_SET	_nbgsub_2CAC5
-		SLOOP_BEGIN		$5A
-		SJSR			_ssub_2CA91
+_scr_boss_dragon_stun:
+		NBG_HNDL_SET	_nbgsub_boss_dragon_catch_test	; dragons are gone if beamed for 90 cycles
+		SLOOP_BEGIN		$5A								; two frame each = 3 seconds
+		SJSR			_ssub_boss_dragon_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
-		SBCS_BREAK		_sloc_2CA7E
+		SBCS_BREAK		_sloc_2CA7E						; wait if beam released and break
 		SLOOP_END
-		NJSR			_nsub_is_any_enemy_active
+		NJSR			_nsub_is_any_enemy_active		; test if this is a last object on the level
 		SBCS			_sloc_2CA66
-		NJSR			_nsub_apu_snd_load_safe
+		NJSR			_nsub_apu_snd_load_safe			; if no, play disappear sound
 			NARGB		$22
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; and do disappear animation
 			NARGB		$44,$40
 		SDELAY			$01
-		SPR_IDX_SET		1,$FF
+		SPR_IDX_SET		1,$FF							; remove object and stop thread then
 		SLOOP_END
 		SSTOP
 _sloc_2CA66:
-		SARG_SET		SARG0,$02
-		NJSR			_nsub_patch_pal_load
+		SARG_SET		SARG0,$02						; when last one, turn it read
+		NJSR			_nsub_patch_pal_load			; and wait for catch as usual
 			NARGB		$07
-			NARGW		byte_2CAAB
+			NARGW		_pal_boss_dragons_red_patch
 _sloc_2CA6F:
-		SJSR			_ssub_2CA91
+		SJSR			_ssub_boss_dragon_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2CA6F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_2CAA7
+			NARGW		_pal_boss_dragons_patch
 _sloc_2CA7E:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sloc_case_2CA89
-		SCASE			_scr_2CA9B
-		SCASE			_scr_2CAA1
+		SCASE			_scr_boss_dragon_retire
+		SCASE			_scr_boss_dragon_catch_anim_L
+		SCASE			_scr_boss_dragon_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CA89:
+_scr_boss_dragon_retire:
 		NBG_HNDL_RESET
 		SPR_IDX_ADD_IMM 6,$F4
 		SPR_IDX_ADD_IMM 6,$FC
-		SJMP			_sloc_2C9B8
+		SJMP			_scr_boss_dragon_restart
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_2CA91:
+_ssub_boss_dragon_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$44,$40
 		SDELAY			$01
@@ -1274,27 +1281,28 @@ _ssub_2CA91:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2CA9B:
+_scr_boss_dragon_catch_anim_L:
 		SARG_SET		SARG1,$50
 		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_2CAA1:
+_scr_boss_dragon_catch_anim_R:
 		SARG_SET		SARG1,$52
 		SJMP			_ssub_common_catch_anim_R_snd19
-byte_2CAA7:
+
+_pal_boss_dragons_patch:
 		.BYTE	$0F,$25,$16,$0F
-byte_2CAAB:
+_pal_boss_dragons_red_patch:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2CAAF:
+_nbgsub_boss_dragon_ctest:
 		LDX		#$10
 		LDY		#$10
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2CABE
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2CA40
+		.WORD	_scr_boss_dragon_stun
 		RTS
 loc_2CABE:
 		LDX		#$15
@@ -1302,7 +1310,7 @@ loc_2CABE:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2CAC5:
+_nbgsub_boss_dragon_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2CADE
@@ -1311,16 +1319,16 @@ _nbgsub_2CAC5:
 		STA		_scores_obj_value
 		BCS		loc_2CAD9
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2CA9B
+		.WORD	_scr_boss_dragon_catch_anim_L
 		RTS
 loc_2CAD9:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2CAA1
+		.WORD	_scr_boss_dragon_catch_anim_R
 locret_2CADE:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2CADF:
+_nsub_enemy_objects_number_test:
 		JSR		_scr_getc
 		STA		_tmp0
 		LDY		#$00
@@ -1337,7 +1345,7 @@ loc_2CAEE:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2CAF6:
+_nsub_boss_dragon_obstacle_test:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,Y
 		ASL
@@ -1355,21 +1363,22 @@ _nsub_2CAF6:
 loc_2CB11:
 		SEC
 		RTS
+
 byte_2CB13:
 		.BYTE	$FF,$D0,$FF,$30
 byte_2CB17:
 		.BYTE	$30,$FF,$A0,$FF
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2CB1B:
-		LDA		#$0B
-		JSR		_rand
-		PHA
+_nsub_boss_dragon_start_pos_select:
+		LDA		#$0B						; select two random numbers
+		JSR		_rand						; $03-$0E and
+		PHA									; $03-$0A
 		LDA		#$08
 		JSR		_rand
 		CLC
-		ADC		#$03
-		ASL
+		ADC		#$03						; this selecting one of the floor
+		ASL									; cells
 		ASL
 		ASL
 		ASL
@@ -1384,17 +1393,17 @@ _nsub_2CB1B:
 		ASL
 		ASL
 		ASL
-		STA		_scr_trds_x_pos_lo,X
+		STA		_scr_trds_x_pos_lo,X		; set current location of the object
 		LDA		#$03
 		STA		_scr_trds_x_pos_hi,X
 		LDA		#$00
 		JSR		_rand
 		AND		#$C0
-		STA		_scr_trds_args1,X
-		RTS
+		STA		_scr_trds_args1,X			; then select movement direction
+		RTS									; also randomly
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2CB4F:
+_nsub_boss_dragon_direction_update:
 		LDA		#$00
 		JSR		_rand
 		LSR
@@ -1405,6 +1414,7 @@ _nsub_2CB4F:
 		STA		_scr_trds_args1,X
 locret_2CB5E:
 		RTS
+
 _spr_nlib1A_3B:
 		.BYTE	$03
 		.BYTE	$08,$82,$00,$F4
@@ -1646,58 +1656,63 @@ _spr_nlib1A_51:
 		.BYTE	$07,$8E,$03,$F9
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CE6C:
+_scr_boss_dragon_flame:
 		SARG_SET		SARG0,$00
-		NJSR			_nsub_sarg1_direction_extract
-		SJMP_SW			$04
-		SCASE			_sloc_case_2CE7C
-		SCASE			_sloc_case_2CE8A
-		SCASE			_sloc_case_2CE81
-		SCASE			_sloc_case_2CE95
+		NJSR			_nsub_sarg1_direction_extract	; four kinds of flame sprites
+		SJMP_SW			$04								; for four directions
+		SCASE			_scr_boss_dragon_flame_U
+		SCASE			_scr_boss_dragon_flame_R
+		SCASE			_scr_boss_dragon_flame_D
+		SCASE			_scr_boss_dragon_flame_L
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CE7C:
+_scr_boss_dragon_flame_U:
 		POS_Y_MOVE		0,$CD
-		SJMP			_sloc_2CE83
+		SJMP			_scr_boss_dragon_flame_vert
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CE81:
+_scr_boss_dragon_flame_D:
 		POS_Y_MOVE		0,$22
-_sloc_2CE83:
-		NBG_HNDL_SET	_nbgsub_2CEA0
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_boss_dragon_flame_vert:
+		NBG_HNDL_SET	_nbgsub_dragon_flame_vert_ctest
 		SPR_IDX_SET		1,$54
 		SPR_IDX_INC		2
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CE8A:
+_scr_boss_dragon_flame_R:
 		POS_X_MOVE		0,$2F
 		POS_Y_MOVE		0,$04
-		NBG_HNDL_SET	_nbgsub_2CEA7
+		NBG_HNDL_SET	_nbgsub_dragon_flame_hor_ctest
 		SPR_IDX_SET		1,$58
 		SPR_IDX_INC		2
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CE95:
+_scr_boss_dragon_flame_L:
 		POS_X_MOVE		0,$D1
 		POS_Y_MOVE		0,$04
-		NBG_HNDL_SET	_nbgsub_2CEA7
+		NBG_HNDL_SET	_nbgsub_dragon_flame_hor_ctest
 		SPR_IDX_SET		1,$56
 		SPR_IDX_INC		2
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2CEA0:
+_nbgsub_dragon_flame_vert_ctest:
 		LDX		#$09
 		LDY		#$24
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2CEA7:
+_nbgsub_dragon_flame_hor_ctest:
 		LDX		#$23
 		LDY		#$0A
 		JMP		_obj_to_player_ctest
+
 _spr_nlib1A_54:
 		.BYTE	$03
 		.BYTE	$E3,$92,$01,$FC
@@ -1743,16 +1758,16 @@ _scr2F_lvl5_boss_key_keeper:
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SJSR			_ssub_boss_music_fade_and_load
-		NJSR			_nsub_2D26C
-		NJSR			_nsub_spr_pal_load
-			NARGW		byte_2D150
+		NJSR			_nsub_boss_keykeeper_init		; init internal extra vast here
+		NJSR			_nsub_spr_pal_load				; the rest is usual
+			NARGW		_pal_spr_boss_keykeeper
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$18
 		SARG_SET		SARG1,$40
-		NJSR			_nsub_new_thread_start
-			NARGB		$2F
+		NJSR			_nsub_new_thread_start			; deploy another boss instance
+			NARGB		_scr2F_lvl5_boss_key_keeper_idx
 			NARGB		$00,$00
-			NARGB		$01
+			NARGB		_sloc_case_2CFB4_idx+1
 			NARGB		$00
 		NJSR			_nsub_2D257
 		SSCRIPT1_SET	_scr_2CFA1
@@ -1767,9 +1782,9 @@ _sloc_2CF30:
 		SDELAY			$28
 		NJSR			_nsub_2D282
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F
+			NARGB		_scr2F_lvl5_boss_key_keeper_idx
 			NARGB		$00,$00
-			NARGB		$02
+			NARGB		_sloc_case_2CFCC_idx+1
 			NARGB		$00
 		NJSR			_nsub_2D257
 		SDELAY			$B4
@@ -1780,7 +1795,7 @@ _sloc_2CF51:
 		SSCRIPT1_OFF
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_2D15C
+			NARGW		_pal_spr_boss_keykeeper+$0C
 
 ; =============== S C R I P T ==========================s====================
 _sloc_case_2CF60:
@@ -1796,6 +1811,10 @@ _sloc_case_2CF60:
 		NJSR			_nsub_2D215
 		NJSR			_nsub_2D1BF
 			NARGW		_sloc_2D002
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
 _sloc_2CF73:
 		SDELAY			$01
 		NJSR			_nsub_mcmp
@@ -1824,11 +1843,11 @@ _sloc_2CF89:
 _scr_2CFA1:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_2D160
+			NARGW		_pal_boss_keykeeper_patch
 		SDELAY			$02
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		byte_2D15C
+			NARGW		_pal_spr_boss_keykeeper+$0C
 		SDELAY			$02
 		SJMP			_scr_2CFA1
 
@@ -1839,7 +1858,7 @@ _sloc_case_2CFB4:
 			NARGB		$5A,$40
 		SDELAY			$28
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F
+			NARGB		_scr2F_lvl5_boss_key_keeper_idx
 			NARGB		$00,$00
 			NARGB		$02
 			NARGB		$00
@@ -1881,7 +1900,7 @@ _sloc_2D002:
 		NJSR			_nsub_2D1B1
 		SDELAY			$01
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F
+			NARGB		_scr2F_lvl5_boss_key_keeper_idx
 			NARGB		$00,$00
 			NARGB		$04
 			NARGB		$00
@@ -2038,7 +2057,7 @@ _scr_2D122:
 		NJSR			_nsub_2D1A8
 		SBCC			_sloc_2D133
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F
+			NARGB		_scr2F_lvl5_boss_key_keeper_idx
 			NARGB		$00,$18
 			NARGB		$03
 			NARGB		$00
@@ -2052,18 +2071,17 @@ _scr_2D139:
 		NJSR			_nsub_2D1A8
 		SBCC			_sloc_2D14A
 		NJSR			_nsub_new_thread_start
-			NARGB		$2F
+			NARGB		_scr2F_lvl5_boss_key_keeper_idx
 			NARGB		$00,$18
 			NARGB		$03
 			NARGB		$00
 _sloc_2D14A:
 		SARG_SET		SARG1,$74
 		SJMP			_ssub_common_catch_anim_R_snd19
-byte_2D150:
-		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$25,$15,$0F
-byte_2D15C:
-		.BYTE	$0F,$36,$1B,$0F
-byte_2D160:
+
+_pal_spr_boss_keykeeper:
+		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$25,$15,$0F,$0F,$36,$1B,$0F
+_pal_boss_keykeeper_patch:
 		.BYTE	$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2257,7 +2275,7 @@ loc_2D266:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D26C:
+_nsub_boss_keykeeper_init:
 		LDA		#$FF
 		STA		byte_7D7
 		STA		byte_7D7+1
@@ -2351,6 +2369,7 @@ loc_2D2F1:
 loc_2D2F3:
 		CLC
 		RTS
+
 _spr_nlib1A_6B:
 		.BYTE	$0C
 		.BYTE	$08,$84,$42,$08
@@ -2804,6 +2823,7 @@ _nsub_2D848:
 		ADC		#$7A
 		STA		_scr_trds_args2,Y
 		RTS
+
 byte_2D886:
 		.BYTE	$00,$05,$00,$FB
 byte_2D88A:
@@ -3561,6 +3581,7 @@ _lvl6_boss_vega_sub4:
 		SLOOP_END
 		POS_MOVE_STOP	0
 		SUSPEND
+
 _spr_nlib1A:
 		.WORD	_spr_nlib1A_00
 		.WORD	_spr_nlib1A_01

@@ -3218,52 +3218,52 @@ _sample_2DA:
 		ALOOP_END
 		ASTOP
 _samples_lib:
-		SMPL_PTR	_sample00,	_sample_00A,_sample_00B
-		SMPL_PTR	_sample01,	_sample_01A,_sample_00B
-		SMPL_PTR	_sample02,	_sample_02A,_sample_00B
-		SMPL_PTR	_sample03,	_sample_03A,_sample_00B
-		SMPL_PTR	_sample04,	_sample_04A,_sample_00B
-		SMPL_PTR	_sample05,	_sample_05A,_sample_05B
-		SMPL_PTR	_sample06,	_sample_05A,_sample_06B
-		SMPL_PTR	_sample07,	_sample_07A,_sample_05B
-		SMPL_PTR	_sample08,	_sample_08A,_sample_05B
-		SMPL_PTR	_sample09,	_sample_08A,_sample_06B
-		SMPL_PTR	_sample0A,	_sample_0AA,_sample_05B
-		SMPL_PTR	_sample0B,	_sample_0AA,_sample_06B
-		SMPL_PTR	_sample0C,	_sample_0CA,_sample_05B
-		SMPL_PTR	_sample0D,	_sample_07A,_sample_06B
-		SMPL_PTR	_sample0E,	_sample_0EA,_sample_05B
-		SMPL_PTR	_sample0F,	_sample_0EA,_sample_06B
-		SMPL_PTR	_sample10,	_sample_10A,_sample_05B
-		SMPL_PTR	_sample11,	_sample_10A,_sample_06B
-		SMPL_PTR	_sample12,	_sample_12A,_sample_05B
-		SMPL_PTR	_sample13,	_sample_13A,_sample_05B
-		SMPL_PTR	_sample14,	_sample_14A,_sample_05B
-		SMPL_PTR	_sample15,	_sample_15A,_sample_15B
-		SMPL_PTR	_sample16,	_sample_15A,_sample_16B
-		SMPL_PTR	_sample17,	_sample_17A,_sample_15B
-		SMPL_PTR	_sample18,	_sample_17A,_sample_16B
-		SMPL_PTR	_sample19,	_sample_19A,_sample_00B
-		SMPL_PTR	_sample1A,	_sample_1AA,_sample_1AB
-		SMPL_PTR	_sample1B,	_sample_19A,_sample_00B
-		SMPL_PTR	_sample1C,	_sample_1CA,_sample_06B
-		SMPL_PTR	_sample1D,	_sample_1DA,_sample_1DB
-		SMPL_PTR	_sample1E,	_sample_1EA,_sample_06B
-		SMPL_PTR	_sample1F,	_sample_1FA,_sample_16B
-		SMPL_PTR	_sample20,	_sample_20A,_sample_1DB
-		SMPL_PTR	_sample21,	_sample_21A,_sample_00B
-		SMPL_PTR	_sample22,	_sample_22A,_sample_22B
-		SMPL_PTR	_sample23,	_sample_23A,_sample_00B
-		SMPL_PTR	_sample24,	_sample_24A,_sample_22B
-		SMPL_PTR	_sample25,	_sample_25A,_sample_25B
-		SMPL_PTR	_sample26,	_sample_26A,_sample_00B
-		SMPL_PTR	_sample27,	_sample_27A,_sample_00B
-		SMPL_PTR	_sample28,	_sample_28A,_sample_22B
-		SMPL_PTR	_sample29,	_sample_29A,_sample_22B
-		SMPL_PTR	_sample2A,	_sample_2AA,_sample_16B
-		SMPL_PTR	_sample2B,	_sample_2BA,_sample_2BB
-		SMPL_PTR	_sample2C,	_sample_2CA,_sample_2BB
-		SMPL_PTR	_sample2D,	_sample_2DA,_sample_22B
+		SMPL_PTR	_sample00,_sample_00A,_sample_00B
+		SMPL_PTR	_sample01,_sample_01A,_sample_00B
+		SMPL_PTR	_sample02,_sample_02A,_sample_00B
+		SMPL_PTR	_sample03,_sample_03A,_sample_00B
+		SMPL_PTR	_sample04,_sample_04A,_sample_00B
+		SMPL_PTR	_sample05,_sample_05A,_sample_05B
+		SMPL_PTR	_sample06,_sample_05A,_sample_06B
+		SMPL_PTR	_sample07,_sample_07A,_sample_05B
+		SMPL_PTR	_sample08,_sample_08A,_sample_05B
+		SMPL_PTR	_sample09,_sample_08A,_sample_06B
+		SMPL_PTR	_sample0A,_sample_0AA,_sample_05B
+		SMPL_PTR	_sample0B,_sample_0AA,_sample_06B
+		SMPL_PTR	_sample0C,_sample_0CA,_sample_05B
+		SMPL_PTR	_sample0D,_sample_07A,_sample_06B
+		SMPL_PTR	_sample0E,_sample_0EA,_sample_05B
+		SMPL_PTR	_sample0F,_sample_0EA,_sample_06B
+		SMPL_PTR	_sample10,_sample_10A,_sample_05B
+		SMPL_PTR	_sample11,_sample_10A,_sample_06B
+		SMPL_PTR	_sample12,_sample_12A,_sample_05B
+		SMPL_PTR	_sample13,_sample_13A,_sample_05B
+		SMPL_PTR	_sample14,_sample_14A,_sample_05B
+		SMPL_PTR	_sample15,_sample_15A,_sample_15B
+		SMPL_PTR	_sample16,_sample_15A,_sample_16B
+		SMPL_PTR	_sample17,_sample_17A,_sample_15B
+		SMPL_PTR	_sample18,_sample_17A,_sample_16B
+		SMPL_PTR	_sample19,_sample_19A,_sample_00B
+		SMPL_PTR	_sample1A,_sample_1AA,_sample_1AB
+		SMPL_PTR	_sample1B,_sample_19A,_sample_00B
+		SMPL_PTR	_sample1C,_sample_1CA,_sample_06B
+		SMPL_PTR	_sample1D,_sample_1DA,_sample_1DB
+		SMPL_PTR	_sample1E,_sample_1EA,_sample_06B
+		SMPL_PTR	_sample1F,_sample_1FA,_sample_16B
+		SMPL_PTR	_sample20,_sample_20A,_sample_1DB
+		SMPL_PTR	_sample21,_sample_21A,_sample_00B
+		SMPL_PTR	_sample22,_sample_22A,_sample_22B
+		SMPL_PTR	_sample23,_sample_23A,_sample_00B
+		SMPL_PTR	_sample24,_sample_24A,_sample_22B
+		SMPL_PTR	_sample25,_sample_25A,_sample_25B
+		SMPL_PTR	_sample26,_sample_26A,_sample_00B
+		SMPL_PTR	_sample27,_sample_27A,_sample_00B
+		SMPL_PTR	_sample28,_sample_28A,_sample_22B
+		SMPL_PTR	_sample29,_sample_29A,_sample_22B
+		SMPL_PTR	_sample2A,_sample_2AA,_sample_16B
+		SMPL_PTR	_sample2B,_sample_2BA,_sample_2BB
+		SMPL_PTR	_sample2C,_sample_2CA,_sample_2BB
+		SMPL_PTR	_sample2D,_sample_2DA,_sample_22B
 byte_533FD:
 		.BYTE	$01,$02,$03,$04,$05,$06,$07,$0E,$15,$1C,$23,$38,$08,$10,$18,$20
 		.BYTE	$80,$40,$08,$10,$18,$20,$28,$30,$06,$0C,$12,$18,$1E,$24,$05,$0A

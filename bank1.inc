@@ -3594,7 +3594,7 @@ _pause_screen_anim:
 		LDA		#$00						; custom sprite insert routine
 		STA		_tmpD8
 		STA		_tmpD9
-		LDA		_beamer_idxA				; using the beamer spr idx
+		LDA		_beamer_spr_base_tmp				; using the beamer spr idx
 		AND		#$F0						; animate it based on frames counter
 		LSR
 		LSR

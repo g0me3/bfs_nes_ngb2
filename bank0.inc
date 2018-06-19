@@ -919,8 +919,8 @@ _scr_select_busters:
 			NARGW		_pal_select_busters
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$06
-		STORE8			_beamer_idxA,$FF				; no players selected yet, reset
-		STORE8			_catcher_idxA,$FF
+		STORE8			_beamer_spr_base_tmp,$FF				; no players selected yet, reset
+		STORE8			_catcher_spr_base_tmp,$FF
 		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
 		STORE8			_cur_room_x_pageB,$00			; not by its ingame meanings
 		POS_X_SET		0,$00,$01						; main offset for screen objects here
@@ -983,14 +983,14 @@ _pal_select_busters:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_idx_init:
-		LDY		_beamer_idxA
+		LDY		_beamer_spr_base_tmp
 		LDA		byte_8BC3,Y
-		STA		_beamer_idxA
-		STA		_beamer_idxB
-		LDY		_catcher_idxA
+		STA		_beamer_spr_base_tmp
+		STA		_beamer_spr_base
+		LDY		_catcher_spr_base_tmp
 		LDA		byte_8BC3,Y
-		STA		_catcher_idxA
-		STA		_catcher_idxB
+		STA		_catcher_spr_base_tmp
+		STA		_catcher_spr_base
 		RTS
 byte_8BC3:
 		.BYTE	$00,$10,$20,$30,$40
@@ -1011,7 +1011,7 @@ loc_8BD5:
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8BE1:
-		CMP		_beamer_idxA				; skip if first player already selected
+		CMP		_beamer_spr_base_tmp				; skip if first player already selected
 		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
 		LDA		_pad0_pressed
@@ -1026,7 +1026,7 @@ loc_8BF1:
 		STA		_scr_trds_args0,X
 loc_8BF9:
 		LDA		_scr_trds_args0,X
-		CMP		_beamer_idxA
+		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8BF1
 loc_8C00:
 ; TODO: very annoying, title accepts only START, select busters only A
@@ -1041,12 +1041,12 @@ loc_8C00:
 		LDA		#$0C
 		JSR		_far_prg6_apu_snd_load_safe	; init one of two players indexes
 		LDA		_scr_trds_args0,X
-		LDY		_beamer_idxA
+		LDY		_beamer_spr_base_tmp
 		BPL		loc_8C17
-		STA		_beamer_idxA
+		STA		_beamer_spr_base_tmp
 		BMI		loc_8C1A
 loc_8C17:
-		STA		_catcher_idxA
+		STA		_catcher_spr_base_tmp
 loc_8C1A:
 		LDA		#$FF
 		STA		_scr_trds_spr_idx,X			; disable obj name sprite, jump to
@@ -1060,7 +1060,7 @@ loc_8C23:
 		LDA		#$00
 		STA		_scr_trds_args0,X
 loc_8C2F:
-		CMP		_beamer_idxA
+		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8C23
 		SEC									; when selection is done, set carry to
 		RTS									; signal the main code to do next part
@@ -1294,7 +1294,7 @@ _scr_buster_walk_left_anim:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_beamer_selected:
-		LDA		_beamer_idxA				; names are selfexplanatory here and below
+		LDA		_beamer_spr_base_tmp				; names are selfexplanatory here and below
 		BPL		loc_8DE4
 		CLC
 		RTS
@@ -1305,7 +1305,7 @@ loc_8DE4:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_cur_buster_select_for_beam_player:
 		LDX		_scr_cur_trd_idx
-		LDA		_beamer_idxA
+		LDA		_beamer_spr_base_tmp
 		CMP		_scr_trds_args0,X
 		BEQ		loc_8DF1
 		CLC
@@ -1316,7 +1316,7 @@ loc_8DF1:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_catcher_selected:
-		LDA		_catcher_idxA
+		LDA		_catcher_spr_base_tmp
 		BPL		loc_8DFA
 		CLC
 		RTS
@@ -1327,7 +1327,7 @@ loc_8DFA:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_cur_buster_select_for_catch_player:
 		LDX		_scr_cur_trd_idx
-		LDA		_catcher_idxA
+		LDA		_catcher_spr_base_tmp
 		CMP		_scr_trds_args0,X
 		BEQ		loc_8E07
 		CLC
@@ -1519,9 +1519,9 @@ _nbgsub_secret_menu_exit_wait:
 		BEQ		locret_8FAA
 		LDX		_menu_controls_idx			; apply changes to the game vars
 		LDA		_ab_controls_,X
-		STA		_control_jump_button_code
+		STA		_control_beam_button_code
 		LDA		_ba_controls_,X
-		STA		_control_fire_button_code
+		STA		_control_catch_button_code
 		LDA		_menu_difficulty_idx
 		STA		_difficulty
 		LDA		#$FF
