@@ -15,8 +15,16 @@ _nmi_flag:
 		.BYTE	0
 _pad0_held:
 		.BYTE	0
+#if TWO_PLAYER_MODE==1
+_pad1_held:
+		.BYTE	0
+#endif
 _pad0_pressed:
 		.BYTE	0
+#if TWO_PLAYER_MODE==1
+_pad1_pressed:
+		.BYTE	0
+#endif
 _ptr06:
 		.BYTE	0,0
 _ptr08:
@@ -53,8 +61,17 @@ _tmp1A:
 		.BYTE	0
 _tmp1B:
 		.BYTE	0
+#if TWO_PLAYER_MODE==1
+_tmp1C:
+		.BYTE	0
+_tmp1D:
+		.BYTE	0
+_unused_12:
+		.BYTE	0		; NOTE: compatibility issues, remove me if no any left
+#else
 _unused_12:
 		.BYTE	0,0,0,0,0
+#endif
 _random_seed:
 		.BYTE	0,0
 _mmc1_ctrl_shadow:
@@ -437,14 +454,20 @@ _catcher_turns_count:
 		.BYTE	0
 _beamer_direction_idx:
 		.BYTE	0
+#if TWO_PLAYER_MODE==1
+_catcher_direction_idx:
+		.BYTE	0
+#endif
 _beamer_speed:
 		.BYTE	0,0
 _catcher_speed:
 		.BYTE	0,0
 _tmp_idx:
 		.BYTE	0
+#if TWO_PLAYER_MODE==0
 _catcher_direction_idx:
 		.BYTE	0
+#endif
 _beamer_spr_base_tmp:
 		.BYTE	0
 _catcher_spr_base_tmp:
@@ -457,8 +480,11 @@ _catcher_target_slot_idx:
 		.BYTE	0
 _catcher_target_distance:
 		.BYTE	0
-_beamer_hit_flag:
+_players_hit_flag:
 		.BYTE	0
+#if TWO_PLAYER_MODE==1
+		.BYTE	0
+#endif
 _cur_room_orientation_idx:
 		.BYTE	0
 _cur_room_data_col:
@@ -481,10 +507,16 @@ _scores:
 		.BYTE	0,0
 _hi_scores:
 		.BYTE	0,0
-_lives:
+_players_lives:
 		.BYTE	0
-_beamer_inv_timer:
+#if TWO_PLAYER_MODE==1
 		.BYTE	0
+#endif
+_players_inv_timer:
+		.BYTE	0
+#if TWO_PLAYER_MODE==1
+		.BYTE	0
+#endif
 _game_flags:
 		.BYTE	0
 _continues:
@@ -515,9 +547,6 @@ _control_beam_button_code:
 		.BYTE	0
 _control_catch_button_code:
 		.BYTE	0
-_unused_15:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 ;--------------------P-P-U----------------------
 

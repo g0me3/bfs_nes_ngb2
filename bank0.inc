@@ -2128,14 +2128,17 @@ _nsub_ending_scores_draw:
 		LDA		#$FF						; disable lives bonus vars
 		STA		_scores_to_next_live
 		STA		_scores_to_next_live+1
-		LDA		_lives						; if you finish the game with more
+		LDA		_players_lives				; if you finish the game with more
 		BEQ		loc_9436
 loc_942C:
 		LDA		#$64						; add 100x scores for every life
 		JSR		_scores_add
-		DEC		_lives
+		DEC		_players_lives
 		BNE		loc_942C
 loc_9436:
+#if TWO_PLAYER_MODE==1
+; TODO: second players lives add to scores?
+#endif
 		JSR		_ppu_res_send_param			; draw text resources
 		.WORD	_res_top_score
 		JSR		_ppu_res_send_param

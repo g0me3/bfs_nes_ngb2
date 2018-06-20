@@ -3539,7 +3539,7 @@ _nsub_ingame_pause_handler:
 		PHA
 		LDA		#_tlm1_score_idx			; draw pause static info tile-map
 		JSR		_far_prg0_tlm_lib_unpack
-		JSR		_nsub_scores_and_lives_draw	; draw pause dynamic info (scores, lives)
+		JSR		_nsub_scores_and_players_lives_draw	; draw pause dynamic info (scores, lives)
 		JSR		_ppu_res_send_param			; send palette
 		.WORD	_res_pause_pal
 loc_15EA2:
@@ -3661,7 +3661,7 @@ _scr_stage_complete:
 		SLOOP_END
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; now unpack tlm for scores info
 			NARGB		_tlm1_score_idx
-		NJSR			_nsub_scores_and_lives_draw		; draw the same info as for pause screen
+		NJSR			_nsub_scores_and_players_lives_draw		; draw the same info as for pause screen
 		NJSR			_nsub_bg_pal_load
 			NARGW		_stage_complete_bg_pal
 		NJSR			_nsub_scroll_page_set			; reset scrolls
@@ -3737,11 +3737,11 @@ _stage_complete_patch_pal_list:
 		.BYTE	$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_scores_and_lives_draw:
+_nsub_scores_and_players_lives_draw:
 		LDA		#$05
 		JSR		_mmc1_chr1_set
 		JSR		_ppu_spr_fill_F1
-		LDA		_lives						; convert binary lives to decimal
+		LDA		_players_lives				; convert binary lives to decimal
 		LDX		#$00
 		JSR		_bin2dec
 		LDA		_var3						; check if high digit is zero
@@ -3758,6 +3758,9 @@ loc_16050:
 		LDX		#$15
 		LDY		#$16
 		JSR		_ppu_offset_calc			; helper routine to calc ppu position
+#if TWO_PLAYER_MODE==1
+; TODO: second players lives display on pause and stage complete screens
+#endif
 		LDX		#$01
 		STX		_tmp_buf+3
 		INX

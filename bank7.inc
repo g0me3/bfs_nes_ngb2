@@ -139,7 +139,10 @@ _MAIN_GAME_LOOP:
 		LDA		#$04
 		SEC
 		SBC		_difficulty
-		STA		_lives
+		STA		_players_lives
+#if TWO_PLAYER_MODE==1
+		STA		_players_lives+1
+#endif
 loc_60112:
 		LDA		#$00
 		STA		_lvl_cur_checkpoint_idx
@@ -333,10 +336,12 @@ _spr_nlib08_AE:
 
 ; =============== S C R I P T ==========================s====================
 _scr08_beamer_handler:
-		STORE8			_beamer_hit_flag,$00				; set when hit by ghost
-		STORE8			_beamer_inv_timer,$00			; set when restores after hit
+		STORE8			_players_hit_flag,$00			; set when hit by ghost
+		STORE8			_players_inv_timer,$00			; set when restores after hit
 		STORE16			_beamer_speed,$180				; initial value for speed
 		NJSR			_nsub_beamer_spr_base_reset		; copy tmp value to current index
+
+; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
 _scr_beamer_reinit:
@@ -350,6 +355,41 @@ _sloc_6029B:
 		NBG_HNDL_SET	_nbgsub_beamer_controlA
 		SUSPEND
 
+#if TWO_PLAYER_MODE==1
+; =============== S C R I P T ==========================s====================
+_scr_beamer_hit_anim:
+		SJSR			_ssub_common_hit_anim
+		SBCC			_scr_beamer_reinit
+		SSTOP
+
+; =============== S C R I P T ==========================s====================
+_scr_catcher_hit_anim:
+		SJSR			_ssub_common_hit_anim
+		SBCC			_scr_catcher_reinit
+		SSTOP
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_common_hit_anim:
+		NJSR			_nsub_apu_snd_load_safe
+			NARGB		$04
+		SLOOP_BEGIN		$1E
+		NJSR			_nsub_beamer_hit_spr_select
+		SDELAY			$03
+		SARG_ALU		SARG1,_ADC,$40
+		SLOOP_END
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+			NARGB		$A0,$40
+		SDELAY			$02
+		SPR_IDX_ADD_IMM 2,$04
+		SPR_IDX_ADD_IMM 4,$04
+		SPR_IDX_ADD_IMM 2,$FC
+		SPR_IDX_ADD_IMM 0,$FC
+		SDELAY			$28
+		SPR_IDX_SET		0,$FF
+		SDELAY			$3C
+		NJSR			_nsub_beamer_decrement_players_lives
+		SRET
+#else
 ; =============== S C R I P T ==========================s====================
 ; called from native routine, replaces previously suspended thread
 ; above, will return the control to it if has lives.
@@ -358,7 +398,7 @@ _scr_beamer_hit_anim:
 		NJSR			_nsub_apu_snd_load_safe			; start hit sound and do rotating
 			NARGB		$04								; animation
 		SLOOP_BEGIN		$1E
-		NJSR			_nsub_beamer_spr_idx_set
+		NJSR			_nsub_beamer_hit_spr_select
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_END
@@ -372,9 +412,10 @@ _scr_beamer_hit_anim:
 		SDELAY			$28
 		SPR_IDX_SET		0,$FF
 		SDELAY			$3C
-		NJSR			_nsub_beamer_decrement_lives	; if lives is over, stop thread
+		NJSR			_nsub_beamer_decrement_players_lives	; if lives is over, stop thread
 		SBCC			_scr_beamer_reinit				; or restore object
 		SSTOP
+#endif
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl3_beamer_auto_script:
@@ -424,16 +465,16 @@ _nbgsub_beamer_controlB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_beamer_controlA:
-		LDA		_beamer_hit_flag				; regular beamer player native handler
+		LDA		_players_hit_flag			; regular beamer player native handler
 		LSR									; test for collision flag is set
 		BCC		loc_60316
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_beamer_hit_anim
 		RTS
 loc_60316:
-		LDA		_beamer_inv_timer			; also run after hit timer
+		LDA		_players_inv_timer			; also run after hit timer
 		BEQ		loc_6031E
-		DEC		_beamer_inv_timer
+		DEC		_players_inv_timer
 loc_6031E:
 		JSR		_beamer_control_move_test
 		JSR		_beamer_spr_selector
@@ -517,8 +558,15 @@ _nsub_beamer_spr_base_reset:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_beamer_decrement_lives:
-		DEC		_lives						; if lives is over, return C=1
+_nsub_beamer_decrement_players_lives:
+#if TWO_PLAYER_MODE==1
+		LDX		_scr_cur_trd_idx
+		LDA		_scr_trds_args2,X
+		TAX
+		DEC		_players_lives,X
+#else
+		DEC		_players_lives				; if lives is over, return C=1
+#endif
 		BNE		loc_603B7					; to stop beamer thread also start
 		LDX		#$00						; game over script instatnly
 		JSR		_thread_reload_param_ex
@@ -526,10 +574,20 @@ _nsub_beamer_decrement_lives:
 		SEC
 		RTS
 loc_603B7:
+#if TWO_PLAYER_MODE==1
+		LDX		_scr_cur_trd_idx
+		LDA		_scr_trds_args2,X
+		TAX
 		LDA		#$00						; otherwise, clear hit flag
-		STA		_beamer_hit_flag
+		STA		_players_hit_flag,X
 		LDA		#$78						; init temporary invulnerability
-		STA		_beamer_inv_timer
+		STA		_players_inv_timer,X
+#else
+		LDA		#$00						; otherwise, clear hit flag
+		STA		_players_hit_flag
+		LDA		#$78						; init temporary invulnerability
+		STA		_players_inv_timer
+#endif
 		CLC
 		RTS
 
@@ -844,7 +902,61 @@ loc_60595:
 		STA		_scr_trds_x_pos_lo,X
 		RTS
 
+#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
+_beamer_direction_calc:
+		TYA
+		PHA
+		LDX		_scr_cur_trd_idx
+		LDY		_scr_trds_args2,X
+		LDA		_pad0_held,Y
+		LSR
+		BCC		loc_605AC
+		LDA		#$40
+		BNE		loc_605BE
+loc_605AC:
+		LSR
+		BCC		loc_605A2
+		LDA		#$C0
+		BNE		loc_605BE
+loc_605A2:
+		LSR
+		BCC		loc_605B6
+		LDA		#$80
+		BNE		loc_605BE
+loc_605B6:
+		LSR
+		BCC		locret_605C6
+		LDA		#$00
+loc_605BE:
+		STA		_scr_trds_args1,X
+		ASL
+		ROL
+		ROL
+		STA		_beamer_direction_idx,Y
+locret_605C6:
+		PLA
+		TAY
+		RTS
+#else
+; =============== S U B R O U T I N E ======n================================
+; TODO: there is a problem with suck method of D-Pad test, a priority.
+; if you hold one button and then press and hold another, you may not
+; move in a new direction, because previous button has a priority
+; and handled first.
+; here is a table for this routine:
+;
+; LEFT+UP	=UP
+; LEFT+DOWN	=DOWN
+; RIGHT+UP	=UP
+; RIGHT+DOWN=RIGHT
+; UP+RIGHT	=UP
+; UP+LEFT	=UP
+; DOWN+LEFT =DOWN
+; DOWN+RIGHT=RIGHT
+;
+; the main problem here is to deterine what button is held last
+;
 _beamer_direction_calc:
 		LDA		_pad0_held					; set base sprite direction as well
 		AND		#$08						; as update beaber direction tmp idx
@@ -876,6 +988,7 @@ loc_605BE:
 		STA		_beamer_direction_idx
 locret_605C6:
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _beamer_spr_selector:
@@ -891,7 +1004,7 @@ loc_605D5:
 		BEQ		loc_605DD
 		INC		_scr_trds_args0+2
 loc_605DD:
-		LDA		_beamer_inv_timer			; otherwise just select either empty
+		LDA		_players_inv_timer			; otherwise just select either empty
 		LSR									; sprite if blinked or actual beamer sprite
 		BCC		_nsub_beamer_spr_idx_calc	; beamer object will be displayed as
 		LDA		#$FF						; regular objects after thread manager finished
@@ -943,8 +1056,15 @@ locret_60622:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_beamer_spr_idx_set:
+_nsub_beamer_hit_spr_select:
+#if TWO_PLAYER_MODE==1
+		LDX		_scr_cur_trd_idx
+		LDA		_scr_trds_args2,X
+		TAX
+		LDA		_beamer_spr_base,X
+#else
 		LDA		_beamer_spr_base
+#endif
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
@@ -1585,7 +1705,7 @@ _nbgsub_beam_input_control:
 		LDA		_pad0_held
 		AND		_control_beam_button_code
 		BEQ		loc_60CD0
-		LDA		_beamer_hit_flag
+		LDA		_players_hit_flag
 		BNE		loc_60CD0
 		LDA		_tmp7C4
 		CMP		#$00
@@ -1957,11 +2077,18 @@ _spr_nlib09_0F:
 
 ; =============== S C R I P T ==========================s====================
 _scr0A_catcher_handler:
-		STORE8			_catcher_turns_count,$00						; mostly the same as for
+#if TWO_PLAYER_MODE==1
+		STORE8			_players_hit_flag+1,$00
+		STORE8			_players_inv_timer+1,$00
+#endif
+		STORE8			_catcher_turns_count,$00		; mostly the same as for
 		STORE8			_catcher_target_slot_idx,$02	; beamer, but additional
 		STORE8			_catcher_target_distance,$18	; speed modifier called from other
 		STORE16			_catcher_speed,$180				; place now
 		NJSR			_nsub_catcher_spr_base_reset
+
+; =============== S C R I P T ==========================s====================
+_scr_catcher_reinit:
 		NBG_HNDL_SET	_nbgsub_catcher_control
 		SUSPEND
 
@@ -2000,6 +2127,19 @@ _scr_lvl6_catcher_auto_scriptB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_catcher_control:
+#if TWO_PLAYER_MODE==1
+		LDA		_players_hit_flag+1
+		LSR
+		BCC		loc_60317
+		JSR		_cur_thread_reload_param
+		.WORD	_scr_catcher_hit_anim
+		RTS
+loc_60317:
+		LDA		_players_inv_timer+1
+		BEQ		loc_6031F
+		DEC		_players_inv_timer+1
+loc_6031F:
+#endif
 		LDA		_scr_trds_idx+5				; do nothing, while catch is deployed
 		BPL		locret_6101E
 		LDA		_scr_trds_idx				; also additionally test if current level is 4
@@ -2013,6 +2153,53 @@ loc_61015:
 locret_6101E:
 		RTS
 
+#if TWO_PLAYER_MODE==1
+; =============== S U B R O U T I N E ======n================================
+_catcher_control_move_test:
+		LDA		_scr_trds_x_pos_lo+4
+		ORA		_scr_trds_y_pos_lo+4
+		AND		#$07
+		BNE		.catcher_speed_calc
+		LDA		_pad1_held
+		AND		#$0F
+		BEQ		.catcher_speed_reset
+		JSR		_beamer_direction_calc
+		LDA		_catcher_direction_idx
+		JSR		_beamer_room_obstacles_test
+		BCS		.catcher_speed_reset
+.catcher_speed_calc:
+		LDA		_catcher_direction_idx
+		LDX		_catcher_speed
+		LDY		_catcher_speed+1
+		JSR		_players_speed_calc
+		TAY
+		BEQ		.catcher_exit
+		BNE		.catcher_step
+.catcher_next_step:
+		LDA		_scr_trds_x_pos_lo+4
+		ORA		_scr_trds_y_pos_lo+4
+		AND		#$07
+		BNE		.catcher_step
+		LDA		_pad1_held
+		AND		#$0F
+		BEQ		.catcher_speed_reset
+		JSR		_beamer_direction_calc
+		LDA		_catcher_direction_idx
+		JSR		_beamer_room_obstacles_test
+		BCC		.catcher_step
+.catcher_speed_reset:
+		LDA		#$80
+		STA		_scr_trds_x_center+4
+		STA		_scr_trds_y_center+4
+		BNE		.catcher_exit
+.catcher_step:
+		LDA		_catcher_direction_idx
+		JSR		_players_move_step
+		DEY
+		BNE		.catcher_next_step
+.catcher_exit:
+		RTS
+#else
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_move_test:
 		LDA		_scr_trds_x_pos_lo+4
@@ -2050,17 +2237,26 @@ _catcher_control_move_test:
 		BNE		.catcher_next_step
 .catcher_exit:
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_catch_test:
+#if TWO_PLAYER_MODE==1
+		LDA		_pad1_pressed
+#else
 		LDA		_pad0_pressed				; only controllable by the player action here
+#endif
 		AND		_control_catch_button_code
 		BEQ		locret_610A9
 		JSR		_cur_obj_screen_pos_calc	; get the current catcher position
 		BCS		locret_610A9
 		STX		_tmp1						; store calculated position
 		STY		_tmp2
+#if TWO_PLAYER_MODE==1
+		LDA		_catcher_direction_idx
+#else
 		JSR		_nsub_sarg1_direction_extract; calculate its direction
+#endif
 		PHA
 		TAX
 		LDA		_tmp2
@@ -2097,9 +2293,23 @@ byte_610AE:
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_spr_selector:
+#if TWO_PLAYER_MODE==1
+		LDA		_pad1_held
+		AND		#$0F
+		BEQ		loc_605DE
+		INC		_scr_trds_args0+4
+loc_605DE:
+		LDA		_players_inv_timer+1
+		LSR
+		BCC		_nsub_catcher_spr_idx_calc
+		LDA		#$FF
+		STA		_scr_trds_spr_idx+4
+		RTS
+#else
 		LDA		_catcher_direction_idx		; when catched stand still its direction idx
 		BMI		_nsub_catcher_spr_idx_calc	; =$FF.
-		INC		_scr_trds_args0+4			; otherwise run ai counter
+		INC		_scr_trds_args0+4			; run player's animation counter
+#endif
 
 ; !FALLTHROUGH!
 
@@ -2108,6 +2318,7 @@ _nsub_catcher_spr_idx_calc:
 		LDA		_catcher_spr_base
 		JMP		_players_spr_idx_calc
 
+#if TWO_PLAYER_MODE==0
 ; =============== S U B R O U T I N E ======n================================
 ; now, here is the main AI routine of the game. path search and target
 ; selection for catcher. fully CPU controlled here
@@ -2521,6 +2732,7 @@ _obj_screen_y_pos_calc:
 		SBC		#$0F
 locret_61346:
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catcher_spr_base_reset:
@@ -4136,9 +4348,70 @@ byte_61E2A:
 byte_61E2E:
 		.BYTE	$14,$01,$14,$01
 
+#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_player_ctest:
-		LDA		_beamer_inv_timer
+		STX		_var0
+		STY		_var1
+		JSR		_cur_obj_screen_pos_calc
+		STX		_tmp1C
+		STY		_tmp1D
+		LDA		_players_inv_timer
+		BNE		locret_61E6B
+		LDX		#$02
+		JSR		_obj_to_player_ctest_ex
+		BCS		locret_61E6B
+		LDA		_players_hit_flag
+#if DEBUG==1
+;		ORA		#$00
+#else
+		ORA		#$01
+#endif
+		STA		_players_hit_flag
+locret_61E6B:
+		LDA		_players_inv_timer+1
+		BNE		locret_61E6C
+		LDX		#$04
+		JSR		_obj_to_player_ctest_ex
+		BCS		locret_61E6C
+		LDA		_players_hit_flag+1
+#if DEBUG==1
+;		ORA		#$00
+#else
+		ORA		#$01
+#endif
+		STA		_players_hit_flag+1
+locret_61E6C:
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_obj_to_player_ctest_ex:
+		JSR		_obj_screen_pos_calc
+		STX		_var2
+		STY		_var3
+		LDA		_tmp1C
+		SEC
+		SBC		_var2
+		BCS		loc_61E51
+		EOR		#$FF
+		ADC		#$01
+loc_61E51:
+		CMP		_var0
+		BCS		locret_61E6D
+		LDA		_tmp1D
+		SEC
+		SBC		_var3
+		BCS		loc_61E5F
+		EOR		#$FF
+		ADC		#$01
+loc_61E5F:
+		CMP		_var1
+locret_61E6D:
+		RTS
+#else
+; =============== S U B R O U T I N E ======n================================
+_obj_to_player_ctest:
+		LDA		_players_inv_timer
 		BNE		locret_61E6B
 		STX		_var0
 		STY		_var1
@@ -4165,15 +4438,16 @@ loc_61E51:
 loc_61E5F:
 		CMP		_var1
 		BCS		locret_61E6B
-		LDA		_beamer_hit_flag
+		LDA		_players_hit_flag
 #if DEBUG==1
 ;		ORA		#$00
 #else
 		ORA		#$01
 #endif
-		STA		_beamer_hit_flag
+		STA		_players_hit_flag
 locret_61E6B:
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 ; TODO: optimize me, this collision test is the same as regular collision
@@ -4948,7 +5222,10 @@ loc_625C3:
 loc_625D1:
 		STY		_scores_to_next_live
 		STA		_scores_to_next_live+1
-		INC		_lives
+		INC		_players_lives
+#if TWO_PLAYER_MODE==1
+		INC		_players_lives+1
+#endif
 		LDA		#$1E
 		JSR		_far_prg6_apu_snd_load_safe
 loc_625DF:
@@ -6010,16 +6287,20 @@ loc_62C18:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beamer_handler_start:
-		JSR		sub_62C2E
+		JSR		_players_thread_vars_init
+#if TWO_PLAYER_MODE==1
+		LDA		#$00						; 2p hack player idx
+		STA		_var2
+#endif
 		LDA		#$02
 		STA		_var4
 		LDA		#$03
 		STA		_var5
-		LDA		#$08
+		LDA		#_scr08_beamer_handler_idx
 		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E ======n================================
-sub_62C2E:
+_players_thread_vars_init:
 		LDA		#$00
 		STA		_var1
 		STA		_tmp_var0
@@ -6030,12 +6311,16 @@ sub_62C2E:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catcher_handler_start:
-		JSR		sub_62C2E
+		JSR		_players_thread_vars_init
+#if TWO_PLAYER_MODE==1
+		LDA		#$01						; 2p hack player idx
+		STA		_var2
+#endif
 		LDA		#$04
 		STA		_var4
 		LDA		#$05
 		STA		_var5
-		LDA		#$0A
+		LDA		#_scr0A_catcher_handler_idx
 		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6474,6 +6759,8 @@ _event_thread_start:
 		LDA		#$0E
 		STA		_var5
 		PLA
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _thread_lib_load:
@@ -8538,10 +8825,50 @@ loc_63A2A:
 locret_63A30:
 		RTS
 
+#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _get_input:
+		LDY		#$00
+		JSR		_calc_pad
+		INY
+_calc_pad:
 		JSR		_read_pads
 		STA		_tmp1A
+		JSR		_read_pads
+		AND		_tmp1A
+		STA		_tmp1A
+		LDA		_pad0_held,Y
+		EOR		#$FF
+		AND		_tmp1A
+		STA		_pad0_pressed,Y
+		LDA		_tmp1A
+		STA		_pad0_held,Y
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_read_pads:
+		LDX		#$01
+		STX		_PAD0_REG
+		DEX
+		STX		_PAD0_REG
+		LDX		#$08
+loc_63A63:
+		PHA
+		LDA		_PAD0_REG,Y
+		STA		_tmp19
+		LSR
+		ORA		_tmp19
+		LSR
+		PLA
+		ROL
+		DEX
+		BNE		loc_63A63
+		RTS
+#else
+; =============== S U B R O U T I N E ======n================================
+_get_input:
+		JSR		_read_pads					; too paranoid to pad reading on NES
+		STA		_tmp1A						; but probably important for real HW
 		JSR		_read_pads
 		AND		_tmp1A
 		STA		_tmp1B
@@ -8578,6 +8905,7 @@ loc_63A63:
 		DEY
 		BNE		loc_63A63
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _ppu_spr_fill_F1:
