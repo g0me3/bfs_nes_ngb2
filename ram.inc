@@ -523,7 +523,7 @@ _continues:
 		.BYTE	0
 _unused_var:
 		.BYTE	0
-_scores_to_next_live_max:
+_scores_to_next_live_start:
 		.BYTE	0,0
 _scores_to_next_live_step:
 		.BYTE	0,0
@@ -531,11 +531,11 @@ _scores_to_next_live:
 		.BYTE	0,0
 _level:
 		.BYTE	0
-byte_7D7:
+_boss_tmp_list:
 		.BYTE	0,0,0
-byte_7DA:
+_keykeeper_beam_flag:
 		.BYTE	0
-byte_7DB:
+_keykeeper_counter:
 		.BYTE	0
 _ram_signature:
 		.BYTE	0,0

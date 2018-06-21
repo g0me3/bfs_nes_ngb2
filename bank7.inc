@@ -57,60 +57,60 @@ loc_60020:
 		LDA		#$77
 		STA		_random_seed
 		STA		_random_seed+1
-		LDA		#$01
+		LDA		#$01						; if restarting, show copyrights first
 		STA		_license_screen_display_flag
-		STA		_difficulty
-		LDA		#$80
-		STA		_control_beam_button_code
-		LDA		#$40
+		STA		_difficulty					; default difficulty is normal
+		LDA		#PAD_A
+		STA		_control_beam_button_code	; default controls
+		LDA		#PAD_B
 		STA		_control_catch_button_code
-		LDA		_ram_signature
-		CMP		#$48
+		LDA		_ram_signature				; ram signature to keep scores
+		CMP		#"H"						; "HS" - HUDSON SOFT?
 		BNE		loc_6007C
 		LDA		_ram_signature+1
-		CMP		#$53
+		CMP		#"S"
 		BEQ		_MAIN_ENTRY
 loc_6007C:
-		LDA		#$48
+		LDA		#"H"
 		STA		_ram_signature
-		LDA		#$53
+		LDA		#"S"
 		STA		_ram_signature+1
-		LDA		#$64
+		LDA		#$64						; initial hi-scores 100(00)pts
 		STA		_hi_scores
 		LDA		#$00
 		STA		_hi_scores+1
 _MAIN_ENTRY:
 		JSR		_ppu_vblank_off
-		LDA		#$FF
+		LDA		#$FF						; fill NT0 and NT1 with $FF
 		LDX		#$00
-		JSR		sub_61FFC
+		JSR		_ppu_nt_clear
 		LDA		#$FF
 		LDX		#$01
-		JSR		sub_61FFC
-		JSR		_scr_trds_list_reset
+		JSR		_ppu_nt_clear
+		JSR		_scr_trds_list_reset		; full reset threads variables
 		LDA		#$00
-		JSR		_event_thread_start
+		JSR		_event_thread_start			; load main title script
 		LDA		#$00
-		STA		_scr_trds_pause_mode
-		STA		_scr_trds_out_of_screen_test
+		STA		_scr_trds_pause_mode		; now starting the simple version of
+		STA		_scr_trds_out_of_screen_test; threads manager
 loc_600AF:
-		JSR		_wait_for_nmi
-		JSR		_ppu_spr_shuffle_pos
-		JSR		_threads_manager
-		JSR		_ppu_spr_clear
-		LDA		_scr_trds_idx
+		JSR		_wait_for_nmi				; wait for nmi
+		JSR		_spr_shuffle_update			; prepare sprites shuffle
+		JSR		_threads_manager			; execute threads
+		JSR		_spr_finish					; all sprites should be done now, finalize
+		LDA		_scr_trds_idx				; repeat until main thread is stopped
 		BPL		loc_600AF
 _GAME_ENTRY:
-		LDX		_difficulty
-		LDA		_scores_to_next_live_max_list_lo,X
-		STA		_scores_to_next_live_max
-		LDA		_scores_to_next_live_max_list_hi,X
-		STA		_scores_to_next_live_max+1
+		LDX		_difficulty					; this means we ready to setup game
+		LDA		_scores_to_next_live_start_list_lo,X; load corresponding difficulty settings
+		STA		_scores_to_next_live_start
+		LDA		_scores_to_next_live_start_list_hi,X
+		STA		_scores_to_next_live_start+1
 		LDA		_scores_to_next_live_step_list_lo,X
 		STA		_scores_to_next_live_step
 		LDA		_scores_to_next_live_step_list_hi,X
 		STA		_scores_to_next_live_step+1
-		LDA		#$04
+		LDA		#$04						; init continues
 		STA		_continues
 #if DEBUG==1
 		LDA		#DEBUG_LEVEL
@@ -118,62 +118,62 @@ _GAME_ENTRY:
 		LDA		#DEBUG_CHKPOINT
 		STA		_lvl_last_checkpoint_idx
 #else
-		LDA		#$00
+		LDA		#$00						; also set default level and checkpoint
 		STA		_level
 		LDA		#$01
-		STA		_lvl_last_checkpoint_idx
+		STA		_lvl_last_checkpoint_idx	; note, value is +1 here
 #endif
 _MAIN_GAME_LOOP:
-		LDA		#$00
+		LDA		#$00						; continue initing the other game vars
 		STA		_mmc1_busy
 		STA		_apu_play_delayed_req
 		STA		_scores
 		STA		_scores+1
-		STA		_unused_var
-		LDA		_scores_to_next_live_max
+		STA		_unused_var					; TODO: redundant
+		LDA		_scores_to_next_live_start
 		STA		_scores_to_next_live
-		LDA		_scores_to_next_live_max+1
+		LDA		_scores_to_next_live_start+1
 		STA		_scores_to_next_live+1
-		LDA		#$01
+		LDA		#$01						; out-of-screen check activate
 		STA		_scr_trds_out_of_screen_test
 		LDA		#$04
 		SEC
 		SBC		_difficulty
-		STA		_players_lives
+		STA		_players_lives				; init lives
 #if TWO_PLAYER_MODE==1
 		STA		_players_lives+1
 #endif
 loc_60112:
 		LDA		#$00
 		STA		_lvl_cur_checkpoint_idx
-		JSR		_scr_trds_list_reset
+		JSR		_scr_trds_list_reset		; one more cleanup of threads lists
 		LDX		_level
-		LDA		_lvl_scripts_list,X
-		JSR		_event_thread_start
+		LDA		_lvl_scripts_list,X			; now load the level script idx
+		JSR		_event_thread_start			; and start main level thread
 loc_60123:
-		JSR		_wait_for_nmi
-		LDA		#$00
-		STA		_cur_room_doors_cnt
-		JSR		_ppu_spr_shuffle_pos
-		JSR		_threads_manager
-		JSR		_ppu_spr_clear
-		JSR		_obj_exit_arrow_position_adjust
-		JSR		sub_60166
-		LDA		_scr_trds_idx
+		JSR		_wait_for_nmi				; main ingame loop goes here
+		LDA		#$00						; all mostly the same as simple loop above
+		STA		_cur_room_doors_cnt			; but with extra special inits
+		JSR		_spr_shuffle_update
+		JSR		_threads_manager			; all work run here
+		JSR		_spr_finish					; finalize sprites when done
+		JSR		_obj_exit_arrow_position_adjust	; also extra object arrow test here
+		JSR		_obj_garbage_collector		; special garbage collector
+		LDA		_scr_trds_idx				; if main thread stopped, then stage completed
 		BPL		loc_60123
-		LDA		_game_flags
-		BPL		loc_6015A
+		LDA		_game_flags					; also to complete stage you nedd $80 value here
+		BPL		loc_6015A					; if not, just restart the game from the beginnging
 		LDA		#$01
-		STA		_lvl_last_checkpoint_idx
-		INC		_level
+		STA		_lvl_last_checkpoint_idx	; reinit checkpoint for next level
+		INC		_level						; increment level
 		LDA		_level
-		CMP		#$07
-		BCC		loc_60112
-		LDA		#$00
-		STA		_level
+		CMP		#$07						; there are levels at $00 to $05 and ending
+		BCC		loc_60112					; at $06 values, there is no extra values above $06
+		LDA		#$00						; so this is a debug leftover from dev stage
+		STA		_level						; most probably meant to be used by stage skip routine
 		BEQ		loc_60112
 loc_6015A:
-		BNE		_MAIN_GAME_LOOP
+		BNE		_MAIN_GAME_LOOP				; this is the case to return after ending
 		JMP		_MAIN_ENTRY
 
 _lvl_scripts_list:
@@ -186,7 +186,18 @@ _lvl_scripts_list:
 		.BYTE	_scr07_ending_idx
 
 ; =============== S U B R O U T I N E ======n================================
-sub_60166:
+; very specific case to handle here. sometimes, they catch the object
+; while beamer moving out of the screen, catcher and such object disappear.
+; but since objects thread is suspended, but catcher only driven not
+; suspendable native routine, catcher stop catching and return back to the
+; beamer, when they both return to the previous location, you'll see
+; the catch animation played alone in air. this routine prevents this
+; kind of cases. its just search for any object in catching process
+; out of the screen and removes them.
+;
+; NOTE: you lose the score in such cases!.
+;
+_obj_garbage_collector:
 		LDX		#$06
 loc_60168:
 		LDA		_scr_trds_idx,X
@@ -217,9 +228,10 @@ loc_60193:
 		CPX		#$0E
 		BCC		loc_60168
 		RTS
-_scores_to_next_live_max_list_lo:
+
+_scores_to_next_live_start_list_lo:
 		.BYTE	$32,$64,$96,$C8
-_scores_to_next_live_max_list_hi:
+_scores_to_next_live_start_list_hi:
 		.BYTE	$00,$00,$00,$00
 _scores_to_next_live_step_list_lo:
 		.BYTE	$C8,$2C,$90,$F4
@@ -4708,17 +4720,17 @@ _attr_bufs_list_hi:
 		.BYTE	>[_attr_buf_pageA]
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61FFC:
-		STA		_tmp_buf+4
-		LDA		byte_6201B,X
+_ppu_nt_clear:
+		STA		_tmp_buf+4					; set ppu fill value to buf
+		LDA		byte_6201B,X				; TODO: low nibble always 00, redundant!
 		STA		_tmp_buf
-		LDA		byte_6201F,X
-		STA		_tmp_buf+1
+		LDA		byte_6201F,X				; set offset
+		STA		_tmp_buf+1					; set rect params: $20x$1E - full screen
 		LDA		#$20
 		STA		_tmp_buf+2
 		LDA		#$1E
 		STA		_tmp_buf+3
-		JSR		_ppu_res_send_param_repeat
+		JSR		_ppu_res_send_param_repeat	; send buffer to PPU in repeat mode
 		.WORD	_tmp_buf
 		RTS
 byte_6201B:
@@ -5204,10 +5216,10 @@ loc_62598:
 		BCC		loc_625DF
 loc_625AA:
 		LDA		_scores_to_next_live+1
-		CMP		_scores_to_next_live_max+1
+		CMP		_scores_to_next_live_start+1
 		BNE		loc_625C3
 		LDA		_scores_to_next_live
-		CMP		_scores_to_next_live_max
+		CMP		_scores_to_next_live_start
 		BNE		loc_625C3
 		LDY		_scores_to_next_live_step
 		LDA		_scores_to_next_live_step+1
@@ -8193,7 +8205,7 @@ _bit_mask:
 		.BYTE	$80,$40,$20,$10,$08,$04,$02,$01
 
 ; =============== S U B R O U T I N E ======n================================
-_ppu_spr_shuffle_pos:
+_spr_shuffle_update:
 		LDA		_spr_buf_pos
 		CMP		#$21
 		BCS		loc_63702
@@ -8208,7 +8220,7 @@ loc_63706:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_ppu_spr_clear:
+_spr_finish:
 		LDA		#$F0
 		LDY		_spr_buf_pos
 loc_6370F:
@@ -8222,7 +8234,7 @@ loc_6370F:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_spr_clip_pause_player_insert:
+_spr_player_pause_insert:
 		STA		_tmp0
 		TYA
 		PHA
@@ -9118,12 +9130,15 @@ _scr_lib_lo:
 ; 		GAME OBJECT scripts, used in the level objects lists, may run
 ;		other instances of self
 ;
-		SCR_IDX_LO	_scr0D_money_bag
-		SCR_IDX_LO	_scr0E_empty_mine_trolley	; except this
+		SCR_IDX_LO	_scr0D_money_bag			; sargs 100
+; NOTE: for some reason, this object has a redundant in this version
+; flag setting. however, there is no empry trolleys used as the room
+; objects data, and args are derived from its main object _scr20_trolley_miner
+		SCR_IDX_LO	_scr0E_empty_mine_trolley	; sargs 010 except this
 		SCR_IDX_LO	_scr0F_candle
 		SCR_IDX_LO	_scr10_train_semaphores
 		SCR_IDX_LO	_scr11_lvl2_ghost_nanny
-		SCR_IDX_LO	_scr12_exit_arrow
+		SCR_IDX_LO	_scr12_exit_arrow			; sargs 011
 		SCR_IDX_LO	_scr13_slow_moving_slime
 		SCR_IDX_LO	_scr14_fast_moving_slime
 		SCR_IDX_LO	_scr15_trolley_kick_slime
@@ -9131,18 +9146,18 @@ _scr_lib_lo:
 		SCR_IDX_LO	_scr17_runner
 		SCR_IDX_LO	_scr18_chain_saw
 		SCR_IDX_LO	_scr19_toilet_snake
-		SCR_IDX_LO	_scr1A_lvl1_boss_judges
-		SCR_IDX_LO	_scr1B_court_chair
+		SCR_IDX_LO	_scr1A_lvl1_boss_judges		; sargs 001
+		SCR_IDX_LO	_scr1B_court_chair			; sargs 010
 		SCR_IDX_LO	_scr1C_girl_and_floaters
 		SCR_IDX_LO	_scr1D_air_hammer_miner
 		SCR_IDX_LO	_scr1E_pick_axe_miner
 		SCR_IDX_LO	_scr1F_hammer_miner
-		SCR_IDX_LO	_scr20_trolley_miner
-		SCR_IDX_LO	_scr21_train_ghost
+		SCR_IDX_LO	_scr20_trolley_miner		; sargs 010
+		SCR_IDX_LO	_scr21_train_ghost			; sargs 100
 		SCR_IDX_LO	_scr22_lvl2_boss_train_slime
 		SCR_IDX_LO	_scr23_halloween
-		SCR_IDX_LO	_scr24_flying_elephant
-		SCR_IDX_LO	_scr25_stinging_elephant
+		SCR_IDX_LO	_scr24_flying_elephant		; sargs 010
+		SCR_IDX_LO	_scr25_stinging_elephant	; sargs 010
 		SCR_IDX_LO	_scr26_sword_ninja
 		SCR_IDX_LO	_scr27_shuriken_ninja
 		SCR_IDX_LO	_scr28_pink_goo
@@ -9152,7 +9167,7 @@ _scr_lib_lo:
 		SCR_IDX_LO	_scr2C_fast_throw_forward_slime
 		SCR_IDX_LO	_scr2D_rotator
 		SCR_IDX_LO	_scr2E_lvl4_boss_dragons
-		SCR_IDX_LO	_scr2F_lvl5_boss_key_keeper
+		SCR_IDX_LO	_scr2F_lvl5_boss_keykeeper
 		SCR_IDX_LO	_scr30_lvl6_boss_vega
 _scr_lib_hi:
 		SCR_IDX_HI	_scr00_intro_title_select
@@ -9202,7 +9217,7 @@ _scr_lib_hi:
 		SCR_IDX_HI	_scr2C_fast_throw_forward_slime
 		SCR_IDX_HI	_scr2D_rotator
 		SCR_IDX_HI	_scr2E_lvl4_boss_dragons
-		SCR_IDX_HI	_scr2F_lvl5_boss_key_keeper
+		SCR_IDX_HI	_scr2F_lvl5_boss_keykeeper
 		SCR_IDX_HI	_scr30_lvl6_boss_vega
 
 _spr_nlibs_lo:

@@ -382,6 +382,12 @@ _lvl1_common_init:
 ; =============== S C R I P T ==========================s====================
 _scr_common_pause_handler:
 		SDELAY			$01								; common pause handler for all levels
+#if DEBUG==1
+		NJSR			_nsub_ingame_select_input_test_unused	; presumably stage complete test were here
+		SBCC			_skip_stage_select
+		SSTOP
+_skip_stage_select:
+#endif
 		NJSR			_nsub_ingame_start_input_test	; just wait for START is pressed
 		SBCC			_scr_common_pause_handler		; and then play pause sound
 		NJSR			_nsub_apu_snd_load_safe			; and run pause native handler
@@ -3494,9 +3500,6 @@ loc_15E56:
 ; the game. usually, there are three options: 00/01 if continue or end were
 ; selected at the "GAME OVER" screen, 80 is set after the "STAGE CLEAR"
 ; screen and thus the main engine will increment the level number...
-; not sure where this routine should be called, but it seems something
-; after the game over... there is no point of setting this variable during
-; the game.
 ;
 _nsub_ingame_select_input_test_unused:
 		LDA		_pad0_pressed
@@ -3606,7 +3609,7 @@ _pause_screen_anim:
 		ADC		_tmp0
 		LDX		#$90						; and put it to fixed location
 		LDY		#$B8
-		JMP		_spr_clip_pause_player_insert
+		JMP		_spr_player_pause_insert
 
 off_15F18:
 		.WORD	_nsub_door00_open_draw
@@ -5343,11 +5346,11 @@ _lvl1_objects_list:
 		OBJ_SET	_scr13_slow_moving_slime,			$70,$03,$98,$03,_NON,_NON,_NON
 		OBJ_SET	_scr13_slow_moving_slime,			$A0,$03,$78,$03,_NON,_NON,_NON
 		OBJ_SET	_scr17_runner,						$D0,$03,$40,$03,_NON,_NON,_NON
-		OBJ_SET	_scr0D_money_bag,					$70,$03,$A0,$03,$01,_NON,_NON
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$02,_NON
+		OBJ_SET	_scr0D_money_bag,					$70,$03,$A0,$03, $01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AD, $02
 		ROOM	$02
 		OBJ_SET	_scr1C_girl_and_floaters,			$90,$04,$E0,$02,_NON,_NON,_NON
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$03,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AF, $03
 		ROOM	$03
 		CHECKPOINT
 		OBJ_SET	_scr17_runner,						$A8,$03,$C0,$02,_NON,_NON,_NON
@@ -5363,27 +5366,27 @@ _lvl1_objects_list:
 		OBJ_SET	_scr13_slow_moving_slime,			$70,$02,$A0,$02,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr14_fast_moving_slime,			$D0,$02,$48,$02,_NON,_NON,_NON
-		OBJ_SET	_scr0D_money_bag,					$80,$02,$50,$02,$01,_NON,_NON
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$04,_NON
+		OBJ_SET	_scr0D_money_bag,					$80,$02,$50,$02, $01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AF, $04
 		ROOM	$04
 		OBJ_SET	_scr19_toilet_snake,				$78,$01,$50,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr13_slow_moving_slime,			$C8,$01,$68,$02,_NON,_NON,_NON
 ; -
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$03,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AD, $03
 		ROOM	$03
 		OBJ_SET	_scr13_slow_moving_slime,			$60,$02,$70,$02,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr14_fast_moving_slime,			$A0,$02,$70,$02,_NON,_NON,_NON
 ; -
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AE,$00,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AE, $00
 		ROOM	$00
 		OBJ_SET	_scr13_slow_moving_slime,			$98,$02,$A8,$03,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr14_fast_moving_slime,			$78,$02,$98,$03,_NON,_NON,_NON
 ; -
 		OBJ_SET	_scr17_runner,						$80,$02,$48,$03,_NON,_NON,_NON
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AF,$01,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AF, $01
 		ROOM	$01
 		CHECKPOINT
 		OBJ_SET	_scr15_trolley_kick_slime,			$08,$01,$80,$03,_NON,_NON,_NON
@@ -5394,15 +5397,15 @@ _lvl1_objects_list:
 		OBJ_SET	_scr14_fast_moving_slime,			$40,$01,$B8,$03,_NON,_NON,_NON
 		OBJ_SET	_scr13_slow_moving_slime,			$B8,$01,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr14_fast_moving_slime,			$A0,$01,$B8,$03,_NON,_NON,_NON
-		OBJ_SET	_scr0D_money_bag,					$B0,$00,$60,$03,$01,_NON,_NON
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AD,$00,_NON
+		OBJ_SET	_scr0D_money_bag,					$B0,$00,$60,$03, $01,_NON,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AD, $00
 		ROOM	$00
 		OBJ_SET	_scr18_chain_saw,					$78,$02,$40,$03,_NON,_NON,_NON
 		OBJ_SET	_scr18_chain_saw,					$B8,$02,$88,$03,_NON,_NON,_NON
 ; REGION, removed in the EU version
 		OBJ_SET	_scr18_chain_saw,					$88,$02,$98,$03,_NON,_NON,_NON
 ; -
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$03,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AC, $03
 		ROOM	$03
 		OBJ_SET	_scr17_runner,						$48,$02,$C8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr14_fast_moving_slime,			$A8,$02,$88,$02,_NON,_NON,_NON
@@ -5410,27 +5413,27 @@ _lvl1_objects_list:
 		OBJ_SET	_scr17_runner,						$C8,$02,$C8,$02,_NON,_NON,_NON
 		OBJ_SET	_scr14_fast_moving_slime,			$58,$02,$68,$02,_NON,_NON,_NON
 ; -
-		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
+		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AC, $05
 		ROOM	$06
 		CHECKPOINT
 ; REGION, added in the EU version
-;		.BYTE	_scr12_exit_arrow,					$00,$00,$00,$00,$AC,$05,_NON
+;		.BYTE	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AC, $05
 ; -
 		ROOM	$05
-		OBJ_SET	_scr1B_court_chair,					$78,$02,$78,$01,$00,_NON,_NON
-		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,$01,_NON,_NON
-		OBJ_SET	_scr1B_court_chair,					$48,$02,$58,$01,$02,_NON,_NON
-		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,$03,_NON,_NON
+		OBJ_SET	_scr1B_court_chair,					$78,$02,$78,$01,_NON, $00,_NON
+		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,_NON, $01,_NON
+		OBJ_SET	_scr1B_court_chair,					$48,$02,$58,$01,_NON, $02,_NON
+		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,_NON, $03,_NON
 ; ADDED, here may be 5th chair object with different pattern, but currently game
 ; engine allows to add 4 enemies on the screen at once maximum. so this chair
 ; does may not appear at all if'd used. try to uncomment this and just wait until
 ; chair in the middle goes up and disappears out of the screen, then fifth chair
 ; will appear.
 #if DEBUG==1
-		OBJ_SET	_scr1B_court_chair,					$38,$02,$18,$01,$04,_NON,_NON
+		OBJ_SET	_scr1B_court_chair,					$38,$02,$18,$01,_NON, $04,_NON
 #endif
 ; -
-		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,$00,_NON,_NON
+		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,_NON,_NON, $00
 		OBJ_END
 
 _lvl1_collisionsA:

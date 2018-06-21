@@ -29,8 +29,8 @@ DEBUG_MAX_ENEMY	EQU		$0C		; ($0A default)
 ; 4 - 1 2 3 4 5
 ; 5 - 1
 ;
-DEBUG_LEVEL		EQU		$03
-DEBUG_CHKPOINT	EQU		$06
+DEBUG_LEVEL		EQU		$00
+DEBUG_CHKPOINT	EQU		$01
 
 ;-------------------F-O-N-T-S-------------------
 

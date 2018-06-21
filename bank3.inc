@@ -10,7 +10,7 @@ _scr1A_lvl1_boss_judges:
 		NJSR			_nsub_obj_sarg_add_imm_test		; two instances of the object existed
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_scr_lvl1_boss_judges_tall
+		SCASE			_scr_judges_tall
 
 ; !FALLTHROUGH!
 
@@ -19,7 +19,7 @@ _scr1A_lvl1_boss_judges:
 		NJSR			_nsub_obj_sarg_add_imm_test		; this is an additional branch for using
 			NARGB		SARG2,$FF						; this object on LVL5
 		SJMP_SW			$01								; only for LVL1 _sloc_2C014 is executed
-		SCASE			_scr_boss_judges_intro			; for the rest this branch is skipped
+		SCASE			_scr_judges_intro				; for the rest this branch is skipped
 
 ; !FALLTHROUGH!
 
@@ -37,7 +37,7 @@ _sloc_2C014:
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_intro:
+_scr_judges_intro:
 		SPR_IDX_SET		4,$04							; finally, start to anim "hat" on the table
 		SPR_IDX_INC		4								; (actually i DONT KNOW what is it and how
 		SPR_IDX_DEC		4								; they called it)
@@ -55,23 +55,23 @@ _scr_boss_judges_intro:
 		NJSR			_nsub_new_thread_start			; judge, the other instance loaded for
 			NARGB		_scr1A_lvl1_boss_judges_idx		; tall judge
 			NARGB		$38,$40
-			NARGB		_scr_lvl1_boss_judges_tall_idx+1
+			NARGB		_scr_judges_tall_idx+1
 			NARGB		$00
 		POS_X_MOVE		0,$C0							; position of the fat judge x-64, y+64 of the
 		POS_Y_MOVE		0,$40							; main object position
 		NJSR			_nsub_patch_pal_load			; NOTE: this is a default value for LVL1 palette
 			NARGB		$06								; for this object, this is already there, so not
-			NARGW		_pal_lvl1_boss_default_patch	; sure why this palette aplied here...
+			NARGW		_pal_judges_default_patch		; sure why this palette aplied here...
 		SARG_SET		SARG1,$80						; face down
 
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sct_boss_judes_fat_restart:
+_sct_judges_fat_restart:
 		NBG_HNDL_SET	_nbgsub_fat_judge_ctest			; init bg native collision test
 		NJSR			_nsub_patch_pal_load			; NOTE: to previous, this is actual palette for
 			NARGB		$06								; this enemy
-			NARGW		_pal_lvl1_boss_active_patch
+			NARGW		_pal_judges_active_patch
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; set sprite
 			NARGB		$09,$40
 		SLOOP_BEGIN		$06								; at the beginning stand still animation
@@ -83,7 +83,7 @@ _sct_boss_judes_fat_restart:
 ; FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sct_boss_judes_fat_active:
+_sct_judges_fat_active:
 		NBG_HNDL_SET	_nbgsub_fat_judge_ctest			; not sure why they set the same handler here twice
 _sloc_2C06F:
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
@@ -100,29 +100,29 @@ _sloc_2C06F:
 		SJMP			_sloc_2C06F						; repeat
 
 ; =============== S C R I P T ==========================s====================
-_sct_boss_judes_fat_stun:
-		NBG_HNDL_SET	_nbgsub_boss_judges_fat_catch_test
+_sct_judges_fat_stun:
+		NBG_HNDL_SET	_nbgsub_judges_fat_catch_test
 		SLOOP_BEGIN		$3C
-		SJSR			_ssub_boss_judges_fat_shake_anim
+		SJSR			_ssub_judges_fat_shake_anim
 		NJSR			_nsub_wait_for_beam_hold		; unles most of regular enemies
-		SBCS_BREAK		_sct_boss_judes_fat_restart		; when beam released, boss continues
+		SBCS_BREAK		_sct_judges_fat_restart			; when beam released, boss continues
 		SLOOP_END										; to be active immediately
 		SARG_SET		SARG0,$02						; after 1 sec boss turns red,
 		NJSR			_nsub_patch_pal_load			; also catch flag is raized, may
 			NARGB		$06								; be catched now as usual
-			NARGW		_pal_boss_judges_red_patch
+			NARGW		_pal_judges_red_patch
 _sloc_2C0A1:
-		SJSR			_ssub_boss_judges_fat_shake_anim; the rest is the same as regular
+		SJSR			_ssub_judges_fat_shake_anim		; the rest is the same as regular
 		NJSR			_nsub_wait_for_beam_hold		; enemy stun handler
 		SBCC			_sloc_2C0A1
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sct_boss_judes_fat_restart
-		SCASE			_scr_boss_judges_fat_catch_anim_L
-		SCASE			_scr_boss_judges_fat_catch_anim_R
+		SCASE			_sct_judges_fat_restart
+		SCASE			_scr_judges_fat_catch_anim_L
+		SCASE			_scr_judges_fat_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_boss_judges_fat_shake_anim:
+_ssub_judges_fat_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$09,$40
 		SDELAY			$01
@@ -130,20 +130,20 @@ _ssub_boss_judges_fat_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_fat_catch_anim_L:
+_scr_judges_fat_catch_anim_L:
 		SARG_SET		SARG1,$15
 		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_fat_catch_anim_R:
+_scr_judges_fat_catch_anim_R:
 		SARG_SET		SARG1,$17
 		SJMP			_ssub_common_catch_anim_R_snd19
 
-_pal_lvl1_boss_default_patch:
+_pal_judges_default_patch:
 		.BYTE	$0F,$31,$25,$0F
-_pal_lvl1_boss_active_patch:
+_pal_judges_active_patch:
 		.BYTE	$0F,$36,$22,$0F
-_pal_boss_judges_red_patch:
+_pal_judges_red_patch:
 		.BYTE	$0F,$25,$15,$0F
 
 ; =============== S U B R O U T I N E ======n================================
@@ -187,7 +187,7 @@ loc_2C10F:
 		TYA
 		BEQ		loc_2C118					; if direction is changed need to recalc sprites
 		JSR		_cur_thread_reload_param	; so reload current current script from beginning
-		.WORD	_sct_boss_judes_fat_active
+		.WORD	_sct_judges_fat_active
 		RTS
 loc_2C118:
 		LDX		#$0C
@@ -195,7 +195,7 @@ loc_2C118:
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2C127
 		JSR		_cur_thread_reload_param
-		.WORD	_sct_boss_judes_fat_stun
+		.WORD	_sct_judges_fat_stun
 		RTS
 loc_2C127:
 		LDX		#$0F
@@ -203,7 +203,7 @@ loc_2C127:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_judges_fat_catch_test:
+_nbgsub_judges_fat_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C147
@@ -212,75 +212,75 @@ _nbgsub_boss_judges_fat_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_2C142
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_judges_fat_catch_anim_L
+		.WORD	_scr_judges_fat_catch_anim_L
 		RTS
 loc_2C142:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_judges_fat_catch_anim_R
+		.WORD	_scr_judges_fat_catch_anim_R
 locret_2C147:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_scr_lvl1_boss_judges_tall:
-		NBG_HNDL_SET	_nbgsub_boss_judge_tall_ctest	; regular init, set regular
+_scr_judges_tall:
+		NBG_HNDL_SET	_nbgsub_judges_tall_ctest		; regular init, set regular
 		NJSR			_nsub_patch_pal_load			; palette immediately without any
 			NARGB		$07								; redundant calls this time
-			NARGW		_pal_lvl1_boss_active_patch
+			NARGW		_pal_judges_active_patch
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$80
-		SSCRIPT1_SET	_scr_boss_judges_tall_spr_anim	; automatic boss, set constant anim
+		SSCRIPT1_SET	_scr_judges_tall_spr_anim		; automatic boss, set constant anim
 		SDELAY			$48
-		SJMP			_scr_boss_judge_tall_activeA
+		SJMP			_scr_judges_tall_activeA
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_restart_posA:
-		NJSR			_nsub_boss_judges_tall_pos_set	; one of three restart points for tall boss
+_scr_judges_tall_restart_posA:
+		NJSR			_nsub_judges_tall_pos_set		; one of three restart points for tall boss
 			NARGB		$B8,$80							; right side of the screen, the same as for
 		SARG_SET		SARG1,$80						; appearance point
-		SJSR			_ssub_boss_judge_tall_reappear
+		SJSR			_ssub_judges_tall_reappear
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_activeA:
+_scr_judges_tall_activeA:
 		SLOOP_BEGIN		$10								; do half large cirle right till the
 		SARG_ALU		SARG1,_ADC,$08					; left side of the screen
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02
 		SDELAY			$07
 		SLOOP_END
-		SJMP			_scr_boss_judge_tall_activeB
+		SJMP			_scr_judges_tall_activeB
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_restart_posB:						; second reappearance point
-		NJSR			_nsub_boss_judges_tall_pos_set	; left side of the screen
+_scr_judges_tall_restart_posB:						; second reappearance point
+		NJSR			_nsub_judges_tall_pos_set		; left side of the screen
 			NARGB		$2A,$72
 		SARG_SET		SARG1,$00
-		SJSR			_ssub_boss_judge_tall_reappear
+		SJSR			_ssub_judges_tall_reappear
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_activeB:
+_scr_judges_tall_activeB:
 		SLOOP_BEGIN		$10								; here start a small half circle to the
 		SARG_ALU		SARG1,_ADC,$08					; middle, the same start for second reappearance
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; point
 			NARGB		$00,$02
 		SDELAY			$04
 		SLOOP_END
-		SJMP			_scr_boss_judge_tall_activeC
+		SJMP			_scr_judges_tall_activeC
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_restart_posC:
-		NJSR			_nsub_boss_judges_tall_pos_set	; finally middle of the screen reappearance point
+_scr_judges_tall_restart_posC:
+		NJSR			_nsub_judges_tall_pos_set		; finally middle of the screen reappearance point
 			NARGB		$7B,$7A
 		SARG_SET		SARG1,$00
-		SJSR			_ssub_boss_judge_tall_reappear
+		SJSR			_ssub_judges_tall_reappear
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_activeC:
+_scr_judges_tall_activeC:
 		SLOOP_BEGIN		$20								; here is the main loop, two full circles
 		SARG_ALU		SARG1,_ADC,$F8					; with start in the middle point, also
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; third reappearance point
@@ -293,41 +293,41 @@ _scr_boss_judge_tall_activeC:
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
-		SJMP			_scr_boss_judge_tall_activeC
+		SJMP			_scr_judges_tall_activeC
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_tall_spr_anim:
+_scr_judges_tall_spr_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
 		SDELAY			$06
 		SPR_IDX_ADD_IMM 6,$04
-		SJMP			_scr_boss_judges_tall_spr_anim
+		SJMP			_scr_judges_tall_spr_anim
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_tall_stun:
-		NBG_HNDL_SET	_nbgsub_boss_judges_tall_catch_test	; same as for other boss object
+_scr_judges_tall_stun:
+		NBG_HNDL_SET	_nbgsub_judges_tall_catch_test	; same as for other boss object
 		SLOOP_BEGIN		$3C
-		SJSR			_scr_boss_judges_tall_shake_anim; beam for a second, then set
+		SJSR			_scr_judges_tall_shake_anim		; beam for a second, then set
 		NJSR			_nsub_wait_for_beam_hold		; catch active flag, turn sprite red
 		SBCS_BREAK		_sloc_2C1EF						; and continue with regular stun handler
 		SLOOP_END
 		SARG_SET		SARG0,$02
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		_pal_boss_judges_red_patch
+			NARGW		_pal_judges_red_patch
 _sloc_2C1E6:
-		SJSR			_scr_boss_judges_tall_shake_anim
+		SJSR			_scr_judges_tall_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2C1E6
 _sloc_2C1EF:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_scr_boss_judge_tall_disappear
-		SCASE			_scr_boss_judges_tall_catch_anim_L
-		SCASE			_scr_boss_judges_tall_catch_anim_R
+		SCASE			_scr_judges_tall_disappear
+		SCASE			_scr_judges_tall_catch_anim_L
+		SCASE			_scr_judges_tall_catch_anim_R
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_scr_boss_judges_tall_shake_anim:
+_scr_judges_tall_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$19,$40
 		SDELAY			$01
@@ -335,7 +335,7 @@ _scr_boss_judges_tall_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judge_tall_disappear:
+_scr_judges_tall_disappear:
 		SLOOP_BEGIN		$1E								; start to blinking
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; in current sprite state
 			NARGB		$19,$40
@@ -345,42 +345,42 @@ _scr_boss_judge_tall_disappear:
 		SDELAY			$3C								; delay, reload active pal patch
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		_pal_lvl1_boss_active_patch
-		SSCRIPT1_SET	_scr_boss_judges_tall_spr_anim	; restart regular animation
+			NARGW		_pal_judges_active_patch
+		SSCRIPT1_SET	_scr_judges_tall_spr_anim		; restart regular animation
 		NJSR			_nsub_get_rand_probability		; get random unmber in range 0-2
 			NARGB		$03
 		SJMP_SW			$03
-		SCASE			_scr_boss_judge_tall_restart_posA	; restarting boss from a particular
-		SCASE			_scr_boss_judge_tall_restart_posB	; location on its movement trajectory
-		SCASE			_scr_boss_judge_tall_restart_posC	; to keep it move on the same area
+		SCASE			_scr_judges_tall_restart_posA	; restarting boss from a particular
+		SCASE			_scr_judges_tall_restart_posB	; location on its movement trajectory
+		SCASE			_scr_judges_tall_restart_posC	; to keep it move on the same area
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_boss_judge_tall_reappear:
+_ssub_judges_tall_reappear:
 		SLOOP_BEGIN		$1E								; blink while reappearing
 		SPR_IDX_SET		1,$1B
 		SPR_IDX_SET		1,$FF
 		SLOOP_END
-		NBG_HNDL_SET	_nbgsub_boss_judge_tall_ctest
+		NBG_HNDL_SET	_nbgsub_judges_tall_ctest
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_tall_catch_anim_L:
+_scr_judges_tall_catch_anim_L:
 		SARG_SET		SARG1,$25
 		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_judges_tall_catch_anim_R:
+_scr_judges_tall_catch_anim_R:
 		SARG_SET		SARG1,$27
 		SJMP			_ssub_common_catch_anim_R_snd19
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_judge_tall_ctest:
+_nbgsub_judges_tall_ctest:
 		LDX		#$08
 		LDY		#$0E
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2C24E
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_judges_tall_stun
+		.WORD	_scr_judges_tall_stun
 		RTS
 loc_2C24E:
 		LDX		#$0B
@@ -388,7 +388,7 @@ loc_2C24E:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_judges_tall_catch_test:
+_nbgsub_judges_tall_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C26E
@@ -397,16 +397,16 @@ _nbgsub_boss_judges_tall_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_2C269
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_judges_tall_catch_anim_L
+		.WORD	_scr_judges_tall_catch_anim_L
 		RTS
 loc_2C269:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_judges_tall_catch_anim_R
+		.WORD	_scr_judges_tall_catch_anim_R
 locret_2C26E:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_boss_judges_tall_pos_set:
+_nsub_judges_tall_pos_set:
 		LDX		_scr_cur_trd_idx			; read hardcoded positions from script
 		JSR		_scr_getc
 		STA		_scr_trds_x_pos_lo,X
@@ -728,33 +728,33 @@ _scr22_lvl2_boss_train_slime:
 		NJSR			_nsub_obj_sarg_add_imm_test		; boss slime looking simple, but
 			NARGB		SARG0,$FF						; uses 4 different entities
 		SJMP_SW			$04
-		SCASE			_scr_boss_train_slime_projectileA
-		SCASE			_scr_boss_train_slime_projectileB
-		SCASE			_scr_boss_train_slime_projectileC
-		SCASE			_scr_boss_train_slime_dead
+		SCASE			_scr_train_slime_projectileA
+		SCASE			_scr_train_slime_projectileB
+		SCASE			_scr_train_slime_projectileC
+		SCASE			_scr_train_slime_dead
 
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
-_scr_boss_train_slime_active:
+_scr_train_slime_active:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		_pal_boss_train_slime_patch
-		NBG_HNDL_SET	_nbgsub_boss_train_slime_ctest
-		SJSR			_ssub_boss_train_slime_idle_anim; idle anim
+			NARGW		_pal_train_slime_patch
+		NBG_HNDL_SET	_nbgsub_train_slime_ctest
+		SJSR			_ssub_train_slime_idle_anim		; idle anim
 		SLOOP_BEGIN		$02
-		SJSR			_ssub_boss_train_slime_shot_anim; two shots in row
+		SJSR			_ssub_train_slime_shot_anim		; two shots in row
 		SLOOP_END
-		SJSR			_ssub_boss_train_slime_idle_anim; idle
-		SJSR			_ssub_boss_train_slime_shot_anim; one shot
-		SJSR			_ssub_boss_train_slime_idle_anim; idle
+		SJSR			_ssub_train_slime_idle_anim		; idle
+		SJSR			_ssub_train_slime_shot_anim		; one shot
+		SJSR			_ssub_train_slime_idle_anim		; idle
 		SLOOP_BEGIN		$03
-		SJSR			_ssub_boss_train_slime_shot_anim; three shots in row
+		SJSR			_ssub_train_slime_shot_anim		; three shots in row
 		SLOOP_END
-		SJMP			_scr_boss_train_slime_active
+		SJMP			_scr_train_slime_active
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_boss_train_slime_idle_anim:
+_ssub_train_slime_idle_anim:
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		0,$29
 		SDELAY			$0C
@@ -764,7 +764,7 @@ _ssub_boss_train_slime_idle_anim:
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_boss_train_slime_shot_anim:
+_ssub_train_slime_shot_anim:
 		SPR_IDX_SET		7,$2C							; turn to the player
 		SPR_IDX_INC		3
 		SPR_IDX_INC		3
@@ -772,7 +772,7 @@ _ssub_boss_train_slime_shot_anim:
 		NJSR			_nsub_new_thread_start			; deploy projectile
 			NARGB		_scr22_lvl2_boss_train_slime_idx
 			NARGB		$00,$F8
-			NARGB		_scr_boss_train_slime_projectileA_idx+1
+			NARGB		_scr_train_slime_projectileA_idx+1
 			NARGB		$00
 		SPR_IDX_INC		7								; turn back
 		SPR_IDX_DEC		3
@@ -781,10 +781,10 @@ _ssub_boss_train_slime_shot_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_stun:
-		NBG_HNDL_SET	_nbgsub_boss_train_slime_catch_test
+_scr_train_slime_stun:
+		NBG_HNDL_SET	_nbgsub_train_slime_catch_test
 		SARG_SET		SARG0,$02
-		SSCRIPT1_SET	_scr_boss_train_slime_dodge_anim; slime dodges the beam
+		SSCRIPT1_SET	_scr_train_slime_dodge_anim		; slime dodges the beam
 _sloc_2C6A2:
 		SDELAY			$01								; it is possible to catch only
 		NJSR			_nsub_wait_for_beam_hold		; while dodge script starts
@@ -792,12 +792,12 @@ _sloc_2C6A2:
 		SSCRIPT1_OFF									; all reloaded to active state
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_scr_boss_train_slime_active
-		SCASE			_scr_boss_train_slime_catch_anim_L
-		SCASE			_scr_boss_train_slime_catch_anim_R
+		SCASE			_scr_train_slime_active
+		SCASE			_scr_train_slime_catch_anim_L
+		SCASE			_scr_train_slime_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_dodge_anim:
+_scr_train_slime_dodge_anim:
 		SLOOP_BEGIN		$01								; dodge anim play
 		SPR_IDX_SET		1,$29
 		SPR_IDX_SET		1,$31
@@ -817,41 +817,41 @@ _scr_boss_train_slime_dodge_anim:
 		SSCRIPT0_OFF									; shut down
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_catch_anim_L:
-		SJSR			_ssub_boss_train_slime_catch_extra
+_scr_train_slime_catch_anim_L:
+		SJSR			_ssub_train_slime_catch_extra
 		SARG_SET		SARG1,$32
 		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_catch_anim_R:
-		SJSR			_ssub_boss_train_slime_catch_extra
+_scr_train_slime_catch_anim_R:
+		SJSR			_ssub_train_slime_catch_extra
 		SARG_SET		SARG1,$34
 		SJMP			_ssub_common_catch_anim_R_snd02
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_boss_train_slime_catch_extra:
-		NJSR			_nsub_new_thread_start
-			NARGB		_scr22_lvl2_boss_train_slime_idx
-			NARGB		$00,$00
-			NARGB		_scr_boss_train_slime_dead_idx+1
+_ssub_train_slime_catch_extra:
+		NJSR			_nsub_new_thread_start			; additional custom init
+			NARGB		_scr22_lvl2_boss_train_slime_idx; for dead lvl2 boss
+			NARGB		$00,$00							; start a new actor script here
+			NARGB		_scr_train_slime_dead_idx+1
 			NARGB		$00
-		NJSR			_nsub_apu_mus_load
+		NJSR			_nsub_apu_mus_load				; and do sound of whistle
 			NARGB		$FF
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$19
 		SRET
 
-_pal_boss_train_slime_patch:
+_pal_train_slime_patch:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_train_slime_ctest:
+_nbgsub_train_slime_ctest:
 		LDX		#$08
 		LDY		#$08
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2C706
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_train_slime_stun
+		.WORD	_scr_train_slime_stun
 		RTS
 loc_2C706:
 		LDX		#$0D
@@ -859,7 +859,7 @@ loc_2C706:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_train_slime_catch_test:
+_nbgsub_train_slime_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2C72B
@@ -871,11 +871,11 @@ _nbgsub_boss_train_slime_catch_test:
 		LSR
 		BCS		loc_2C726
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_train_slime_catch_anim_L
+		.WORD	_scr_train_slime_catch_anim_L
 		RTS
 loc_2C726:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_train_slime_catch_anim_R
+		.WORD	_scr_train_slime_catch_anim_R
 locret_2C72B:
 		RTS
 
@@ -1009,7 +1009,7 @@ _spr_nlib1A_35:
 		.BYTE	$F8,$F6,$42,$00
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_dead:
+_scr_train_slime_dead:
 		NJSR			_nsub_players_scr_suspend		; when boss dead, there is another
 		SDELAY			$5A								; scenery, first players are auto controlled
 		NJSR			_nsub_lvl_native_handler_disable; custom routine to disable all bg work of level
@@ -1048,26 +1048,26 @@ _nsub_lvl_native_handler_disable:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_projectileA:
-		NJSR			_nsub_boss_train_slime_projectile_dir_select
+_scr_train_slime_projectileA:
+		NJSR			_nsub_train_slime_projectile_dir_select
 		NJSR			_nsub_new_thread_start			; set random direction up
 			NARGB		_scr22_lvl2_boss_train_slime_idx; then deploy two more projectiles
 			NARGB		$F8,$00							; to the left and to the right
-			NARGB		_scr_boss_train_slime_projectileB_idx+1
+			NARGB		_scr_train_slime_projectileB_idx+1
 			NARGB		$E0
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr22_lvl2_boss_train_slime_idx
 			NARGB		$08,$00
-			NARGB		_scr_boss_train_slime_projectileC_idx+1
+			NARGB		_scr_train_slime_projectileC_idx+1
 			NARGB		$20
 		SPR_IDX_SET		0,$37
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_projectile_common:
+_scr_train_slime_projectile_common:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_boss_train_slime_projectile_ctest
+		NBG_HNDL_SET	_nbgsub_train_slime_projectile_ctest
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$02							; small projectile in the beginning
 		SDELAY			$18								; then getting bigger and finally disappear
@@ -1080,13 +1080,13 @@ _scr_boss_train_slime_projectile_common:
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_train_slime_projectile_ctest:
+_nbgsub_train_slime_projectile_ctest:
 		LDX		#$06
 		LDY		#$07
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_boss_train_slime_projectile_dir_select:
+_nsub_train_slime_projectile_dir_select:
 		LDA		#$21
 		JSR		_rand
 		CLC
@@ -1112,22 +1112,22 @@ _spr_nlib1A_3A:
 		.BYTE	$F8,$C8,$41,$FC
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_projectileB:
+_scr_train_slime_projectileB:
 		SPR_IDX_SET		0,$36
-		SJMP			_scr_boss_train_slime_projectile_common
+		SJMP			_scr_train_slime_projectile_common
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_train_slime_projectileC:
+_scr_train_slime_projectileC:
 		SPR_IDX_SET		0,$38
-		SJMP			_scr_boss_train_slime_projectile_common
+		SJMP			_scr_train_slime_projectile_common
 
 ; =============== S C R I P T ==========================s====================
 _scr2E_lvl4_boss_dragons:
-		NJSR			_nsub_obj_sarg_add_imm_test		;
+		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$02
-		SCASE			_scr_boss_dragon_active
-		SCASE			_scr_boss_dragon_flame
+		SCASE			_scr_dragons_active
+		SCASE			_scr_dragons_flame
 
 ; !FALLTHROUGH!
 
@@ -1135,27 +1135,27 @@ _scr2E_lvl4_boss_dragons:
 		SJSR			_ssub_boss_music_fade_and_load	; boss init here, music, palette
 		NJSR			_nsub_patch_pal_load			; and CHR bank
 			NARGB		$07
-			NARGW		_pal_boss_dragons_patch
+			NARGW		_pal_dragons_patchA
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$13
 		SLOOP_BEGIN		$08								; now will deploy 8 objects
 _sloc_2C99C:
 		SDELAY			$01
-		NJSR			_nsub_enemy_objects_number_test	; if objects count more than 3, then wait
+		NJSR			_nsub_dragons_obj_num_test		; if objects count more than 3, then wait
 			NARGB		$04								; when you catch some
 		SBCS			_sloc_2C99C
 		NJSR			_nsub_new_thread_start			; or else deploy new clone
 			NARGB		_scr2E_lvl4_boss_dragons_idx
 			NARGB		$00,$00
-			NARGB		_scr_boss_dragon_active_idx+1
+			NARGB		_scr_dragons_active_idx+1
 			NARGB		$00
 		SLOOP_END
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_active:
-		NJSR			_nsub_boss_dragon_start_pos_select	; set the appearance position and
+_scr_dragons_active:
+		NJSR			_nsub_dragons_start_pos_select	; set the appearance position and
 		SLOOP_BEGIN		$10								; direction,
 		SPR_IDX_SET		1,$3B							; then blink under water phase sprite
 		SPR_IDX_SET		1,$FF
@@ -1164,21 +1164,21 @@ _scr_boss_dragon_active:
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_restart:
+_scr_dragons_restart:
 		SARG_SET		SARG0,$00
 _sloc_2C9BB:
 		SPR_IDX_SET		0,$3B							; retarget at the beginning of the ai loop
-		NJSR			_nsub_boss_dragon_direction_update	; by random
-		NJSR			_nsub_boss_dragon_obstacle_test	; test if any obstacles in given direction
+		NJSR			_nsub_dragons_direction_update	; by random
+		NJSR			_nsub_dragons_obstacle_test		; test if any obstacles in given direction
 		SBCC			_sloc_2C9E4
 		SARG_ALU		SARG1,_ADC,$40
-		NJSR			_nsub_boss_dragon_obstacle_test	; test all directions before start moving
+		NJSR			_nsub_dragons_obstacle_test		; test all directions before start moving
 		SBCC			_sloc_2C9E4
 		SARG_ALU		SARG1,_ADC,$80
-		NJSR			_nsub_boss_dragon_obstacle_test
+		NJSR			_nsub_dragons_obstacle_test
 		SBCC			_sloc_2C9E4
 		SARG_ALU		SARG1,_ADC,$C0
-		NJSR			_nsub_boss_dragon_obstacle_test
+		NJSR			_nsub_dragons_obstacle_test
 		SBCS			_sloc_2C9BB
 _sloc_2C9E4:
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
@@ -1195,7 +1195,7 @@ _sloc_2C9E4:
 			NARGB		$3C,$40
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 7,$04							; now start active phase, also
-		NBG_HNDL_SET	_nbgsub_boss_dragon_ctest		; catchable
+		NBG_HNDL_SET	_nbgsub_dragons_ctest			; catchable
 		SPR_IDX_ADD_IMM 4,$04							; animate popping up
 		SPR_IDX_ADD_IMM 0,$04
 		SDELAY			$18
@@ -1212,7 +1212,7 @@ _sloc_2C9E4:
 		NJSR			_nsub_new_thread_start			; deploy fire projectile
 			NARGB		_scr2E_lvl4_boss_dragons_idx
 			NARGB		$00,$00
-			NARGB		_scr_boss_dragon_flame_idx+1
+			NARGB		_scr_dragons_flame_idx+1
 			NARGB		$00
 		SDELAY			$03								; hide back
 		SLOOP_END
@@ -1228,10 +1228,10 @@ _sloc_2C9E4:
 		SJMP			_sloc_2C9BB
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_stun:
-		NBG_HNDL_SET	_nbgsub_boss_dragon_catch_test	; dragons are gone if beamed for 90 cycles
+_scr_dragons_stun:
+		NBG_HNDL_SET	_nbgsub_dragons_catch_test		; dragons are gone if beamed for 90 cycles
 		SLOOP_BEGIN		$5A								; two frame each = 3 seconds
-		SJSR			_ssub_boss_dragon_shake_anim
+		SJSR			_ssub_dragons_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCS_BREAK		_sloc_2CA7E						; wait if beam released and break
 		SLOOP_END
@@ -1250,30 +1250,30 @@ _sloc_2CA66:
 		SARG_SET		SARG0,$02						; when last one, turn it read
 		NJSR			_nsub_patch_pal_load			; and wait for catch as usual
 			NARGB		$07
-			NARGW		_pal_boss_dragons_red_patch
+			NARGW		_pal_dragons_patchB
 _sloc_2CA6F:
-		SJSR			_ssub_boss_dragon_shake_anim
+		SJSR			_ssub_dragons_shake_anim
 		NJSR			_nsub_wait_for_beam_hold
 		SBCC			_sloc_2CA6F
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
-			NARGW		_pal_boss_dragons_patch
+			NARGW		_pal_dragons_patchA
 _sloc_2CA7E:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_scr_boss_dragon_retire
-		SCASE			_scr_boss_dragon_catch_anim_L
-		SCASE			_scr_boss_dragon_catch_anim_R
+		SCASE			_scr_dragons_retire
+		SCASE			_scr_dragons_catch_anim_L
+		SCASE			_scr_dragons_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_retire:
+_scr_dragons_retire:
 		NBG_HNDL_RESET
 		SPR_IDX_ADD_IMM 6,$F4
 		SPR_IDX_ADD_IMM 6,$FC
-		SJMP			_scr_boss_dragon_restart
+		SJMP			_scr_dragons_restart
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_ssub_boss_dragon_shake_anim:
+_ssub_dragons_shake_anim:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$44,$40
 		SDELAY			$01
@@ -1281,28 +1281,28 @@ _ssub_boss_dragon_shake_anim:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_catch_anim_L:
+_scr_dragons_catch_anim_L:
 		SARG_SET		SARG1,$50
 		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_catch_anim_R:
+_scr_dragons_catch_anim_R:
 		SARG_SET		SARG1,$52
 		SJMP			_ssub_common_catch_anim_R_snd19
 
-_pal_boss_dragons_patch:
+_pal_dragons_patchA:
 		.BYTE	$0F,$25,$16,$0F
-_pal_boss_dragons_red_patch:
+_pal_dragons_patchB:
 		.BYTE	$0F,$36,$2B,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_dragon_ctest:
+_nbgsub_dragons_ctest:
 		LDX		#$10
 		LDY		#$10
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2CABE
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_dragon_stun
+		.WORD	_scr_dragons_stun
 		RTS
 loc_2CABE:
 		LDX		#$15
@@ -1310,7 +1310,7 @@ loc_2CABE:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_boss_dragon_catch_test:
+_nbgsub_dragons_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2CADE
@@ -1319,16 +1319,16 @@ _nbgsub_boss_dragon_catch_test:
 		STA		_scores_obj_value
 		BCS		loc_2CAD9
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_dragon_catch_anim_L
+		.WORD	_scr_dragons_catch_anim_L
 		RTS
 loc_2CAD9:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_boss_dragon_catch_anim_R
+		.WORD	_scr_dragons_catch_anim_R
 locret_2CADE:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_enemy_objects_number_test:
+_nsub_dragons_obj_num_test:
 		JSR		_scr_getc
 		STA		_tmp0
 		LDY		#$00
@@ -1345,11 +1345,11 @@ loc_2CAEE:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_boss_dragon_obstacle_test:
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,Y
-		ASL
-		ROL
+_nsub_dragons_obstacle_test:
+		LDY		_scr_cur_trd_idx			; since there are no actual obstacles
+		LDA		_scr_trds_args1,Y			; this test only preventing the
+		ASL									; objects to get close to the screen
+		ROL									; edges
 		ROL
 		TAX
 		LDA		_scr_trds_x_pos_lo,Y
@@ -1370,7 +1370,7 @@ byte_2CB17:
 		.BYTE	$30,$FF,$A0,$FF
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_boss_dragon_start_pos_select:
+_nsub_dragons_start_pos_select:
 		LDA		#$0B						; select two random numbers
 		JSR		_rand						; $03-$0E and
 		PHA									; $03-$0A
@@ -1403,8 +1403,8 @@ _nsub_boss_dragon_start_pos_select:
 		RTS									; also randomly
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_boss_dragon_direction_update:
-		LDA		#$00
+_nsub_dragons_direction_update:
+		LDA		#$00						; moving randomly under water
 		JSR		_rand
 		LSR
 		BCC		locret_2CB5E
@@ -1619,23 +1619,23 @@ _spr_nlib1A_4F:
 		.BYTE	$F0,$E8,$03,$02
 		.BYTE	$F0,$D8,$03,$FA
 _spr_nlib1A_52:
-		.BYTE	$0A		; *--
-		.BYTE	$DF,$AA,$43,$07	; *--
-		.BYTE	$DF,$BA,$43,$FF	; *--
-		.BYTE	$FF,$CA,$43,$0F	; *--
-		.BYTE	$EF,$C8,$43,$0F	; *--
-		.BYTE	$EF,$D8,$43,$07	; *--
-		.BYTE	$EF,$E8,$43,$FF	; *--
-		.BYTE	$EF,$F8,$43,$F7	; *--
-		.BYTE	$FF,$9E,$43,$07	; *--
-		.BYTE	$FF,$AE,$43,$FF	; *--
-		.BYTE	$FF,$BE,$43,$F7	; *--
+		.BYTE	$0A
+		.BYTE	$DF,$AA,$43,$07				; unused
+		.BYTE	$DF,$BA,$43,$FF
+		.BYTE	$FF,$CA,$43,$0F
+		.BYTE	$EF,$C8,$43,$0F
+		.BYTE	$EF,$D8,$43,$07
+		.BYTE	$EF,$E8,$43,$FF
+		.BYTE	$EF,$F8,$43,$F7
+		.BYTE	$FF,$9E,$43,$07
+		.BYTE	$FF,$AE,$43,$FF
+		.BYTE	$FF,$BE,$43,$F7
 _spr_nlib1A_53:
-		.BYTE	$04		; *--
-		.BYTE	$F6,$F8,$43,$FA	; *--
-		.BYTE	$F6,$C8,$43,$02	; *--
-		.BYTE	$06,$BE,$43,$FA	; *--
-		.BYTE	$06,$8E,$43,$02	; *--
+		.BYTE	$04
+		.BYTE	$F6,$F8,$43,$FA				; unused
+		.BYTE	$F6,$C8,$43,$02
+		.BYTE	$06,$BE,$43,$FA
+		.BYTE	$06,$8E,$43,$02
 _spr_nlib1A_50:
 		.BYTE	$0A
 		.BYTE	$DF,$AA,$03,$F2
@@ -1656,35 +1656,35 @@ _spr_nlib1A_51:
 		.BYTE	$07,$8E,$03,$F9
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_flame:
+_scr_dragons_flame:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_sarg1_direction_extract	; four kinds of flame sprites
-		SJMP_SW			$04								; for four directions
-		SCASE			_scr_boss_dragon_flame_U
-		SCASE			_scr_boss_dragon_flame_R
-		SCASE			_scr_boss_dragon_flame_D
-		SCASE			_scr_boss_dragon_flame_L
+		SJMP_SW			$04								; for every direction
+		SCASE			_scr_dragons_flame_U
+		SCASE			_scr_dragons_flame_R
+		SCASE			_scr_dragons_flame_D
+		SCASE			_scr_dragons_flame_L
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_flame_U:
+_scr_dragons_flame_U:
 		POS_Y_MOVE		0,$CD
-		SJMP			_scr_boss_dragon_flame_vert
+		SJMP			_scr_dragons_flame_vert
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_flame_D:
+_scr_dragons_flame_D:
 		POS_Y_MOVE		0,$22
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_flame_vert:
+_scr_dragons_flame_vert:
 		NBG_HNDL_SET	_nbgsub_dragon_flame_vert_ctest
 		SPR_IDX_SET		1,$54
 		SPR_IDX_INC		2
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_flame_R:
+_scr_dragons_flame_R:
 		POS_X_MOVE		0,$2F
 		POS_Y_MOVE		0,$04
 		NBG_HNDL_SET	_nbgsub_dragon_flame_hor_ctest
@@ -1693,7 +1693,7 @@ _scr_boss_dragon_flame_R:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_boss_dragon_flame_L:
+_scr_dragons_flame_L:
 		POS_X_MOVE		0,$D1
 		POS_Y_MOVE		0,$04
 		NBG_HNDL_SET	_nbgsub_dragon_flame_hor_ctest
@@ -1745,180 +1745,204 @@ _spr_nlib1A_57:
 		.BYTE	$F3,$92,$01,$02
 
 ; =============== S C R I P T ==========================s====================
-_scr2F_lvl5_boss_key_keeper:
+_scr2F_lvl5_boss_keykeeper:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$04
-		SCASE			_sloc_case_2CFB4
-		SCASE			_sloc_case_2CFCC
-		SCASE			_sloc_case_2D7B1
-		SCASE			_sloc_case_2D81B
+		SCASE			_scr_boss_keykeeperA
+		SCASE			_scr_boss_keykeeperB
+		SCASE			_scr_keykeeper_death
+		SCASE			_scr_keykeeper_projectile
 
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SJSR			_ssub_boss_music_fade_and_load
-		NJSR			_nsub_boss_keykeeper_init		; init internal extra vast here
+		NJSR			_nsub_keykeeper_init			; init internal extra vars here
 		NJSR			_nsub_spr_pal_load				; the rest is usual
 			NARGW		_pal_spr_boss_keykeeper
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$18
 		SARG_SET		SARG1,$40
 		NJSR			_nsub_new_thread_start			; deploy another boss instance
-			NARGB		_scr2F_lvl5_boss_key_keeper_idx
+			NARGB		_scr2F_lvl5_boss_keykeeper_idx
 			NARGB		$00,$00
-			NARGB		_sloc_case_2CFB4_idx+1
-			NARGB		$00
-		NJSR			_nsub_2D257
-		SSCRIPT1_SET	_scr_2CFA1
-		SDELAY			$28
-		SDELAY			$B4
-_sloc_2CF30:
-		NJSR			_nsub_2D199
-		SBCC			_sloc_2CF51
-		NJSR			_nsub_2D1BF
-			NARGW		_sloc_2CFD9
-		SSCRIPT1_SET	_scr_2CFA1
-		SDELAY			$28
-		NJSR			_nsub_2D282
-		NJSR			_nsub_new_thread_start
-			NARGB		_scr2F_lvl5_boss_key_keeper_idx
+			NARGB		_scr_boss_keykeeperA_idx+1
+			NARGB		$00								; store its thread idx to the custom array
+		NJSR			_nsub_keykeeper_thread_idx_register
+		SSCRIPT1_SET	_scr_keykeeper_appear_blink		; wait until second instance stopped
+		SDELAY			$28								; this thread will wait until second instance walk
+		SDELAY			$B4								; then two more instances finish to work
+
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_main:
+		NJSR			_nsub_is_boss_three_obj_left_test	; if 3 or more objects to deploy left,
+		SBCC			_sloc_2CF51						; keep deploying boss instances
+		NJSR			_nsub_keykeeper_active_obj_threads_reload	; as the main object deploying entities
+			NARGW		_scr_keykeeper_moveA_blink		; set all objects the same short move script
+		SSCRIPT1_SET	_scr_keykeeper_appear_blink		; with no collision test handler
+		SDELAY			$28								; wait for they move
+		NJSR			_keykeeper_clone_to_near_thread_slot
+		NJSR			_nsub_new_thread_start			; start another instance
+			NARGB		_scr2F_lvl5_boss_keykeeper_idx
 			NARGB		$00,$00
-			NARGB		_sloc_case_2CFCC_idx+1
+			NARGB		_scr_boss_keykeeperB_idx+1
 			NARGB		$00
-		NJSR			_nsub_2D257
-		SDELAY			$B4
+		NJSR			_nsub_keykeeper_thread_idx_register
+		SDELAY			$B4								; still keep walking
 _sloc_2CF51:
-		NJSR			_nsub_2D1BF
-			NARGW		_sloc_2CFE3
-		SDELAY			$28
-		SSCRIPT1_OFF
+		NJSR			_nsub_keykeeper_active_obj_threads_reload
+			NARGW		_scr_keykeeper_move_solid		; when all three instances deployed, set to all
+		SDELAY			$28								; objects collision testable script and walk around
+		SSCRIPT1_OFF									; for one cycle, then stop and reload regular palette
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		_pal_spr_boss_keykeeper+$0C
 
+; !FALLTHROUGH!
+
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CF60:
+_sub_keykeeper_active:
 		SDELAY			$01
-		NJSR			_nsub_2D1F2
+		NJSR			_nsub_keykeeper_get_beamed_status
 		SJMP_SW			$02
-		SCASE			_sloc_case_2CF60
-		SCASE			_sloc_case_2CF81
+		SCASE			_sub_keykeeper_active
+		SCASE			_sub_keykeeper_reinit
 
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
-		NJSR			_nsub_2D215
-		NJSR			_nsub_2D1BF
-			NARGW		_sloc_2D002
+		NJSR			_nsub_keykeeper_pos_lock		; lock all current positions for all objects
+		NJSR			_nsub_keykeeper_active_obj_threads_reload
+			NARGW		_scr_keykeeper_fire				; set firing state for all except beamed one
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sloc_2CF73:
-		SDELAY			$01
+_scr_keykeeper_stop:
+		SDELAY			$01								; test if beamer is lost its target
 		NJSR			_nsub_mcmp
-			NARGW		byte_7DA
+			NARGW		_keykeeper_beam_flag
 			NARGB		$00
-		SBCC			_sloc_2CF89
-		NJSR			_nsub_2D229
+		SBCC			_scr_keykeeper_shake			; of no, keep shaking
+		NJSR			_nsub_keykeeper_pos_unlock		; or turn targeting bosses to normal
+
+; !FALLTHROUGH!
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CF81:
-		NJSR			_nsub_2D1BF
-			NARGW		_sloc_2CFE3
-		SJMP			_sloc_case_2CF60
-_sloc_2CF89:
-		NJSR			_nsub_mcmp
-			NARGW		byte_7DA
+_sub_keykeeper_reinit:
+		NJSR			_nsub_keykeeper_active_obj_threads_reload
+			NARGW		_scr_keykeeper_move_solid
+		SJMP			_sub_keykeeper_active
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_shake:
+		NJSR			_nsub_mcmp						; here we test if object catched
+			NARGW		_keykeeper_beam_flag			; _keykeeper_beam_flag == $02
 			NARGB		$02
-		SBCC			_sloc_2CF73
-		NJSR			_nsub_2D229
-		SMEM_ALU		byte_7DB,_ADC,$FF
-		NJSR			_nsub_2D19F
-		SBCC			_sloc_2CF30
+		SBCC			_scr_keykeeper_stop
+		NJSR			_nsub_keykeeper_pos_unlock		; when catched, decrement boss counter
+		SMEM_ALU		_keykeeper_counter,_ADC,$FF
+		NJSR			_nsub_is_boss_last_obj_left_test; test if there are few
+		SBCC			_scr_keykeeper_main				; restart base script then or stop cur entity
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_2CFA1:
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_pal_boss_keykeeper_patch
+_scr_keykeeper_appear_blink:
+		NJSR			_nsub_patch_pal_load			; black blinking while
+			NARGB		$07								; appear and move
+			NARGW		_pal_keykeeper_patch
 		SDELAY			$02
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		_pal_spr_boss_keykeeper+$0C
 		SDELAY			$02
-		SJMP			_scr_2CFA1
+		SJMP			_scr_keykeeper_appear_blink
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CFB4:
+_scr_boss_keykeeperA:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
 		SDELAY			$28
 		NJSR			_nsub_new_thread_start
-			NARGB		_scr2F_lvl5_boss_key_keeper_idx
+			NARGB		_scr2F_lvl5_boss_keykeeper_idx
 			NARGB		$00,$00
-			NARGB		$02
+			NARGB		_scr_boss_keykeeperB_idx+1
 			NARGB		$00
-		NJSR			_nsub_2D257
-		SJMP			_sloc_2CFED
+		NJSR			_nsub_keykeeper_thread_idx_register
+		SJMP			_scr_keykeeper_move_common
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2CFCC:
+_scr_boss_keykeeperB:
 		SARG_SET		SARG0,$00
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
 		SDELAY			$B4
-		SJMP			_sloc_2CFD9
-_sloc_2CFD9:
+		SJMP			_scr_keykeeper_moveA_blink
+; TODO: redundant jump here, may be replaced with NOTHING!
+;
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_moveA_blink:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
 		SDELAY			$28
-		SJMP			_sloc_2CFED
-_sloc_2CFE3:
+		SJMP			_scr_keykeeper_move_common
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_move_solid:
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
 		SDELAY			$28
-		NBG_HNDL_SET	_nbgsub_2D164
-_sloc_2CFED:
-		NJSR			_nsub_sarg1_direction_extract
-		SJSR_SW	$04
-		SCASE			_ssub_case_2D07A
-		SCASE			_ssub_case_2D01E
-		SCASE			_ssub_case_2D0A8
-		SCASE			_ssub_case_2D04C
+		NBG_HNDL_SET	_nbgsub_keykeeper_ctest
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_move_common:
+		NJSR			_nsub_sarg1_direction_extract	; constantly moving around the
+		SJSR_SW	$04										; corner, when reach corresponding limit
+		SCASE			_scr_keykeeper_move_U			; turn to the next corner
+		SCASE			_scr_keykeeper_move_R			; never stop
+		SCASE			_scr_keykeeper_move_D
+		SCASE			_scr_keykeeper_move_L
 		POS_MOVE_STOP	0
 		SARG_ALU		SARG1,_ADC,$40
-		SJMP			_sloc_2CFED
-_sloc_2D002:
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
-		SDELAY			$01
+		SJMP			_scr_keykeeper_move_common
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_fire:
+		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; keep firing state unless
+		SDELAY			$01								; beamed object lost or catched
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
 			NARGB		$5A,$40
-		NJSR			_nsub_2D1B1
+		NJSR			_nsub_keykeeper_spr_reverse
 		SDELAY			$01
-		NJSR			_nsub_new_thread_start
-			NARGB		_scr2F_lvl5_boss_key_keeper_idx
+		NJSR			_nsub_new_thread_start			; deploy projectile
+			NARGB		_scr2F_lvl5_boss_keykeeper_idx
 			NARGB		$00,$00
-			NARGB		$04
+			NARGB		_scr_keykeeper_projectile_idx+1
 			NARGB		$00
 		SDELAY			$3C
-		SJMP			_sloc_2D002
-_ssub_case_2D01E:
-		SSCRIPT1_SET	_scr_2D02F
+		SJMP			_scr_keykeeper_fire				; loop unless beamed object change state
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_move_R:
+		SSCRIPT1_SET	_scr_keykeeper_move_R_anim
 _sloc_2D022:
-		NJSR			_nsub_2D2BB
+		NJSR			_nsub_keykeeper_R_limit_test	; test for reaching the limit
 			NARGB		$C8
-		SBCS			_sloc_2D02E
-		SDELAY			$01
+		SBCS			_sloc_2D02E						; then exit to retarget
+		SDELAY			$01								; else keep going
 		SJMP			_sloc_2D022
 _sloc_2D02E:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D02F:
+_scr_keykeeper_move_R_anim:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5B
 		SDELAY			$0A
@@ -1931,11 +1955,13 @@ _scr_2D02F:
 		POS_X_DELTA_SET 0,$00,$02
 		SPR_IDX_SET		0,$5F
 		SDELAY			$06
-		SJMP			_scr_2D02F
-_ssub_case_2D04C:
-		SSCRIPT1_SET	_scr_2D05D
+		SJMP			_scr_keykeeper_move_R_anim
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_move_L:
+		SSCRIPT1_SET	_scr_keykeeper_move_L_anim
 _sloc_2D050:
-		NJSR			_nsub_2D2CC
+		NJSR			_nsub_keykeeper_L_limit_test
 			NARGB		$30
 		SBCS			_sloc_2D05C
 		SDELAY			$01
@@ -1944,7 +1970,7 @@ _sloc_2D05C:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D05D:
+_scr_keykeeper_move_L_anim:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5D
 		SDELAY			$0A
@@ -1957,11 +1983,13 @@ _scr_2D05D:
 		POS_X_DELTA_SET 0,$00,$FE
 		SPR_IDX_SET		0,$61
 		SDELAY			$06
-		SJMP			_scr_2D05D
-_ssub_case_2D07A:
-		SSCRIPT1_SET	_scr_2D08B
+		SJMP			_scr_keykeeper_move_L_anim
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_move_U:
+		SSCRIPT1_SET	_scr_keykeeper_move_U_anim
 _sloc_2D07E:
-		NJSR			_nsub_2D2D8
+		NJSR			_nsub_keykeeper_U_limit_test
 			NARGB		$40
 		SBCS			_sloc_2D08A
 		SDELAY			$01
@@ -1970,7 +1998,7 @@ _sloc_2D08A:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D08B:
+_scr_keykeeper_move_U_anim:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5A
 		SDELAY			$0A
@@ -1983,11 +2011,13 @@ _scr_2D08B:
 		POS_Y_DELTA_SET 0,$00,$FE
 		SPR_IDX_SET		0,$5E
 		SDELAY			$06
-		SJMP			_scr_2D08B
-_ssub_case_2D0A8:
-		SSCRIPT1_SET	_scr_2D0B9
+		SJMP			_scr_keykeeper_move_U_anim
+
+; =============== S C R I P T ==========================s====================
+_scr_keykeeper_move_D:
+		SSCRIPT1_SET	_scr_keykeeper_move_D_anim
 _sloc_2D0AC:
-		NJSR			_nsub_2D2E4
+		NJSR			_nsub_keykeeper_D_limit_test
 			NARGB		$A8
 		SBCS			_sloc_2D0B8
 		SDELAY			$01
@@ -1996,7 +2026,7 @@ _sloc_2D0B8:
 		SRET
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D0B9:
+_scr_keykeeper_move_D_anim:
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$5C
 		SDELAY			$0A
@@ -2009,12 +2039,12 @@ _scr_2D0B9:
 		POS_Y_DELTA_SET 0,$00,$02
 		SPR_IDX_SET		0,$60
 		SDELAY			$06
-		SJMP			_scr_2D0B9
+		SJMP			_scr_keykeeper_move_D_anim
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D0D6:
-		NBG_HNDL_SET	_nbgsub_2D17F
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+_scr_keykeeper_stun:
+		NBG_HNDL_SET	_nbgsub_keykeeper_catch_test	; also two-part handler
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; first part waiting for beaming time
 			NARGB		$5A,$40
 		SLOOP_BEGIN		$5A
 		SPR_IDX_ADD_IMM 1,$0C
@@ -2023,17 +2053,17 @@ _scr_2D0D6:
 		SBCS_BREAK		_sloc_2D112
 		SLOOP_END
 		SARG_SET		SARG0,$02
-		NJSR			_nsub_2D1A8
-		SBCS			_sloc_2D103
-		SPR_IDX_ADD_IMM 0,$10
+		NJSR			_nsub_is_boss_one_obj_left_test	; also additional test if there is a last
+		SBCS			_sloc_2D103						; object
+		SPR_IDX_ADD_IMM 0,$10							; set new sprite with red palette set
 _sloc_2D0F6:
-		SPR_IDX_ADD_IMM 1,$04
-		SPR_IDX_ADD_IMM 1,$FC
-		NJSR			_nsub_wait_for_beam_hold
+		SPR_IDX_ADD_IMM 1,$04							; because all objects uses the same pal
+		SPR_IDX_ADD_IMM 1,$FC							; we just can't use the same pal trick as
+		NJSR			_nsub_wait_for_beam_hold		; for lvl1 boss for exmple...
 		SBCC			_sloc_2D0F6
 		SJMP			_sloc_2D112
 _sloc_2D103:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; start to disappear and baby appear
 			NARGB		$5A,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$76
@@ -2042,38 +2072,38 @@ _sloc_2D103:
 _sloc_2D112:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
-		SCASE			_sloc_case_2D11D
-		SCASE			_scr_2D122
-		SCASE			_scr_2D139
+		SCASE			_scr_keykeeper_lost
+		SCASE			_scr_keykeeper_catch_anim_L
+		SCASE			_scr_keykeeper_catch_anim_R
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2D11D:
-		STORE8			byte_7DA,$00
+_scr_keykeeper_lost:
+		STORE8			_keykeeper_beam_flag,$00		; reset flag, the rest is up to other part of script
 		SUSPEND
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D122:
-		NJSR			_nsub_2D23D
-		NJSR			_nsub_2D1A8
-		SBCC			_sloc_2D133
+_scr_keykeeper_catch_anim_L:
+		NJSR			_nsub_keykeeper_thread_idx_remove	; remove it from local tmp list
+		NJSR			_nsub_is_boss_one_obj_left_test	; test if there is not the last boss
+		SBCC			_sloc_2D133						; if yes, deploy death anim
 		NJSR			_nsub_new_thread_start
-			NARGB		_scr2F_lvl5_boss_key_keeper_idx
+			NARGB		_scr2F_lvl5_boss_keykeeper_idx
 			NARGB		$00,$18
-			NARGB		$03
+			NARGB		_scr_keykeeper_death_idx+1
 			NARGB		$00
 _sloc_2D133:
-		SARG_SET		SARG1,$72
+		SARG_SET		SARG1,$72						; or just play catch anim with sound
 		SJMP			_ssub_common_catch_anim_L_snd19
 
 ; =============== S C R I P T ==========================s====================
-_scr_2D139:
-		NJSR			_nsub_2D23D
-		NJSR			_nsub_2D1A8
+_scr_keykeeper_catch_anim_R:
+		NJSR			_nsub_keykeeper_thread_idx_remove
+		NJSR			_nsub_is_boss_one_obj_left_test
 		SBCC			_sloc_2D14A
 		NJSR			_nsub_new_thread_start
-			NARGB		_scr2F_lvl5_boss_key_keeper_idx
+			NARGB		_scr2F_lvl5_boss_keykeeper_idx
 			NARGB		$00,$18
-			NARGB		$03
+			NARGB		_scr_keykeeper_death_idx+1
 			NARGB		$00
 _sloc_2D14A:
 		SARG_SET		SARG1,$74
@@ -2081,19 +2111,19 @@ _sloc_2D14A:
 
 _pal_spr_boss_keykeeper:
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$25,$15,$0F,$0F,$36,$1B,$0F
-_pal_boss_keykeeper_patch:
+_pal_keykeeper_patch:
 		.BYTE	$0F,$0F,$0F,$0F
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2D164:
+_nbgsub_keykeeper_ctest:
 		LDX		#$10
 		LDY		#$16
 		JSR		_obj_to_beam_ctest
 		BCC		loc_2D178
 		LDA		#$01
-		STA		byte_7DA
+		STA		_keykeeper_beam_flag
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2D0D6
+		.WORD	_scr_keykeeper_stun
 		RTS
 loc_2D178:
 		LDX		#$0F
@@ -2101,7 +2131,7 @@ loc_2D178:
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2D17F:
+_nbgsub_keykeeper_catch_test:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args0,X
 		BPL		locret_2D198
@@ -2110,23 +2140,23 @@ _nbgsub_2D17F:
 		STA		_scores_obj_value
 		BCS		loc_2D193
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2D122
+		.WORD	_scr_keykeeper_catch_anim_L
 		RTS
 loc_2D193:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_2D139
+		.WORD	_scr_keykeeper_catch_anim_R
 locret_2D198:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D199:
-		LDA		byte_7DB
+_nsub_is_boss_three_obj_left_test:
+		LDA		_keykeeper_counter
 		CMP		#$03
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D19F:
-		LDA		byte_7DB
+_nsub_is_boss_last_obj_left_test:
+		LDA		_keykeeper_counter
 		BNE		loc_2D1A6
 		SEC
 		RTS
@@ -2135,8 +2165,8 @@ loc_2D1A6:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D1A8:
-		LDA		byte_7DB
+_nsub_is_boss_one_obj_left_test:
+		LDA		_keykeeper_counter
 		CMP		#$01
 		BEQ		locret_2D1B0
 		CLC
@@ -2144,7 +2174,7 @@ locret_2D1B0:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D1B1:
+_nsub_keykeeper_spr_reverse:
 		LDX		_scr_cur_trd_idx
 		LDY		_scr_trds_spr_idx,X
 		LDA		byte_2D1BB-$5A,Y
@@ -2154,7 +2184,7 @@ byte_2D1BB:
 		.BYTE	$5D,$5A,$5B,$5C
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D1BF:
+_nsub_keykeeper_active_obj_threads_reload:
 		JSR		_scr_getc
 		STA		_tmp0
 		JSR		_scr_getc
@@ -2163,7 +2193,7 @@ _nsub_2D1BF:
 loc_2D1CB:
 		TYA
 		PHA
-		LDX		byte_7D7,Y
+		LDX		_boss_tmp_list,Y
 		BMI		loc_2D1EC
 		LDA		_scr_trds_idx,X
 		BMI		loc_2D1EC
@@ -2187,13 +2217,13 @@ loc_2D1EC:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D1F2:
-		LDA		byte_7DA
+_nsub_keykeeper_get_beamed_status:
+		LDA		_keykeeper_beam_flag		; return $00 if no beamed at all
 		BEQ		locret_2D214
 		LDY		#$02
 loc_2D1F9:
-		LDX		byte_7D7,Y
-		BMI		loc_2D207
+		LDX		_boss_tmp_list,Y		; look for currently beamed
+		BMI		loc_2D207					; return $02 if any
 		LDA		_scr_trds_idx,X
 		BMI		loc_2D207
 		LDA		_scr_trds_args0,X
@@ -2201,9 +2231,9 @@ loc_2D1F9:
 loc_2D207:
 		DEY
 		BPL		loc_2D1F9
-		LDA		#$00
-		STA		byte_7DA
-		LDA		#$01
+		LDA		#$00						; if beamed flag set but no beamed
+		STA		_keykeeper_beam_flag		; objects left, reset beamed flag,
+		LDA		#$01						; return $01
 		RTS
 loc_2D212:
 		LDA		#$02
@@ -2211,10 +2241,10 @@ locret_2D214:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D215:
+_nsub_keykeeper_pos_lock:
 		LDY		#$02
 loc_2D217:
-		LDX		byte_7D7,Y
+		LDX		_boss_tmp_list,Y
 		BMI		loc_2D225
 		LDA		_scr_trds_idx,X
 		BMI		loc_2D225
@@ -2226,10 +2256,10 @@ loc_2D225:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D229:
+_nsub_keykeeper_pos_unlock:
 		LDY		#$02
 loc_2D22B:
-		LDX		byte_7D7,Y
+		LDX		_boss_tmp_list,Y
 		BMI		loc_2D239
 		LDA		_scr_trds_idx,X
 		BMI		loc_2D239
@@ -2241,56 +2271,56 @@ loc_2D239:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D23D:
+_nsub_keykeeper_thread_idx_remove:
 		LDY		#$02
 loc_2D23F:
-		LDA		byte_7D7,Y
+		LDA		_boss_tmp_list,Y
 		CMP		_scr_cur_trd_idx
 		BEQ		loc_2D24C
 		DEY
 		BPL		loc_2D23F
 loc_2D249:
-		JMP		loc_2D249
+		JMP		loc_2D249					; original DEBUG assert here
 loc_2D24C:
 		LDA		#$FF
-		STA		byte_7D7,Y
+		STA		_boss_tmp_list,Y
 		LDA		#$02
-		STA		byte_7DA
+		STA		_keykeeper_beam_flag
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D257:
+_nsub_keykeeper_thread_idx_register:
 		LDX		#$00
 loc_2D259:
-		LDA		byte_7D7,X
+		LDA		_boss_tmp_list,X
 		BMI		loc_2D266
 		INX
 		CPX		#$03
 		BCC		loc_2D259
 loc_2D263:
-		JMP		loc_2D263
+		JMP		loc_2D263					; original DEBUG assert here also
 loc_2D266:
 		LDA		_nsub_return_value
-		STA		byte_7D7,X
+		STA		_boss_tmp_list,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_boss_keykeeper_init:
+_nsub_keykeeper_init:
 		LDA		#$FF
-		STA		byte_7D7
-		STA		byte_7D7+1
-		STA		byte_7D7+2
+		STA		_boss_tmp_list
+		STA		_boss_tmp_list+1
+		STA		_boss_tmp_list+2
 		LDA		#$00
-		STA		byte_7DA
+		STA		_keykeeper_beam_flag
 		LDA		#$0A
-		STA		byte_7DB
+		STA		_keykeeper_counter
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D282:
-		JSR		sub_2D2A7
+_keykeeper_clone_to_near_thread_slot:
+		JSR		_keykeeper_get_near_thread_idx_slot
 		TAY
-		LDX		byte_7D7,Y
+		LDX		_boss_tmp_list,Y
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_x_pos_lo,X
 		STA		_scr_trds_x_pos_lo,Y
@@ -2305,15 +2335,15 @@ _nsub_2D282:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_2D2A7:
+_keykeeper_get_near_thread_idx_slot:
 		LDY		#$02
 loc_2D2A9:
-		LDA		byte_7D7,Y
+		LDA		_boss_tmp_list,Y
 		BMI		loc_2D2B4
 		DEY
 		BPL		loc_2D2A9
 loc_2D2B1:
-		JMP		loc_2D2B1
+		JMP		loc_2D2B1					; original DEBUG assert here also
 loc_2D2B4:
 		LDA		byte_2D2B8,Y
 		RTS
@@ -2321,7 +2351,7 @@ byte_2D2B8:
 		.BYTE	$02,$00,$01
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D2BB:
+_nsub_keykeeper_R_limit_test:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_x_pos_lo,X
@@ -2336,7 +2366,7 @@ loc_2D2CA:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D2CC:
+_nsub_keykeeper_L_limit_test:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_x_pos_lo,X
@@ -2346,7 +2376,7 @@ locret_2D2D7:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D2D8:
+_nsub_keykeeper_U_limit_test:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_y_pos_lo,X
@@ -2356,7 +2386,7 @@ locret_2D2E3:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D2E4:
+_nsub_keykeeper_D_limit_test:
 		JSR		_scr_getc
 		LDX		_scr_cur_trd_idx
 		CMP		_scr_trds_y_pos_lo,X
@@ -2724,15 +2754,15 @@ _spr_nlib1A_75:
 		.BYTE	$F0,$90,$43,$08
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2D7B1:
-		SARG_SET		SARG0,$00
-		SPR_IDX_SET		0,$76
+_scr_keykeeper_death:
+		SARG_SET		SARG0,$00						; remove main boss object
+		SPR_IDX_SET		0,$76							; set baby keykeeper sprite
 		SDELAY			$20
-		POS_Y_DELTA_SET 4,$00,$02
+		POS_Y_DELTA_SET 4,$00,$02						; animate it
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		4,$78
 		SPR_IDX_INC		4
-		SPR_IDX_SET		0,$76
+		SPR_IDX_SET		0,$76							; set stage complete script
 		SDELAY			$3C
 		NJSR			_nsub_stage_complete_force
 		SUSPEND
@@ -2767,33 +2797,33 @@ _spr_nlib1A_79:
 		.BYTE	$F0,$A6,$03,$F8
 
 ; =============== S C R I P T ==========================s====================
-_sloc_case_2D81B:
+_scr_keykeeper_projectile:
 		SARG_SET		SARG0,$00
-		NJSR			_nsub_2D848
+		NJSR			_nsub_keykepper_projectile_init	; init starting pos and direction
 		SLOOP_BEGIN		$03
-		SPR_IDX_SET		2,$FF
-		NJSR			_nsub_obj_spr_idx_set_from_sarg
+		SPR_IDX_SET		2,$FF							; start to animate it first around
+		NJSR			_nsub_obj_spr_idx_set_from_sarg	; head
 			NARGB		SARG2
 		SDELAY			$02
-		SLOOP_END
+		SLOOP_END										; then start to move in targets direction
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$0F
-		NBG_HNDL_SET	_nbgsub_2D83E
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NBG_HNDL_SET	_nbgsub_keykeeper_projectile_ctest	; deadly projectile collision test
+		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; reinit sprite
 			NARGB		$7C,$20
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; keep going, script is done here
 			NARGB		$00,$03
 		SUSPEND
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2D83E:
+_nbgsub_keykeeper_projectile_ctest:
 		LDX		#$09
 		LDY		#$0A
 		JSR		_obj_to_player_ctest
 		JMP		_cur_obj_out_of_screen_test
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2D848:
+_nsub_keykepper_projectile_init:
 		LDY		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,Y
 		CLC
@@ -2823,7 +2853,6 @@ _nsub_2D848:
 		ADC		#$7A
 		STA		_scr_trds_args2,Y
 		RTS
-
 byte_2D886:
 		.BYTE	$00,$05,$00,$FB
 byte_2D88A:
@@ -2832,6 +2861,7 @@ byte_2D88E:
 		.BYTE	$E8,$FE,$FD,$FE
 byte_2D892:
 		.BYTE	$FF,$FF,$FF,$FF
+
 _spr_nlib1A_7A:
 		.BYTE	$02
 		.BYTE	$FC,$96,$01,$00
@@ -2861,62 +2891,62 @@ _scr30_lvl6_boss_vega:
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$04
-		SCASE			_lvl6_boss_vega_sub1
-		SCASE			_lvl6_boss_vega_sub2
-		SCASE			_lvl6_boss_vega_sub3
-		SCASE			_lvl6_boss_vega_sub4
+		SCASE			_scr_vega_projectileA
+		SCASE			_scr_vega_fireball
+		SCASE			_scr_vega_projectileB
+		SCASE			_scr_vega_mother
 
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
-		SLOOP_BEGIN		$C8							; default initialization
-		SMEM_ALU		_apu_mus_volume,_ADC,$FF	; slowly lower the music volume
-		SDELAY			$02							; in about 6 seconds
+		SLOOP_BEGIN		$C8								; default initialization
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF		; slowly lower the music volume
+		SDELAY			$02								; in about 6 seconds
 		SLOOP_END
-		NJSR			_nsub_apu_snd_load_safe		; start laughing sound effect
+		NJSR			_nsub_apu_snd_load_safe			; start laughing sound effect
 			NARGB		$0E
 		SDELAY			$64
-		STORE8			_apu_mus_volume,$FF			; restore music volume and play
-		NJSR			_nsub_apu_mus_load			; boss music
+		STORE8			_apu_mus_volume,$FF				; restore music volume and play
+		NJSR			_nsub_apu_mus_load				; custom boss music
 			NARGB		$0B
-		SPR_IDX_SET		0,$C0						; display sprite (hidden)
-		SLOOP_BEGIN		$04							; slowly reveal through the
+		SPR_IDX_SET		0,$C0							; display sprite (hidden)
+		SLOOP_BEGIN		$04								; slowly reveal through the
 		NJSR			_nsub_pal_fade_req_inc_by_mask	; palette fade in effect
 			NARGB		$22
 		SDELAY			$06
 		SLOOP_END
-		STORE16			byte_7D7,$800				; set HP for this boss
-		NBG_HNDL_SET	_nbgsub_lvl6_boss_vega_damage_count	; set bg damage detection routine
-		SSCRIPT1_SET	_scr_lvl6_boss_vega_blinker	; start damage blinker secondary script
-		SDELAY			$B4							; now wait for a while
-		POS_Y_DELTA_SET 0,$80,$00					; and move forth from the painting
+		STORE16			_boss_tmp_list,$800				; set HP for this boss
+		NBG_HNDL_SET	_nbgsub_vega_ctest				; set bg damage detection routine
+		SSCRIPT1_SET	_scr_vega_blinker				; start damage blinker secondary script
+		SDELAY			$B4								; now wait for a while
+		POS_Y_DELTA_SET 0,$80,$00						; and move forth from the painting
 		SDELAY			$60
-		POS_MOVE_STOP	0							; stop, get to the main loop
+		POS_MOVE_STOP	0								; stop, get to the main loop
 _sloc_2D90E:
-		SPR_IDX_SET		0,$C0						; delay before attack
+		SPR_IDX_SET		0,$C0							; delay before attack
 		SDELAY			$62
-		SARG_SET		SARG1,$00					; reset attack tmp var
-		NJSR			_nsub_new_thread_start		; start to attack
-			NARGB		_scr30_lvl6_boss_vega_idx
+		SARG_SET		SARG1,$00						; reset attack tmp var
+		NJSR			_nsub_new_thread_start			; start to attack
+			NARGB		_scr30_lvl6_boss_vega_idx		; deploy four projectiles
 			NARGB		$00,$00
-			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		_scr_vega_projectileA_idx+1
 			NARGB		$20
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$00,$00
-			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		_scr_vega_projectileA_idx+1
 			NARGB		$60
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$00,$00
-			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		_scr_vega_projectileA_idx+1
 			NARGB		$A0
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$00,$00
-			NARGB		_lvl6_boss_vega_sub1_idx+1
+			NARGB		_scr_vega_projectileA_idx+1
 			NARGB		$E0
-		SDELAY			$2E
+		SDELAY			$2E								; animate vega controlling projectiles
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		0,$C1
 		SDELAY			$0C
@@ -2927,93 +2957,94 @@ _sloc_2D90E:
 		SLOOP_END
 		SPR_IDX_DEC		0
 		SDELAY			$0C
-		NJSR			_nsub_new_thread_start
-			NARGB		_scr30_lvl6_boss_vega_idx
+		NJSR			_nsub_new_thread_start			; all fireballs shrinked to one single
+			NARGB		_scr30_lvl6_boss_vega_idx		; pulsating ball
 			NARGB		$00,$00
-			NARGB		_lvl6_boss_vega_sub2_idx+1
+			NARGB		_scr_vega_fireball_idx+1
 			NARGB		$00
-		SDELAY			$20
+		SDELAY			$20								; some more hands shaking
 		SPR_IDX_SET		0,$C0
 		SDELAY			$10
 		SPR_IDX_SET		0,$C5
 		SDELAY			$08
-		NJSR			_nsub_2DA70
-		NJSR			_nsub_new_thread_start
-			NARGB		_scr30_lvl6_boss_vega_idx
+		NJSR			_nsub_vega_shot_targeting		; random targering to fire
+		NJSR			_nsub_new_thread_start			; deploy three fire balls
+			NARGB		_scr30_lvl6_boss_vega_idx		; from one hand
 			NARGB		$10,$F8
-			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		_scr_vega_projectileB_idx+1
 			NARGB		$4C
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$10,$F8
-			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		_scr_vega_projectileB_idx+1
 			NARGB		$6C
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$10,$F8
-			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		_scr_vega_projectileB_idx+1
 			NARGB		$8C
-		SDELAY			$10
+		SDELAY			$10								; then the same from another hand
 		SPR_IDX_INC		0
 		SDELAY			$08
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$F0,$F8
-			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		_scr_vega_projectileB_idx+1
 			NARGB		$74
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$F0,$F8
-			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		_scr_vega_projectileB_idx+1
 			NARGB		$94
 		NJSR			_nsub_new_thread_start
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$F0,$F8
-			NARGB		_lvl6_boss_vega_sub3_idx+1
+			NARGB		_scr_vega_projectileB_idx+1
 			NARGB		$B4
 		SDELAY			$10
-		SJMP			_sloc_2D90E
+		SJMP			_sloc_2D90E						; repeat boss pattern
 
 ; =============== S C R I P T ==========================s====================
-_scr_lvl6_boss_vega_blinker:
+_scr_vega_blinker:
 		SDELAY			$01
-		NJSR			_nsub_obj_sarg_add_imm_test
+		NJSR			_nsub_obj_sarg_add_imm_test		; wait when need to blink
 			NARGB		SARG0,$00
 		SJMP_SW			$01
-		SCASE			_scr_lvl6_boss_vega_blinker
+		SCASE			_scr_vega_blinker				; and blink!
 
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		byte_2D9B8
+			NARGW		_pal_vega_blink_patch
 		SDELAY			$01
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		byte_2D9B4
+			NARGW		_pal_vega_normal_patch
 		SDELAY			$01
-		SJMP			_scr_lvl6_boss_vega_blinker
-byte_2D9B4:
+		SJMP			_scr_vega_blinker
+
+_pal_vega_normal_patch:
 		.BYTE	$0F,$36,$17,$0F
-byte_2D9B8:
+_pal_vega_blink_patch:
 		.BYTE	$0F,$20,$20,$20
 
 ; =============== S C R I P T ==========================s====================
-_scr_lvl6_boss_vega_death:
-		NJSR			_nsub_gen_threads_off_except_cur
+_scr_vega_death:
+		NJSR			_nsub_gen_threads_off_except_cur; start final boss death cutscene
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
-			NARGW		byte_2D9B4
-		SPR_IDX_SET		0,$C1
+			NARGW		_pal_vega_normal_patch
+		SPR_IDX_SET		0,$C1							; stop animating
 		SDELAY			$40
 		SPR_IDX_SET		0,$C7
-		SDELAY			$10
+		SDELAY			$10								; start scream sound
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
 		NJSR			_nsub_apu_snd_load_safe
 			NARGB		$1A
-		POS_Y_DELTA_SET 0,$00,$FC
+		POS_Y_DELTA_SET 0,$00,$FC						; now dodjing back to painting
 		SPR_IDX_SET		4,$84
 		SPR_IDX_INC		4
 		POS_Y_DELTA_SET 0,$00,$FE
@@ -3023,10 +3054,10 @@ _scr_lvl6_boss_vega_death:
 		POS_MOVE_STOP	0
 		SPR_IDX_INC		4
 		SPR_IDX_SET		0,$FF
-		SDELAY			$5A
-		NJSR			_nsub_lvl6_players_auto_scriptsB_set
+		SDELAY			$5A								; final scene starts, auto play script
+		NJSR			_nsub_lvl6_players_auto_scriptsB_set	; for players
 		POS_X_SET		0,$80,$00
-		POS_Y_SET		0,$98,$00
+		POS_Y_SET		0,$98,$00						; show blinking baby
 		SPR_IDX_SET		1,$91
 		SPR_IDX_SET		2,$FF
 		SPR_IDX_SET		3,$91
@@ -3050,50 +3081,50 @@ _scr_lvl6_boss_vega_death:
 		SDELAY			$0E
 		SPR_IDX_SET		0,$91
 		SDELAY			$96
-		NJSR			_nsub_new_thread_start
+		NJSR			_nsub_new_thread_start			; deploy mother script, walk to baby
 			NARGB		_scr30_lvl6_boss_vega_idx
 			NARGB		$00,$58
-			NARGB		_lvl6_boss_vega_sub4_idx+1
+			NARGB		_scr_vega_mother_idx+1
 			NARGB		$00
 		SDELAY			$40
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_pal_fade_req_dec_by_mask
+		NJSR			_nsub_pal_fade_req_dec_by_mask	; fade out
 			NARGB		$FF
 		SDELAY			$08
 		SLOOP_END
-		STORE8			_game_flags,$80
-		NJSR			_nsub_all_threads_off_except_cur
+		STORE8			_game_flags,$80					; no sclear screen here, just silently exit
+		NJSR			_nsub_all_threads_off_except_cur; script with complere stage flag
 		SSTOP
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_lvl6_boss_vega_damage_count:
+_nbgsub_vega_ctest:
 		LDX		#$15
 		LDY		#$26
 		JSR		_obj_to_player_ctest
 		LDX		#$10
 		LDY		#$18
-		JSR		_obj_to_beam_ctest
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
-		BEQ		locret_2DA6F
-		LDA		byte_7D7
+		JSR		_obj_to_beam_ctest			; this is not regular ctest for beam
+		LDX		_scr_cur_trd_idx			; we don't have stun or beamed scripts for vega
+		LDA		_scr_trds_args0,X			; it is only an amount of beam damage
+		BEQ		locret_2DA6F				; that counts
+		LDA		_boss_tmp_list
 		SEC
 		SBC		#$01
-		STA		byte_7D7
-		LDA		byte_7D7+1
+		STA		_boss_tmp_list
+		LDA		_boss_tmp_list+1
 		SBC		#$00
-		STA		byte_7D7+1
-		ORA		byte_7D7
+		STA		_boss_tmp_list+1
+		ORA		_boss_tmp_list				; beam it until death, thats all
 		BNE		locret_2DA6F
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_lvl6_boss_vega_death
+		.WORD	_scr_vega_death
 		LDA		#$C8
 		JSR		_scores_add
 locret_2DA6F:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2DA70:
+_nsub_vega_shot_targeting:
 		LDA		#$21
 		JSR		_rand
 		SEC
@@ -3450,10 +3481,10 @@ _spr_nlib1A_94:
 		.BYTE	$F1,$C5,$00,$00
 
 ; =============== S C R I P T ==========================s====================
-_lvl6_boss_vega_sub1:
-		SARG_SET		SARG0,$00
-		SSCRIPT1_SET	_scr_2DF30
-		NBG_HNDL_SET	_nbgsub_2DF36
+_scr_vega_projectileA:
+		SARG_SET		SARG0,$00						; this projectile moves in circles
+		SSCRIPT1_SET	_scr_vega_projectileA_anim		; around vega
+		NBG_HNDL_SET	_nbgsub_vega_projectileA_ctest
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$04
 		SDELAY			$10
@@ -3472,26 +3503,26 @@ _lvl6_boss_vega_sub1:
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$06
 		SDELAY			$01
-		NJSR			_nsub_2DF3D
+		NJSR			_nsub_vega_projectileA_shrink
 		SLOOP_END
-		SARG_ALU		SARG2,_ADC,$01
+		SARG_ALU		SARG2,_ADC,$01					; final shrinking
 		SLOOP_END
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_scr_2DF30:
+_scr_vega_projectileA_anim:
 		SPR_IDX_SET		1,$8B
 		SPR_IDX_INC		1
-		SJMP			_scr_2DF30
+		SJMP			_scr_vega_projectileA_anim
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2DF36:
+_nbgsub_vega_projectileA_ctest:
 		LDX		#$08
 		LDY		#$09
 		JMP		_obj_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_2DF3D:
+_nsub_vega_projectileA_shrink:
 		LDX		_scr_cur_trd_idx
 		LDA		_scr_trds_args1,X
 		CLC
@@ -3500,7 +3531,7 @@ _nsub_2DF3D:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_lvl6_boss_vega_sub2:
+_scr_vega_fireball:
 		SARG_SET		SARG0,$00
 		SPR_IDX_SET		0,$8A
 		SLOOP_BEGIN		$03
@@ -3517,9 +3548,9 @@ _lvl6_boss_vega_sub2:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_lvl6_boss_vega_sub3:
+_scr_vega_projectileB:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_2DF78
+		NBG_HNDL_SET	_nbgsub_vega_projectileB_ctest
 		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
 			NARGB		$00,$03
 		SPR_IDX_SET		0,$8A
@@ -3536,11 +3567,12 @@ _sloc_2DF73:
 		SJMP			_sloc_2DF73
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_2DF78:
+_nbgsub_vega_projectileB_ctest:
 		LDX		#$08
 		LDY		#$09
 		JSR		_obj_to_player_ctest
 		JMP		_cur_obj_out_of_screen_test
+
 _spr_nlib1A_89:
 		.BYTE	$01
 		.BYTE	$F8,$8C,$01,$FC
@@ -3571,7 +3603,7 @@ _spr_nlib1A_90:
 		.BYTE	$F8,$98,$00,$F8
 
 ; =============== S C R I P T ==========================s====================
-_lvl6_boss_vega_sub4:
+_scr_vega_mother:
 		POS_Y_DELTA_SET 0,$00,$FF
 		SLOOP_BEGIN		$04
 		SPR_IDX_SET		4,$92
