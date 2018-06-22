@@ -4443,7 +4443,7 @@ _sloc_sewer_worm_active:
 		SPR_IDX_SET		0,$4B							; if yes, show up the head
 		SDELAY			$28
 		SPR_IDX_SET		6,$53							; then full extent
-		NBG_HNDL_SET	_ngbsub_sewer_worm_ctestB		; bounding box settings are changed then
+		NBG_HNDL_SET	_nbgsub_sewer_worm_ctestB		; bounding box settings are changed then
 		POS_Y_MOVE		0,$F8							; animate shoot
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_new_thread_start			; shot 4 projectiles
@@ -4490,8 +4490,8 @@ _sloc_3A346:
 		NJSR			_nsub_get_obj_stun_state
 		SJMP_SW			$03
 		SCASE			_scr_sewer_worm_active_after_stun
-		SCASE			_scr_sewer_worm_catch_anim_LA
-		SCASE			_scr_sewer_worm_catch_anim_RA
+		SCASE			_scr_sewer_worm_catch_anim_L_A
+		SCASE			_scr_sewer_worm_catch_anim_R_A
 
 ; =============== S C R I P T ==========================s====================
 ; when beamed in secondary state, it should return to floating state immediately
@@ -4516,12 +4516,12 @@ _sloc_3A368:
 		SCASE			_scr_sewer_worm_catch_anim_RB
 
 ; =============== S C R I P T ==========================s====================
-_scr_sewer_worm_catch_anim_LA:
+_scr_sewer_worm_catch_anim_L_A:
 		SARG_SET		SARG1,$4F
 		SJMP			_ssub_common_catch_anim_L_snd02
 
 ; =============== S C R I P T ==========================s====================
-_scr_sewer_worm_catch_anim_RA:
+_scr_sewer_worm_catch_anim_R_A:
 		SARG_SET		SARG1,$51
 		SJMP			_ssub_common_catch_anim_R_snd02
 
@@ -4559,16 +4559,16 @@ _nbgsub_sewer_worm_catch_testA:
 		STA		_scores_obj_value
 		BCS		loc_3A3C8
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_sewer_worm_catch_anim_LA
+		.WORD	_scr_sewer_worm_catch_anim_L_A
 		RTS
 loc_3A3C8:
 		JSR		_cur_thread_reload_param
-		.WORD	_scr_sewer_worm_catch_anim_RA
+		.WORD	_scr_sewer_worm_catch_anim_R_A
 locret_3A3CD:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_ngbsub_sewer_worm_ctestB:
+_nbgsub_sewer_worm_ctestB:
 		LDX		#$08
 		LDY		#$0C
 		JSR		_obj_to_beam_ctest

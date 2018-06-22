@@ -195,7 +195,7 @@ _lvl_scripts_list:
 ; kind of cases. its just search for any object in catching process
 ; out of the screen and removes them.
 ;
-; NOTE: you lose the score in such cases!.
+; NOTE: you lose the scores in such cases!.
 ;
 _obj_garbage_collector:
 		LDX		#$06
@@ -249,8 +249,8 @@ loc_601B1:
 		BMI		loc_601C4
 		CMP		#_scr13_slow_moving_slime_idx	; all above are enemies,
 		BCS		loc_601C2					; increment enemies counter
-		CMP		#_scr12_exit_arrow_idx		; also if arrow itself is appear
-		BNE		loc_601C4					; store it's slot number
+		CMP		#_scr12_exit_arrow_idx		; if arrow, then
+		BNE		loc_601C4					; store it's slot idx
 		STX		_var0
 		BEQ		loc_601C4
 loc_601C2:
@@ -290,7 +290,7 @@ locret_601F6:
 ; =============== S C R I P T ==========================s====================
 ; NOTE: the arrow object is always in the room and always blinking, but
 ; since it inserted to the room with zero cooridnates, it is always
-; clipped by the out-of-screen test routine. we actually not see it.
+; clipped by sprite engine
 ;
 _scr12_exit_arrow:
 		NBG_HNDL_SET	_nbgsub_exit_arrow_off_test
@@ -357,7 +357,7 @@ _scr08_beamer_handler:
 
 ; =============== S C R I P T ==========================s====================
 _scr_beamer_reinit:
-		NJSR			_nsub_mcmp						; special test for additional handler
+		NJSR			_nsub_mcmp						; special test for additional handler.
 			NARGW		_scr_trds_idx					; after setting the control routines
 			NARGB		$04								; this thread is suspended
 		SBCC			_sloc_6029B						; but object still active and controlled
@@ -430,9 +430,15 @@ _scr_beamer_hit_anim:
 #endif
 
 ; =============== S C R I P T ==========================s====================
+; TODO: last room before lvl3 "boss" is empty. you may walk it fast or slow.
+; there is an unused track for this area but it is non-looped and too long
+; for the whole scene. but it is possible to implement another script
+; which will walk this last room for fixed timing, then show the cutscene,
+; so full music may fit there.
+;
 _scr_lvl3_beamer_auto_script:
-		POS_X_SET		0,$40,$00
-		POS_Y_SET		0,$C8,$02
+		POS_X_SET		0,$40,$00						; stand still while ghost nanny does its
+		POS_Y_SET		0,$C8,$02						; work
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$40
 		NJSR			_nsub_beamer_spr_idx_calc
@@ -451,8 +457,8 @@ _scr_lvl6_beamer_auto_scriptA:
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl6_beamer_auto_scriptB:
-		NJSR			_nsub_beamer_spr_idx_calc
-		SDELAY			$78
+		NJSR			_nsub_beamer_spr_idx_calc		; first player stand still, then change
+		SDELAY			$78								; direction and move down out of screen
 		SARG_SET		SARG1,$80
 		POS_Y_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$F0
@@ -463,6 +469,10 @@ _scr_lvl6_beamer_auto_scriptB:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
+; this used for other cases when players must do nothing, just dummy script
+; with no nbgsub set (when called as a new thread start, which resets all
+; parameters including setting the dummy nbgsub by default)
+;
 _scr_suspend:
 		SUSPEND
 
@@ -614,7 +624,7 @@ _beamer_control_move_test:
 		BEQ		.beamer_speed_reset
 		JSR		_beamer_direction_calc		; get pressed button and calc new movement
 		LDA		_beamer_direction_idx		; direction
-		JSR		_beamer_room_obstacles_test	; then test if any obstacles there
+		JSR		_players_move_obstacles_test	; then test if any obstacles there
 		BCS		.beamer_speed_reset
 .beamer_speed_calc:
 		LDA		_beamer_direction_idx		; according to speed and face direction
@@ -634,7 +644,7 @@ _beamer_control_move_test:
 		BEQ		.beamer_speed_reset
 		JSR		_beamer_direction_calc
 		LDA		_beamer_direction_idx
-		JSR		_beamer_room_obstacles_test
+		JSR		_players_move_obstacles_test
 		BCC		.beamer_step
 .beamer_speed_reset:
 		LDA		#$80
@@ -644,6 +654,9 @@ _beamer_control_move_test:
 .beamer_step:
 		LDA		_beamer_direction_idx		; beamer direction determined only by
 		JSR		_players_move_step			; player's input, do one step in given
+#if TWO_PLAYER_MODE==1
+		LDX		_beamer_direction_idx		; beamer direction determined only by
+#endif
 		JSR		_beamer_scroll_step			; direction, additionally set scroll if
 		DEY									; available. Y here is number of steps
 		BNE		.beamer_next_step			; for starting move
@@ -651,13 +664,13 @@ _beamer_control_move_test:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_beamer_room_obstacles_test:
+_players_move_obstacles_test:
 		PHA
 		TYA
 		PHA
-		JSR		_cur_obj_screen_pos_calc
-		STX		_tmp1
-		STY		_tmp2
+		JSR		_cur_obj_screen_pos_calc	; calculates the beamer position
+		STX		_tmp1						; preventing walking it out of the
+		STY		_tmp2						; screen
 		PLA
 		TAY
 		PLA
@@ -685,29 +698,142 @@ loc_60442:
 loc_6044D:
 		LDA		_tmp1
 		CMP		#$09
-		BCS		loc_60455
+		BCS		loc_60455					; walk area hardwritten as $09-$F8, $09-$E8
 loc_60453:
 		SEC
 		RTS
 loc_60455:
-		LDA		_tmp0
+		LDA		_tmp0						; then test for obstacles in selected direction
 		JMP		_players_bound_box_to_room_test
+
+#if TWO_PLAYER_MODE==1
+; NOTE: here is an updated version of scroll adjust test for 2P mode
+; by new logic both players could affect scroll. new scroll test routine
+; uses additionally current movement direction for player to determine
+; what scroll need adjustement. so now both players can move scroll
+; when crossing the center of the screen but both need to be on the same
+; screen at once. leaving the screen for one of them will cause wrong
+; collision detection otherwise.
+;
+; TODO: too much similar value calculations all the time. a lot of
+; screen space conversions all around the original code. all this may
+; be optimized with precalculation of such values only once per
+; object as part of common thread work.
+;
+; =============== S U B R O U T I N E ======n================================
+_catcher_scroll_step:
+		TYA									; backup Y to be Y safe routine
+		PHA									; X = direction of movement (different
+		TXA									; than face direction)
+		LDX		#$02						; catcher calculates distance to beamer
+		BNE		_players_scroll_step
 
 ; =============== S U B R O U T I N E ======n================================
 _beamer_scroll_step:
 		TYA
 		PHA
+		TXA
+		LDX		#$04						; beamer calculates distance to catcher
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_players_scroll_step:
+		STA		_tmp1C
+		LDY		#$70
+		JSR		_obj_to_obj_in_range_test
+		BCC		loc_604CA
 		JSR		_cur_obj_screen_pos_calc
+		DEC		_tmp1C
+		BPL		loc_6047D
+		CPY		#$78
+		BCS		loc_604CA
+		LDA		_ppu_scroll_pos_y			; 0 scroll up
+		BNE		loc_604A1
+		LDA		_ppu_scroll_pos_y+1
+		CMP		_cur_room_x_pageA
+		BEQ		loc_604CA
+loc_604A1:
+		LDA		_ppu_scroll_pos_y
+		SEC
+		SBC		#$01
+		BCS		loc_604AC
+		SBC		#$0F
+		DEC		_ppu_scroll_pos_y+1
+loc_604AC:
+		STA		_ppu_scroll_pos_y
+		BCS		loc_604CA
+loc_6047D:
+		DEC		_tmp1C
+		BPL		loc_60490
 		CPX		#$80
+		BCC		loc_604CA
+		LDA		_ppu_scroll_pos_x			; 1 scroll right
+		BNE		loc_60488
+		LDA		_ppu_scroll_pos_x+1
+		CMP		_cur_room_y_pageA
+		BEQ		loc_604CA
+loc_60488:
+		INC		_ppu_scroll_pos_x
+		BNE		loc_604CA
+		INC		_ppu_scroll_pos_x+1
+		BPL		loc_604CA
+loc_60490:
+		DEC		_tmp1C
+		BPL		loc_604B0
+		CPY		#$78
+		BCC		loc_604CA
+		LDA		_ppu_scroll_pos_y			; 2 scroll down
+		BNE		loc_604BB
+		LDA		_ppu_scroll_pos_y+1
+		CMP		_cur_room_x_pageB
+		BEQ		loc_604CA
+loc_604BB:
+		LDA		_ppu_scroll_pos_y
+		CLC
+		ADC		#$01
+		CMP		#$F0
+		BCC		loc_604C8
+		ADC		#$0F
+		INC		_ppu_scroll_pos_y+1
+loc_604C8:
+		STA		_ppu_scroll_pos_y
+		BPL		loc_604CA
+loc_604B0:
+		CPX		#$80
+		BCS		loc_604CA
+		LDA		_ppu_scroll_pos_x			; 3 scroll left
+		BNE		loc_60470
+		LDA		_ppu_scroll_pos_x+1
+		CMP		_cur_room_y_pageB
+		BEQ		loc_604CA
+loc_60470:
+		LDA		_ppu_scroll_pos_x
+		SEC
+		SBC		#$01
+		STA		_ppu_scroll_pos_x
+		BCS		loc_604CA
+		DEC		_ppu_scroll_pos_x+1
+loc_604CA:
+		PLA
+		TAY
+		RTS
+#else
+; =============== S U B R O U T I N E ======n================================
+_beamer_scroll_step:
+		TYA
+		PHA
+		JSR		_cur_obj_screen_pos_calc	; calculates beamer position and check
+		CPX		#$80						; if it scroll move needed
 		BEQ		loc_60490
 		BCS		loc_6047D
-		LDA		_ppu_scroll_pos_x
+		LDA		_ppu_scroll_pos_x			; test for scroll limit
 		BNE		loc_60470
 		LDA		_ppu_scroll_pos_x+1
 		CMP		_cur_room_y_pageB
 		BEQ		loc_60490
 loc_60470:
-		LDA		_ppu_scroll_pos_x
+		LDA		_ppu_scroll_pos_x			; if there is a scroll available, move it
 		SEC
 		SBC		#$01
 		STA		_ppu_scroll_pos_x
@@ -726,7 +852,7 @@ loc_60488:
 		INC		_ppu_scroll_pos_x+1
 		BPL		loc_60490
 loc_60490:
-		CPY		#$78
+		CPY		#$78						; if already centered, do nothing
 		BEQ		loc_604CA
 		BCS		loc_604B0
 		LDA		_ppu_scroll_pos_y
@@ -764,11 +890,12 @@ loc_604CA:
 		PLA
 		TAY
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg1_direction_extract:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,X
+		LDX		_scr_cur_trd_idx			; get the direction bits of the obj
+		LDA		_scr_trds_args1,X			; orientation value
 		ASL
 		ROL
 		ROL
@@ -776,7 +903,7 @@ _nsub_sarg1_direction_extract:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg1_direction_update:
-		PHA
+		PHA									; put back orientation value
 		LDY		_scr_cur_trd_idx
 		LSR
 		ROR
@@ -791,8 +918,8 @@ _players_bound_box_to_room_test:
 		TAX
 		TYA
 		PHA
-		LDA		off_604F1,X
-		LDY		off_604F5,X
+		LDA		off_604F1,X					; this is lib of the bounding boxes for
+		LDY		off_604F5,X					; player objects for all directions
 		JSR		_obj_to_room_bound_box_ctest
 		PLA
 		TAY
@@ -826,6 +953,13 @@ byte_60508:
 		.BYTE	$F0,$00
 
 ; =============== S U B R O U T I N E ======n================================
+; TODO: still don't really understand meaning of center variable used only
+; for players (they not using delta values at all), as against any other
+; objects that uses deltas but never used center values... it seems we have
+; some extra movement speed calculations above the main object methods,
+; which seem little bit odd and redundant, but maybe I just do not understant
+; its real meaning.
+;
 _players_speed_calc:
 		STX		_var0
 		STY		_var1
@@ -869,6 +1003,10 @@ loc_60550:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; this routine adjust players position for continuous walking when
+; D-Pad button is pressed once. so player objects can only walk by
+; some kind of grid, moving automatically between edges.
+;
 _players_move_step:
 		STA		_tmp0
 		LDX		_scr_cur_trd_idx
@@ -917,6 +1055,7 @@ loc_60595:
 #if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _beamer_direction_calc:
+_catcher_direction_calc:
 		TYA
 		PHA
 		LDX		_scr_cur_trd_idx
@@ -2175,9 +2314,9 @@ _catcher_control_move_test:
 		LDA		_pad1_held
 		AND		#$0F
 		BEQ		.catcher_speed_reset
-		JSR		_beamer_direction_calc
+		JSR		_catcher_direction_calc
 		LDA		_catcher_direction_idx
-		JSR		_beamer_room_obstacles_test
+		JSR		_players_move_obstacles_test
 		BCS		.catcher_speed_reset
 .catcher_speed_calc:
 		LDA		_catcher_direction_idx
@@ -2195,9 +2334,9 @@ _catcher_control_move_test:
 		LDA		_pad1_held
 		AND		#$0F
 		BEQ		.catcher_speed_reset
-		JSR		_beamer_direction_calc
+		JSR		_catcher_direction_calc
 		LDA		_catcher_direction_idx
-		JSR		_beamer_room_obstacles_test
+		JSR		_players_move_obstacles_test
 		BCC		.catcher_step
 .catcher_speed_reset:
 		LDA		#$80
@@ -2207,6 +2346,8 @@ _catcher_control_move_test:
 .catcher_step:
 		LDA		_catcher_direction_idx
 		JSR		_players_move_step
+		LDX		_catcher_direction_idx
+		JSR		_catcher_scroll_step
 		DEY
 		BNE		.catcher_next_step
 .catcher_exit:

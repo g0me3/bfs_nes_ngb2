@@ -67,10 +67,10 @@ _tmp1C:
 _tmp1D:
 		.BYTE	0
 _unused_12:
-		.BYTE	0		; NOTE: compatibility issues, remove me if no any left
+		.BYTE	0
 #else
 _unused_12:
-		.BYTE	0,0,0,0,0
+		.BYTE	0,0,0,0,0		; NOTE: compatibility issues, remove me if no any left
 #endif
 _random_seed:
 		.BYTE	0,0
