@@ -3589,7 +3589,7 @@ loc_15ED8:
 		STA		_ppu_scroll_pos_x+1
 		PLA
 		STA		_ppu_scroll_pos_x
-		LDA		_apu_req_idx
+		LDA		_apu_cur_mus_idx
 		JMP		_far_prg6_apu_mus_load
 
 ; =============== S U B R O U T I N E ======n================================

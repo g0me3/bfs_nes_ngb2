@@ -497,9 +497,9 @@ _lvl_cur_checkpoint_idx:
 		.BYTE	0
 _lvl_last_checkpoint_idx:
 		.BYTE	0
-_tmp7C4:
+_apu_cur_snd_idx:
 		.BYTE	0
-_apu_req_idx:
+_apu_cur_mus_idx:
 		.BYTE	0
 _scores_obj_value:
 		.BYTE	0

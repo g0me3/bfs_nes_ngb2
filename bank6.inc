@@ -67,7 +67,7 @@ loc_5005C:
 locret_50061:
 		RTS
 loc_50062:
-		STX		_tmp7C4
+		STX		_apu_cur_snd_idx
 		LDA		byte_5348F,X
 		STA		_apu_var404
 		LDA		byte_534B3,X
@@ -97,6 +97,8 @@ loc_50085:
 loc_5009C:
 		DEX
 		BPL		loc_50085
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 sub_5009F:

@@ -1834,7 +1834,7 @@ _scr09_player_beam:
 		NBG_HNDL_SET	_nbgsub_beam_input_control		; keep beamer input working
 		SARG_SET		SARG0,$FF						; there is no beamed obkects yet
 		SLOOP_BEGIN		$14								; when started, lasts for 20 frames (1/3 sec)
-		NJSR			_nsub_beam_target_and_spr_idx_update	; if no object catched
+		NJSR			_nsub_beam_idle_draw			; if no object catched
 		SDELAY			$01								; while doing this, update beam target and spr
 		SLOOP_END										; then disappear automatically
 		SSTOP
@@ -1853,49 +1853,49 @@ _sloc_60C9F:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_beam_input_control:
-		LDA		_pad0_held
+		LDA		_pad0_held					; test if beamer still held the button
 		AND		_control_beam_button_code
 		BEQ		loc_60CD0
-		LDA		_players_hit_flag
+		LDA		_players_hit_flag			; also test if beamer not hit
 		BNE		loc_60CD0
-		LDA		_tmp7C4
+		LDA		_apu_cur_snd_idx			; check if current se is a beam sound
 		CMP		#$00
 		BNE		loc_60CBB
-		LDA		_apu_var400
+		LDA		_apu_var400					; additional check if sound done playing
 		BNE		loc_60CC0
 loc_60CBB:
-		LDA		#$00
+		LDA		#$00						; in both cases restart beam sound
 		JSR		_far_prg6_apu_snd_load_safe
 loc_60CC0:
-		LDX		_scr_trds_args0+3
+		LDX		_scr_trds_args0+3			; fetch beamed object idx
 		BMI		locret_60CCF
-		LDA		_scr_trds_idx,X
+		LDA		_scr_trds_idx,X				; check if it still active
 		BMI		loc_60CDD
-		LDA		_scr_trds_args0,X
-		BMI		loc_60CDD
+		LDA		_scr_trds_args0,X			; get its beamed state also
+		BMI		loc_60CDD					; when if 00 or FF, stop beam
 		BEQ		loc_60CDD
 locret_60CCF:
-		RTS
+		RTS									; otherwise, do nothing
 loc_60CD0:
-		LDX		_scr_trds_args0+3
-		BMI		loc_60CDD
+		LDX		_scr_trds_args0+3			; same set of test for case when you
+		BMI		loc_60CDD					; release buttons,
 		LDA		_scr_trds_args0,X
 		BMI		loc_60CDD
 		BEQ		loc_60CDD
-		JSR		_nsub_obj_to_beam_release_test
+		JSR		_nsub_obj_to_beam_release_test	; if release, then release lol
 loc_60CDD:
 		JMP		_scr_cur_trd_off
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_beam_target_and_spr_idx_update:
-		LDX		#$02
-		JSR		_obj_screen_pos_calc
+_nsub_beam_idle_draw:
+		LDX		#$02						; when you just fire the beam in air
+		JSR		_obj_screen_pos_calc		; its sprite is plain and simple
 		STY		_tmp2
-		LDA		_scr_trds_args1+2
+		LDA		_scr_trds_args1+2			; fetch beamer position and direction
 		CLC
 		ADC		#$20
 		AND		#$C0
-		STA		_scr_trds_args1+3
+		STA		_scr_trds_args1+3			; update object parameters
 		ASL
 		ROL
 		ROL
@@ -1903,16 +1903,16 @@ _nsub_beam_target_and_spr_idx_update:
 		TXA
 		CLC
 		ADC		byte_60D1F,Y
-		STA		_beam_target_x_pos
+		STA		_beam_target_x_pos			; update target position as well
 		TAX
 		LDA		_tmp2
 		CLC
 		ADC		byte_60D23,Y
 		STA		_beam_target_y_pos
 		TAY
-		JSR		_obj_new_lvl_pos_set
-		LDA		_nmi_counter
-		AND		#$07
+		JSR		_obj_new_lvl_pos_set		; recalc current position
+		LDA		_nmi_counter				; here we calculate time based
+		AND		#$07						; animation frame for beam
 		STA		_tmp0
 		LDA		_scr_trds_args1+3
 		AND		#$40
@@ -1922,7 +1922,7 @@ _nsub_beam_target_and_spr_idx_update:
 		ORA		_tmp0
 		CLC
 		ADC		#$00
-		STA		_scr_trds_spr_idx+3
+		STA		_scr_trds_spr_idx+3			; finally set sprite idx
 		RTS
 byte_60D1F:
 		.BYTE	$00,$1C,$00,$E4
@@ -1931,20 +1931,20 @@ byte_60D23:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beam_active_draw:
-		LDX		_scr_trds_args0+3
-		JSR		_obj_screen_pos_calc
+		LDX		_scr_trds_args0+3			; active beam much harder, it's flexible
+		JSR		_obj_screen_pos_calc		; get the beamed object pos
 		BCC		loc_60D2F
 locret_60D2E:
 		RTS
 loc_60D2F:
-		TXA
+		TXA									; continue if object on the screen
 		PHA
-		STA		_var0
+		STA		_var0						; store beamed object position
 		TYA
 		PHA
 		STA		_var1
 		LDX		#$02
-		JSR		_obj_screen_pos_calc
+		JSR		_obj_screen_pos_calc		; get the beamer position then
 		STX		_tmp1
 		LDA		_scr_trds_args1+2
 		CLC
@@ -1956,8 +1956,8 @@ loc_60D2F:
 		TAX
 		LDA		_tmp1
 		ADC		byte_60E67,X
-		STA		_scr_trds_x_pos_lo+3
-		STA		_var2
+		STA		_scr_trds_x_pos_lo+3		; lots of vector/calcs follows
+		STA		_var2						; to calculate current beam sprite
 		TYA
 		CLC
 		ADC		byte_60E6B,X
@@ -2047,18 +2047,17 @@ loc_60DE8:
 		LDA		#$80
 		STA		_scr_trds_x_center+3
 		STA		_scr_trds_y_center+3
-		LDA		#$05
-		STA		_var1
-		LDY		_spr_buf_pos
+		LDA		#$05						; when calcs are done, draw 5 segments
+		STA		_var1						; of the beam manually, using raw spr
+		LDY		_spr_buf_pos				; buffer access
 loc_60E12:
 		LSR		_var0
 		BCC		loc_60E3D
-; REGION, missing in the US proto version, this is a BUG fix for sprite
-; glitches when clipping out sprites does not write X position in RAM
-; buffer, not initialized it will contain a previous random garbage.
-; so clipped sprite may appear randomly.
-; this is also an evidence that the US proto were early version of the game
-; (later EU version is based on it)
+; REGION, missing in the US proto version,
+; look like this manual sprite insertion causes some
+; special glitches on the screen so then manually reset
+; the sprite buf before writing it... need to investigate more
+;
 		LDA		#$00
 		STA		_ppu_spr_buf+3,Y
 ; -
@@ -2140,11 +2139,11 @@ byte_60E71:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_to_beam_release_test:
-		LDX		_scr_trds_args0+3
-		LDA		_scr_trds_args0,X
+		LDX		_scr_trds_args0+3			; get the beamed object idx
+		LDA		_scr_trds_args0,X			; test if it is still not catched
 		BMI		locret_60F02
 		CMP		#$02
-		BNE		loc_60EFE
+		BNE		loc_60EFE					; also test if it stunned by beam
 		INC		_scr_trds_args0,X
 		RTS
 loc_60EFE:
@@ -2355,11 +2354,11 @@ _catcher_control_move_test:
 #else
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_move_test:
-		LDA		_scr_trds_x_pos_lo+4
-		ORA		_scr_trds_y_pos_lo+4
+		LDA		_scr_trds_x_pos_lo+4		; move control for catcher mostly the same
+		ORA		_scr_trds_y_pos_lo+4		; as for beemer, but with some difference
 		AND		#$07
 		BNE		.catcher_speed_calc
-		JSR		_catcher_target_follow
+		JSR		_catcher_target_follow		; here is the AI routine to follow the target
 		LDA		_catcher_direction_idx
 		BMI		.catcher_speed_reset
 .catcher_speed_calc:
@@ -2385,7 +2384,7 @@ _catcher_control_move_test:
 		BNE		.catcher_exit
 .catcher_step:
 		JSR		_nsub_sarg1_direction_extract
-		JSR		_players_move_step
+		JSR		_players_move_step			; and here is no scroll update routine
 		DEY
 		BNE		.catcher_next_step
 .catcher_exit:
@@ -2514,7 +2513,7 @@ _catcher_target_follow:
 		BCC		.catcher_search_path		; range
 		LDA		_catcher_target_slot_idx	; if in range, reset movements counter
 		CMP		#$02						; and direction variables,
-; TODO: remove it to target the beamer evein in the close range
+; TODO: remove it to change beamer direction even in the close range
 		BEQ		loc_61112
 ; -
 		JSR		_obj_to_obj_vector_calc		; also if we targeted to beamed object
@@ -2524,7 +2523,7 @@ _catcher_target_follow:
 		STA		_scr_trds_args1+4			; turns to the beamer dynamically
 loc_61112:
 		LDA		#$00						; for beamer target we don't have to face it
-		STA		_catcher_turns_count						; all the way.
+		STA		_catcher_turns_count		; all the way.
 		LDA		#$FF
 		BNE		.catcher_exit2
 .catcher_search_path:
@@ -2701,6 +2700,11 @@ locret_61238:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; when obstacle found, try to avoid it by the right hand rule in the labyrinth
+; however, we need to store previous move direction to return to previous path
+; every time it get into the obstacle, it saves previous walk direction,
+; turn right and continues...
+;
 _catcher_turn_add:
 		PHA
 		STA		_tmp0
@@ -2736,7 +2740,7 @@ byte_6126E:
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_turn_sub:
-		JSR		_catchet_turn_test
+		JSR		_catchet_turn_test			; do turn
 		PHA
 		DEC		_catcher_turns_count
 		LDA		_catcher_turns_count
@@ -2747,7 +2751,7 @@ _catcher_turn_sub:
 
 ; =============== S U B R O U T I N E ======n================================
 _catchet_turn_test:
-		LDX		_catcher_turns_count
+		LDX		_catcher_turns_count		; test if turn needed
 		DEX
 		TXA
 		PHA
@@ -2896,40 +2900,42 @@ _nsub_catcher_spr_base_reset:
 ; =============== S C R I P T ==========================s====================
 _scr0B_player_catch:
 		SARG_SET		SARG0,$00
-		NBG_HNDL_SET	_nbgsub_61379
-		NJSR			_nsub_613C5
+		NBG_HNDL_SET	_nbgsub_catch_ctest				; init catch collision test
+		NJSR			_nsub_catch_deploy_init			; set speed and direction of catch
 _sloc_61357:
-		NJSR			_nsub_613F1
+		NJSR			_nsub_catch_deploy_anim			; animate catch deploy
 		SDELAY			$01
-		NJSR			_nsub_613F7
+		NJSR			_nsub_catch_deploy_stop_test	; wait for 8 frames
 		SBCC			_sloc_61357
-		SJMP			_sloc_6136A
+		SJMP			_scr_catch_remove				; remove catch
 
 ; =============== S C R I P T ==========================s====================
-_scr_61365:
-		NJSR			_nsub_61429
+_scr_catch_active:
+		NJSR			_nsub_catch_work_anim			; animate catch opens
 		SDELAY			$0E
-_sloc_6136A:
-		NJSR			_nsub_613FC
+
+; =============== S C R I P T ==========================s====================
+_scr_catch_remove:
+		NJSR			_nsub_catch_remove_init			; the reverse process
 _sloc_6136D:
-		NJSR			_nsub_6141A
+		NJSR			_nsub_catch_remove_anim
 		SDELAY			$01
-		NJSR			_nsub_61421
+		NJSR			_nsub_catch_remove_stop_test
 		SBCC			_sloc_6136D
-		SSTOP
+		SSTOP											; then stop
 
 ; =============== S U B R O U T I N E ======n================================
-_nbgsub_61379:
-		JSR		sub_61449
+_nbgsub_catch_ctest:
+		JSR		_catch_obj_beamed_search	; search for any beamed object first
 		BCS		locret_613C4
-		LDA		_scr_trds_idx+3
+		LDA		_scr_trds_idx+3				; if beam is not active, skip this part
 		BMI		loc_6138C
-		CPX		_scr_trds_args0+3
-		BNE		loc_6138C
+		CPX		_scr_trds_args0+3			; if beamed object and object we found is the same
+		BNE		loc_6138C					; disable the beam, it's work done
 		LDA		#$FF
 		STA		_scr_trds_idx+3
 loc_6138C:
-		LDY		#$00
+		LDY		#$00						; calc X distance betwee beamed obj and catch
 		LDA		_scr_trds_x_pos_lo+5
 		SEC
 		SBC		_scr_trds_x_pos_lo,X
@@ -2938,8 +2944,8 @@ loc_6138C:
 		BCS		loc_6139C
 		INY
 loc_6139C:
-		TYA
-		ORA		#$80
+		TYA									; force beamed object to be at catch now
+		ORA		#$80						; adjust positions
 		STA		_scr_trds_args0,X
 		LDA		_scr_trds_x_pos_lo+5
 		STA		_scr_trds_x_pos_lo,X
@@ -2956,13 +2962,13 @@ loc_613B5:
 		LDA		_scr_trds_y_pos_hi+5
 		SBC		#$00
 		STA		_scr_trds_y_pos_hi,X
-		JSR		_cur_thread_reload_param
-		.WORD	_scr_61365
+		JSR		_cur_thread_reload_param	; now reload the current script with active type
+		.WORD	_scr_catch_active
 locret_613C4:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_613C5:
+_nsub_catch_deploy_init:
 		JSR		_nsub_sarg1_direction_extract
 		ASL
 		TAY
@@ -2980,19 +2986,19 @@ byte_613E3:
 		.BYTE	$00,$00,$04,$00,$00,$00,$FC
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_613F1:
-		JSR		sub_61438
+_nsub_catch_deploy_anim:
+		JSR		_catch_spr_idx_select
 		INC		_scr_trds_args0+5
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_613F7:
+_nsub_catch_deploy_stop_test:
 		LDA		_scr_trds_args0+5
 		CMP		#$08
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_613FC:
+_nsub_catch_remove_init:
 		JSR		_nsub_sarg1_direction_extract
 		ASL
 		TAY
@@ -3007,13 +3013,13 @@ _nsub_613FC:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_6141A:
+_nsub_catch_remove_anim:
 		LDX		_scr_cur_trd_idx
 		DEC		_scr_trds_args0+5
-		JMP		sub_61438
+		JMP		_catch_spr_idx_select
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_61421:
+_nsub_catch_remove_stop_test:
 		LDA		_scr_trds_args0+5
 		BNE		loc_61427
 		SEC
@@ -3023,9 +3029,9 @@ loc_61427:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_61429:
+_nsub_catch_work_anim:
 		DEC		_scr_trds_args0+5
-		JSR		sub_61438
+		JSR		_catch_spr_idx_select
 		LDA		_scr_trds_spr_idx+5
 		CLC
 		ADC		#$10
@@ -3034,7 +3040,7 @@ _nsub_61429:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61438:
+_catch_spr_idx_select:
 		JSR		_nsub_sarg1_direction_extract
 		STA		_tmp0
 		LDA		_scr_trds_args0+5
@@ -3046,23 +3052,23 @@ sub_61438:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-sub_61449:
-		JSR		_cur_obj_screen_pos_calc
+_catch_obj_beamed_search:
+		JSR		_cur_obj_screen_pos_calc	; get the current catch position
 		STX		_tmp1
 		STY		_tmp2
 		LDX		#$06
 loc_61452:
-		TXA
+		TXA									; now look for any object in beamed state
 		PHA
-		LDA		_scr_trds_idx,X
+		LDA		_scr_trds_idx,X				; skip inactive objects
 		BMI		loc_61480
-		LDA		_scr_trds_args0,X
+		LDA		_scr_trds_args0,X			; beamed object has $02 here
 		BMI		loc_61480
 		CMP		#$02
 		BCC		loc_61480
-		JSR		_obj_screen_pos_calc
-		BCS		loc_61480
-		TXA
+		JSR		_obj_screen_pos_calc		; then calc position of this object
+		BCS		loc_61480					; and calc the distance between
+		TXA									; catch and object
 		SBC		_tmp1
 		BCS		loc_6146F
 		EOR		#$FF
@@ -3083,12 +3089,13 @@ loc_61480:
 		TAX
 		INX
 		CPX		#$0E
-		BCC		loc_61452
+		BCC		loc_61452					; return C=1 if no such objects found
 		RTS
 loc_61488:
 		PLA
-		TAX
+		TAX									; return C=0 and X= object idx
 		RTS
+
 _spr_nlib09_13:
 		.BYTE	$03
 		.BYTE	$F4,$46,$00,$08
@@ -5455,7 +5462,7 @@ _nsub_apu_mus_load:
 
 ; =============== S U B R O U T I N E ======n================================
 _far_prg6_apu_mus_load:
-		STA		_apu_req_idx
+		STA		_apu_cur_mus_idx
 
 ; =============== S U B R O U T I N E ======n================================
 _far_prg6_apu_mus_load_ex:
