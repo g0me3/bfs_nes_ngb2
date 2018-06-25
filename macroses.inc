@@ -19,7 +19,7 @@ PAD_D			EQU		$04
 PAD_L			EQU		$02
 PAD_R			EQU		$01
 
-DEBUG_MAX_ENEMY	EQU		$0C		; ($0A default)
+DEBUG_MAX_ENEMY	EQU		$0E		; ($0A default, $0E - max)
 ; levels table:
 ; N - CP
 ; 0 - 1 2 3 4
@@ -189,6 +189,16 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 ;------------S-T-R-U-C-T-U-R-E-S----------------
 
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
+
+	MAC	MUS
+{1}_idx	SET	[.-_music_lib]>>1
+		.WORD	{1}
+	ENDM
+
+	MAC	SND
+{1}_idx	SET	[.-_snd_lib]>>1
+		.WORD	{1}
+	ENDM
 
 	MAC	TXT
 {3}		SET		.
@@ -615,250 +625,3 @@ CUR_SEC_START	SET $FFFFFFFF
 #endif
 	ENDM
 
-;---------------A-R-I-T-H-M---------------------
-
-	; \t\tLDA\t\t(.*)\n\t\tSTA\t\t(.*)\n\t\tLDA\t\t\1\+1\n\t\tSTA\t\t\2\+1\n
-	; \t\tMOVW\t\2,\1\n
-	;
-	MAC	MOVW
-		LDA		{2}
-		STA		{1}
-		LDA		{2}+1
-		STA		{1}+1
-	ENDM
-
-	MAC	MOVD
-		LDA		{2}
-		STA		{1}
-		LDA		{2}+1
-		STA		{1}+1
-		LDA		{2}+2
-		STA		{1}+2
-	ENDM
-
-	; \t\tLDA\t\t#<\[(.*)\]\n\t\tSTA\t\t(.*)\n\t\tLDA\t\t#>\[\1\]\n\t\tSTA\t\t\2\+1\n
-	; \t\tMOVWO\t\2,\1\n
-	;
-	MAC	MOVWO
-		LDA		#<[{2}]
-		STA		{1}
-		LDA		#>[{2}]
-		STA		{1}+1
-	ENDM
-
-	; \t\tLDA\t\t#\$(..)\n\t\tSTA\t\t(.*)\n\t\tLDA\t\t#\$(..)\n\t\tSTA\t\t\2\+1\n
-	; \t\tMOVWI\t\2,$\3\1\n
-	;
-	MAC	MOVWI
-	#if {2}==0
-		LDA		#0
-		STA		{1}
-		STA		{1}+1
-	#else
-		LDA		#[[{2}>>0]&$FF]
-		STA		{1}
-		LDA		#[[{2}>>8]&$FF]
-		STA		{1}+1
-	#endif
-	ENDM
-
-	; \t\tLDA\t\t#\$(..)\n\t\tSTA\t\t(.*)\n\t\tLDA\t\t#\$(..)\n\t\tSTA\t\t\2\+1\n\t\tLDA\t\t#\$(..)\n\t\tSTA\t\t\2\+2\n
-	; \t\tMOVDI\t\2,$\4\3\1\n
-	;
-	MAC	MOVDI
-	#if {2}==0
-		LDA		#0
-		STA		{1}
-		STA		{1}+1
-		STA		{1}+2
-	#else
-		LDA		#[[{2}>>0 ]&$FF]
-		STA		{1}
-		LDA		#[[{2}>>8 ]&$FF]
-		STA		{1}+1
-		LDA		#[[{2}>>16]&$FF]
-		STA		{1}+2
-	#endif
-	ENDM
-
-	; \t\tINC\t\t(.*)\n\t\tBNE\t\t(.*)\n\t\tINC\t\t\1\+1\n\2:\n
-	; \t\tINCW\t\1\n\2:
-	;
-	MAC	INCW
-		INC		{1}
-		BNE		.1
-		INC		{1}+1
-.1:
-	ENDM
-
-	MAC	ADDB
-	#if {2}==#$02
-		INC		{1}
-		INC		{1}
-	#else
-		LDA		{1}
-		CLC
-		ADC		{2}
-		STA		{1}
-	#endif
-	ENDM
-
-	MAC	MADDB
-		LDA		{2}
-		CLC
-		ADC		{3}
-		STA		{1}
-	ENDM
-
-	; \t\tLDA\t\t(.*)\n\t\tADC\t\t\#\$00\n\t\tSTA\t\t\1\n
-	; \t\tADCH\t\1\n
-	;
-	; adjust high hibble of 16-bit value when 8bit argument added
-	;
-	MAC	ADCH
-		BCC		.1
-		INC		{0}
-.1:
-	ENDM
-
-	; \t\tLDA\t\t(.*)\n\t\tCLC\n\t\tADC\t\t(.*)\n\t\tSTA\t\t\1\n\t\tBCC\t\t(.*)\n\t\tINC\t\t\1\+1\n\3:
-	; \t\tADDWB\t\1,\2\n\3:
-	;
-	MAC	ADDWB
-		LDA		{1}
-		CLC
-		ADC		{2}
-		STA		{1}
-		BCC		.1
-		INC		{1}+1
-.1:
-	ENDM
-
-	; Add two 16-bit integer or fixed point values and put it
-	; in third arg.
-	;
-	MAC	MADDW
-		LDA		{2}
-		CLC
-		ADC		{3}
-		STA		{1}
-		LDA		{2}+1
-		ADC		{3}+1
-		STA		{1}+1
-	ENDM
-
-	MAC CMPW
-		LDA		{1}
-		CMP		{2}
-		LDA		{1}+1
-		SBC		{2}+1
-	ENDM
-
-	MAC CMPWI
-		LDA		{1}
-		CMP		#[[{2}>>0]&$FF]
-		LDA		{1}+1
-		SBC		#[[{2}>>8]&$FF]
-	ENDM
-
-	MAC	MSUBW
-		LDA		{2}
-		SEC
-		SBC		{3}
-		STA		{1}
-		LDA		{2}+1
-		SBC		{3}+1
-		STA		{1}+1
-	ENDM
-
-	MAC	SUBB
-	#if {2}==#$02
-		DEC		{1}
-		DEC		{1}
-	#else
-		LDA		{1}
-		SEC
-		SBC		{2}
-		STA		{1}
-	#endif
-	ENDM
-
-	MAC	MSUBB
-		LDA		{2}
-		SEC
-		SBC		{3}
-		STA		{1}
-	ENDM
-
-	; \t\tLDA\t\t(.*)\n\t\tSEC\n\t\tSBC\t\t\#\$(..)\n\t\tSTA\t\t\1\n\t\tLDA\t\t\1\+1\n\t\tSBC\t\t\#\$(..)\n\t\tSTA\t\t\1\+1\n\t\tBCS\t\t(.*)\n\t\tDEC\t\t\1\+2\n\4\:\n
-	; \t\tSUBDI16\t\1,\$\3\2\n\4\:\n
-	;
-	; Subtract 16-bit Word from 24-bit Dword
-	; in third arg.
-	;
-	MAC	SUBDI16
-		LDA		{1}
-		SEC
-		SBC		#<[{2}]
-		STA		{1}
-		LDA		{1}+1
-		SBC		#>[{2}]
-		STA		{1}+1
-		BCS		.1
-		DEC		{1}+2
-.1:
-	ENDM
-
-	; \t\tLDA\t\t(.*)\n\t\tSBC\t\t\#\$00\n\t\tSTA\t\t\1\n
-	; \t\tSBCH\t\1\n
-	;
-	; adjust high hibble of 16-bit value when 8bit argument added
-	;
-	MAC	SBCH
-		BCS		.1
-		DEC		{0}
-.1:
-	ENDM
-
-
-	; \t\tLDA\t\t(.*)\n\t\tSEC\n\t\tSBC\t\t(.*)\n\t\tSTA\t\t\1\n\t\tLDA\t\t\1\+1\n\t\tSBC\t\t\2\+1\n\t\tSTA\t\t\1\+1\n\t\tBCS\t\t(.*)\n\t\tDEC\t\t\1\+2\n\3\:\n
-	; \t\tSUBDW\t\1,\2\n\3\:\n
-	;
-	MAC	SUBDW
-		LDA		{1}
-		SEC
-		SBC		{2}
-		STA		{1}
-		LDA		{1}+1
-		SBC		{2}+1
-		STA		{1}+1
-		BCS		.1
-		DEC		{1}+2
-.1:
-	ENDM
-
-	MAC	SUBD
-		LDA		{1}
-		SEC
-		SBC		{2}
-		STA		{1}
-		LDA		{1}+1
-		SBC		{2}+1
-		STA		{1}+1
-		LDA		{1}+2
-		SBC		{2}+2
-		STA		{1}+2
-	ENDM
-
-	MAC	MSUBD
-		LDA		{2}
-		SEC
-		SBC		{3}
-		STA		{1}
-		LDA		{2}+1
-		SBC		{3}+1
-		STA		{1}+1
-		LDA		{2}+2
-		SBC		{3}+2
-		STA		{1}+2
-	ENDM

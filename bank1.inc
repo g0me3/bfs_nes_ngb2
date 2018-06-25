@@ -370,7 +370,7 @@ _lvl1_common_init:
 			NARGW		_lvl1_attrs_tbl
 		STORE16			_lvl_rooms_lib_ptr,lvl1_rooms_lib
 		NJSR			_nsub_apu_mus_load				; begin background music
-			NARGB		$00
+			NARGB		_mus0_idx
 		NJSR			_nsub_beamer_handler_start		; start players control script 08, for beamer
 		NJSR			_nsub_catcher_handler_start		; and 0A for catcher
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler	; also set the room object handler as a native bg sub
@@ -390,8 +390,8 @@ _skip_stage_select:
 #endif
 		NJSR			_nsub_ingame_start_input_test	; just wait for START is pressed
 		SBCC			_scr_common_pause_handler		; and then play pause sound
-		NJSR			_nsub_apu_snd_load_safe			; and run pause native handler
-			NARGB		$03
+		NJSR			_nsub_apu_snd_load				; and run pause native handler
+			NARGB		_snd03_idx
 		SJSR			_ssub_room_exit_pal_fade_out_ex	; when exit, loop back to wait for input
 		NJSR			_nsub_ingame_pause_handler
 		SJSR			_ssub_room_entry_pal_fade_in_ex
@@ -861,12 +861,12 @@ _scr_lvl2_roomA_secondary:
 		SLOOP_END
 		NJSR			_nsub_apu_mus_load				; plays train sound
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load_safe			; and then start another music
-			NARGB		$13
+		NJSR			_nsub_apu_snd_load				; and then start another music
+			NARGB		_snd13_idx
 		SDELAY			$A0
 		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
-			NARGB		$04
+			NARGB		_mus4_idx
 		SJMP			_scr_common_pause_handler		; and finally goes to the regular pause seq
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -901,7 +901,7 @@ _lvl2_common_init:
 			NARGW		_lvl2_attrs_tbl
 		STORE16			_lvl_rooms_lib_ptr,_lvl2_rooms_lib
 		NJSR			_nsub_apu_mus_load
-			NARGB		$06
+			NARGB		_mus6_idx
 		NJSR			_nsub_beamer_handler_start
 		NJSR			_nsub_catcher_handler_start
 		SSCRIPT1_SET	_scr_common_pause_handler		; initial bg and secondary handlers are common
@@ -1151,7 +1151,7 @@ _lvl3_room4_handler:
 			NARGW		_lvl3_room4_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_room4_prize_seq
 		NJSR			_nsub_apu_mus_load				; here is the special room with
-			NARGB		$04								; mid-boss, as well as special
+			NARGB		_mus4_idx						; mid-boss, as well as special
 		NJSR			_nsub_patch_pal_load			; music and palettes for it
 			NARGB		$07
 			NARGW		_lvl3_roomsAE_patch_pal
@@ -1165,7 +1165,7 @@ _sloc_149E3:
 		SBCC			_sloc_149E3
 		SJSR			_ssub_room_exit_pal_fade_out	; restore regular music here
 		NJSR			_nsub_apu_mus_load
-			NARGB		$07
+			NARGB		_mus7_idx
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$AE,$02,$02
@@ -1298,7 +1298,7 @@ _lvl3_room7_handler:
 			NARGW		_lvl3_room7_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_room7_prize_seq
 		NJSR			_nsub_apu_mus_load
-			NARGB		$04
+			NARGB		_mus4_idx
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14B38:
 		SDELAY			$01
@@ -1309,7 +1309,7 @@ _sloc_14B38:
 		SBCC			_sloc_14B38
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
-			NARGB		$07
+			NARGB		_mus7_idx
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$CE,$02,$02
@@ -1446,7 +1446,7 @@ _lvl3_roomA_handler:
 			NARGW		_lvl3_roomA_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_roomA_prize_seq
 		NJSR			_nsub_apu_mus_load
-			NARGB		$04
+			NARGB		_mus4_idx
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14C8D:
 		SDELAY			$01
@@ -1457,7 +1457,7 @@ _sloc_14C8D:
 		SBCC			_sloc_14C8D
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
-			NARGB		$07
+			NARGB		_mus7_idx
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$2E,$62,$02
@@ -1591,7 +1591,7 @@ _lvl3_roomD_handler:
 			NARGW		_lvl3_roomD_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_roomD_prize_seq
 		NJSR			_nsub_apu_mus_load
-			NARGB		$04
+			NARGB		_mus4_idx
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14DE4:
 		SDELAY			$01
@@ -1602,7 +1602,7 @@ _sloc_14DE4:
 		SBCC			_sloc_14DE4
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
-			NARGB		$07
+			NARGB		_mus7_idx
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$4E,$62,$02
@@ -1733,7 +1733,7 @@ _lvl3_room10_handler:
 			NARGW		_lvl3_room10_doors
 		STORE16			_room_prize_sequence_ptr,_lvl3_room10_prize_seq
 		NJSR			_nsub_apu_mus_load
-			NARGB		$04
+			NARGB		_mus4_idx
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_14F3E:
 		SDELAY			$01
@@ -1744,7 +1744,7 @@ _sloc_14F3E:
 		SBCC			_sloc_14F3E
 		SJSR			_ssub_room_exit_pal_fade_out
 		NJSR			_nsub_apu_mus_load
-			NARGB		$07
+			NARGB		_mus7_idx
 		NJSR			_nsub_players_room_start_pos_init
 			NARGB		$02
 			NARGB		$AE,$62,$02
@@ -1874,9 +1874,9 @@ _lvl3_room16_handler:
 		STORE16			_room_prize_sequence_ptr,_lvl3_room16_prize_seq
 		NJSR			_nsub_apu_mus_load				; start intermedia music
 #if DEBUG==1
-			NARGB		$0D
+			NARGB		_musD_idx
 #else
-			NARGB		$01
+			NARGB		_mus1_idx
 #endif
 		SJSR			_ssub_room_entry_pal_fade_in
 _sloc_15086:
@@ -1968,7 +1968,7 @@ _lvl3_common_init:
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$10
 		NJSR			_nsub_apu_mus_load
-			NARGB		$07
+			NARGB		_mus7_idx
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_0
 		NJSR			_nsub_beamer_handler_start
 		NJSR			_nsub_catcher_handler_start
@@ -2388,7 +2388,7 @@ _lvl4_common_init:
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$11
 		NJSR			_nsub_apu_mus_load
-			NARGB		$08
+			NARGB		_mus8_idx
 		NBG_HNDL_SET	_nbgsub_lvl4_common
 		NJSR			_nsub_beamer_handler_start
 		NJSR			_nsub_catcher_handler_start
@@ -3327,7 +3327,7 @@ _lvl5_common_init:
 			NARGB		$15
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_1
 		NJSR			_nsub_apu_mus_load
-			NARGB		$09
+			NARGB		_mus9_idx
 		NJSR			_nsub_beamer_handler_start
 		NJSR			_nsub_catcher_handler_start
 		SSCRIPT1_SET	_scr_common_pause_handler
@@ -3448,7 +3448,7 @@ _lvl6_common_init:
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$16
 		NJSR			_nsub_apu_mus_load
-			NARGB		$0A
+			NARGB		_musA_idx
 		NBG_HNDL_SET	_j_nbgsub_lvl_room_objects_handler_2
 		NJSR			_nsub_beamer_handler_start
 		NJSR			_nsub_catcher_handler_start
@@ -3648,7 +3648,7 @@ _scr_stage_complete:
 		NJSR			_nsub_all_threads_off_except_cur; then off all threads except this one
 		SDELAY			$2D
 		NJSR			_nsub_apu_mus_load				; start stage complete jingle
-			NARGB		$03
+			NARGB		_mus3_idx
 		NJSR			_nsub_mmc1_chr0_set				; also change sprites CHR bank
 			NARGB		$05
 		NJSR			_nsub_obj_screen_pos_set		; set object sprite screen position
@@ -3741,7 +3741,7 @@ _stage_complete_patch_pal_list:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_scores_and_players_lives_draw:
-		LDA		#$05
+		LDA		#$05						; TODO: replace to STA _chr_bank1
 		JSR		_mmc1_chr1_set
 		JSR		_ppu_spr_fill_F1
 		LDA		_players_lives				; convert binary lives to decimal
@@ -3836,7 +3836,7 @@ _scr_game_over:
 		SJSR			_ssub_pal_fade_in
 		STORE8			_apu_mus_volume,$FF				; start game over music
 		NJSR			_nsub_apu_mus_load
-			NARGB		$02
+			NARGB		_mus2_idx
 		NJSR			_nsub_mcmp						; now check if we have any continues
 			NARGW		_continues
 			NARGB		$00
@@ -4256,8 +4256,8 @@ _ssub_door00_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door00_open_draw
 		SPR_IDX_SET		6,$00							; there are only one additional
 		SPR_IDX_SET		0,$FF							; phase for door opening, then disable sprite
@@ -4267,8 +4267,8 @@ _ssub_door00_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_wait:
 		SJSR			_ssub_wait_for_door_is_inactive	; now wait for players leave the door area
-		NJSR			_nsub_apu_snd_load_safe			; in this case play shut down sound
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load				; in this case play shut down sound
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$00							; and animate door close the same way it was
 		SPR_IDX_SET		0,$FF							; animated open
 		NJSR			_nsub_door00_close_draw			; now draw meta tile for closed door
@@ -4363,8 +4363,8 @@ _ssub_door01_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door01_open_draw
 		SPR_IDX_SET		6,$01
 		SPR_IDX_SET		0,$FF
@@ -4374,8 +4374,8 @@ _ssub_door01_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$01
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door01_close_draw
@@ -4454,8 +4454,8 @@ _ssub_door02_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door02_open_draw
 		SPR_IDX_SET		2,$02							; this is a mine door, it has
 		SPR_IDX_INC		2								; a lot more detailed animation
@@ -4467,8 +4467,8 @@ _ssub_door02_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		2,$04
 		SPR_IDX_DEC		2
 		SPR_IDX_DEC		2
@@ -4573,8 +4573,8 @@ _ssub_door03_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door03_open_draw
 		SPR_IDX_SET		3,$05							; this is a door for train
 		SPR_IDX_INC		3								; aprt of lvl2
@@ -4585,8 +4585,8 @@ _ssub_door03_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		3,$06
 		SPR_IDX_DEC		3
 		SPR_IDX_SET		0,$FF
@@ -4623,8 +4623,8 @@ _ssub_door04_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door04_open_draw
 		SPR_IDX_SET		6,$07
 		SPR_IDX_SET		0,$FF
@@ -4634,8 +4634,8 @@ _ssub_door04_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$07
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door04_close_draw
@@ -4665,12 +4665,12 @@ _spr_nlib01_07:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_opened:
 		NJSR			_nsub_door05_open_draw
-		SJMP			_sloc_1666E
+		SJMP			_ssub_door05_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door05_open_draw
 		SPR_IDX_SET		6,$08
 		SPR_IDX_SET		0,$FF
@@ -4678,10 +4678,10 @@ _ssub_door05_anim:
 ; FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_sloc_1666E:
+_ssub_door05_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$08
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door05_close_draw
@@ -4717,8 +4717,8 @@ _ssub_door06_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door06_open_draw
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
@@ -4728,8 +4728,8 @@ _ssub_door06_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$0A
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd0A_idx
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door06_close_draw
@@ -4765,8 +4765,8 @@ _ssub_door07_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door07_open_draw
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
@@ -4776,8 +4776,8 @@ _ssub_door07_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$09
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door06_close_draw			; closed state for both doors are
@@ -4798,8 +4798,8 @@ _ssub_door08_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door08_open_draw
 		SPR_IDX_SET		6,$0A
 		SPR_IDX_SET		0,$FF
@@ -4809,8 +4809,8 @@ _ssub_door08_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$0A
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door08_close_draw
@@ -4867,8 +4867,8 @@ _ssub_door09_anim:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_lvl4_doos_animB:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_lvl4_doors_open_drawB
 		SPR_IDX_SET		6,$0B
 		SPR_IDX_SET		0,$FF
@@ -4878,8 +4878,8 @@ _ssub_lvl4_doos_animB:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_lvl4_doos_waitB:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$0B
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_lvl4_doors_close_drawB
@@ -5011,7 +5011,7 @@ _mac_door0C_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0D_opened:
 		NJSR			_nsub_door0D_open_draw
-		SJMP			_sloc_1680B
+		SJMP			_ssub_door0D_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; the difference between previous doors and this one in
@@ -5019,8 +5019,8 @@ _ssub_door0D_opened:
 ; in a separate script case...
 ;
 _ssub_door0D_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door0D_open_draw
 		SPR_IDX_SET		6,$0C
 		SPR_IDX_SET		0,$FF
@@ -5028,10 +5028,10 @@ _ssub_door0D_anim:
 ; FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_sloc_1680B:
+_ssub_door0D_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$0C
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door0D_close_draw
@@ -5065,8 +5065,8 @@ _ssub_door10_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door10_open_draw
 		SPR_IDX_SET		6,$0D
 		SPR_IDX_SET		0,$FF
@@ -5076,8 +5076,8 @@ _ssub_door10_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$0D
 		SPR_IDX_SET		0,$FF
 		NJSR			_nsub_door10_close_draw
@@ -5111,8 +5111,8 @@ _ssub_door0E_opened:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door0E_open_draw
 		SPR_IDX_SET		1,$0E
 		SPR_IDX_INC		1
@@ -5124,8 +5124,8 @@ _ssub_door0E_anim:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		1,$10
 		SPR_IDX_DEC		1
 		SPR_IDX_DEC		1
@@ -5175,12 +5175,12 @@ _spr_nlib01_10:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_opened:
 		NJSR			_nsub_door0F_open_draw
-		SJMP			_sloc_16901
+		SJMP			_ssub_door0F_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$07
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd07_idx
 		NJSR			_nsub_door0F_open_draw
 		SPR_IDX_SET		2,$11
 		SPR_IDX_INC		2
@@ -5191,10 +5191,10 @@ _ssub_door0F_anim:
 ; FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_sloc_16901:
+_ssub_door0F_wait:
 		SJSR			_ssub_wait_for_door_is_inactive
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$06
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd06_idx
 		SPR_IDX_SET		2,$14
 		SPR_IDX_DEC		2
 		SPR_IDX_DEC		2
@@ -5270,7 +5270,9 @@ _scr0D_money_bagA:
 _sloc_16969:
 		SDELAY			$01
 		NJSR			_nsub_prize_sequence_completed_test	; wait for prize sequence completed
+#if DEBUG==0
 		SBCC			_sloc_16969
+#endif
 		SARG_SET		SARG2,$1E						; set the money amount for this bonus.
 		NBG_HNDL_SET	_nbgsub_money_bag_ctest			; now load collision test routine
 _sloc_16977:
@@ -5285,7 +5287,7 @@ _nbgsub_money_bag_ctest:
 ; may be optimized
 		LDX		#$0D						; fixed dimensions for collision test.
 		LDY		#$0E
-		JMP		_money_prize_ctest
+		JMP		_prize_to_player_ctest
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_prize_sequence_completed_test:

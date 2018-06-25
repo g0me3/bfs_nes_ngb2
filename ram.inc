@@ -523,11 +523,11 @@ _continues:
 		.BYTE	0
 _unused_var:
 		.BYTE	0
-_scores_to_next_live_start:
+_scores_1st_extend:
 		.BYTE	0,0
-_scores_to_next_live_step:
+_scores_2nd_extend:
 		.BYTE	0,0
-_scores_to_next_live:
+_scores_to_next_life:
 		.BYTE	0,0
 _level:
 		.BYTE	0

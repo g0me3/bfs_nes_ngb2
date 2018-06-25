@@ -87,7 +87,7 @@ _copyrights_skip:
 ; =============== S C R I P T ==========================s====================
 _sloc_title_start:
 		NJSR			_nsub_apu_mus_load				; start title music theme
-			NARGB		$05
+			NARGB		_mus5_idx
 		NJSR			_nsub_full_pal_load				; load title palette
 			NARGW		_pal2
 ; TODO: for some reason, this native subroutines just does write
@@ -941,7 +941,7 @@ _scr_select_busters:
 		SLOOP_END
 		SJSR			_ssub_pal_fade_in				; finally preparations is done,
 		NJSR			_nsub_apu_mus_load				; show the screen and play the music
-			NARGB		$01
+			NARGB		_mus1_idx
 		SARG_SET		SARG0,$00						; init tmp index
 _sloc_8B3D:
 		SDELAY			$01
@@ -1001,8 +1001,8 @@ _nsub_select_buster_input:
 		LDA		_pad0_pressed				; test for L/R buttons press
 		AND		#PAD_R
 		BEQ		loc_8BE6
-		LDA		#$0B
-		JSR		_far_prg6_apu_snd_load_safe
+		LDA		#_snd0B_idx
+		JSR		_far_prg6_apu_snd_load
 loc_8BD5:
 		INC		_scr_trds_args0,X			; increment current selection index
 		LDA		_scr_trds_args0,X
@@ -1017,8 +1017,8 @@ loc_8BE6:
 		LDA		_pad0_pressed
 		AND		#PAD_L
 		BEQ		loc_8C00
-		LDA		#$0B
-		JSR		_far_prg6_apu_snd_load_safe
+		LDA		#_snd0B_idx
+		JSR		_far_prg6_apu_snd_load
 loc_8BF1:
 		DEC		_scr_trds_args0,X			; same but for decrement
 		BPL		loc_8BF9
@@ -1038,8 +1038,8 @@ loc_8C00:
 		AND		#PAD_A
 #endif
 		BEQ		loc_8C36
-		LDA		#$0C
-		JSR		_far_prg6_apu_snd_load_safe	; init one of two players indexes
+		LDA		#_snd0C_idx
+		JSR		_far_prg6_apu_snd_load	; init one of two players indexes
 		LDA		_scr_trds_args0,X
 		LDY		_beamer_spr_base_tmp
 		BPL		loc_8C17
@@ -1527,7 +1527,7 @@ _nbgsub_secret_menu_exit_wait:
 		LDA		#$FF
 		JSR		_far_prg6_apu_mus_load		; if sound test used, shut all sounds
 		LDA		#$FF
-		JSR		_far_prg6_apu_snd_load_safe
+		JSR		_far_prg6_apu_snd_load
 		JSR		_cur_thread_reload_param	; load intro script again starting
 		.WORD	_scr_title_restart			; directly from title screen
 locret_8FAA:
@@ -1806,9 +1806,9 @@ loc_91C2:
 		CMP		#$03
 		BNE		locret_91EC
 		LDA		#$FF
-		JSR		_far_prg6_apu_snd_load_safe
+		JSR		_far_prg6_apu_snd_load
 		LDA		_sound_test_snd_idx
-		JMP		_far_prg6_apu_snd_load_safe
+		JMP		_far_prg6_apu_snd_load
 loc_91D1:
 		LDA		_pad0_pressed				; B stops them
 		AND		#PAD_B
@@ -1822,7 +1822,7 @@ loc_91E3:
 		CMP		#$03
 		BNE		locret_91EC
 		LDA		#$FF
-		JMP		_far_prg6_apu_snd_load_safe
+		JMP		_far_prg6_apu_snd_load
 locret_91EC:
 		RTS
 
@@ -1955,7 +1955,7 @@ _scr07_ending:
 		NJSR			_nsub_full_pal_load
 			NARGW		_pal_ending
 		NJSR			_nsub_apu_mus_load				; misc setups.. whatever
-			NARGB		$05
+			NARGB		_mus5_idx
 		SDELAY			$64								; more delay to let music begin
 		SJSR			_ssub_pal_fade_in				; show screen
 		POS_X_SET		0,$80,$00						; set base offset for main object
@@ -2126,8 +2126,8 @@ locret_941E:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_ending_scores_draw:
 		LDA		#$FF						; disable lives bonus vars
-		STA		_scores_to_next_live
-		STA		_scores_to_next_live+1
+		STA		_scores_to_next_life
+		STA		_scores_to_next_life+1
 		LDA		_players_lives				; if you finish the game with more
 		BEQ		loc_9436
 loc_942C:

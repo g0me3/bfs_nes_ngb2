@@ -26,14 +26,14 @@ loc_50018:
 		LDA		#$FF
 
 ; =============== S U B R O U T I N E ======n================================
-_apu_snd_load_safe:
+_apu_snd_load:
 		STA		_tmp0
 		TXA
 		PHA
 		TYA
 		PHA
 		LDA		_tmp0
-		JSR		_apu_snd_load
+		JSR		_apu_snd_load_ex
 		PLA
 		TAY
 		PLA
@@ -41,7 +41,7 @@ _apu_snd_load_safe:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_apu_snd_load:
+_apu_snd_load_ex:
 		TAX
 		BPL		loc_5003B
 		JMP		sub_500AE
@@ -3276,60 +3276,61 @@ byte_533FD:
 ;		.BYTE	$08,$09,$11,$19,$0E,$0A,$04,$02,$70,$18,$04,$05,$08,$0C,$0D,$19
 ;
 _music_lib:
-		.WORD	_mus0
-		.WORD	_mus1
-		.WORD	_mus2
-		.WORD	_mus3
-		.WORD	_mus4
-		.WORD	_mus5
-		.WORD	_mus6
-		.WORD	_mus7
-		.WORD	_mus8
-		.WORD	_mus9
-		.WORD	_musA
-		.WORD	_musB
-		.WORD	_musC
+		MUS		_mus0	; lvl1 theme
+		MUS		_mus1	; busters select
+		MUS		_mus2	; game over
+		MUS		_mus3	; stage complete
+		MUS		_mus4	; mid-boss theme
+		MUS		_mus5	; title theme
+		MUS		_mus6	; lvl2 theme
+		MUS		_mus7	; lvl3 theme
+		MUS		_mus8	; lvl4 theme
+		MUS		_mus9	; lvl5 theme
+		MUS		_musA	; final boss prellude
+		MUS		_musB	; final boss theme
+		MUS		_musC	; lvl3 final cutscene
 #if DEBUG==1
 ; REGION, re-added an unused missing music track here in future
-		.WORD	_musD
+		MUS		_musD
 #endif
 _snd_lib:
-		.WORD	_snd00
-		.WORD	_snd01
-		.WORD	_snd02
-		.WORD	_snd03
-		.WORD	_snd04
-		.WORD	_snd05
-		.WORD	_snd06
-		.WORD	_snd07
-		.WORD	_snd08
-		.WORD	_snd09
-		.WORD	_snd0A
-		.WORD	_snd0B
-		.WORD	_snd0C
-		.WORD	_snd0D
-		.WORD	_snd0E
-		.WORD	_snd0F
-		.WORD	_snd10
-		.WORD	_snd11
-		.WORD	_snd12
-		.WORD	_snd13
-		.WORD	_snd14
-		.WORD	_snd15
-		.WORD	_snd16
-		.WORD	_snd17
-		.WORD	_snd18
-		.WORD	_snd19
-		.WORD	_snd1A
-		.WORD	_snd1B
-		.WORD	_snd1C
-		.WORD	_snd1D
-		.WORD	_snd1E
-		.WORD	_snd1F
-		.WORD	_snd20
-		.WORD	_snd21
-		.WORD	_snd22
-		.WORD	_snd23
+		SND		_snd00	; beam
+		SND		_snd01	; catch release
+		SND		_snd02	; ghost catch scream
+		SND		_snd03	; pause
+		SND		_snd04	; beamer hit
+		SND		_snd05	; -unused-
+		SND		_snd06	; doors close
+		SND		_snd07	; doors open
+		SND		_snd08	; slime laugh
+		SND		_snd09	; -unused-
+		SND		_snd0A	; door06 close
+		SND		_snd0B	; buster select input
+		SND		_snd0C	; buster select apply
+		SND		_snd0D	; prize taken
+		SND		_snd0E	; vega laugh
+		SND		_snd0F	; key keeper shoot
+		SND		_snd10	; -unused-
+		SND		_snd11	; -unused-
+		SND		_snd12	; court chair
+		SND		_snd13	; train whistle
+		SND		_snd14	; sewers dragon appear
+		SND		_snd15	; sewers dragon fire
+		SND		_snd16	; -unused-
+		SND		_snd17	; -unused-
+		SND		_snd18	; -unused-
+		SND		_snd19	; boss catch scream
+		SND		_snd1A	; vega death scream
+		SND		_snd1B	; -unused-
+		SND		_snd1C	; -unused-
+		SND		_snd1D	; -unused-
+		SND		_snd1E	; live add
+		SND		_snd1F	; -unused-
+		SND		_snd20	; -unused-
+		SND		_snd21	; -unused-
+		SND		_snd22	; sewers dragon disappear
+		SND		_snd23	; candle light up
+
 byte_5348F:
 		.BYTE	$02,$02,$0A,$0F,$03,$0A,$0A,$0A,$02,$0A,$0A,$02,$02,$02,$03,$0A
 		.BYTE	$02,$02,$0A,$0B,$08,$08,$08,$03,$0A,$0B,$0F,$08,$02,$02,$03,$08

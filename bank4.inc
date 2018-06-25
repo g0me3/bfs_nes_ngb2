@@ -453,8 +453,8 @@ _scr16_still_throw_forward_slime:
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 _scr_still_throw_forward_slime_active:
 		NBG_HNDL_SET	_nbgsub_still_throw_forward_slime_ctest
-		NJSR			_nsub_apu_snd_load_safe			; they when appear
-			NARGB		$08
+		NJSR			_nsub_apu_snd_load				; they when appear
+			NARGB		_snd08_idx
 _sloc_38363:
 		SLOOP_BEGIN		$03
 		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; calcs to turn face to beamer
@@ -605,8 +605,8 @@ _scr1B_court_chair:
 _sloc_38442:
 		SPR_IDX_SET		0,$25							; start from still position
 		SDELAY			$0A
-		NJSR			_nsub_apu_snd_load_safe			; chair sound
-			NARGB		$12
+		NJSR			_nsub_apu_snd_load				; chair sound
+			NARGB		_snd12_idx
 		POS_Y_MOVE		0,$FF							; slowly lift up
 		SPR_IDX_INC		3								; the chair is actually moving on grid
 		POS_Y_MOVE		0,$FE							; 16x16 per tile, shadow of chairs is
@@ -1533,7 +1533,7 @@ _nsub_empty_miner_trolley_path_select:
 		STA		_tmp_var0
 		LDA		_scr_trds_x_pos_lo,X
 		TAX
-		JSR		_far_lvl_room_ofs_calc		; read the current rail macro from level data
+		JSR		_far_room_macro_block_read		; read the current rail macro from level data
 		LDY		#$0B
 loc_38C71:
 		CMP		_mac_rails_list,Y			; check if this tile is valid rail macro
@@ -2129,8 +2129,8 @@ _scr2B_still_throw_ballistic_slime:
 
 ; =============== S C R I P T ==========================s====================
 _scr_still_throw_ballistic_slime_active:
-		NJSR			_nsub_apu_snd_load_safe			; also laughs
-			NARGB		$08
+		NJSR			_nsub_apu_snd_load				; also laughs
+			NARGB		_snd08_idx
 		NBG_HNDL_SET	_nbgsub_still_throw_ballistic_slime_ctest
 _sloc_39114:
 		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; target on beamer as well
@@ -4627,7 +4627,7 @@ _nsub_sewer_worm_move_anim:
 		TAY
 		PLA
 		TAX
-		JSR		_far_lvl_room_ofs_calc		; calculate room offset,
+		JSR		_far_room_macro_block_read		; calculate room offset,
 		BEQ		loc_3A437					; and read out macro tile data
 		CMP		#$0D						; macroses $01-$0C are floatable
 		BCS		loc_3A437
@@ -5014,8 +5014,8 @@ _scr_candle_light_up:
 		SDELAY			$01								; all objects goes here finally to wait
 		NJSR			_nsub_candle_activate_test		; for player passes particular position
 		SBCC			_scr_candle_light_up			; the same as the candle Y position of
-		NJSR			_nsub_apu_snd_load_safe			; the every thread object instance,
-			NARGB		$23
+		NJSR			_nsub_apu_snd_load				; the every thread object instance,
+			NARGB		_snd23_idx
 _sloc_3A745:
 		SPR_IDX_SET		3,$6B							; and animate fire
 		SPR_IDX_INC		3
@@ -7423,7 +7423,7 @@ _scr11_lvl2_ghost_nanny:
 #if DEBUG==1
 #else
 		NJSR			_nsub_apu_mus_load				; start music
-			NARGB		$0C
+			NARGB		_musC_idx
 #endif
 		NJSR			_nsub_new_thread_start			; set baby animated object
 			NARGB		_scr11_lvl2_ghost_nanny_idx

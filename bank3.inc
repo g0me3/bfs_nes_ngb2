@@ -835,10 +835,10 @@ _ssub_train_slime_catch_extra:
 			NARGB		$00,$00							; start a new actor script here
 			NARGB		_scr_train_slime_dead_idx+1
 			NARGB		$00
-		NJSR			_nsub_apu_mus_load				; and do sound of whistle
+		NJSR			_nsub_apu_mus_load				; and do scream sound
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$19
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd19_idx
 		SRET
 
 _pal_train_slime_patch:
@@ -1017,8 +1017,8 @@ _scr_train_slime_dead:
 			NARGB		$02
 			NARGW		_pal_train_slime_dead_patch
 		SDELAY			$50
-		NJSR			_nsub_apu_snd_load_safe			; train whistle
-			NARGB		$13
+		NJSR			_nsub_apu_snd_load				; train whistle
+			NARGB		_snd13_idx
 		SDELAY			$3C
 		SLOOP_BEGIN		$3C
 		STORE8			_scr_trds_y_pos_hi+2,$05		; now do the scroll trick, set
@@ -1189,8 +1189,8 @@ _sloc_2C9E4:
 			NARGB		$02,$40
 		SBCC			_sloc_2C9BB						; if no one, continue swimming
 		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
-		NJSR			_nsub_apu_snd_load_safe			; or else, target on it,
-			NARGB		$14								; play popping up sound
+		NJSR			_nsub_apu_snd_load				; or else, target on it,
+			NARGB		_snd14_idx						; play popping up sound
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; show up the dragon itself
 			NARGB		$3C,$40
 		SDELAY			$07
@@ -1206,8 +1206,8 @@ _sloc_2C9E4:
 		SPR_IDX_ADD_IMM 0,$04
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 0,$FC
-		NJSR			_nsub_apu_snd_load_safe			; play fire sound
-			NARGB		$15
+		NJSR			_nsub_apu_snd_load				; play fire sound
+			NARGB		_snd15_idx
 		SLOOP_BEGIN		$20
 		NJSR			_nsub_new_thread_start			; deploy fire projectile
 			NARGB		_scr2E_lvl4_boss_dragons_idx
@@ -1237,8 +1237,8 @@ _scr_dragons_stun:
 		SLOOP_END
 		NJSR			_nsub_is_any_enemy_active		; test if this is a last object on the level
 		SBCS			_sloc_2CA66
-		NJSR			_nsub_apu_snd_load_safe			; if no, play disappear sound
-			NARGB		$22
+		NJSR			_nsub_apu_snd_load				; if no, play disappear sound
+			NARGB		_snd22_idx
 		SLOOP_BEGIN		$10
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; and do disappear animation
 			NARGB		$44,$40
@@ -2806,8 +2806,8 @@ _scr_keykeeper_projectile:
 			NARGB		SARG2
 		SDELAY			$02
 		SLOOP_END										; then start to move in targets direction
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$0F
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd0F_idx
 		NBG_HNDL_SET	_nbgsub_keykeeper_projectile_ctest	; deadly projectile collision test
 		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; reinit sprite
 			NARGB		$7C,$20
@@ -2903,12 +2903,12 @@ _scr30_lvl6_boss_vega:
 		SMEM_ALU		_apu_mus_volume,_ADC,$FF		; slowly lower the music volume
 		SDELAY			$02								; in about 6 seconds
 		SLOOP_END
-		NJSR			_nsub_apu_snd_load_safe			; start laughing sound effect
-			NARGB		$0E
+		NJSR			_nsub_apu_snd_load				; start laughing sound effect
+			NARGB		_snd0E_idx
 		SDELAY			$64
 		STORE8			_apu_mus_volume,$FF				; restore music volume and play
 		NJSR			_nsub_apu_mus_load				; custom boss music
-			NARGB		$0B
+			NARGB		_musB_idx
 		SPR_IDX_SET		0,$C0							; display sprite (hidden)
 		SLOOP_BEGIN		$04								; slowly reveal through the
 		NJSR			_nsub_pal_fade_req_inc_by_mask	; palette fade in effect
@@ -3042,8 +3042,8 @@ _scr_vega_death:
 		SDELAY			$10								; start scream sound
 		NJSR			_nsub_apu_mus_load
 			NARGB		$FF
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$1A
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd1A_idx
 		POS_Y_DELTA_SET 0,$00,$FC						; now dodjing back to painting
 		SPR_IDX_SET		4,$84
 		SPR_IDX_INC		4

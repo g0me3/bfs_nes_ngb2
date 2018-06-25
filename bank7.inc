@@ -102,14 +102,14 @@ loc_600AF:
 		BPL		loc_600AF
 _GAME_ENTRY:
 		LDX		_difficulty					; this means we ready to setup game
-		LDA		_scores_to_next_live_start_list_lo,X; load corresponding difficulty settings
-		STA		_scores_to_next_live_start
-		LDA		_scores_to_next_live_start_list_hi,X
-		STA		_scores_to_next_live_start+1
-		LDA		_scores_to_next_live_step_list_lo,X
-		STA		_scores_to_next_live_step
-		LDA		_scores_to_next_live_step_list_hi,X
-		STA		_scores_to_next_live_step+1
+		LDA		_scores_1st_extend_list_lo,X; load corresponding difficulty settings
+		STA		_scores_1st_extend
+		LDA		_scores_1st_extend_list_hi,X
+		STA		_scores_1st_extend+1
+		LDA		_scores_2nd_extend_list_lo,X
+		STA		_scores_2nd_extend
+		LDA		_scores_2nd_extend_list_hi,X
+		STA		_scores_2nd_extend+1
 		LDA		#$04						; init continues
 		STA		_continues
 #if DEBUG==1
@@ -130,10 +130,10 @@ _MAIN_GAME_LOOP:
 		STA		_scores
 		STA		_scores+1
 		STA		_unused_var					; TODO: redundant
-		LDA		_scores_to_next_live_start
-		STA		_scores_to_next_live
-		LDA		_scores_to_next_live_start+1
-		STA		_scores_to_next_live+1
+		LDA		_scores_1st_extend			; load first extend value
+		STA		_scores_to_next_life
+		LDA		_scores_1st_extend+1
+		STA		_scores_to_next_life+1
 		LDA		#$01						; out-of-screen check activate
 		STA		_scr_trds_out_of_screen_test
 		LDA		#$04
@@ -229,13 +229,13 @@ loc_60193:
 		BCC		loc_60168
 		RTS
 
-_scores_to_next_live_start_list_lo:
+_scores_1st_extend_list_lo:
 		.BYTE	$32,$64,$96,$C8
-_scores_to_next_live_start_list_hi:
+_scores_1st_extend_list_hi:
 		.BYTE	$00,$00,$00,$00
-_scores_to_next_live_step_list_lo:
+_scores_2nd_extend_list_lo:
 		.BYTE	$C8,$2C,$90,$F4
-_scores_to_next_live_step_list_hi:
+_scores_2nd_extend_list_hi:
 		.BYTE	$00,$01,$01,$01
 
 ; =============== S U B R O U T I N E ======n================================
@@ -382,8 +382,8 @@ _scr_catcher_hit_anim:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_hit_anim:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$04
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd04_idx
 		SLOOP_BEGIN		$1E
 		NJSR			_nsub_beamer_hit_spr_select
 		SDELAY			$03
@@ -407,8 +407,8 @@ _ssub_common_hit_anim:
 ; above, will return the control to it if has lives.
 ;
 _scr_beamer_hit_anim:
-		NJSR			_nsub_apu_snd_load_safe			; start hit sound and do rotating
-			NARGB		$04								; animation
+		NJSR			_nsub_apu_snd_load				; start hit sound and do rotating
+			NARGB		_snd04_idx						; animation
 		SLOOP_BEGIN		$1E
 		NJSR			_nsub_beamer_hit_spr_select
 		SDELAY			$03
@@ -543,7 +543,7 @@ _lvl4_speed_modifier_calc:
 		STA		_tmp_var0
 		LDA		_scr_trds_x_pos_lo,X
 		TAX
-		JSR		_far_lvl_room_ofs_calc		; read room data, test if meta is in
+		JSR		_far_room_macro_block_read	; read room data, test if meta is in
 		BEQ		loc_60388					; needed range ($01-$0C)
 		CMP		#$0D
 		BCS		loc_60388
@@ -1859,13 +1859,13 @@ _nbgsub_beam_input_control:
 		LDA		_players_hit_flag			; also test if beamer not hit
 		BNE		loc_60CD0
 		LDA		_apu_cur_snd_idx			; check if current se is a beam sound
-		CMP		#$00
+		CMP		#_snd00_idx
 		BNE		loc_60CBB
 		LDA		_apu_var400					; additional check if sound done playing
 		BNE		loc_60CC0
 loc_60CBB:
-		LDA		#$00						; in both cases restart beam sound
-		JSR		_far_prg6_apu_snd_load_safe
+		LDA		#_snd00_idx					; in both cases restart beam sound
+		JSR		_far_prg6_apu_snd_load
 loc_60CC0:
 		LDX		_scr_trds_args0+3			; fetch beamed object idx
 		BMI		locret_60CCF
@@ -2434,8 +2434,8 @@ _catcher_control_catch_test:
 		STA		_var5
 		LDA		#_scr0B_player_catch_idx
 		JSR		_thread_lib_load
-		LDA		#$01						; and play sound
-		JMP		_far_prg6_apu_snd_load_safe
+		LDA		#_snd01_idx					; and play sound
+		JMP		_far_prg6_apu_snd_load
 locret_610A9:
 		RTS
 byte_610AA:
@@ -2458,7 +2458,7 @@ loc_605DE:
 		STA		_scr_trds_spr_idx+4
 		RTS
 #else
-		LDA		_catcher_direction_idx		; when catched stand still its direction idx
+		LDA		_catcher_direction_idx		; when catcher stand still its direction idx
 		BMI		_nsub_catcher_spr_idx_calc	; =$FF.
 		INC		_scr_trds_args0+4			; run player's animation counter
 #endif
@@ -2735,7 +2735,7 @@ loc_6124C:
 		RTS
 _catcher_turns_masks:
 		.BYTE	$FC,$F3,$CF,$3F
-byte_6126E:
+_catcher_turns_bits:
 		.BYTE	$03,$0C,$30,$C0
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2762,7 +2762,7 @@ _catchet_turn_test:
 		LSR
 		TAY
 		LDA		_catcher_turns_flags,Y
-		AND		byte_6126E,X
+		AND		_catcher_turns_bits,X
 		DEX
 		BMI		locret_6129E
 loc_61299:
@@ -3236,6 +3236,7 @@ _spr_nlib09_2E:
 		.BYTE	$D8,$56,$00,$FC
 		.BYTE	$E8,$56,$00,$FC
 		.BYTE	$F8,$44,$00,$FC
+
 _spr_nlib08:
 		.WORD	_spr_nlib08_02
 		.WORD	_spr_nlib08_01
@@ -3464,6 +3465,9 @@ _spr_nlib09:
 		.WORD	_spr_nlib09_2F
 
 ; =============== S U B R O U T I N E ======n================================
+; input data is a set of bounding box points to ckeck the macro tile type
+; in corresponding direction
+;
 _obj_to_room_bound_box_ctest:
 		STA		_ptr08
 		STY		_ptr08+1
@@ -3488,7 +3492,7 @@ loc_617E1:
 		LDY		_tmp2
 		LDA		_var0
 		PHA
-		JSR		_obj_to_room_macro_ctest_box
+		JSR		_obj_to_room_macro_ctest
 		PLA
 		ROL
 		STA		_var0
@@ -3509,14 +3513,20 @@ loc_61809:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; doors are different kind of objects, they may be opened or may be closed
+; although they drawn with the same macro blocks as other level obstacles
+; and macro collision test performed on it also, when opened, we may
+; just skip the macro test, so here we use room position and dimensions data
+; to test if we in collide with the door area.
+;
 _room_doors_ctest:
-		STY		_tmp2
-		LDY		_cur_room_doors_cnt
-		BEQ		loc_61860
+		STY		_tmp2						; here is the current nearest door
+		LDY		_cur_room_doors_cnt			; object idx stored (literally, this is offs
+		BEQ		loc_61860					; to its data)
 loc_61812:
 		TXA
 		SEC
-		SBC		_obj_door_x_hi_poss,Y
+		SBC		_obj_door_x_hi_poss,Y		; calculate distance to object
 		STA		_tmp0
 		LDA		_tmp_var0
 		SBC		_obj_door_x_lo_poss,Y
@@ -3531,7 +3541,7 @@ loc_61812:
 		ADC		#$00
 loc_6182E:
 		BNE		loc_6185D
-		LDA		_obj_doors_widths,Y
+		LDA		_obj_doors_widths,Y			; now test if we in door bound box
 		CMP		_tmp0
 		BCC		loc_6185D
 		LDA		_tmp2
@@ -3564,11 +3574,11 @@ loc_61861:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_room_macro_ctest_box:
+_obj_to_room_macro_ctest:
 		LDA		#$00
-		STA		_tmp_var0
-		STA		_tmp_var1
-		TXA
+		STA		_tmp_var0					; again, calculate bound box vertex
+		STA		_tmp_var1					; room position, then read out the macro
+		TXA									; block data for it
 		BPL		loc_6186F
 		DEC		_tmp_var0
 loc_6186F:
@@ -3608,16 +3618,16 @@ loc_61896:
 
 ; =============== S U B R O U T I N E ======n================================
 _room_macro_ctest_ex:
-		JSR		_room_doors_ctest
+		JSR		_room_doors_ctest			; skip if stand in a door
 		BCC		loc_618A6
 		RTS
 loc_618A6:
 		LDA		_prg_cur_bank
 		PHA
-		LDA		_lvl_data_prg_bank
-		STA		_prg_cur_bank
+		LDA		_lvl_data_prg_bank			; read macro data, then extract
+		STA		_prg_cur_bank				; collision bit data
 		JSR		_mmc1_prg_safe
-		JSR		_room_macro_read
+		JSR		_room_macro_tile_read
 		JSR		_macro_collision_read
 		PHP
 		PLA
@@ -3630,6 +3640,9 @@ loc_618A6:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; this is far routine to read out the collision data bit only for a
+; given macro index read somewhere else... never used in this here.
+;
 _far_macro_collision_read_unref:
 		STA		_tmp0
 		LDA		_prg_cur_bank
@@ -3667,9 +3680,9 @@ _macro_collision_read:
 		TAX
 		LDA		_prg_cur_bank
 		PHA
-		LDA		_lvl_data_prg_bank
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
+		LDA		_lvl_data_prg_bank			; TODO: for some reason, this routine also
+		STA		_prg_cur_bank				; set the bank, already set in routine above.
+		JSR		_mmc1_prg_safe				; redundant setting may be removed
 		LDA		(_lvl_collisions_ptr),Y
 		STA		_tmp0
 		PLA
@@ -3691,13 +3704,16 @@ loc_61914:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_far_room_macro_read_unref:
+; one more unused unreferenced far call helper to only to read
+; macro data this time.
+;
+_far_room_macro_tile_read_unref:
 		LDA		_prg_cur_bank
 		PHA
 		LDA		_lvl_data_prg_bank
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
-		JSR		_room_macro_read
+		JSR		_room_macro_tile_read
 		STA		_tmp0
 		PLA
 		STA		_prg_cur_bank
@@ -3706,7 +3722,7 @@ _far_room_macro_read_unref:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_room_macro_read:
+_room_macro_tile_read:
 		TYA
 		PHA
 		AND		#$08
@@ -3719,15 +3735,15 @@ _room_macro_read:
 		LSR
 		ORA		_tmp0
 		PHA
-		JSR		_lvl_room_ofs_calc
+		JSR		_room_macro_block_read		; read macro block idx first
 		TAY
 		PLA
 		TAX
-		LDA		_lvl_macroA_ptr,X
-		STA		_ptr06
+		LDA		_lvl_macroA_ptr,X			; NOTE: all macro ptrs are stored
+		STA		_ptr06						; continuosly, we read only one at once
 		LDA		_lvl_macroA_ptr+1,X
 		STA		_ptr06+1
-		LDA		(_ptr06),Y
+		LDA		(_ptr06),Y					; read corresponding macro tile (1/4)
 		STA		_tmp0
 		PLA
 		TAX
@@ -3737,13 +3753,15 @@ _room_macro_read:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_far_lvl_room_ofs_calc:
+; this is the only helper used in other portions of the engine
+;
+_far_room_macro_block_read:
 		LDA		_prg_cur_bank
 		PHA
 		LDA		_lvl_data_prg_bank
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
-		JSR		_lvl_room_ofs_calc
+		JSR		_room_macro_block_read
 		STA		_tmp0
 		PLA
 		STA		_prg_cur_bank
@@ -3752,7 +3770,7 @@ _far_lvl_room_ofs_calc:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_lvl_room_ofs_calc:
+_room_macro_block_read:
 		TYA
 		PHA
 		AND		#$F0
@@ -3788,9 +3806,9 @@ _lvl_room_ofs_calc:
 ; =============== S U B R O U T I N E ======n================================
 _ppu_macro_block_draw:
 		STA		_tmp0
-		LDA		_prg_cur_bank
+		LDA		_prg_cur_bank				; get the macro idx
 		PHA
-		LDA		_lvl_data_prg_bank
+		LDA		_lvl_data_prg_bank			; set the data bank
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
 		LDA		_tmp_var0
@@ -3810,7 +3828,7 @@ _ppu_macro_block_draw:
 		LSR
 		PHA
 		LDY		_tmp0
-		LDA		(_lvl_macroA_ptr),Y
+		LDA		(_lvl_macroA_ptr),Y			; fetch the macro tiles data
 		STA		_tmp_buf+4
 		LDA		(_lvl_macroB_ptr),Y
 		STA		_tmp_buf+5
@@ -3818,15 +3836,15 @@ _ppu_macro_block_draw:
 		STA		_tmp_buf+6
 		LDA		(_lvl_macroD_ptr),Y
 		STA		_tmp_buf+7
-		LDA		(_lvl_attrs_ptr),Y
+		LDA		(_lvl_attrs_ptr),Y			; also attributes
 		STA		_tmp0
 		PLA
 		TAY
 		LDA		_tmp0
-		JSR		_ppu_macro_attr_transfer
+		JSR		_ppu_macro_attr_transfer	; send attributes first
 		LDA		#$02
-		STA		_tmp_buf+2
-		STA		_tmp_buf+3
+		STA		_tmp_buf+2					; form macro tile chunk and sent
+		STA		_tmp_buf+3					;  it to ppu queue
 		JSR		_ppu_offset_calc
 		JSR		_ppu_res_send_param_no_ofs
 		.WORD	_tmp_buf+2
@@ -3839,13 +3857,15 @@ _ppu_macro_block_draw:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E ======n================================
-sub_619F7:
+; this routine fills the room data in one single name table at once.
+;
+_ppu_room_screen_draw:
 		LDY		#$00
 loc_619F9:
 		LDX		#$00
 loc_619FB:
-		JSR		_far_lvl_room_ofs_calc
-		JSR		_ppu_macro_block_draw
+		JSR		_far_room_macro_block_read	; TODO: also unoptimal, both routines
+		JSR		_ppu_macro_block_draw		; set the same PRG bank individually
 		TXA
 		CLC
 		ADC		#$10
@@ -3944,6 +3964,9 @@ loc_61A71:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; smilar to previous one, but with x wrapping for some reason, never used in
+; this game.
+;
 _unref_4:
 		TXA
 		CLC
@@ -4284,6 +4307,15 @@ loc_61CD4:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; the main object gandler routine for levels
+; get the data pointer, then fetch room data and wait if player get to
+; corresponding room, then deploy enemies max 4 at once on the same screen
+; when objects are removed from level, adds the rest one until reach
+; next room marker, then again wait when player arrive in this room
+; a special command for checkpoint does increment for current checkpoint
+; position index, next time engine restarting the level, room data
+; will start from previously saved checkpoint data offset
+;
 _nbgsub_lvl_room_objects_handler:
 		LDA		_prg_cur_bank				; backup current PRG bank
 		PHA
@@ -4389,7 +4421,7 @@ _ld1_exit:
 
 ; =============== S U B R O U T I N E ======n================================
 ; look for a beginning of the object data section corresponding to current
-; check point index.
+; checkpoint index to continue the game after game over.
 ;
 _nsub_lvl_room_objects_init:
 		LDA		_prg_cur_bank
@@ -4514,7 +4546,8 @@ _obj_to_player_ctest:
 		STX		_var0
 		STY		_var1
 		JSR		_cur_obj_screen_pos_calc
-		STX		_tmp1C
+		BCS		locret_61E6C				; this extra allows to have correct collision
+		STX		_tmp1C						; tests for object out of the screen (now allowed)
 		STY		_tmp1D
 		LDA		_players_inv_timer
 		BNE		locret_61E6B
@@ -4571,22 +4604,22 @@ locret_61E6D:
 #else
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_player_ctest:
-		LDA		_players_inv_timer
-		BNE		locret_61E6B
+		LDA		_players_inv_timer			; original game does enemy collision test
+		BNE		locret_61E6B				; only for beamer player,
 		STX		_var0
 		STY		_var1
-		LDX		#$02
+		LDX		#$02						; here we calc current screen pos of beamer
 		JSR		_obj_screen_pos_calc
 		STX		_var2
 		STY		_var3
-		JSR		_cur_obj_screen_pos_calc
-		TXA
-		SEC
-		SBC		_var2
-		BCS		loc_61E51
-		EOR		#$FF
-		ADC		#$01
-loc_61E51:
+		JSR		_cur_obj_screen_pos_calc	; then read current object screen position
+		TXA									; NOTE: because we calculate objects collision
+		SEC									; always in screen coordinates, you couldn't
+		SBC		_var2						; let any object leave the screen and stay active
+		BCS		loc_61E51					; at the same time. however, this may be rewritten
+		EOR		#$FF						; to have all calculations in room coordinates.
+		ADC		#$01						; to avoid this... or just additionally test if
+loc_61E51:									; object out of screen here
 		CMP		_var0
 		BCS		locret_61E6B
 		TYA
@@ -4611,14 +4644,13 @@ locret_61E6B:
 
 ; =============== S U B R O U T I N E ======n================================
 ; TODO: optimize me, this collision test is the same as regular collision
-; test but set a collision flag. may be merged with common code and money
-; add option added to the caller.
+; test but not set the collision flag. may be merged with common routine
 ; NOTE: most probably this routine may be intended to be used more than
 ; for collecting one money bag, presumably for more bonuses during the game
 ; like boots and wests... this is the reason they uses scores to be
-; passed  to this routine from object itself...
+; passed to this routine from object itself...
 ;
-_money_prize_ctest:
+_prize_to_player_ctest:
 		STX		_var0
 		STY		_var1
 		LDX		#$02
@@ -4648,16 +4680,16 @@ loc_61E94:
 		LDA		#$FF						; and add a scores from its ARG2 parameter
 		STA		_scr_trds_idx,X
 		LDA		_scr_trds_args2,X
-		JSR		_scores_add					; play a sound
-		LDA		#$0D
-		JSR		_far_prg6_apu_snd_load_safe
+		JSR		_scores_add					; add scores from sarg2 var
+		LDA		#_snd0D_idx					; play a sound
+		JSR		_far_prg6_apu_snd_load
 locret_61EA9:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _bin2dec:
-		STA		_var4
-		STX		_var5
+		STA		_var4						; converts 16-bit integer value
+		STX		_var5						; to 6-byte decimal value
 		LDX		#$00
 loc_61EB0:
 		LDY		#$00
@@ -4693,9 +4725,9 @@ byte_61EE1:
 
 ; =============== S U B R O U T I N E ======n================================
 _print_num99999:
-		JSR		_ppu_offset_calc
-		LDX		#$00
-		STX		_var5
+		JSR		_ppu_offset_calc			; covert 5-byte decimal value to
+		LDX		#$00						; a string with removing leftmost zeroes
+		STX		_var5						; then print it
 loc_61EEC:
 		LDA		_var0,X
 		ORA		_var5
@@ -4723,8 +4755,8 @@ loc_61F00:
 
 ; =============== S U B R O U T I N E ======n================================
 _ppu_offset_calc:
-		TXA
-		AND		#$1F
+		TXA									; convert X/Y tile screen position
+		AND		#$1F						; to PPU offset
 		STA		_tmp0
 		LDA		#$00
 		STA		_ptr08+1
@@ -4749,8 +4781,8 @@ _ppu_offset_calc:
 		LSR
 		LSR
 		STA		_tmp0
-		LDA		_mmc1_ctrl_shadow
-		AND		#$01
+		LDA		_mmc1_ctrl_shadow			; also adjust the high nibble according
+		AND		#$01						; to current mirroring setting
 		ORA		_tmp0
 		TAX
 		LDA		byte_61F4E,X
@@ -4762,8 +4794,8 @@ byte_61F4E:
 
 ; =============== S U B R O U T I N E ======n================================
 _ppu_macro_attr_transfer:
-		JSR		_ppu_attr_ofs_calc
-		STA		_tmp0
+		JSR		_ppu_attr_ofs_calc			; calculate attributes values offsets
+		STA		_tmp0						; then extract corresponding attr bits pos
 		TXA
 		PHA
 		AND		#$02
@@ -4801,6 +4833,9 @@ loc_61F74:
 		PLA
 		TAX
 		RTS
+; TODO: accidentally, this attr maksk list is the same as _catcher_turns_masks
+; which may be also merged.
+;
 byte_61F98:
 		.BYTE	$FC,$F3,$CF,$3F
 
@@ -4887,9 +4922,9 @@ byte_6201F:
 		.BYTE	$20,$24,$28,$2C
 
 ; =============== S U B R O U T I N E ======n================================
-_ppu_attr_fill_unref:
-		STA		_tmp_buf+4
-		LDA		_unused_unref,X
+_ppu_arrt_clear_unref:
+		STA		_tmp_buf+4					; similar routine but for clear attributes
+		LDA		_unused_unref,X				; not used here also
 		STA		_tmp_buf
 		LDA		_unused_unref_0,X
 		STA		_tmp_buf+1
@@ -5060,6 +5095,8 @@ _bg_pal_load:
 _full_pal_load:
 		LDY		#$1F
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _pal_load_ex:
 		STA		_ptr06
@@ -5069,6 +5106,8 @@ loc_62129:
 		STA		_pal_buf,Y
 		DEY
 		BPL		loc_62129
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _pal_def_color_set:
@@ -5083,6 +5122,8 @@ loc_62137:
 		INY
 		DEX
 		BPL		loc_62137
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _full_pal_fade:
@@ -5163,7 +5204,7 @@ byte_621B8:
 
 ; =============== S U B R O U T I N E ======n================================
 _div16:
-		CPY		#$02
+		CPY		#$02						; we don't div by 0 and 1 by obvious reasons
 		BCC		locret_621EB
 		DEY
 		DEY
@@ -5171,7 +5212,7 @@ _div16:
 		TXA
 		PHA
 		LDA		_tmp0
-		LDX		byte_621EC,Y
+		LDX		_div_table,Y
 		JSR		_div8
 		STX		_tmp1
 		PLA
@@ -5179,7 +5220,7 @@ _div16:
 		LDA		_tmp1
 		PHA
 		LDA		_tmp0
-		LDX		byte_621EC,Y
+		LDX		_div_table,Y
 		JSR		_div8
 		STA		_tmp0
 		PLA
@@ -5192,7 +5233,7 @@ _div16:
 		PLA
 locret_621EB:
 		RTS
-byte_621EC:
+_div_table:
 		.BYTE	$80,$55,$40,$33,$2A,$24,$20,$1C,$19,$17,$15,$13,$12,$11,$10,$0F
 		.BYTE	$0E,$0D,$0C,$0C,$0B,$0B,$0A,$0A,$09,$09,$09,$08,$08,$08,$08,$07
 		.BYTE	$07,$07,$07,$06,$06,$06,$06,$06,$06,$05,$05,$05,$05,$05,$05,$05
@@ -5212,13 +5253,13 @@ byte_621EC:
 
 ; =============== S U B R O U T I N E ======n================================
 _rand:
-		STA		_tmp0
-		TXA
-		PHA
-		LDA		_tmp0
-		PHA
-		LDA		_random_seed
-		LDX		#$0B
+		STA		_tmp0						; NOTE: this routine kinda heavy
+		TXA									; for frequent usage, it used mostly once
+		PHA									; per phase of most object targeted randomly.
+		LDA		_tmp0						; also it called only when needed, so most
+		PHA									; of the other time _random_seed is the same.
+		LDA		_random_seed				; other games may call randomizers constantly
+		LDX		#$0B						; in system loop, then just read seed value
 loc_622F5:
 		ASL		_random_seed
 		ROL		_random_seed+1
@@ -5248,8 +5289,8 @@ loc_62314:
 
 ; =============== S U B R O U T I N E ======n================================
 _div8:
-		STA		_tmp0
-		STX		_tmp1
+		STA		_tmp0						; fast div8 routine however takes
+		STX		_tmp1						; as much as 512k of div tables
 		STX		_var0
 		AND		_tmp1
 		AND		#$01
@@ -5320,11 +5361,11 @@ _div_tbl0:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_prize_sequence_test:
-		LDA		_prg_cur_bank
-		PHA
-		LDA		#$01
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
+		LDA		_prg_cur_bank				; routine used in a catch anim script
+		PHA									; to test if enemies catched in a particular
+		LDA		#$01						; sequence. need to activate bonus prize -
+		STA		_prg_cur_bank				; bag with money.
+		JSR		_mmc1_prg_safe				; all data is a part of level handlers
 		LDY		#$00
 		LDA		(_room_prize_sequence_ptr),Y
 		LDX		_scr_cur_trd_idx
@@ -5334,8 +5375,8 @@ _nsub_prize_sequence_test:
 		BNE		loc_6257B
 		INC		_room_prize_sequence_ptr+1
 loc_6257B:
-		LDA		(_room_prize_sequence_ptr),Y
-		BNE		loc_62583
+		LDA		(_room_prize_sequence_ptr),Y; when list completed, zero the pointer
+		BNE		loc_62583					; this will activate hidden object
 		STA		_room_prize_sequence_ptr
 		STA		_room_prize_sequence_ptr+1
 loc_62583:
@@ -5345,51 +5386,53 @@ loc_62583:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_scores_add:
-		LDA		_scores_obj_value
+		LDA		_scores_obj_value			; collision test must init this var first
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _scores_add:
 		CLC
-		ADC		_scores
+		ADC		_scores						; increment scores by given value
 		STA		_scores
 		BCC		loc_62598
 		INC		_scores+1
 loc_62598:
-		LDA		_scores+1
-		CMP		_scores_to_next_live+1
-		BCC		loc_625DF
-		BNE		loc_625AA
+		LDA		_scores+1					; compare with next life score value
+		CMP		_scores_to_next_life+1		; compare with current score range
+		BCC		loc_625DF					; if current score equal or higher
+		BNE		loc_625AA					; than current extend,
 		LDA		_scores
-		CMP		_scores_to_next_live
+		CMP		_scores_to_next_life
 		BCC		loc_625DF
 loc_625AA:
-		LDA		_scores_to_next_live+1
-		CMP		_scores_to_next_live_start+1
+		LDA		_scores_to_next_life+1		; check if current extend equal to 1st
+		CMP		_scores_1st_extend+1		; then load 2nd extend as next one
 		BNE		loc_625C3
-		LDA		_scores_to_next_live
-		CMP		_scores_to_next_live_start
+		LDA		_scores_to_next_life
+		CMP		_scores_1st_extend
 		BNE		loc_625C3
-		LDY		_scores_to_next_live_step
-		LDA		_scores_to_next_live_step+1
+		LDY		_scores_2nd_extend
+		LDA		_scores_2nd_extend+1
 		JMP		loc_625D1
 loc_625C3:
-		LDA		_scores_to_next_live
-		CLC
-		ADC		_scores_to_next_live_step
+		LDA		_scores_to_next_life		; in all other cases all next extends are
+		CLC									; the same as 2nd one
+		ADC		_scores_2nd_extend
 		TAY
-		LDA		_scores_to_next_live+1
-		ADC		_scores_to_next_live_step+1
+		LDA		_scores_to_next_life+1
+		ADC		_scores_2nd_extend+1
 loc_625D1:
-		STY		_scores_to_next_live
-		STA		_scores_to_next_live+1
+		STY		_scores_to_next_life
+		STA		_scores_to_next_life+1
 		INC		_players_lives
 #if TWO_PLAYER_MODE==1
 		INC		_players_lives+1
 #endif
-		LDA		#$1E
-		JSR		_far_prg6_apu_snd_load_safe
+		LDA		#_snd1E_idx
+		JSR		_far_prg6_apu_snd_load
 loc_625DF:
-		LDA		_scores+1
+		LDA		_scores+1					; test for hi-scores update
 		CMP		_hi_scores+1
 		BCC		locret_625FD
 		BNE		loc_625F1
@@ -5406,7 +5449,7 @@ locret_625FD:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_scores_display_unref:
-		JSR		_scr_getc
+		JSR		_scr_getc					; never called from script here
 		PHA
 		JSR		_scr_getc
 		PHA
@@ -5414,40 +5457,42 @@ _nsub_scores_display_unref:
 
 ; =============== S U B R O U T I N E ======n================================
 _printf_scores:
-		TXA
-		PHA
+		TXA									; actual used sub is native called
+		PHA									; to draw status/complete screen
 		TYA
 		PHA
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _printf_scores_ex:
-		LDA		_scores
+		LDA		_scores						; common scores printf routine
 		LDX		_scores+1
-		JSR		_bin2dec
-		PLA
-		TAY
-		PLA
+		JSR		_bin2dec					; convert to decimal first
+		PLA									; retrieve the screen position
+		TAY									; and draw with leftmost zeroes
+		PLA									; trimmed
 		TAX
 		JMP		_print_num99999
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_hi_scores_display:
-		JSR		_scr_getc
-		PHA
+		JSR		_scr_getc					; this nsub routine called from
+		PHA									; title script
 		JSR		_scr_getc
 		PHA
 		JMP		_printf_hi_scores_ex
 
 ; =============== S U B R O U T I N E ======n================================
 _printf_hi_scores:
-		TXA
+		TXA									; also used for status/complete screens
 		PHA
 		TYA
 		PHA
 
 ; =============== S U B R O U T I N E ======n================================
 _printf_hi_scores_ex:
-		LDA		_hi_scores
+		LDA		_hi_scores					; common sub different only in var used
 		LDX		_hi_scores+1
 		JSR		_bin2dec
 		PLA
@@ -5458,16 +5503,20 @@ _printf_hi_scores_ex:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_apu_mus_load:
-		JSR		_scr_getc
+		JSR		_scr_getc					; helper to call this routine from script
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _far_prg6_apu_mus_load:
-		STA		_apu_cur_mus_idx
+		STA		_apu_cur_mus_idx			; helper to call from native procedures
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _far_prg6_apu_mus_load_ex:
-		STA		_tmp0
-		LDA		_prg_cur_bank
+		STA		_tmp0						; main mus load routine here
+		LDA		_prg_cur_bank				; executed here for pause
 		PHA
 		TXA
 		PHA
@@ -5487,15 +5536,17 @@ _far_prg6_apu_mus_load_ex:
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_apu_snd_load_safe:
-		JSR		_scr_getc
+_nsub_apu_snd_load:
+		JSR		_scr_getc					; same for snd for script loading
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
-_far_prg6_apu_snd_load_safe:
-		STA		_tmp0
-		LDA		_prg_cur_bank
-		PHA
-		TXA
+_far_prg6_apu_snd_load:
+		STA		_tmp0						; the currently played snd index
+		LDA		_prg_cur_bank				; stored in main apu code instead
+		PHA									; so don't need to store it here as
+		TXA									; for mus
 		PHA
 		TYA
 		PHA
@@ -5503,7 +5554,7 @@ _far_prg6_apu_snd_load_safe:
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
 		LDA		_tmp0
-		JSR		_apu_snd_load_safe
+		JSR		_apu_snd_load
 		PLA
 		TAY
 		PLA
@@ -5514,7 +5565,7 @@ _far_prg6_apu_snd_load_safe:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_full_pal_fade_set:
-		JSR		_scr_getc
+		JSR		_scr_getc					; nsub for palette loading from scipts
 		LDY		#$07
 loc_62688:
 		STA		_pal_fade_req_list,Y
@@ -5701,6 +5752,8 @@ _nsub_mmc1_mirror_vertical:
 		JMP		_mmc1_ctrl
 
 ; =============== S U B R O U T I N E ======n================================
+; TODO: they used native call to store value to zero RAM var, however,
+; they may do this also with SSTORE8 command the same size!
 _nsub_mmc1_chr0_set:
 		JSR		_scr_getc
 		STA		_chr_bank0
@@ -5710,6 +5763,8 @@ _nsub_mmc1_chr0_set:
 _nsub_mmc1_chr1_set:
 		JSR		_scr_getc
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _mmc1_chr1_set:
 		STA		_chr_bank1
@@ -5717,19 +5772,19 @@ _mmc1_chr1_set:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_mmc1_prg_set_unused:
-		JSR		_scr_getc
+		JSR		_scr_getc					; prg set helper as well never used here
 		JMP		_mmc1_prg_safe
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_new_thread_start:
-		LDX		_scr_cur_trd_idx
-		JSR		_scr_getc
-		PHA
+		LDX		_scr_cur_trd_idx			; start a new thread from current thread
+		JSR		_scr_getc					; usually loads the same script with different
+		PHA									; parameters
 		LDA		#$00
 		STA		_var6
 		STA		_var7
-		JSR		_scr_getc
-		STA		_tmp1
+		JSR		_scr_getc					; here is the relative position of new
+		STA		_tmp1						; object from current object calculated
 		BPL		loc_627AE
 		DEC		_var6
 loc_627AE:
@@ -5738,13 +5793,13 @@ loc_627AE:
 		BPL		loc_627B7
 		DEC		_var7
 loc_627B7:
-		JSR		_scr_getc
-		STA		_var0
-		JSR		_scr_getc
+		JSR		_scr_getc					; also read two parameters, sarg0 as
+		STA		_var0						; thread entity selector
+		JSR		_scr_getc					; sarg1 as direction modifier
 		CLC
 		ADC		_scr_trds_args1,X
 		STA		_var1
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_scr_trds_y_pos_lo,X		; calc new position
 		CLC
 		ADC		_tmp2
 		TAY
@@ -5773,8 +5828,8 @@ loc_627B7:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg01_load_data_ofs:
-		LDX		_scr_cur_trd_idx
-		JSR		_scr_getc
+		LDX		_scr_cur_trd_idx			; custom usage of sargs with general purpose
+		JSR		_scr_getc					; scripts as a pointer for example
 		STA		_scr_trds_args0,X
 		JSR		_scr_getc
 		STA		_scr_trds_args1,X
@@ -5787,9 +5842,12 @@ _nsub_sarg01_load_data_ofs:
 ; so this routine will create a number of copies of the current thread with
 ; predefined parameters.
 ;
+; also used by general purpose scripts, uses ptr loaded in sargs with prev
+; nsub routine
+;
 _nsub_chain_thread_lib_load_enemy:
 		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDA		_scr_trds_args0,X			; load chain scripts data ptr
 		STA		_ptr06
 		LDA		_scr_trds_args1,X
 		STA		_ptr06+1
@@ -5797,7 +5855,7 @@ _nsub_chain_thread_lib_load_enemy:
 		STA		_var4
 		STA		_var5
 		TAY
-		LDA		(_ptr06),Y
+		LDA		(_ptr06),Y					; read next chunk
 		STA		_var0
 		INY
 		LDA		(_ptr06),Y
@@ -5812,24 +5870,24 @@ loc_62819:
 		DEC		_var5
 loc_62822:
 		INY
-		LDA		(_ptr06),Y
-		LDX		_scr_cur_trd_idxw
+		LDA		(_ptr06),Y					; every new script will have its own
+		LDX		_scr_cur_trd_idxw			; delay value at start
 		STA		_scr_trds_delay,X
 		LDX		_scr_cur_trd_idx
 		INY
 		TYA
 		CLC
 		ADC		_ptr06
-		STA		_scr_trds_args0,X
+		STA		_scr_trds_args0,X			; put ptr to the next chunk
 		LDA		_ptr06+1
 		ADC		#$00
 		STA		_scr_trds_args1,X
 		LDA		_scr_trds_idx,X
 		PHA
-		LDA		_scr_trds_y_pos_lo,X
-		CLC
-		ADC		_tmp2
-		TAY
+		LDA		_scr_trds_y_pos_lo,X		; deploy currently loaded thread, one
+		CLC									; at a time. to read out all data you
+		ADC		_tmp2						; need this routine as much times as
+		TAY									; much chunks in data
 		LDA		_scr_trds_y_pos_hi,X
 		ADC		_var5
 		STA		_tmp_var1
@@ -5847,10 +5905,10 @@ loc_62822:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_sarg_add_imm_test:
-		JSR		_scr_getc
-		TAX
-		LDA		_scr_args_list_ptr_lo,X
-		STA		_ptr06
+		JSR		_scr_getc					; main commonly used nsub routine
+		TAX									; to getch sarg value and test its value
+		LDA		_scr_args_list_ptr_lo,X		; after selected displacement. used
+		STA		_ptr06						; to get indexes of the script switch cases
 		LDA		_scr_args_list_ptr_hi,X
 		STA		_ptr06+1
 		JSR		_scr_getc
@@ -5866,7 +5924,7 @@ loc_62877:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_get_rand_probability:
-		JSR		_scr_getc
+		JSR		_scr_getc					; get rand value of 1/getc probability
 		JSR		_rand
 		BEQ		loc_62883
 		CLC
@@ -5877,7 +5935,7 @@ loc_62883:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_lvl_data_ptrs_load:
-		JSR		_scr_getc
+		JSR		_scr_getc					; common data load for current stage
 		STA		_lvl_macroA_ptr
 		JSR		_scr_getc
 		STA		_lvl_macroA_ptr+1
@@ -5901,8 +5959,8 @@ _nsub_lvl_data_ptrs_load:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_room_page_set_unref:
-		JSR		_scr_getc
-		STA		_cur_room_x_pageA
+		JSR		_scr_getc					; this routine never used to load
+		STA		_cur_room_x_pageA			; current room screens layouts
 		JSR		_scr_getc
 		STA		_cur_room_x_pageB
 		JSR		_scr_getc
@@ -5912,7 +5970,6 @@ _nsub_room_page_set_unref:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-; calculates
 _nsub_cur_obj_linear_dst_pos_from_sarg1_set:
 		JSR		_scr_getc
 		PHA
@@ -5936,8 +5993,13 @@ _nsub_cur_obj_linear_dst_pos_from_sarg1_set:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; there are three types of rooms, size 1x1 screens, 1x2 and 2x1. this routine
+; determines the room type and number of screens in it, then draw one or
+; two at once. this endine does not draw room data while scrolling as in other
+; games. single room always fit into two name tables for one mirroring mode.
+;
 _nsub_room_draw:
-		JSR		_scr_getc
+		JSR		_scr_getc					; most of room draw called from scripts
 		STA		_cur_room_orientation_idx
 		JSR		_scr_getc
 		STA		_cur_room_data_col
@@ -5948,8 +6010,8 @@ _nsub_room_draw:
 
 ; =============== S U B R O U T I N E ======n================================
 _room_draw:
-		JSR		_ppu_vblank_off
-		LDA		_cur_room_orientation_idx
+		JSR		_ppu_vblank_off				; this is the only routine for native callers
+		LDA		_cur_room_orientation_idx	; used when redraw pause screen.
 		ORA		#$1E
 		JSR		_mmc1_ctrl
 		LDA		_cur_room_data_col
@@ -5960,7 +6022,7 @@ _room_draw:
 		STA		_tmp_var1
 		STA		_cur_room_x_pageA
 		STA		_cur_room_x_pageB
-		JSR		sub_619F7
+		JSR		_ppu_room_screen_draw
 		LDA		_cur_room_orientation_idx
 		BNE		loc_6293C
 		INC		_cur_room_y_pageA
@@ -5972,20 +6034,20 @@ loc_6293C:
 		INC		_cur_room_x_pageB
 		INC		_tmp_var1
 loc_62945:
-		JSR		sub_619F7
+		JSR		_ppu_room_screen_draw
 loc_62948:
 		JMP		_ppu_vblank_on
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_room_exit_test:
-		JSR		_scr_getc
-		STA		_var0
-		LDA		#$00
+		JSR		_scr_getc					; fetches the exit locations of the level
+		STA		_var0						; and compares with current beamed position
+		LDA		#$00						; return flag if position reached
 		STA		_var3
 loc_62954:
-		LDX		#$02
-		JSR		_scr_getc
-		SEC
+		LDX		#$02						; have no use with doors code itself
+		JSR		_scr_getc					; doors are just for blocking your way
+		SEC									; but exits are always active
 		SBC		_scr_trds_x_pos_lo+2
 		STA		_var1
 		JSR		_scr_getc
@@ -6029,15 +6091,15 @@ loc_629A0:
 loc_629A8:
 		TXA
 		CLC
-		ADC		_scr_pc
-		STA		_scr_pc
+		ADC		_scr_pc						; adjust script pointer to next
+		STA		_scr_pc						; data chunk untill there are no left
 		BCC		loc_629B2
 		INC		_scr_pc+1
 loc_629B2:
 		INC		_var3
 		DEC		_var0
 		BNE		loc_62954
-		CLC
+		CLC									; exit with C=0 if no exit reached
 		RTS
 loc_629BA:
 		DEC		_var0
@@ -6049,16 +6111,16 @@ loc_629BA:
 		BCC		loc_629C8
 		INC		_scr_pc+1
 loc_629C8:
-		LDA		_var3
+		LDA		_var3						; exit with C=1 if exit reached
 		STA		_tmp_idx
 		SEC
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_room_start_pos_init:
-		JSR		_scr_getc
-		PHA
-		LDA		_tmp_idx
+		JSR		_scr_getc					; also common routine for init starting
+		PHA									; position of players at the level start
+		LDA		_tmp_idx					; or at the beginning of any new room
 		ASL
 		ADC		_tmp_idx
 		TAY
@@ -6089,10 +6151,10 @@ _nsub_players_room_start_pos_init:
 		LSR
 		ROR
 		ROR
-		STA		_scr_trds_args1+2
-		STA		_scr_trds_args1+4
-		LDA		_scr_trds_x_pos_lo+2
-		CLC
+		STA		_scr_trds_args1+2			; position data stored only for beamer
+		STA		_scr_trds_args1+4			; position of catched auto calculated
+		LDA		_scr_trds_x_pos_lo+2		; by direction of beamer and starting position
+		CLC									; at the door
 		ADC		byte_62A87,X
 		STA		_scr_trds_x_pos_lo+2
 		LDA		_scr_trds_x_pos_hi+2
@@ -6146,10 +6208,11 @@ _nsub_players_room_start_pos_init:
 		BCC		loc_62A7E
 		INC		_scr_pc+1
 loc_62A7E:
-		LDA		#$00
-		STA		_ppu_scroll_pos_x
+		LDA		#$00						; also this routine resets the scrolls
+		STA		_ppu_scroll_pos_x			; and removes all possible threads garbage
 		STA		_ppu_scroll_pos_y
 		JMP		_nsub_gen_threads_off_except_cur
+
 byte_62A87:
 		.BYTE	$10,$10,$10,$F8
 byte_62A8B:
@@ -6169,8 +6232,8 @@ byte_62AA3:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_read_mem:
-		JSR		_scr_getc
-		STA		_ptr06
+		JSR		_scr_getc					; workaround to read mem due to
+		STA		_ptr06						; lack such command in the scrips
 		JSR		_scr_getc
 		STA		_ptr06+1
 		LDY		#$00
@@ -6337,9 +6400,9 @@ locret_62B94:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_stage_complete_test:
-		LDA		_lvl_objects_ptr+1
-		BNE		locret_62BB0
-		LDX		#$06
+		LDA		_lvl_objects_ptr+1			; stage completed when object list
+		BNE		locret_62BB0				; reaches its end, and all enemies
+		LDX		#$06						; are inactive anymore
 loc_62B9B:
 		LDA		_scr_trds_idx,X
 		BMI		loc_62BA4
@@ -6400,9 +6463,9 @@ _nsub_obj_sarg_set_from_nsub_return_value:
 _nsub_is_any_enemy_active:
 		LDX		#$06
 loc_62BE7:
-		LDA		_scr_trds_idx,X
-		BMI		loc_62BF4
-		CMP		#$13
+		LDA		_scr_trds_idx,X				; test if there are no enemies, used
+		BMI		loc_62BF4					; mostly for special small cutscenes
+		CMP		#$13						; on the stages
 		BCC		loc_62BF4
 		CPX		_scr_cur_trd_idx
 		BNE		loc_62BFB
@@ -6506,7 +6569,6 @@ loc_62C5E:
 loc_62C6A:
 		CLC
 		RTS
-
 off_62C6C:
 		.BYTE	<[byte_62C70]
 		.BYTE	<[byte_62C75]
@@ -6647,9 +6709,9 @@ _nsub_players_scr_suspend:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_tlm_raw_arg2_idx_line_draw:
-		JSR		_scr_getc
-		STA		_ptr08
-		JSR		_scr_getc
+		JSR		_scr_getc					; custom helper for drawing raw strided
+		STA		_ptr08						; tilemaps for the title and ending screens
+		JSR		_scr_getc					; draw one line per call
 		STA		_ptr08+1
 		LDX		_scr_cur_trd_idx
 		LDA		#$00
@@ -6693,8 +6755,8 @@ loc_62D3F:
 
 ; =============== S U B R O U T I N E ======n================================
 _cur_obj_out_of_screen_test:
-		JSR		_cur_obj_screen_pos_calc
-		CPX		#$04
+		JSR		_cur_obj_screen_pos_calc	; routine to remove objects that
+		CPX		#$04						; have to disappear off screen
 		BCC		loc_62D76
 		CPX		#$F8
 		BCS		loc_62D76
@@ -6782,8 +6844,8 @@ _ssub_room_exit_pal_fade_out_ex:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_L_snd02:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$02
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd02_idx
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_L_ex:
@@ -6814,8 +6876,10 @@ _ssub_common_catch_finish:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_R_snd02:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$02
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd02_idx
+
+; !FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_R_ex:
@@ -6838,25 +6902,25 @@ _ssub_common_catch_anim_R_ex:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 
 _ssub_common_catch_anim_L_snd19:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$19
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd19_idx
 		SJMP			_ssub_common_catch_anim_L_ex
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_R_snd19:
-		NJSR			_nsub_apu_snd_load_safe
-			NARGB		$19
+		NJSR			_nsub_apu_snd_load
+			NARGB		_snd19_idx
 		SJMP			_ssub_common_catch_anim_R_ex
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_boss_music_fade_and_load:
-		SLOOP_BEGIN		$80
-		SMEM_ALU		_apu_mus_volume,_ADC,$FF
+		SLOOP_BEGIN		$80								; special common boss music start routine
+		SMEM_ALU		_apu_mus_volume,_ADC,$FF		; fade out the current music first
 		SDELAY			$01
 		SLOOP_END
 		STORE8			_apu_mus_volume,$FF
 		NJSR			_nsub_apu_mus_load
-			NARGB		$04
+			NARGB		_mus4_idx
 		SRET
 
 _spr_nlib1A_00:
@@ -6900,7 +6964,7 @@ loc_62E6E:
 
 ; =============== S U B R O U T I N E ======n================================
 _thread_lib_load_gen_ex:
-		PHA
+		PHA									; load new thread, slots 06-0D allowed only
 		LDA		#$06
 		STA		_var4
 		LDA		#$0E
@@ -6911,7 +6975,7 @@ _thread_lib_load_gen_ex:
 ; =============== S U B R O U T I N E ======n================================
 _event_thread_start:
 		PHA
-		LDA		#$00
+		LDA		#$00						; load thread without parameters and limits
 		STA		_var0
 		STA		_var1
 		STA		_var2
@@ -6924,8 +6988,8 @@ _event_thread_start:
 
 ; =============== S U B R O U T I N E ======n================================
 _thread_lib_load:
-		STA		_tmp0
-		STX		_tmp1
+		STA		_tmp0						; look for free threads slot
+		STX		_tmp1						; and load selected library script
 		STY		_tmp2
 		LDX		_var4
 loc_62EB2:
@@ -6967,8 +7031,8 @@ loc_62EBD:
 
 ; =============== S U B R O U T I N E ======n================================
 _thread_load:
-		PHA
-		TYA
+		PHA									; raw thread load, if you need something
+		TYA									; to load that not in the library
 		PHA
 		LDA		#$FF
 		STA		_scr_trds_spr_idx,X
@@ -7043,10 +7107,12 @@ loc_62F45:
 		CPX		#$02						; if paused, hold all other threads, excluding the
 		BCS		.trds_skip_exec				; system threads: 0 - level, 1 - level doors
 loc_62F6A:
+#if TWO_PLAYER_MODE==0
 		CPX		#$06
 		BCC		.trds_do_exec
 		JSR		_obj_screen_pos_calc		; when object out of screen, hold it, so any object
 		BCS		.trds_skip_exec				; halted, but will resume if visible again...
+#endif
 .trds_do_exec:
 		LDX		_scr_cur_trd_idx			; now, finally do execute. fetch current thread index
 		LDY		_scr_trds_idx,X				; and set corresponding PRG bank before executing
@@ -7963,6 +8029,8 @@ _scmd0C_bcc:
 		LSR
 		BCS		_j_scr_pc_incB
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _scr_pc_set:
 		STX		_scr_pc+1
@@ -7994,6 +8062,8 @@ _scmd11_sloc_sw:
 		CMP		_nsub_return_value
 		BCC		_scmd_skip
 		BNE		_cmd_switch_case
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd_skip:
@@ -8499,8 +8569,8 @@ _cur_thread_reload_param:
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
-; in case we need to reload a script for a particular thread, nit the same one
-; but all other is the same.
+; in case we need to reload a script for a particular thread instead of current
+; one
 ;
 _thread_reload_param_ex:
 		PLA
@@ -8558,10 +8628,10 @@ _ppu_nmi_on:
 
 ; =============== S U B R O U T I N E ======n================================
 _wait_for_nmi:
-		PHA
-		LDA		_ppu_ctrl_shadow
-		BPL		loc_637FF
-loc_637F5:
+		PHA									; in case routine is called during
+		LDA		_ppu_ctrl_shadow			; render being off, wait nmi using
+		BPL		loc_637FF					; _PPU_STATUS flags instead. never
+loc_637F5:									; happens in this game
 		LDA		_nmi_flag
 		BEQ		loc_637F5
 		LDA		#$00
@@ -8580,6 +8650,8 @@ loc_63804:
 ; =============== S U B R O U T I N E ======n================================
 _ppu_vblank_off:
 		LDA		#$00
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _ppu_vblank_ex:
@@ -9028,7 +9100,7 @@ loc_63A63:
 ; =============== S U B R O U T I N E ======n================================
 _get_input:
 		JSR		_read_pads					; too paranoid to pad reading on NES
-		STA		_tmp1A						; but probably important for real HW
+		STA		_tmp1A						; but seems important for real HW
 		JSR		_read_pads
 		AND		_tmp1A
 		STA		_tmp1B
