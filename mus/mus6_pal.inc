@@ -26,7 +26,6 @@ _mus6_A:
 		AJSR		_asub_99D43
 		AJSR		_asub_99D69
 		AJMP		_mus6_A
-		ASTOP
 _asub_99D43:
 		ADMC		_pcm0A
 		ADATA		$5F
@@ -104,7 +103,6 @@ _mus6_B:
 		AJSR		_asub_99DEA
 		ADATAEX		$D0,$01
 		AJMP		_mus6_B
-		ASTOP
 _asub_99DD5:
 		ASMPL		_sample13
 		ADATA		$64
@@ -157,7 +155,6 @@ _mus6_C:
 		AJSR		_asub_99E81
 		ALOOP_END
 		AJMP		_mus6_C
-		ASTOP
 _asub_99E3D:
 		ACMDF4		$E6
 		ADATA		$76
@@ -260,7 +257,6 @@ _mus6_D:
 		AJSR		_asub_99FB8
 		ALOOP_END
 		AJMP		_mus6_D
-		ASTOP
 _asub_99EC5:
 		ADATA		$42
 		ADATAEX		$D0,$29
@@ -475,7 +471,6 @@ _mus6_E:
 		ALOOP_END
 		ADATAEX		$D0,$01
 		AJMP		_mus6_E
-		ASTOP
 _asub_9A019:
 		ACMDF5		$1C
 		ADATAEX		$D6,$11

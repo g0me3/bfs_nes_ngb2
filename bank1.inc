@@ -19,7 +19,7 @@
 ; and then jump to a corresponding new room handler. every room handler
 ; usually setup its own set of doors, entry points and exits.
 ;
-_scr01_lvl1_handler:
+		FAR_OFS			_scr01_lvl1_handler
 		NJSR			_nsub_get_checkpoint_tmp_idx	; here is the beginning of the stage
 		NJSR			_nsub_read_mem					; we start from here either if begin the stage
 			NARGW		_tmp_idx						; or continue after game over
@@ -361,7 +361,7 @@ _lvl1_room_initB:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_common_init:
-		STORE8			_lvl_data_prg_bank,$01			; common initialization for whole level, all levels
+		STORE8			_lvl_data_prg_bank,_lvl1_bank	; common initialization for whole level, all levels
 		NJSR			_nsub_lvl_data_ptrs_load		; does the same initializers.
 			NARGW		_lvl1_macroA_tbl				; here set macro/attrs data for level draw,
 			NARGW		_lvl1_macroB_tbl				; level layouts and room data library
@@ -383,7 +383,7 @@ _lvl1_common_init:
 _scr_common_pause_handler:
 		SDELAY			$01								; common pause handler for all levels
 #if DEBUG==1
-		NJSR			_nsub_ingame_select_input_test_unused	; presumably stage complete test were here
+		NJSR			_nsub_ingame_select_input_test	; presumably stage complete test were here
 		SBCC			_skip_stage_select
 		SSTOP
 _skip_stage_select:
@@ -417,7 +417,7 @@ _j_nbgsub_lvl_room_objects_handler:
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr02_lvl2_handler:
+		FAR_OFS			_scr02_lvl2_handler
 		NJSR			_nsub_get_checkpoint_tmp_idx	; same as for lvl1
 		NJSR			_nsub_read_mem					; now we have 4 checkpoints here
 			NARGW		_tmp_idx
@@ -892,7 +892,7 @@ _lvl2_room_initB:
 _lvl2_common_init:
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl2_full_pal
-		STORE8			_lvl_data_prg_bank,$02
+		STORE8			_lvl_data_prg_bank,_lvl2_bank
 		NJSR			_nsub_lvl_data_ptrs_load		; TODO, same routine always, and same additional
 			NARGW		_lvl2_macroA_tbl				; rooms lib ptr settings, why not to include it
 			NARGW		_lvl2_macroB_tbl				; in this subroutine as well as soon as
@@ -919,8 +919,8 @@ _lvl2_bg_palA:
 ; however, the final version uses only first part of it for background
 ; as you may see, the only difference in sprites palettes is two last palettes
 ; are swapped.
-_unused_2:
-		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$2B,$0F,$0F,$10,$17,$07 ;	*--
+;_unused_2:
+;		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15,$0F,$36,$2B,$0F,$0F,$10,$17,$07
 _lvl2_roomA_patch_pal_list:
 		.BYTE	$0F,$0F,$07,$0F
 		.BYTE	$0F,$07,$0F,$0F
@@ -958,7 +958,7 @@ _j_nbgsub_lvl_room_objects_handler_3:
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr03_lvl3_handler:
+		FAR_OFS			_scr03_lvl3_handler
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1952,7 +1952,7 @@ _lvl3_room17_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl3_common_init:
-		STORE8			_lvl_data_prg_bank,$02
+		STORE8			_lvl_data_prg_bank,_lvl3_bank
 		STORE16			_lvl_rooms_lib_ptr,_lvl3_rooms_lib
 		NJSR			_nsub_lvl_data_ptrs_load
 			NARGW		_lvl3_macroA_tbl
@@ -1992,7 +1992,7 @@ _j_nbgsub_lvl_room_objects_handler_0:
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr04_lvl4_handler:
+		FAR_OFS			_scr04_lvl4_handler
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2372,7 +2372,7 @@ _lvl4_room9_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl4_common_init:
-		STORE8			_lvl_data_prg_bank,$05
+		STORE8			_lvl_data_prg_bank,_lvl4_bank
 		NJSR			_nsub_lvl_data_ptrs_load
 			NARGW		_lvl4_macroA_tbl
 			NARGW		_lvl4_macroB_tbl
@@ -2441,7 +2441,7 @@ _lvl4_patch_pal_lib:
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr05_lvl5_handler:
+		FAR_OFS			_scr05_lvl5_handler
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2642,14 +2642,9 @@ _sloc_15716:
 			NARGB		$9C,$67,$03
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-; BUG: SJMP_SW here has only single case entry, but counter here is $02
+; BUGFIX: SJMP_SW here has only single case entry, but counter here was $02
 ; this not cause any bugs, but incorrect.
-#if BUGFIXES==1
 		SJMP_SW			$01
-#else
-		SJMP_SW			$02
-#endif
-; -
 		SCASE			_lvl5_room3_handler
 
 _lvl5_room4_doors:
@@ -3310,7 +3305,7 @@ _lvl5_room15_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl5_common_init:
-		STORE8			_lvl_data_prg_bank,$05
+		STORE8			_lvl_data_prg_bank,_lvl5_bank
 		STORE16			_lvl_rooms_lib_ptr,_lvl5_rooms_lib
 		NJSR			_nsub_lvl_data_ptrs_load
 			NARGW		_lvl5_macroA_tbl
@@ -3350,7 +3345,7 @@ _j_nbgsub_lvl_room_objects_handler_1:
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr06_lvl6_handler:
+		FAR_OFS			_scr06_lvl6_handler
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -3432,7 +3427,7 @@ _lvl6_room1_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl6_common_init:
-		STORE8			_lvl_data_prg_bank,$03
+		STORE8			_lvl_data_prg_bank,_lvl6_bank
 		NJSR			_nsub_lvl_data_ptrs_load
 			NARGW		_lvl6_macroA_tbl
 			NARGW		_lvl6_macroB_tbl
@@ -3494,6 +3489,7 @@ loc_15E56:
 		CLC
 		RTS
 
+#if DEBUG==1
 ; =============== S U B R O U T I N E ======n================================
 ; NOTE: this _game_flags ($80) used by the game to determine if previous
 ; level were comlete or not when the main level script is stopped during
@@ -3501,7 +3497,9 @@ loc_15E56:
 ; selected at the "GAME OVER" screen, 80 is set after the "STAGE CLEAR"
 ; screen and thus the main engine will increment the level number...
 ;
-_nsub_ingame_select_input_test_unused:
+; NEW, reused this routine for debugging purposes
+;
+_nsub_ingame_select_input_test:
 		LDA		_pad0_pressed
 		AND		#$20
 		BEQ		loc_15E65
@@ -3512,6 +3510,7 @@ _nsub_ingame_select_input_test_unused:
 loc_15E65:
 		CLC
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_ingame_pause_handler:
@@ -3636,6 +3635,9 @@ _res_pause_pal:
 		.BYTE	$0F,$31,$11,$01,$0F,$00,$10,$20,$0F,$00,$10,$20,$0F,$00,$10,$20
 		.BYTE	$0F,$36,$1C,$0F,$0F,$21,$25,$15
 
+; NOTE: must be in the same bank as stage scrips, or called as a separate
+; entry in the scripts list
+;
 ; =============== S C R I P T ==========================s====================
 _scr_stage_complete:
 		NJSR			_nsub_players_scr_suspend		; suspend players
@@ -3783,43 +3785,9 @@ loc_16050:
 		LDY		#$0A
 		JMP		_print_num99999
 
-_spr_nlib01_17:
-		.BYTE	$10
-		.BYTE	$00,$8E,$03,$18
-		.BYTE	$00,$8C,$03,$10
-		.BYTE	$00,$8A,$03,$08
-		.BYTE	$00,$88,$03,$00
-		.BYTE	$00,$7E,$03,$F8
-		.BYTE	$00,$7C,$03,$F0
-		.BYTE	$00,$7A,$03,$E8
-		.BYTE	$00,$78,$03,$E0
-		.BYTE	$F0,$76,$03,$18
-		.BYTE	$F0,$74,$03,$10
-		.BYTE	$F0,$72,$03,$08
-		.BYTE	$F0,$68,$03,$E0
-		.BYTE	$F0,$6A,$03,$E8
-		.BYTE	$F0,$6C,$03,$F0
-		.BYTE	$F0,$6E,$03,$F8
-		.BYTE	$F0,$70,$03,$00
-_spr_nlib01_18:
-		.BYTE	$10
-		.BYTE	$00,$8F,$03,$18
-		.BYTE	$00,$8D,$03,$10
-		.BYTE	$00,$8B,$03,$08
-		.BYTE	$00,$89,$03,$00
-		.BYTE	$00,$7F,$03,$F8
-		.BYTE	$00,$7D,$03,$F0
-		.BYTE	$00,$7B,$03,$E8
-		.BYTE	$00,$79,$03,$E0
-		.BYTE	$F0,$77,$03,$18
-		.BYTE	$F0,$75,$03,$10
-		.BYTE	$F0,$73,$03,$08
-		.BYTE	$F0,$69,$03,$E0
-		.BYTE	$F0,$6B,$03,$E8
-		.BYTE	$F0,$6D,$03,$F0
-		.BYTE	$F0,$6F,$03,$F8
-		.BYTE	$F0,$71,$03,$00
-
+; NOTE: same as for stage complete script, must be in the same bank as
+; the main stage scripts.
+;
 ; =============== S C R I P T ==========================s====================
 _scr_game_over:
 		SJSR			_ssub_room_exit_pal_fade_out	; usual stuff here
@@ -3948,31 +3916,12 @@ loc_1621B:
 		CLC
 		RTS
 
-_spr_nlib01_15:
-		.BYTE	$07
-		.BYTE	$F0,$3B,$22,$00
-		.BYTE	$00,$3D,$22,$08
-		.BYTE	$00,$3F,$22,$00
-		.BYTE	$00,$0F,$22,$F0
-		.BYTE	$00,$1F,$22,$F8
-		.BYTE	$F0,$0D,$22,$F0
-		.BYTE	$F0,$1D,$22,$F8
-_spr_nlib01_16:
-		.BYTE	$07
-		.BYTE	$00,$3D,$62,$F0
-		.BYTE	$00,$3F,$62,$F8
-		.BYTE	$F0,$3B,$62,$F8
-		.BYTE	$00,$1F,$62,$00
-		.BYTE	$00,$0F,$62,$08
-		.BYTE	$F0,$0D,$62,$08
-		.BYTE	$F0,$1D,$62,$00
-
 		SECTION_END	"PAUSE/STAGE COMPLETE/GAME OVER HANDLERS"
 
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr0C_room_doors_handler:
+		FAR_OFS			_scr0C_room_doors_handler
 		NBG_HNDL_SET	_nbgsub_room_doors_data_load	; initialize the doors data on start
 		NJSR			_nsub_player_to_doors_ctest		; now test if player appears at the door
 		SBCC			_sloc_16284						; in this case draw it open manually
@@ -4349,13 +4298,6 @@ _door_y_lo_deltasA:
 _door_y_hi_deltasA:
 		.BYTE	$FF,$FF,$00,$00
 
-_spr_nlib01_00:
-		.BYTE	$04
-		.BYTE	$F0,$31,$43,$08
-		.BYTE	$00,$33,$43,$08
-		.BYTE	$00,$33,$03,$F0
-		.BYTE	$F0,$31,$03,$F0
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_opened:
 		NJSR			_nsub_door01_open_draw
@@ -4442,11 +4384,6 @@ _door_y_lo_deltasB:
 _door_y_hi_deltasB:
 		.BYTE	$FF,$00
 
-_spr_nlib01_01:
-		.BYTE	$02
-		.BYTE	$F0,$EF,$83,$00
-		.BYTE	$00,$EF,$03,$00
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_opened:
 		NJSR			_nsub_door02_open_draw
@@ -4506,7 +4443,7 @@ _door02_x_hi_deltaA:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_door02_close_draw:
-; BUG: here routine to draw 2x1 macro tile blocks fetches arrays out of range
+; BUGFIX: here routine to draw 2x1 macro tile blocks fetches arrays out of range
 ; all arrays here size 2, but this initialization set it for 4. so with first
 ; two draws it will send garbage to the room tilemap, and the last two is ok.
 ; for horizontal mirrored areas this is effect is invisible, but for vertical
@@ -4514,14 +4451,10 @@ _nsub_door02_close_draw:
 ; back to first room section... SCREENSHOT TAKEN
 ; this bug present in the EU version as well.
 ;
-#if BUGFIXES==1
 ; TODO, with index 01 set here, this routine turns the same as for open draw
 ; so we may remove redundancy and merge both in one.
 ;
-		LDY		#$01
-#else
-		LDY		#$03						; another custom routine to draw custom
-#endif
+		LDY		#$01						; another custom routine to draw custom
 loc_16585:									; mine doors in horizontal arrangement
 		TYA
 		PHA
@@ -4546,25 +4479,6 @@ loc_16585:									; mine doors in horizontal arrangement
 		RTS
 _mac_door2_closed:
 		.BYTE	$0B,$1B
-
-_spr_nlib01_02:
-		.BYTE	$06
-		.BYTE	$0B,$F9,$43,$00
-		.BYTE	$0B,$F9,$43,$F8
-		.BYTE	$0B,$F9,$03,$F0
-		.BYTE	$F8,$FB,$03,$00
-		.BYTE	$F8,$EB,$03,$F8
-		.BYTE	$F8,$DB,$03,$F0
-_spr_nlib01_03:
-		.BYTE	$04
-		.BYTE	$0B,$F9,$03,$F8
-		.BYTE	$0B,$F9,$03,$F0
-		.BYTE	$F8,$DD,$03,$F8
-		.BYTE	$F8,$CD,$03,$F0
-_spr_nlib01_04:
-		.BYTE	$02
-		.BYTE	$0B,$F9,$03,$F0
-		.BYTE	$F4,$CB,$03,$F1
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_opened:
@@ -4609,13 +4523,6 @@ _nsub_door03_close_draw:
 _mac_door03_close:
 		.BYTE	$D3,$D2
 
-_spr_nlib01_05:
-		.BYTE	$01
-		.BYTE	$00,$D9,$03,$FF
-_spr_nlib01_06:
-		.BYTE	$01
-		.BYTE	$00,$E9,$03,$FF
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_opened:
 		NJSR			_nsub_door04_open_draw
@@ -4656,11 +4563,6 @@ _nsub_door04_close_draw:
 		JMP		_door_macro_drawA
 _mac_door04_close:
 		.BYTE	$D4,$D6,$D5,$D7
-
-_spr_nlib01_07:
-		.BYTE	$02
-		.BYTE	$F0,$AF,$40,$F8
-		.BYTE	$00,$8B,$40,$F8
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_opened:
@@ -4703,13 +4605,6 @@ _nsub_door05_close_draw:
 _mac_door05_close:
 		.BYTE	$0A,$1A,$0B,$1B
 
-_spr_nlib01_08:
-		.BYTE	$04
-		.BYTE	$00,$43,$02,$08
-		.BYTE	$F0,$41,$02,$08
-		.BYTE	$F0,$41,$42,$F0
-		.BYTE	$00,$43,$42,$F0
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_opened:
 		NJSR			_nsub_door06_open_draw
@@ -4750,13 +4645,6 @@ _nsub_door06_close_draw:
 		JMP		_door_macro_drawA
 _mac_door06_close:
 		.BYTE	$40,$50,$41,$51
-
-_spr_nlib01_09:
-		.BYTE	$04
-		.BYTE	$00,$23,$02,$08
-		.BYTE	$F0,$21,$02,$08
-		.BYTE	$00,$33,$02,$F0
-		.BYTE	$F0,$31,$02,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_opened:
@@ -4831,13 +4719,6 @@ _nsub_door08_close_draw:
 		JMP		_door_macro_drawA
 _mac_door08_close:
 		.BYTE	$8B,$8D,$8C,$8E
-
-_spr_nlib01_0A:
-		.BYTE	$04
-		.BYTE	$00,$CF,$00,$08
-		.BYTE	$00,$CF,$00,$00
-		.BYTE	$00,$CF,$00,$F0
-		.BYTE	$00,$CF,$00,$F8
 
 ; TODO: from this point for some reasons, the developers start to merge
 ; and optimize door drawing routines also for data offset loading functions.
@@ -4958,11 +4839,6 @@ _lvl4_mac_close_lib_hi:
 		.BYTE	>[_mac_door0B_close]
 		.BYTE	>[_mac_door0C_close]
 
-_spr_nlib01_0B:
-		.BYTE	$02
-		.BYTE	$F0,$DD,$00,$00
-		.BYTE	$00,$DF,$00,$00
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0A_opened:
 		SARG_SET		SARG0,$01
@@ -5053,11 +4929,6 @@ _nsub_door0D_close_draw:
 _mac_door0D_close:
 		.BYTE	$8B,$8C
 
-_spr_nlib01_0C:
-		.BYTE	$02
-		.BYTE	$00,$CF,$00,$08
-		.BYTE	$00,$CF,$00,$00
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_opened:
 		NJSR			_nsub_door10_open_draw
@@ -5098,11 +4969,6 @@ _nsub_door10_close_draw:
 		JMP		_door_macro_drawB
 _mac_door10_close:
 		.BYTE	$9C,$9D
-
-_spr_nlib01_0D:
-		.BYTE	$02
-		.BYTE	$F0,$DD,$00,$08
-		.BYTE	$00,$DF,$00,$08
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_opened:
@@ -5148,29 +5014,6 @@ _nsub_door0E_close_draw:
 		JMP		_door_macro_drawA
 _mac_door0E_close:
 		.BYTE	$0A,$1A,$0B,$1B
-
-_spr_nlib01_0E:
-		.BYTE	$08
-		.BYTE	$F0,$7D,$00,$08
-		.BYTE	$F0,$7D,$00,$00
-		.BYTE	$F0,$7D,$00,$F8
-		.BYTE	$F0,$7D,$00,$F0
-		.BYTE	$00,$7F,$00,$F0
-		.BYTE	$00,$7F,$00,$08
-		.BYTE	$00,$7F,$00,$00
-		.BYTE	$00,$7F,$00,$F8
-_spr_nlib01_0F:
-		.BYTE	$04
-		.BYTE	$00,$6F,$00,$08
-		.BYTE	$00,$6F,$00,$00
-		.BYTE	$00,$6F,$00,$F8
-		.BYTE	$00,$6F,$00,$F0
-_spr_nlib01_10:
-		.BYTE	$04
-		.BYTE	$00,$7D,$00,$08
-		.BYTE	$00,$7D,$00,$00
-		.BYTE	$00,$7D,$00,$F8
-		.BYTE	$00,$7D,$00,$F0
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_opened:
@@ -5219,53 +5062,22 @@ _nsub_door0F_close_draw:
 _mac_door0F_close:
 		.BYTE	$29,$29
 
-_spr_nlib01_11:
-		.BYTE	$02
-		.BYTE	$F4,$5F,$00,$00
-		.BYTE	$00,$5F,$00,$00
-_spr_nlib01_12:
-		.BYTE	$02
-		.BYTE	$F8,$5D,$00,$00
-		.BYTE	$00,$5D,$00,$00
-_spr_nlib01_13:
-		.BYTE	$02
-		.BYTE	$FC,$5D,$00,$00
-		.BYTE	$00,$5D,$00,$00
-_spr_nlib01_14:
-		.BYTE	$01
-		.BYTE	$00,$6D,$00,$00
-
-		SECTION_END	"DOORS HANDLERS"
+		SECTION_END	"SCR0C DOORS HANDLERS"
 
 		SECTION_START
 
 ; =============== S C R I P T ==========================s====================
-_scr0D_money_bag:
-; NOTE: there are unreferenced sprites below, intended to draw rotating coin
-; judging from the starting section of this script there may be a different
-; mode for this object with either spitting coins or something...
-; or else this initializer just redundant here
+; NOTE: judging from the script structure and some unused sprites data,
+; they seems planned to have more prizes than one little bag.
+;
+		FAR_OFS			_scr0D_money_bag
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$01
-		SCASE			_scr0D_money_bagA
-
-_spr_unref:
-		.BYTE	$02
-		.BYTE	$F8,$BB,$00,$00
-		.BYTE	$F8,$AB,$00,$F8
-_spr_unref_0:
-		.BYTE	$01
-		.BYTE	$F8,$BF,$00,$FC
-_spr_unref_1:
-		.BYTE	$01
-		.BYTE	$F8,$AF,$00,$FC
-_spr_unref_2:
-		.BYTE	$01
-		.BYTE	$F8,$BF,$40,$FC
+		SCASE			_money_bag_prize
 
 ; =============== S C R I P T ==========================s====================
-_scr0D_money_bagA:
+_money_bag_prize:
 		SARG_SET		SARG0,$00
 _sloc_16969:
 		SDELAY			$01
@@ -5300,14 +5112,9 @@ loc_1698C:
 		CLC
 		RTS
 
-_spr_nlib01_19:
-		.BYTE	$02
-		.BYTE	$F8,$BD,$00,$00
-		.BYTE	$F8,$AD,$00,$F8
-_spr_nlib01_1A:
-		.BYTE	$02
-		.BYTE	$F8,$BD,$01,$00
-		.BYTE	$F8,$AD,$01,$F8
+		SECTION_END	"SCR0D MONEY BAG"
+
+		SECTION_START
 
 _spr_nlib01:
 		.WORD	_spr_nlib01_00
@@ -5338,9 +5145,200 @@ _spr_nlib01:
 		.WORD	_spr_nlib01_19
 		.WORD	_spr_nlib01_1A
 
-		SECTION_END	"OBJ0D SCRIPT"
+; doors open anims
+_spr_nlib01_00:
+		.BYTE	$04
+		.BYTE	$F0,$31,$43,$08
+		.BYTE	$00,$33,$43,$08
+		.BYTE	$00,$33,$03,$F0
+		.BYTE	$F0,$31,$03,$F0
+_spr_nlib01_01:
+		.BYTE	$02
+		.BYTE	$F0,$EF,$83,$00
+		.BYTE	$00,$EF,$03,$00
+_spr_nlib01_02:
+		.BYTE	$06
+		.BYTE	$0B,$F9,$43,$00
+		.BYTE	$0B,$F9,$43,$F8
+		.BYTE	$0B,$F9,$03,$F0
+		.BYTE	$F8,$FB,$03,$00
+		.BYTE	$F8,$EB,$03,$F8
+		.BYTE	$F8,$DB,$03,$F0
+_spr_nlib01_03:
+		.BYTE	$04
+		.BYTE	$0B,$F9,$03,$F8
+		.BYTE	$0B,$F9,$03,$F0
+		.BYTE	$F8,$DD,$03,$F8
+		.BYTE	$F8,$CD,$03,$F0
+_spr_nlib01_04:
+		.BYTE	$02
+		.BYTE	$0B,$F9,$03,$F0
+		.BYTE	$F4,$CB,$03,$F1
+_spr_nlib01_05:
+		.BYTE	$01
+		.BYTE	$00,$D9,$03,$FF
+_spr_nlib01_06:
+		.BYTE	$01
+		.BYTE	$00,$E9,$03,$FF
+_spr_nlib01_07:
+		.BYTE	$02
+		.BYTE	$F0,$AF,$40,$F8
+		.BYTE	$00,$8B,$40,$F8
+_spr_nlib01_08:
+		.BYTE	$04
+		.BYTE	$00,$43,$02,$08
+		.BYTE	$F0,$41,$02,$08
+		.BYTE	$F0,$41,$42,$F0
+		.BYTE	$00,$43,$42,$F0
+_spr_nlib01_09:
+		.BYTE	$04
+		.BYTE	$00,$23,$02,$08
+		.BYTE	$F0,$21,$02,$08
+		.BYTE	$00,$33,$02,$F0
+		.BYTE	$F0,$31,$02,$F0
+_spr_nlib01_0A:
+		.BYTE	$04
+		.BYTE	$00,$CF,$00,$08
+		.BYTE	$00,$CF,$00,$00
+		.BYTE	$00,$CF,$00,$F0
+		.BYTE	$00,$CF,$00,$F8
+_spr_nlib01_0B:
+		.BYTE	$02
+		.BYTE	$F0,$DD,$00,$00
+		.BYTE	$00,$DF,$00,$00
+_spr_nlib01_0C:
+		.BYTE	$02
+		.BYTE	$00,$CF,$00,$08
+		.BYTE	$00,$CF,$00,$00
+_spr_nlib01_0D:
+		.BYTE	$02
+		.BYTE	$F0,$DD,$00,$08
+		.BYTE	$00,$DF,$00,$08
+_spr_nlib01_0E:
+		.BYTE	$08
+		.BYTE	$F0,$7D,$00,$08
+		.BYTE	$F0,$7D,$00,$00
+		.BYTE	$F0,$7D,$00,$F8
+		.BYTE	$F0,$7D,$00,$F0
+		.BYTE	$00,$7F,$00,$F0
+		.BYTE	$00,$7F,$00,$08
+		.BYTE	$00,$7F,$00,$00
+		.BYTE	$00,$7F,$00,$F8
+_spr_nlib01_0F:
+		.BYTE	$04
+		.BYTE	$00,$6F,$00,$08
+		.BYTE	$00,$6F,$00,$00
+		.BYTE	$00,$6F,$00,$F8
+		.BYTE	$00,$6F,$00,$F0
+_spr_nlib01_10:
+		.BYTE	$04
+		.BYTE	$00,$7D,$00,$08
+		.BYTE	$00,$7D,$00,$00
+		.BYTE	$00,$7D,$00,$F8
+		.BYTE	$00,$7D,$00,$F0
+_spr_nlib01_11:
+		.BYTE	$02
+		.BYTE	$F4,$5F,$00,$00
+		.BYTE	$00,$5F,$00,$00
+_spr_nlib01_12:
+		.BYTE	$02
+		.BYTE	$F8,$5D,$00,$00
+		.BYTE	$00,$5D,$00,$00
+_spr_nlib01_13:
+		.BYTE	$02
+		.BYTE	$FC,$5D,$00,$00
+		.BYTE	$00,$5D,$00,$00
+_spr_nlib01_14:
+		.BYTE	$01
+		.BYTE	$00,$6D,$00,$00
+; pause mode sprites
+_spr_nlib01_15:
+		.BYTE	$07
+		.BYTE	$F0,$3B,$22,$00
+		.BYTE	$00,$3D,$22,$08
+		.BYTE	$00,$3F,$22,$00
+		.BYTE	$00,$0F,$22,$F0
+		.BYTE	$00,$1F,$22,$F8
+		.BYTE	$F0,$0D,$22,$F0
+		.BYTE	$F0,$1D,$22,$F8
+_spr_nlib01_16:
+		.BYTE	$07
+		.BYTE	$00,$3D,$62,$F0
+		.BYTE	$00,$3F,$62,$F8
+		.BYTE	$F0,$3B,$62,$F8
+		.BYTE	$00,$1F,$62,$00
+		.BYTE	$00,$0F,$62,$08
+		.BYTE	$F0,$0D,$62,$08
+		.BYTE	$F0,$1D,$62,$00
+; stage complete sprites
+_spr_nlib01_17:
+		.BYTE	$10
+		.BYTE	$00,$8E,$03,$18
+		.BYTE	$00,$8C,$03,$10
+		.BYTE	$00,$8A,$03,$08
+		.BYTE	$00,$88,$03,$00
+		.BYTE	$00,$7E,$03,$F8
+		.BYTE	$00,$7C,$03,$F0
+		.BYTE	$00,$7A,$03,$E8
+		.BYTE	$00,$78,$03,$E0
+		.BYTE	$F0,$76,$03,$18
+		.BYTE	$F0,$74,$03,$10
+		.BYTE	$F0,$72,$03,$08
+		.BYTE	$F0,$68,$03,$E0
+		.BYTE	$F0,$6A,$03,$E8
+		.BYTE	$F0,$6C,$03,$F0
+		.BYTE	$F0,$6E,$03,$F8
+		.BYTE	$F0,$70,$03,$00
+_spr_nlib01_18:
+		.BYTE	$10
+		.BYTE	$00,$8F,$03,$18
+		.BYTE	$00,$8D,$03,$10
+		.BYTE	$00,$8B,$03,$08
+		.BYTE	$00,$89,$03,$00
+		.BYTE	$00,$7F,$03,$F8
+		.BYTE	$00,$7D,$03,$F0
+		.BYTE	$00,$7B,$03,$E8
+		.BYTE	$00,$79,$03,$E0
+		.BYTE	$F0,$77,$03,$18
+		.BYTE	$F0,$75,$03,$10
+		.BYTE	$F0,$73,$03,$08
+		.BYTE	$F0,$69,$03,$E0
+		.BYTE	$F0,$6B,$03,$E8
+		.BYTE	$F0,$6D,$03,$F0
+		.BYTE	$F0,$6F,$03,$F8
+		.BYTE	$F0,$71,$03,$00
+; NOTE: unreferenced sprites below intended to draw rotating coin
+; judging from the starting section of this script there may be a different
+; mode for this object with either spitting coins or something...
+; or else this initializer just redundant here
+;_spr_unref:
+;		.BYTE	$02
+;		.BYTE	$F8,$BB,$00,$00
+;		.BYTE	$F8,$AB,$00,$F8
+;_spr_unref_0:
+;		.BYTE	$01
+;		.BYTE	$F8,$BF,$00,$FC
+;_spr_unref_1:
+;		.BYTE	$01
+;		.BYTE	$F8,$AF,$00,$FC
+;_spr_unref_2:
+;		.BYTE	$01
+;		.BYTE	$F8,$BF,$40,$FC
+; money bag prize
+_spr_nlib01_19:
+		.BYTE	$02
+		.BYTE	$F8,$BD,$00,$00
+		.BYTE	$F8,$AD,$00,$F8
+_spr_nlib01_1A:
+		.BYTE	$02
+		.BYTE	$F8,$BD,$01,$00
+		.BYTE	$F8,$AD,$01,$F8
+
+		SECTION_END	"PRG1 SPRITES DATA"
 
 		SECTION_START
+
+		FAR_OFS	_lvl1
 
 _lvl1_objects_list:
 		CHECKPOINT
@@ -5446,9 +5444,9 @@ _lvl1_collisionsB:
 		.BYTE	$FC,$F7,$F8,$FB,$0C,$CE,$0F,$FF,$0B,$00,$07,$00,$F7,$00,$FB,$02
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 ; no refrences at all.
-_unused_11:
-		.BYTE	$7F,$CE,$F7,$CF,$BC,$2E,$B3,$2C,$00,$00,$00,$04,$FE,$8F,$FC,$EC ;	*--
-		.BYTE	$2F,$E0,$3E,$7F,$F8,$FD,$F4,$FF,$FF,$FF,$00,$03,$00,$00,$00,$00
+;_unused_11:
+;		.BYTE	$7F,$CE,$F7,$CF,$BC,$2E,$B3,$2C,$00,$00,$00,$04,$FE,$8F,$FC,$EC
+;		.BYTE	$2F,$E0,$3E,$7F,$F8,$FD,$F4,$FF,$FF,$FF,$00,$03,$00,$00,$00,$00
 _lvl1_macroA_tbl:
 		.BYTE	$FF,$11,$12,$13,$05,$06,$08,$09,$1A,$00,$20,$22,$26,$28,$10,$24
 		.BYTE	$00,$01,$02,$03,$15,$10,$00,$1A,$0A,$00,$20,$42,$46,$48,$09,$09

@@ -66,11 +66,11 @@ _tmp1C:
 		.BYTE	0
 _tmp1D:
 		.BYTE	0
-_unused_12:
-		.BYTE	0
+;_unused_12:
+;		.BYTE	0
 #else
-_unused_12:
-		.BYTE	0,0,0,0,0		; NOTE: compatibility issues, remove me if no any left
+;_unused_12:
+;		.BYTE	0,0,0,0,0		; NOTE: compatibility issues, remove me if no any left
 #endif
 _random_seed:
 		.BYTE	0,0
@@ -105,8 +105,8 @@ _ppu_queue_tail_tmp:
 		.BYTE	0
 _nmi_counter:
 		.BYTE	0
-_unused_13:
-		.BYTE	0
+;_unused_13:
+;		.BYTE	0
 _apu_cur_pc:
 		.BYTE	0,0
 _apu_cur_sp:
@@ -227,8 +227,8 @@ _scr_trds_x_move_speed:
 _scr_trds_y_move_speed:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_nbgsub_ptr:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_x_center:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_y_center:
@@ -284,8 +284,8 @@ _apu_var403:
 		.BYTE	0
 _apu_var404:
 		.BYTE	0
-_unused_8:
-		.BYTE	0
+;_unused_8:
+;		.BYTE	0
 _apu_reg_pulse0_A:
 		.BYTE	0,0,0,0
 _apu_reg_pulse1_A:
@@ -336,8 +336,8 @@ _apu_chnl_smpl:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_chnl_var0B:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
-_apu_chnl_var0C:
-		.BYTE	0,0,0,0,0,0,0,0,0,0
+;_apu_chnl_freq_tbl:
+;		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_mus_sp:
 		.BYTE	0,0,0,0,0,0,0,0,0,0
 _apu_snd_sp:
@@ -362,11 +362,11 @@ _scr_trds_x_move_delta:
 _scr_trds_y_move_delta:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_sp:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _scr_trds_delay:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0  ; thread suspend for	a given	number of clocks
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 		_ttrd _scr_trds_ptr
 		_ttrd _scr_trds_ptr1
@@ -408,8 +408,8 @@ _sound_test_mus_idx:
 		.BYTE	0
 _sound_test_snd_idx:
 		.BYTE	0
-_unused_var_0:
-		.BYTE	0,0,0
+;_unused_var_0:
+;		.BYTE	0,0,0
 _obj_door_x_hi_poss:
 		.BYTE	0,0,0,0,0,0,0,0
 _obj_doors_y_hi_poss:
@@ -422,8 +422,8 @@ _obj_doors_widths:
 		.BYTE	0,0,0,0,0,0,0,0
 _obj_doors_heights:
 		.BYTE	0,0,0,0,0,0,0,0
-_unused_14:
-		.BYTE	0
+;_unused_14:
+;		.BYTE	0
 _attr_buf_pageA:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -521,8 +521,8 @@ _game_flags:
 		.BYTE	0
 _continues:
 		.BYTE	0
-_unused_var:
-		.BYTE	0
+;_unused_var:
+;		.BYTE	0
 _scores_1st_extend:
 		.BYTE	0,0
 _scores_2nd_extend:

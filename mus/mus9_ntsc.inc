@@ -18,7 +18,6 @@ _mus9_A:
 		ADMC		_pcm1
 		ADATA		$3C
 		AJMP		_mus9_A
-		ASTOP
 _mus9_B:
 		ACMDF2		$02
 		ACMDF0		$0E
@@ -49,7 +48,6 @@ _mus9_B:
 		ACMDF4		$00
 		ADATA		$29
 		AJMP		_mus9_B
-		ASTOP
 _mus9_C:
 		ACMDF2		$02
 		ACMDF0		$08
@@ -115,7 +113,6 @@ _mus9_C:
 		ALOOP_END
 		ADATAEX		$D0,$10
 		AJMP		_mus9_C
-		ASTOP
 _asub_524F1:
 		ADATA		$69
 		ADATA		$66
@@ -182,7 +179,6 @@ _mus9_D:
 		ALOOP_END
 		ADATAEX		$D0,$10
 		AJMP		_mus9_D
-		ASTOP
 _mus9_E:
 		ACMDF2		$02
 		ACMDF0		$0F
@@ -192,4 +188,3 @@ _mus9_E:
 _aloc_5255C:
 		ADATA		$A2
 		AJMP		_aloc_5255C
-		ASTOP

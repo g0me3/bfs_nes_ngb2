@@ -2,7 +2,7 @@
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
 DEBUG			EQU		0
-OPTIMIZATION	EQU		0
+OPTIMIZATION	EQU		1
 BUGFIXES		EQU		0
 TWO_PLAYER_MODE	EQU		0
 
@@ -273,6 +273,11 @@ _NON	EQU	-1
 {1}		SET	.
 {1}._ptr0:		.WORD 0
 {1}._ptr1:		.WORD 0
+	ENDM
+
+	MAC	FAR_OFS
+{1}_bank	SET	CUR_PRG_BANK
+{1}			SET	.
 	ENDM
 
 ;---------------S-C-R-I-P-T-S-------------------

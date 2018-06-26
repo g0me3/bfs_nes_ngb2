@@ -117,4 +117,3 @@ _aloc_9A4AE:
 		ADATA		$07
 		ADATA		$48
 		AJMP		_aloc_9A4AE
-		ASTOP

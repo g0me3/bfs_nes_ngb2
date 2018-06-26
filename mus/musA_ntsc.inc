@@ -29,7 +29,6 @@ _aloc_52573:
 		ADMC		_pcm1
 		ADATA		$7E
 		AJMP		_aloc_52573
-		ASTOP
 _musA_B:
 		ACMDF2		$03
 		ACMDF0		$0D
@@ -39,7 +38,6 @@ _musA_B:
 		AJSR		_asub_525B1
 		AJSR		_asub_525E1
 		AJMP		_musA_B
-		ASTOP
 _asub_525B1:
 		ASMPL		_sample13
 		ADATA		$04
@@ -110,7 +108,6 @@ _aloc_525FC:
 		ADATAEX		$C7,$40
 		ACMDF0		$0A
 		AJMP		_aloc_525FC
-		ASTOP
 _musA_D:
 		ACMDF2		$03
 		ACMDF0		$08
@@ -130,7 +127,6 @@ _aloc_5261C:
 		ADATAEX		$D8,$40
 		ACMDF0		$09
 		AJMP		_aloc_5261C
-		ASTOP
 _musA_E:
 		ACMDF2		$03
 		ASMPL		_sample03
@@ -144,4 +140,3 @@ _aloc_52644:
 		ADATAEX		$C4,$C8
 		ADATAEX		$C4,$38
 		AJMP		_aloc_52644
-		ASTOP

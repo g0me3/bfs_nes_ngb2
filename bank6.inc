@@ -48,15 +48,15 @@ _apu_snd_load_ex:
 loc_5003B:
 		LDA		_apu_var403
 		BEQ		loc_50062
-		AND		byte_5348F,X
+		AND		_apu_snd_table0,X
 		BEQ		loc_50062
 		LDY		#$04
 loc_50047:
 		LDA		_apu_chnl_var0F,Y
-		AND		byte_5348F,X
+		AND		_apu_snd_table0,X
 		BEQ		loc_5005C
 		LDA		_apu_chnl_var0F+5,Y
-		CMP		byte_534B3,X
+		CMP		_apu_snd_table1,X
 		BCC		locret_50061
 		LDA		#$00
 		STA		_apu_mus_delay,Y
@@ -68,9 +68,9 @@ locret_50061:
 		RTS
 loc_50062:
 		STX		_apu_cur_snd_idx
-		LDA		byte_5348F,X
+		LDA		_apu_snd_table0,X
 		STA		_apu_var404
-		LDA		byte_534B3,X
+		LDA		_apu_snd_table1,X
 		STA		_var2
 		TXA
 		ASL
@@ -141,7 +141,7 @@ apu_chnl_load:
 		STA		_apu_chnl_var09,X
 		STA		_apu_chnl_smpl,X
 		STA		_apu_chnl_var0B,X
-		STA		_apu_chnl_var0C,X
+;		STA		_apu_chnl_freq_tbl,X
 		LDA		_apu_stack_main_list,X
 		STA		_apu_mus_sp,X
 		INY
@@ -481,7 +481,7 @@ loc_50315:
 		LSR
 		ADC		_apu_chnl_var0B,X
 		TAY
-		LDA		byte_533FD,Y
+		LDA		_apu_len_table,Y
 loc_50321:
 		STA		_apu_mus_delay,X
 		RTS
@@ -566,29 +566,29 @@ loc_503A7:
 loc_503B6:
 		JMP		_apu_mus_fetch_next
 loc_503B9:
-		CMP		#$F7						; NOTE, CMDF7, frequency table selector
-		BNE		loc_503C6					; there is only one frequence table in this
-		JSR		_apu_getc					; engine so this command completely unused
-		STA		_apu_chnl_var0C,X
-		JMP		_apu_mus_fetch_next
+;		CMP		#$F7						; REDUNDANT, CMDF7, frequency table selector
+;		BNE		loc_503C6					; there is only one frequence table in this
+;		JSR		_apu_getc					; engine so this command completely unused
+;		STA		_apu_chnl_freq_tbl,X
+;		JMP		_apu_mus_fetch_next
 loc_503C6:
 #if OPTIMIZATION==1
 		CMP		#$E4
 		BNE		loc_503DA
-		LDA		#_pcm0A_size
 		LDY		#_pcm0A_addr
+		LDA		#_pcm0A_size
 		BNE		loc_503D9
 loc_503DA:
 		CMP		#$E5
 		BNE		loc_503DB
-		LDA		#_pcm0B_size
 		LDY		#_pcm0B_addr
+		LDA		#_pcm0B_size
 		BNE		loc_503D9
 loc_503DB:
 		CMP		#$E6
 		BNE		loc_503DC
-		LDA		#_pcm1_size
 		LDY		#_pcm1_addr
+		LDA		#_pcm1_size
 loc_503D9:
 		STY		_APU_DMC_ADDR
 		STA		_APU_DMC_LEN
@@ -734,19 +734,19 @@ loc_504AF:
 		STA		_apu_cur_pc
 		LDA		_apu_stack+2,Y
 		STA		_apu_cur_pc+1
+loc_504D4:
 		RTS
 loc_504CB:
 		INC		_apu_cur_sp
 		INC		_apu_cur_sp
 		INC		_apu_cur_sp
 		JMP		_apu_getc
-loc_504D4:
-		CMP		#$FE						; NOTE, CMDFE also unused command,
-		BNE		locret_504DE				; literally 2-byte ANOP operation.
-		JSR		_apu_getc
-		JMP		_apu_getc
-locret_504DE:
-		RTS
+;		CMP		#$FE						; REDUNDANT, CMDFE also unused command,
+;		BNE		locret_504DE				; literally 2-byte ANOP operation.
+;		JSR		_apu_getc
+;		JMP		_apu_getc
+;locret_504DE:
+;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _apu_getc:
@@ -759,21 +759,23 @@ loc_504E5:
 
 ; =============== S U B R O U T I N E ======n================================
 sub_504E8:
-		PHA
-		LDA		_apu_chnl_var0C,X
+;		PHA
+;		LDA		_apu_chnl_freq_tbl,X
+;		ASL
+;		TAY
+;		LDA		_apu_freq_table_ofs,Y
+;		STA		_ptr17
+;		LDA		_apu_freq_table_ofs+1,Y
+;		STA		_ptr17+1
+;		PLA
 		ASL
 		TAY
-		LDA		_apu_freq_table_ofs,Y
-		STA		_ptr17
-		LDA		_apu_freq_table_ofs+1,Y
-		STA		_ptr17+1
-		PLA
-		ASL
-		TAY
-		LDA		(_ptr17),Y
+;		LDA		(_ptr17),Y
+		LDA		_apu_freq_table,Y
 		STA		_tmp19
-		INY
-		LDA		(_ptr17),Y
+;		INY
+;		LDA		(_ptr17),Y
+		LDA		_apu_freq_table+1,Y
 		LDY		_apu_chnl_type,X
 		INY
 		INY
@@ -980,16 +982,16 @@ locret_50655:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_apu_unref:
-		LDY		#$00
-		LDA		(_apu_cur_pc),Y
-		AND		#$1F
-		BIT		_apu_dpcm_flag_mask
-		BEQ		locret_50664
-		ORA		#$E0
-		DEY
-locret_50664:
-		RTS
+;_apu_unref:
+;		LDY		#$00
+;		LDA		(_apu_cur_pc),Y
+;		AND		#$1F
+;		BIT		_apu_dpcm_flag_mask
+;		BEQ		locret_50664
+;		ORA		#$E0
+;		DEY
+;locret_50664:
+;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 sub_50665:
@@ -1042,14 +1044,663 @@ _apu_stack_main_list:
 		.BYTE	$10,$20,$30,$40,$50,$60,$70,$80,$90,$A0
 _apu_stack_sample_list:
 		.BYTE	$06,$16,$26,$36,$46,$56,$66,$76,$86,$96
-_apu_freq_table_ofs:
-		.WORD	_apu_freq_table
+; NOTE: all games with the same engine uses this table to select freq tables.
+; however, in all such games/engines there is only one freq table always.
+;
+;_apu_freq_table_ofs:
+;		.WORD	_apu_freq_table
+_apu_len_table:
+		.BYTE	$01,$02,$03,$04,$05,$06,$07,$0E,$15,$1C,$23,$38,$08,$10,$18,$20
+		.BYTE	$80,$40,$08,$10,$18,$20,$28,$30,$06,$0C,$12,$18,$1E,$24,$05,$0A
+		.BYTE	$0F,$14,$19,$1E,$09,$12,$1B,$24,$8A,$06,$11,$0C,$05,$03,$88,$1D
+; REGION, the additional lengths table for PAL version of the music data
+;		.BYTE	$01,$04,$08,$09,$0C,$0D,$06,$07,$14,$1A,$1B,$35,$04,$08,$0C,$0D
+;		.BYTE	$19,$09,$05,$06,$0B,$0C,$16,$17,$06,$0C,$12,$18,$1E,$30,$04,$05
+;		.BYTE	$08,$09,$11,$19,$0E,$0A,$04,$02,$70,$18,$04,$05,$08,$0C,$0D,$19
+_apu_snd_table0:
+		.BYTE	$02,$02,$0A,$0F,$03,$0A,$0A,$0A,$02,$0A,$0A,$02,$02,$02,$03,$0A
+		.BYTE	$02,$02,$0A,$0B,$08,$08,$08,$03,$0A,$0B,$0F,$08,$02,$02,$03,$08
+		.BYTE	$02,$02,$02,$0C
+_apu_snd_table1:
+		.BYTE	$3C,$32,$32,$00,$0A,$28,$32,$32,$32,$32,$32,$32,$32,$28,$1E,$32
+		.BYTE	$3C,$3C,$32,$28,$3C,$32,$28,$28,$3C,$1E,$0B,$3C,$32,$32,$00,$46
+		.BYTE	$32,$32,$28,$32
 
-		SECTION_END	"APU ENGINE A"
+		SECTION_END	"APU ENGINE"
 
 		SECTION_START
 
-; REGION, unused data for missing music track from the EU version
+_samples_lib:
+		SMPL_PTR	_sample00,_sample_00A,_sample_00B
+		SMPL_PTR	_sample01,_sample_01A,_sample_00B
+		SMPL_PTR	_sample02,_sample_02A,_sample_00B
+		SMPL_PTR	_sample03,_sample_03A,_sample_00B
+		SMPL_PTR	_sample04,_sample_04A,_sample_00B
+		SMPL_PTR	_sample05,_sample_05A,_sample_05B
+		SMPL_PTR	_sample06,_sample_05A,_sample_06B
+		SMPL_PTR	_sample07,_sample_07A,_sample_05B
+		SMPL_PTR	_sample08,_sample_08A,_sample_05B
+		SMPL_PTR	_sample09,_sample_08A,_sample_06B
+		SMPL_PTR	_sample0A,_sample_0AA,_sample_05B
+		SMPL_PTR	_sample0B,_sample_0AA,_sample_06B
+		SMPL_PTR	_sample0C,_sample_0CA,_sample_05B
+		SMPL_PTR	_sample0D,_sample_07A,_sample_06B
+		SMPL_PTR	_sample0E,_sample_0EA,_sample_05B
+		SMPL_PTR	_sample0F,_sample_0EA,_sample_06B
+		SMPL_PTR	_sample10,_sample_10A,_sample_05B
+		SMPL_PTR	_sample11,_sample_10A,_sample_06B
+		SMPL_PTR	_sample12,_sample_12A,_sample_05B
+		SMPL_PTR	_sample13,_sample_13A,_sample_05B
+		SMPL_PTR	_sample14,_sample_14A,_sample_05B
+		SMPL_PTR	_sample15,_sample_15A,_sample_15B
+		SMPL_PTR	_sample16,_sample_15A,_sample_16B
+		SMPL_PTR	_sample17,_sample_17A,_sample_15B
+		SMPL_PTR	_sample18,_sample_17A,_sample_16B
+		SMPL_PTR	_sample19,_sample_19A,_sample_00B
+		SMPL_PTR	_sample1A,_sample_1AA,_sample_1AB
+		SMPL_PTR	_sample1B,_sample_19A,_sample_00B
+		SMPL_PTR	_sample1C,_sample_1CA,_sample_06B
+		SMPL_PTR	_sample1D,_sample_1DA,_sample_1DB
+		SMPL_PTR	_sample1E,_sample_1EA,_sample_06B
+		SMPL_PTR	_sample1F,_sample_1FA,_sample_16B
+		SMPL_PTR	_sample20,_sample_20A,_sample_1DB
+		SMPL_PTR	_sample21,_sample_21A,_sample_00B
+		SMPL_PTR	_sample22,_sample_22A,_sample_22B
+		SMPL_PTR	_sample23,_sample_23A,_sample_00B
+		SMPL_PTR	_sample24,_sample_24A,_sample_22B
+		SMPL_PTR	_sample25,_sample_25A,_sample_25B
+		SMPL_PTR	_sample26,_sample_26A,_sample_00B
+		SMPL_PTR	_sample27,_sample_27A,_sample_00B
+		SMPL_PTR	_sample28,_sample_28A,_sample_22B
+		SMPL_PTR	_sample29,_sample_29A,_sample_22B
+		SMPL_PTR	_sample2A,_sample_2AA,_sample_16B
+		SMPL_PTR	_sample2B,_sample_2BA,_sample_2BB
+		SMPL_PTR	_sample2C,_sample_2CA,_sample_2BB
+		SMPL_PTR	_sample2D,_sample_2DA,_sample_22B
+
+_sample_00A:
+		ADATA		$80
+		ADATA		$4F
+		ASTOP
+_sample_01A:
+		ADATA		$81
+		ADATA		$4F
+		ASTOP
+_sample_02A:
+		ADATA		$82
+		ADATA		$4F
+		ASTOP
+_sample_03A:
+		ADATA		$83
+		ADATA		$4F
+		ASTOP
+_sample_00B:
+		ADATA		$40
+		ASTOP
+_sample_1AB:
+		ADATA		$42
+		ADATA		$02
+		ADATA		$41
+		ADATA		$04
+		ADATA		$40
+		ASTOP
+_sample_05B:
+		ADATA		$42
+		ASTOP
+_sample_04A:
+		ADATA		$4C
+		ADATA		$03
+		ALOOP_START	$0C
+		ADATA		$6F
+		ADATA		$03
+		ALOOP_END
+		ASTOP
+_aloc_53148:
+		ADATA		$57
+		ADATA		$56
+		ADATA		$45
+		ADATA		$03
+		ADATA		$44
+		ADATA		$0F
+_aloc_5314E:
+		ADATA		$6F
+		ADATA		$04
+		ADATA		$61
+		ADATA		$04
+		AJMP		_aloc_5314E
+_sample_05A:
+		ADATA		$80
+		ADATA		$58
+		ADATA		$81
+		AJMP		_aloc_53148
+_sample_06B:
+		ADATA		$44
+		ADATA		$04
+		ADATA		$43
+		ALOOP_START	$05
+		ADATA		$6F
+		ADATA		$04
+		ADATA		$61
+		ADATA		$04
+		ADATA		$6F
+		ALOOP_END
+		ADATA		$20
+		ASTOP
+_sample_07A:
+		ADATA		$81
+		ADATA		$58
+		ADATA		$80
+		AJMP		_aloc_53148
+_sample_08A:
+		ADATA		$80
+		ADATA		$58
+		ADATA		$82
+		AJMP		_aloc_53148
+_sample_0AA:
+		ADATA		$82
+		ADATA		$58
+		ADATA		$80
+		AJMP		_aloc_53148
+;_sample_unref:
+;		ADATA		$80
+;		ADATA		$57
+;		ADATA		$82
+;		ADATA		$04
+;		AJMP		_aloc_53185
+_sample_0CA:
+		ADATA		$81
+		ADATA		$57
+		ADATA		$80
+		ADATA		$04
+_aloc_53185:
+		ADATA		$40
+_aloc_53186:
+		ADATA		$2E
+		ADATA		$62
+		ADATA		$04
+		ADATA		$22
+		ADATA		$6E
+		ADATA		$04
+		AJMP		_aloc_53186
+_sample_0EA:
+		ADATA		$80
+		ADATA		$58
+		ADATA		$83
+		AJMP		_aloc_53148
+_sample_10A:
+		ADATA		$83
+		ADATA		$58
+		ADATA		$80
+		AJMP		_aloc_53148
+;_sample_unref_0:
+;		ADATA		$44
+_aloc_5319C:
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		AJMP		_aloc_5319C
+_sample_12A:
+		AJSR		_asub_531AD
+		AJMP		_aloc_531B7
+_asub_531AD:
+		ADATA		$80
+		ADATA		$43
+		ALOOP_START	$03
+		ADATA		$72
+		ALOOP_END
+		ADATA		$91
+		ADATA		$6E
+		ADATA		$83
+		ARET
+_aloc_531B7:
+		ALOOP_START	$02
+		ADATA		$6E
+		ADATA		$02
+		ALOOP_END
+		ADATA		$7F
+_aloc_531BD:
+		ADATA		$61
+		ADATA		$04
+		ADATA		$6F
+		ADATA		$04
+		AJMP		_aloc_531BD
+_sample_13A:
+		ADATA		$49
+		ALOOP_START	$03
+		ADATA		$01
+		ADATA		$6B
+		ALOOP_END
+		ASTOP
+_sample_14A:
+		ADATA		$49
+		ALOOP_START	$02
+		ADATA		$7E
+		ALOOP_END
+		ALOOP_START	$05
+		ADATA		$6F
+		ADATA		$02
+		ALOOP_END
+		ASTOP
+_sample_15A:
+		ADATA		$82
+		ADATA		$58
+		ADATA		$20
+		ADATA		$83
+		AJMP		_aloc_53148
+_sample_17A:
+		ADATA		$80
+		ADATA		$58
+		ADATA		$82
+		AJMP		_aloc_53148
+_sample_15B:
+		ADATA		$2E
+		ADATA		$42
+		ASTOP
+_sample_16B:
+		ADATA		$44
+		ADATA		$04
+		ADATA		$43
+		ALOOP_START	$0A
+		ADATA		$6F
+		ADATA		$04
+		ADATA		$61
+		ADATA		$04
+		ADATA		$6F
+		ALOOP_END
+		ADATA		$22
+		ASTOP
+_sample_19A:
+		ADATA		$4B
+		ADATA		$92
+		ADATA		$48
+		ADATA		$83
+		ALOOP_START	$08
+		ADATA		$6F
+		ADATA		$02
+		ALOOP_END
+		ASTOP
+_sample_1AA:
+		ADATA		$83
+		ADATA		$46
+		ALOOP_START	$02
+		ADATA		$71
+		ADATA		$80
+		ALOOP_END
+		ALOOP_START	$02
+		ADATA		$6E
+		ADATA		$03
+		ALOOP_END
+_aloc_53209:
+		ADATA		$42
+		ADATA		$02
+		ADATA		$41
+		ADATA		$0C
+		AJMP		_aloc_53209
+_sample_1CA:
+		ADATA		$81
+		ADATA		$45
+		ALOOP_START	$02
+		ADATA		$72
+		ALOOP_END
+		ADATA		$82
+_aloc_53217:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$23
+		ADATA		$02
+		ADATA		$22
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$2D
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		AJMP		_aloc_53217
+_sample_1DA:
+		ADATA		$4A
+		ADATA		$83
+		ADATA		$02
+		ADATA		$81
+		ALOOP_START	$03
+		ADATA		$7E
+		ALOOP_END
+_aloc_5322E:
+		ADATA		$83
+		ADATA		$02
+		ADATA		$72
+		ADATA		$7E
+		AJMP		_aloc_5322E
+_sample_1DB:
+		ALOOP_START	$05
+		ADATA		$6F
+		ADATA		$03
+		ALOOP_END
+_sample_1EA:
+		ADATA		$80
+		ADATA		$4D
+		ADATA		$02
+		ADATA		$81
+		ADATA		$4A
+		ALOOP_START	$02
+		ADATA		$7D
+		ALOOP_END
+		ADATA		$82
+		ALOOP_START	$02
+		ADATA		$7F
+		ALOOP_END
+_sample_1FA:
+		ADATA		$80
+		ADATA		$4A
+		ADATA		$02
+		ADATA		$6E
+		ADATA		$83
+		ADATA		$02
+_aloc_5324E:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$21
+		ADATA		$03
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$03
+		AJMP		_aloc_5324E
+_sample_20A:
+		ADATA		$57
+		ADATA		$31
+		ADATA		$6F
+		ADATA		$21
+		ADATA		$02
+		ADATA		$21
+		ADATA		$03
+		ADATA		$6F
+_aloc_53261:
+		ADATA		$21
+		ADATA		$05
+		AJMP		_aloc_53261
+_sample_21A:
+		ADATA		$83
+		ADATA		$5A
+		ADATA		$81
+		ADATA		$59
+		ADATA		$80
+		ADATA		$47
+		ADATA		$03
+_aloc_5326D:
+		ADATA		$21
+		ADATA		$03
+		ADATA		$2F
+		ADATA		$03
+		AJMP		_aloc_5326D
+_sample_22A:
+		ADATA		$82
+		ADATA		$5A
+		ADATA		$80
+		ADATA		$58
+		ALOOP_START	$02
+		ADATA		$7E
+		ADATA		$80
+		ADATA		$7E
+		ALOOP_END
+_aloc_5327E:
+		ADATA		$46
+		ADATA		$03
+		ADATA		$42
+		ADATA		$02
+		ADATA		$46
+		ADATA		$03
+		ADATA		$42
+		ADATA		$02
+		AJMP		_aloc_5327E
+;		ASTOP
+_sample_23A:
+		ADATA		$83
+		ADATA		$22
+		ADATA		$5A
+		ADATA		$81
+		ADATA		$59
+		ADATA		$80
+		ADATA		$47
+		ADATA		$03
+_aloc_53292:
+		ADATA		$21
+		ADATA		$03
+		ADATA		$2F
+		ADATA		$03
+		AJMP		_aloc_53292
+_sample_22B:
+		ADATA		$53
+		ADATA		$55
+		ADATA		$53
+		ADATA		$42
+		ADATA		$02
+		ADATA		$40
+		ASTOP
+_sample_24A:
+		ADATA		$23
+		AJMP		_sample_22A
+;		ASTOP
+_sample_25A:
+		ADATA		$82
+		ADATA		$59
+		ADATA		$81
+		ADATA		$5A
+		ADATA		$83
+		ADATA		$5B
+		ADATA		$21
+		ADATA		$5D
+		ADATA		$2F
+		ADATA		$5A
+_aloc_532AF:
+		ADATA		$49
+		ADATA		$21
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		AJMP		_aloc_532AF
+_sample_26A:
+		ADATA		$80
+		ADATA		$5D
+		ADATA		$81
+		ADATA		$5D
+		ADATA		$82
+		ADATA		$5A
+		ALOOP_START	$05
+		ADATA		$7F
+		ALOOP_END
+_aloc_532C1:
+		ADATA		$55
+		AJMP		_aloc_532C1
+_sample_25B:
+		ADATA		$42
+		ADATA		$03
+		ADATA		$44
+		ADATA		$04
+		AJMP		_sample_25B
+;		ASTOP
+_sample_27A:
+		ADATA		$83
+		ADATA		$4D
+		ADATA		$02
+		ADATA		$82
+		ADATA		$4B
+		ADATA		$04
+		ADATA		$4A
+		ADATA		$04
+		ADATA		$49
+		ADATA		$06
+_aloc_532D7:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$22
+		ADATA		$02
+		AJMP		_aloc_532D7
+_sample_28A:
+		ADATA		$82
+		ADATA		$5D
+		ADATA		$83
+		ADATA		$5B
+		ADATA		$7E
+		ADATA		$6F
+		ADATA		$02
+		ADATA		$81
+_aloc_532EA:
+		ADATA		$31
+		ADATA		$3F
+		ADATA		$3F
+		ADATA		$31
+		AJMP		_aloc_532EA
+_sample_29A:
+		ADATA		$80
+		ADATA		$5E
+		ADATA		$81
+		ADATA		$47
+		ADATA		$02
+		ADATA		$80
+		ADATA		$5B
+		ADATA		$5A
+		ALOOP_START	$0A
+		ADATA		$7F
+		ALOOP_END
+		ASTOP
+_sample_2AA:
+		ADATA		$83
+		ADATA		$5F
+		ADATA		$80
+		ADATA		$4C
+		ADATA		$02
+		ADATA		$82
+		ADATA		$49
+_aloc_53305:
+		ADATA		$21
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		AJMP		_aloc_53305
+;		ASTOP
+_sample_2BA:
+		ADATA		$83
+		ADATA		$47
+		ALOOP_START	$06
+		ADATA		$61
+		ADATA		$02
+		ALOOP_END
+_aloc_53318:
+		ADATA		$22
+		ADATA		$02
+		ADATA		$2F
+		ADATA		$02
+		ADATA		$2E
+		ADATA		$02
+		ADATA		$21
+		ADATA		$02
+		AJMP		_aloc_53318
+;		ASTOP
+_sample_2BB:
+		ALOOP_START	$0D
+		ADATA		$7E
+		ADATA		$7F
+		ADATA		$7F
+		ADATA		$6F
+		ADATA		$02
+		ADATA		$71
+		ADATA		$71
+		ADATA		$62
+		ADATA		$02
+		ALOOP_END
+		ASTOP
+_sample_2CA:
+		ADATA		$82
+		ADATA		$4E
+		ADATA		$03
+		ADATA		$4B
+		ALOOP_START	$0B
+		ADATA		$6F
+		ADATA		$03
+		ALOOP_END
+		ASTOP
+_sample_2DA:
+		ADATA		$5F
+		ADATA		$5E
+		ADATA		$58
+		ADATA		$5C
+		ADATA		$5A
+		ALOOP_START	$0A
+		ADATA		$7F
+		ALOOP_END
+		ASTOP
+
+		SECTION_END	"APU SAMPLES"
+
+		SECTION_START
+
+_music_lib:
+		MUS		_mus0	; lvl1 theme
+		MUS		_mus1	; busters select
+		MUS		_mus2	; game over
+		MUS		_mus3	; stage complete
+		MUS		_mus4	; mid-boss theme
+		MUS		_mus5	; title theme
+		MUS		_mus6	; lvl2 theme
+		MUS		_mus7	; lvl3 theme
+		MUS		_mus8	; lvl4 theme
+		MUS		_mus9	; lvl5 theme
+		MUS		_musA	; final boss prellude
+		MUS		_musB	; final boss theme
+		MUS		_musC	; lvl3 final cutscene
+		MUS		_musD	; -unused-, see NOTE
+
+_mus0:
+		INCLUDE	"..\mus\mus0_ntsc.inc"
+_mus1:
+		INCLUDE	"..\mus\mus1_ntsc.inc"
+_mus2:
+		INCLUDE	"..\mus\mus2_ntsc.inc"
+_mus3:
+		INCLUDE	"..\mus\mus3_ntsc.inc"
+
+; NOTE: this data is an exact copy of full library of _sampleXX codes.
+; it has no pointer table associated, but all offsets are fixed to
+; this particular location, so somehow they have his copy linked to
+; the sources as well. definitely this is not just rtash from uninitialized
+; RAM...
+;
+;		INCLUDE	"..\mus\unused_jp.inc"
+
+_mus4:
+		INCLUDE	"..\mus\mus4_ntsc.inc"
+_mus5:
+		INCLUDE	"..\mus\mus5_ntsc.inc"
+_mus6:
+		INCLUDE	"..\mus\mus6_ntsc.inc"
+_mus7:
+		INCLUDE	"..\mus\mus7_ntsc.inc"
+_mus8:
+		INCLUDE	"..\mus\mus8_ntsc.inc"
+_mus9:
+		INCLUDE	"..\mus\mus9_ntsc.inc"
+_musA:
+		INCLUDE	"..\mus\musA_ntsc.inc"
+_musB:
+		INCLUDE	"..\mus\musB_ntsc.inc"
+_musC:
+		INCLUDE	"..\mus\musC_ntsc.inc"
+
+; NOTE: unused data for missing music track from the EU version
 ; there are no either header nor music library entry, literally
 ; can't be even played in any known nsf records.
 ;
@@ -1070,50 +1721,50 @@ _apu_freq_table_ofs:
 ; on a second thought, there is possible they did it later based on
 ; short looped jingle of the Stage 3 ending but never actually used
 ;
-#if DEBUG==1
 _musD:
 		INCLUDE	"..\mus\musD_ntsc.inc"
-#endif
-
-_musC:
-		INCLUDE	"..\mus\musC_ntsc.inc"
-_mus1:
-		INCLUDE	"..\mus\mus1_ntsc.inc"
-_mus2:
-		INCLUDE	"..\mus\mus2_ntsc.inc"
-_mus3:
-		INCLUDE	"..\mus\mus3_ntsc.inc"
-
-; NOTE: this data is an exact copy of full library of _sampleXX codes.
-; it has no pointer table associated, but all offsets are fixed to
-; this particular location, so somehow they have his copy linked to
-; the sources as well. definitely this is not just rtash from uninitialized
-; RAM...
-;
-		INCLUDE	"..\mus\unused_jp.inc"
-
-_mus4:
-		INCLUDE	"..\mus\mus4_ntsc.inc"
-_mus5:
-		INCLUDE	"..\mus\mus5_ntsc.inc"
-_mus0:
-		INCLUDE	"..\mus\mus0_ntsc.inc"
-_mus6:
-		INCLUDE	"..\mus\mus6_ntsc.inc"
-_mus7:
-		INCLUDE	"..\mus\mus7_ntsc.inc"
-_mus8:
-		INCLUDE	"..\mus\mus8_ntsc.inc"
-_mus9:
-		INCLUDE	"..\mus\mus9_ntsc.inc"
-_musA:
-		INCLUDE	"..\mus\musA_ntsc.inc"
-_musB:
-		INCLUDE	"..\mus\musB_ntsc.inc"
 
 		SECTION_END	"APU MUSIC DATA"
 
 		SECTION_START
+
+_snd_lib:
+		SND		_snd00	; beam
+		SND		_snd01	; catch release
+		SND		_snd02	; ghost catch scream
+		SND		_snd03	; pause
+		SND		_snd04	; beamer hit
+		SND		_snd05	; -unused-
+		SND		_snd06	; doors close
+		SND		_snd07	; doors open
+		SND		_snd08	; slime laugh
+		SND		_snd09	; -unused-
+		SND		_snd0A	; door06 close
+		SND		_snd0B	; buster select input
+		SND		_snd0C	; buster select apply
+		SND		_snd0D	; prize taken
+		SND		_snd0E	; vega laugh
+		SND		_snd0F	; key keeper shoot
+		SND		_snd10	; -unused-
+		SND		_snd11	; -unused-
+		SND		_snd12	; court chair
+		SND		_snd13	; train whistle
+		SND		_snd14	; sewers dragon appear
+		SND		_snd15	; sewers dragon fire
+		SND		_snd16	; -unused-
+		SND		_snd17	; -unused-
+		SND		_snd18	; -unused-
+		SND		_snd19	; boss catch scream
+		SND		_snd1A	; vega death scream
+		SND		_snd1B	; -unused-
+		SND		_snd1C	; -unused-
+		SND		_snd1D	; -unused-
+		SND		_snd1E	; live add
+		SND		_snd1F	; -unused-
+		SND		_snd20	; -unused-
+		SND		_snd21	; -unused-
+		SND		_snd22	; sewers dragon disappear
+		SND		_snd23	; candle light up
 
 _snd00:
 		.BYTE	$01
@@ -1666,7 +2317,7 @@ _aloc_52B27:
 		ACMDE3		$D4
 		ACMDF3		$01
 		AJMP		_aloc_52B27
-		ASTOP
+;		ASTOP
 _snd09_B:
 		ACMDF2		$00
 		ACMDF0		$05
@@ -2691,655 +3342,5 @@ _snd23_B:
 		ASTOP
 
 		SECTION_END	"APU SOUND EFFECTS DATA"
-
-		SECTION_START
-
-_sample_00A:
-		ADATA		$80
-		ADATA		$4F
-		ASTOP
-_sample_01A:
-		ADATA		$81
-		ADATA		$4F
-		ASTOP
-_sample_02A:
-		ADATA		$82
-		ADATA		$4F
-		ASTOP
-_sample_03A:
-		ADATA		$83
-		ADATA		$4F
-		ASTOP
-_sample_00B:
-		ADATA		$40
-		ASTOP
-_sample_1AB:
-		ADATA		$42
-		ADATA		$02
-		ADATA		$41
-		ADATA		$04
-		ADATA		$40
-		ASTOP
-_sample_05B:
-		ADATA		$42
-		ASTOP
-_sample_04A:
-		ADATA		$4C
-		ADATA		$03
-		ALOOP_START	$0C
-		ADATA		$6F
-		ADATA		$03
-		ALOOP_END
-		ASTOP
-_aloc_53148:
-		ADATA		$57
-		ADATA		$56
-		ADATA		$45
-		ADATA		$03
-		ADATA		$44
-		ADATA		$0F
-_aloc_5314E:
-		ADATA		$6F
-		ADATA		$04
-		ADATA		$61
-		ADATA		$04
-		AJMP		_aloc_5314E
-_sample_05A:
-		ADATA		$80
-		ADATA		$58
-		ADATA		$81
-		AJMP		_aloc_53148
-_sample_06B:
-		ADATA		$44
-		ADATA		$04
-		ADATA		$43
-		ALOOP_START	$05
-		ADATA		$6F
-		ADATA		$04
-		ADATA		$61
-		ADATA		$04
-		ADATA		$6F
-		ALOOP_END
-		ADATA		$20
-		ASTOP
-_sample_07A:
-		ADATA		$81
-		ADATA		$58
-		ADATA		$80
-		AJMP		_aloc_53148
-_sample_08A:
-		ADATA		$80
-		ADATA		$58
-		ADATA		$82
-		AJMP		_aloc_53148
-_sample_0AA:
-		ADATA		$82
-		ADATA		$58
-		ADATA		$80
-		AJMP		_aloc_53148
-_sample_unref:
-		ADATA		$80
-		ADATA		$57
-		ADATA		$82
-		ADATA		$04
-		AJMP		_aloc_53185
-_sample_0CA:
-		ADATA		$81
-		ADATA		$57
-		ADATA		$80
-		ADATA		$04
-_aloc_53185:
-		ADATA		$40
-_aloc_53186:
-		ADATA		$2E
-		ADATA		$62
-		ADATA		$04
-		ADATA		$22
-		ADATA		$6E
-		ADATA		$04
-		AJMP		_aloc_53186
-_sample_0EA:
-		ADATA		$80
-		ADATA		$58
-		ADATA		$83
-		AJMP		_aloc_53148
-_sample_10A:
-		ADATA		$83
-		ADATA		$58
-		ADATA		$80
-		AJMP		_aloc_53148
-_sample_unref_0:
-		ADATA		$44
-_aloc_5319C:
-		ADATA		$2F
-		ADATA		$02
-		ADATA		$21
-		ADATA		$02
-		ADATA		$21
-		ADATA		$02
-		ADATA		$2F
-		ADATA		$02
-		AJMP		_aloc_5319C
-_sample_12A:
-		AJSR		_asub_531AD
-		AJMP		_aloc_531B7
-_asub_531AD:
-		ADATA		$80
-		ADATA		$43
-		ALOOP_START	$03
-		ADATA		$72
-		ALOOP_END
-		ADATA		$91
-		ADATA		$6E
-		ADATA		$83
-		ARET
-_aloc_531B7:
-		ALOOP_START	$02
-		ADATA		$6E
-		ADATA		$02
-		ALOOP_END
-		ADATA		$7F
-_aloc_531BD:
-		ADATA		$61
-		ADATA		$04
-		ADATA		$6F
-		ADATA		$04
-		AJMP		_aloc_531BD
-_sample_13A:
-		ADATA		$49
-		ALOOP_START	$03
-		ADATA		$01
-		ADATA		$6B
-		ALOOP_END
-		ASTOP
-_sample_14A:
-		ADATA		$49
-		ALOOP_START	$02
-		ADATA		$7E
-		ALOOP_END
-		ALOOP_START	$05
-		ADATA		$6F
-		ADATA		$02
-		ALOOP_END
-		ASTOP
-_sample_15A:
-		ADATA		$82
-		ADATA		$58
-		ADATA		$20
-		ADATA		$83
-		AJMP		_aloc_53148
-_sample_17A:
-		ADATA		$80
-		ADATA		$58
-		ADATA		$82
-		AJMP		_aloc_53148
-_sample_15B:
-		ADATA		$2E
-		ADATA		$42
-		ASTOP
-_sample_16B:
-		ADATA		$44
-		ADATA		$04
-		ADATA		$43
-		ALOOP_START	$0A
-		ADATA		$6F
-		ADATA		$04
-		ADATA		$61
-		ADATA		$04
-		ADATA		$6F
-		ALOOP_END
-		ADATA		$22
-		ASTOP
-_sample_19A:
-		ADATA		$4B
-		ADATA		$92
-		ADATA		$48
-		ADATA		$83
-		ALOOP_START	$08
-		ADATA		$6F
-		ADATA		$02
-		ALOOP_END
-		ASTOP
-_sample_1AA:
-		ADATA		$83
-		ADATA		$46
-		ALOOP_START	$02
-		ADATA		$71
-		ADATA		$80
-		ALOOP_END
-		ALOOP_START	$02
-		ADATA		$6E
-		ADATA		$03
-		ALOOP_END
-_aloc_53209:
-		ADATA		$42
-		ADATA		$02
-		ADATA		$41
-		ADATA		$0C
-		AJMP		_aloc_53209
-_sample_1CA:
-		ADATA		$81
-		ADATA		$45
-		ALOOP_START	$02
-		ADATA		$72
-		ALOOP_END
-		ADATA		$82
-_aloc_53217:
-		ADATA		$22
-		ADATA		$02
-		ADATA		$23
-		ADATA		$02
-		ADATA		$22
-		ADATA		$02
-		ADATA		$2E
-		ADATA		$02
-		ADATA		$2D
-		ADATA		$02
-		ADATA		$2E
-		ADATA		$02
-		AJMP		_aloc_53217
-_sample_1DA:
-		ADATA		$4A
-		ADATA		$83
-		ADATA		$02
-		ADATA		$81
-		ALOOP_START	$03
-		ADATA		$7E
-		ALOOP_END
-_aloc_5322E:
-		ADATA		$83
-		ADATA		$02
-		ADATA		$72
-		ADATA		$7E
-		AJMP		_aloc_5322E
-_sample_1DB:
-		ALOOP_START	$05
-		ADATA		$6F
-		ADATA		$03
-		ALOOP_END
-_sample_1EA:
-		ADATA		$80
-		ADATA		$4D
-		ADATA		$02
-		ADATA		$81
-		ADATA		$4A
-		ALOOP_START	$02
-		ADATA		$7D
-		ALOOP_END
-		ADATA		$82
-		ALOOP_START	$02
-		ADATA		$7F
-		ALOOP_END
-_sample_1FA:
-		ADATA		$80
-		ADATA		$4A
-		ADATA		$02
-		ADATA		$6E
-		ADATA		$83
-		ADATA		$02
-_aloc_5324E:
-		ADATA		$22
-		ADATA		$02
-		ADATA		$21
-		ADATA		$03
-		ADATA		$2E
-		ADATA		$02
-		ADATA		$2F
-		ADATA		$03
-		AJMP		_aloc_5324E
-_sample_20A:
-		ADATA		$57
-		ADATA		$31
-		ADATA		$6F
-		ADATA		$21
-		ADATA		$02
-		ADATA		$21
-		ADATA		$03
-		ADATA		$6F
-_aloc_53261:
-		ADATA		$21
-		ADATA		$05
-		AJMP		_aloc_53261
-_sample_21A:
-		ADATA		$83
-		ADATA		$5A
-		ADATA		$81
-		ADATA		$59
-		ADATA		$80
-		ADATA		$47
-		ADATA		$03
-_aloc_5326D:
-		ADATA		$21
-		ADATA		$03
-		ADATA		$2F
-		ADATA		$03
-		AJMP		_aloc_5326D
-_sample_22A:
-		ADATA		$82
-		ADATA		$5A
-		ADATA		$80
-		ADATA		$58
-		ALOOP_START	$02
-		ADATA		$7E
-		ADATA		$80
-		ADATA		$7E
-		ALOOP_END
-_aloc_5327E:
-		ADATA		$46
-		ADATA		$03
-		ADATA		$42
-		ADATA		$02
-		ADATA		$46
-		ADATA		$03
-		ADATA		$42
-		ADATA		$02
-		AJMP		_aloc_5327E
-		ASTOP
-_sample_23A:
-		ADATA		$83
-		ADATA		$22
-		ADATA		$5A
-		ADATA		$81
-		ADATA		$59
-		ADATA		$80
-		ADATA		$47
-		ADATA		$03
-_aloc_53292:
-		ADATA		$21
-		ADATA		$03
-		ADATA		$2F
-		ADATA		$03
-		AJMP		_aloc_53292
-_sample_22B:
-		ADATA		$53
-		ADATA		$55
-		ADATA		$53
-		ADATA		$42
-		ADATA		$02
-		ADATA		$40
-		ASTOP
-_sample_24A:
-		ADATA		$23
-		AJMP		_sample_22A
-		ASTOP
-_sample_25A:
-		ADATA		$82
-		ADATA		$59
-		ADATA		$81
-		ADATA		$5A
-		ADATA		$83
-		ADATA		$5B
-		ADATA		$21
-		ADATA		$5D
-		ADATA		$2F
-		ADATA		$5A
-_aloc_532AF:
-		ADATA		$49
-		ADATA		$21
-		ADATA		$02
-		ADATA		$2F
-		ADATA		$02
-		AJMP		_aloc_532AF
-_sample_26A:
-		ADATA		$80
-		ADATA		$5D
-		ADATA		$81
-		ADATA		$5D
-		ADATA		$82
-		ADATA		$5A
-		ALOOP_START	$05
-		ADATA		$7F
-		ALOOP_END
-_aloc_532C1:
-		ADATA		$55
-		AJMP		_aloc_532C1
-_sample_25B:
-		ADATA		$42
-		ADATA		$03
-		ADATA		$44
-		ADATA		$04
-		AJMP		_sample_25B
-		ASTOP
-_sample_27A:
-		ADATA		$83
-		ADATA		$4D
-		ADATA		$02
-		ADATA		$82
-		ADATA		$4B
-		ADATA		$04
-		ADATA		$4A
-		ADATA		$04
-		ADATA		$49
-		ADATA		$06
-_aloc_532D7:
-		ADATA		$22
-		ADATA		$02
-		ADATA		$2E
-		ADATA		$02
-		ADATA		$2E
-		ADATA		$02
-		ADATA		$22
-		ADATA		$02
-		AJMP		_aloc_532D7
-_sample_28A:
-		ADATA		$82
-		ADATA		$5D
-		ADATA		$83
-		ADATA		$5B
-		ADATA		$7E
-		ADATA		$6F
-		ADATA		$02
-		ADATA		$81
-_aloc_532EA:
-		ADATA		$31
-		ADATA		$3F
-		ADATA		$3F
-		ADATA		$31
-		AJMP		_aloc_532EA
-_sample_29A:
-		ADATA		$80
-		ADATA		$5E
-		ADATA		$81
-		ADATA		$47
-		ADATA		$02
-		ADATA		$80
-		ADATA		$5B
-		ADATA		$5A
-		ALOOP_START	$0A
-		ADATA		$7F
-		ALOOP_END
-		ASTOP
-_sample_2AA:
-		ADATA		$83
-		ADATA		$5F
-		ADATA		$80
-		ADATA		$4C
-		ADATA		$02
-		ADATA		$82
-		ADATA		$49
-_aloc_53305:
-		ADATA		$21
-		ADATA		$02
-		ADATA		$2F
-		ADATA		$02
-		ADATA		$2F
-		ADATA		$02
-		ADATA		$21
-		ADATA		$02
-		AJMP		_aloc_53305
-		ASTOP
-_sample_2BA:
-		ADATA		$83
-		ADATA		$47
-		ALOOP_START	$06
-		ADATA		$61
-		ADATA		$02
-		ALOOP_END
-_aloc_53318:
-		ADATA		$22
-		ADATA		$02
-		ADATA		$2F
-		ADATA		$02
-		ADATA		$2E
-		ADATA		$02
-		ADATA		$21
-		ADATA		$02
-		AJMP		_aloc_53318
-		ASTOP
-_sample_2BB:
-		ALOOP_START	$0D
-		ADATA		$7E
-		ADATA		$7F
-		ADATA		$7F
-		ADATA		$6F
-		ADATA		$02
-		ADATA		$71
-		ADATA		$71
-		ADATA		$62
-		ADATA		$02
-		ALOOP_END
-		ASTOP
-_sample_2CA:
-		ADATA		$82
-		ADATA		$4E
-		ADATA		$03
-		ADATA		$4B
-		ALOOP_START	$0B
-		ADATA		$6F
-		ADATA		$03
-		ALOOP_END
-		ASTOP
-_sample_2DA:
-		ADATA		$5F
-		ADATA		$5E
-		ADATA		$58
-		ADATA		$5C
-		ADATA		$5A
-		ALOOP_START	$0A
-		ADATA		$7F
-		ALOOP_END
-		ASTOP
-_samples_lib:
-		SMPL_PTR	_sample00,_sample_00A,_sample_00B
-		SMPL_PTR	_sample01,_sample_01A,_sample_00B
-		SMPL_PTR	_sample02,_sample_02A,_sample_00B
-		SMPL_PTR	_sample03,_sample_03A,_sample_00B
-		SMPL_PTR	_sample04,_sample_04A,_sample_00B
-		SMPL_PTR	_sample05,_sample_05A,_sample_05B
-		SMPL_PTR	_sample06,_sample_05A,_sample_06B
-		SMPL_PTR	_sample07,_sample_07A,_sample_05B
-		SMPL_PTR	_sample08,_sample_08A,_sample_05B
-		SMPL_PTR	_sample09,_sample_08A,_sample_06B
-		SMPL_PTR	_sample0A,_sample_0AA,_sample_05B
-		SMPL_PTR	_sample0B,_sample_0AA,_sample_06B
-		SMPL_PTR	_sample0C,_sample_0CA,_sample_05B
-		SMPL_PTR	_sample0D,_sample_07A,_sample_06B
-		SMPL_PTR	_sample0E,_sample_0EA,_sample_05B
-		SMPL_PTR	_sample0F,_sample_0EA,_sample_06B
-		SMPL_PTR	_sample10,_sample_10A,_sample_05B
-		SMPL_PTR	_sample11,_sample_10A,_sample_06B
-		SMPL_PTR	_sample12,_sample_12A,_sample_05B
-		SMPL_PTR	_sample13,_sample_13A,_sample_05B
-		SMPL_PTR	_sample14,_sample_14A,_sample_05B
-		SMPL_PTR	_sample15,_sample_15A,_sample_15B
-		SMPL_PTR	_sample16,_sample_15A,_sample_16B
-		SMPL_PTR	_sample17,_sample_17A,_sample_15B
-		SMPL_PTR	_sample18,_sample_17A,_sample_16B
-		SMPL_PTR	_sample19,_sample_19A,_sample_00B
-		SMPL_PTR	_sample1A,_sample_1AA,_sample_1AB
-		SMPL_PTR	_sample1B,_sample_19A,_sample_00B
-		SMPL_PTR	_sample1C,_sample_1CA,_sample_06B
-		SMPL_PTR	_sample1D,_sample_1DA,_sample_1DB
-		SMPL_PTR	_sample1E,_sample_1EA,_sample_06B
-		SMPL_PTR	_sample1F,_sample_1FA,_sample_16B
-		SMPL_PTR	_sample20,_sample_20A,_sample_1DB
-		SMPL_PTR	_sample21,_sample_21A,_sample_00B
-		SMPL_PTR	_sample22,_sample_22A,_sample_22B
-		SMPL_PTR	_sample23,_sample_23A,_sample_00B
-		SMPL_PTR	_sample24,_sample_24A,_sample_22B
-		SMPL_PTR	_sample25,_sample_25A,_sample_25B
-		SMPL_PTR	_sample26,_sample_26A,_sample_00B
-		SMPL_PTR	_sample27,_sample_27A,_sample_00B
-		SMPL_PTR	_sample28,_sample_28A,_sample_22B
-		SMPL_PTR	_sample29,_sample_29A,_sample_22B
-		SMPL_PTR	_sample2A,_sample_2AA,_sample_16B
-		SMPL_PTR	_sample2B,_sample_2BA,_sample_2BB
-		SMPL_PTR	_sample2C,_sample_2CA,_sample_2BB
-		SMPL_PTR	_sample2D,_sample_2DA,_sample_22B
-byte_533FD:
-		.BYTE	$01,$02,$03,$04,$05,$06,$07,$0E,$15,$1C,$23,$38,$08,$10,$18,$20
-		.BYTE	$80,$40,$08,$10,$18,$20,$28,$30,$06,$0C,$12,$18,$1E,$24,$05,$0A
-		.BYTE	$0F,$14,$19,$1E,$09,$12,$1B,$24,$8A,$06,$11,$0C,$05,$03,$88,$1D
-; REGION, the additional lengths table for PAL version of the music data
-;		.BYTE	$01,$04,$08,$09,$0C,$0D,$06,$07,$14,$1A,$1B,$35,$04,$08,$0C,$0D
-;		.BYTE	$19,$09,$05,$06,$0B,$0C,$16,$17,$06,$0C,$12,$18,$1E,$30,$04,$05
-;		.BYTE	$08,$09,$11,$19,$0E,$0A,$04,$02,$70,$18,$04,$05,$08,$0C,$0D,$19
-;
-_music_lib:
-		MUS		_mus0	; lvl1 theme
-		MUS		_mus1	; busters select
-		MUS		_mus2	; game over
-		MUS		_mus3	; stage complete
-		MUS		_mus4	; mid-boss theme
-		MUS		_mus5	; title theme
-		MUS		_mus6	; lvl2 theme
-		MUS		_mus7	; lvl3 theme
-		MUS		_mus8	; lvl4 theme
-		MUS		_mus9	; lvl5 theme
-		MUS		_musA	; final boss prellude
-		MUS		_musB	; final boss theme
-		MUS		_musC	; lvl3 final cutscene
-#if DEBUG==1
-; REGION, re-added an unused missing music track here in future
-		MUS		_musD
-#endif
-_snd_lib:
-		SND		_snd00	; beam
-		SND		_snd01	; catch release
-		SND		_snd02	; ghost catch scream
-		SND		_snd03	; pause
-		SND		_snd04	; beamer hit
-		SND		_snd05	; -unused-
-		SND		_snd06	; doors close
-		SND		_snd07	; doors open
-		SND		_snd08	; slime laugh
-		SND		_snd09	; -unused-
-		SND		_snd0A	; door06 close
-		SND		_snd0B	; buster select input
-		SND		_snd0C	; buster select apply
-		SND		_snd0D	; prize taken
-		SND		_snd0E	; vega laugh
-		SND		_snd0F	; key keeper shoot
-		SND		_snd10	; -unused-
-		SND		_snd11	; -unused-
-		SND		_snd12	; court chair
-		SND		_snd13	; train whistle
-		SND		_snd14	; sewers dragon appear
-		SND		_snd15	; sewers dragon fire
-		SND		_snd16	; -unused-
-		SND		_snd17	; -unused-
-		SND		_snd18	; -unused-
-		SND		_snd19	; boss catch scream
-		SND		_snd1A	; vega death scream
-		SND		_snd1B	; -unused-
-		SND		_snd1C	; -unused-
-		SND		_snd1D	; -unused-
-		SND		_snd1E	; live add
-		SND		_snd1F	; -unused-
-		SND		_snd20	; -unused-
-		SND		_snd21	; -unused-
-		SND		_snd22	; sewers dragon disappear
-		SND		_snd23	; candle light up
-
-byte_5348F:
-		.BYTE	$02,$02,$0A,$0F,$03,$0A,$0A,$0A,$02,$0A,$0A,$02,$02,$02,$03,$0A
-		.BYTE	$02,$02,$0A,$0B,$08,$08,$08,$03,$0A,$0B,$0F,$08,$02,$02,$03,$08
-		.BYTE	$02,$02,$02,$0C
-byte_534B3:
-		.BYTE	$3C,$32,$32,$00,$0A,$28,$32,$32,$32,$32,$32,$32,$32,$28,$1E,$32
-		.BYTE	$3C,$3C,$32,$28,$3C,$32,$28,$28,$3C,$1E,$0B,$3C,$32,$32,$00,$46
-		.BYTE	$32,$32,$28,$32
-
-		SECTION_END	"APU ENGINE B"
 
 		BANK_END 6,$C000

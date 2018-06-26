@@ -103,7 +103,6 @@ _mus2_D:
 		ACMDF5		$2A
 		ASMPL		_sample00
 		AJMP		_aloc_9A3CB
-		ASTOP
 _mus2_E:
 		ACMDF2		$05
 		ACMDF0		$0C

@@ -14,7 +14,6 @@ _musB_A:
 		AJSR		_asub_52671
 		AJSR		_asub_526AA
 		AJMP		_musB_A
-		ASTOP
 _asub_52671:
 		ALOOP_START	$02
 		ADMC		_pcm0A
@@ -81,7 +80,6 @@ _musB_B:
 		AJSR		_asub_526DD
 		AJSR		_asub_52711
 		AJMP		_musB_B
-		ASTOP
 _asub_526DD:
 		ALOOP_START	$02
 		ASMPL		_sample13
@@ -169,7 +167,6 @@ _musB_C:
 		AJSR		_asub_52786
 		AJSR		_asub_52797
 		AJMP		_musB_C
-		ASTOP
 _asub_52772:
 		ALOOP_START	$02
 		ADATA		$07
@@ -260,7 +257,6 @@ _musB_D:
 		ALOOP_END
 		ALOOP_END
 		AJMP		_musB_D
-		ASTOP
 _asub_527ED:
 		ALOOP_START	$02
 		ADATA		$0B
@@ -324,7 +320,6 @@ _musB_E:
 		ALOOP_END
 		ALOOP_END
 		AJMP		_musB_E
-		ASTOP
 _asub_5284D:
 		ALOOP_START	$02
 		ADATA		$0B

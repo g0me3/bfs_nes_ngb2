@@ -28,7 +28,6 @@ _aloc_50ECA:
 		AJSR		_asub_50F41
 		ALOOP_END
 		AJMP		_aloc_50ECA
-		ASTOP
 _asub_50EF2:
 		ADMC		_pcm0A
 		ADATA		$7F
@@ -145,7 +144,6 @@ _aloc_50F98:
 		AJSR		_asub_50FCF
 		ALOOP_END
 		AJMP		_aloc_50F98
-		ASTOP
 _asub_50FB0:
 		ACMDF4		$B1
 		ADATA		$34
@@ -213,7 +211,6 @@ _aloc_50FF0:
 		AJSR		_asub_51052
 		ALOOP_END
 		AJMP		_aloc_50FF0
-		ASTOP
 _asub_51012:
 		ASMPL		_sample13
 		ADATA		$25
@@ -360,7 +357,6 @@ _aloc_510C5:
 		AJSR		_asub_5114E
 		ALOOP_END
 		AJMP		_aloc_510C5
-		ASTOP
 _asub_510FF:
 		ACMDF4		$B1
 		ADATA		$34
@@ -474,7 +470,6 @@ _aloc_51186:
 		AJSR		_asub_51251
 		ALOOP_END
 		AJMP		_aloc_51186
-		ASTOP
 _asub_511B3:
 		ACMDF5		$10
 		ACMDF4		$B1
@@ -559,9 +554,9 @@ _asub_5120C:
 		ADATA		$90
 		ACMDF1		$08
 		ARET
-_unref_10:
-		ACMDF4		$00
-		ASMPL		_sample09
+;_unref_10:
+;		ACMDF4		$00
+;		ASMPL		_sample09
 _asub_51225:
 		ALOOP_START	$02
 		ADATA		$14

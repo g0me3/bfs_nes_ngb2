@@ -28,7 +28,6 @@ _aloc_993CB:
 		AJSR		_asub_99445
 		ALOOP_END
 		AJMP		_aloc_993CB
-		ASTOP
 _asub_993F3:
 		ADMC		_pcm0A
 		ADATA		$BF
@@ -145,7 +144,6 @@ _aloc_9949D:
 		AJSR		_asub_994D4
 		ALOOP_END
 		AJMP		_aloc_9949D
-		ASTOP
 _asub_994B5:
 		ACMDF4		$B1
 		ADATA		$74
@@ -213,7 +211,6 @@ _aloc_994FA:
 		AJSR		_asub_9955C
 		ALOOP_END
 		AJMP		_aloc_994FA
-		ASTOP
 _asub_9951C:
 		ASMPL		_sample13
 		ADATA		$65
@@ -360,7 +357,6 @@ _aloc_995CF:
 		AJSR		_asub_99656
 		ALOOP_END
 		AJMP		_aloc_995CF
-		ASTOP
 _asub_99609:
 		ACMDF4		$B1
 		ADATA		$74
@@ -474,7 +470,6 @@ _aloc_9968F:
 		AJSR		_asub_9975D
 		ALOOP_END
 		AJMP		_aloc_9968F
-		ASTOP
 _asub_996BC:
 		ACMDF5		$11
 		ACMDF4		$B1
@@ -559,9 +554,9 @@ _asub_99716:
 		ADATAEX		$D0,$1D
 		ACMDF1		$08
 		ARET
-_unref_0:
-		ACMDF4		$00
-		ASMPL		_sample09
+;_unref_0:
+;		ACMDF4		$00
+;		ASMPL		_sample09
 _asub_99731:
 		ALOOP_START	$02
 		ADATA		$34

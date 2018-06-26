@@ -21,7 +21,6 @@ _aloc_5200E:
 		AJSR		_asub_52082
 		ALOOP_END
 		AJMP		_aloc_5200E
-		ASTOP
 _asub_5202D:
 		ADMC		_pcm1
 		ADATAEX		$DF,$03
@@ -113,7 +112,6 @@ _aloc_520A8:
 		AJSR		_asub_5211B
 		ALOOP_END
 		AJMP		_aloc_520A8
-		ASTOP
 _asub_520C7:
 		ASMPL		_sample19
 		ADATAEX		$C6,$03
@@ -243,7 +241,6 @@ _aloc_52179:
 		AJSR		_asub_5223F
 		AJSR		_asub_5226C
 		AJMP		_aloc_52289
-		ASTOP
 _asub_52195:
 		ASMPL		_sample25
 		ACMDF4		$80
@@ -455,7 +452,6 @@ _aloc_522B4:
 		AJSR		_asub_52316
 		ALOOP_END
 		AJMP		_aloc_52143
-		ASTOP
 _asub_522C5:
 		ACMDF4		$A6
 		ADATA		$38
@@ -569,7 +565,6 @@ _aloc_5232F:
 		AJSR		_asub_5241D
 		ALOOP_END
 		AJMP		_aloc_5232F
-		ASTOP
 _asub_52360:
 		ACMDF4		$B1
 		ADATA		$58

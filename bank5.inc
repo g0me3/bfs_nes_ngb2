@@ -5,6 +5,8 @@
 
 		SECTION_START
 
+		FAR_OFS	_lvl5
+
 _lvl5_objects_list:
 		CHECKPOINT
 		OBJ_SET	_scr12_exit_arrow,					$00,$00,$00,$00,_NON, $AC, $01
@@ -801,6 +803,8 @@ _l5_r26:
 		SECTION_END	"LVL5 DATA"
 
 		SECTION_START
+
+		FAR_OFS	_lvl4
 
 _lvl4_objects_list:
 		CHECKPOINT

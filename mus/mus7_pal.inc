@@ -25,7 +25,6 @@ _mus7_A:
 		AJSR		_asub_99816
 		AJSR		_asub_99816
 		AJMP		_mus7_A
-		ASTOP
 _asub_997F3:
 		ADMC		_pcm0A
 		ADATA		$9F
@@ -107,7 +106,6 @@ _mus7_B:
 		AJSR		_asub_998AB
 		AJSR		_asub_99901
 		AJMP		_mus7_B
-		ASTOP
 _asub_99885:
 		ASMPL		_sample13
 		ADATA		$65
@@ -250,7 +248,6 @@ _mus7_C:
 		AJSR		_asub_999B2
 		AJSR		_asub_999B8
 		AJMP		_mus7_C
-		ASTOP
 _asub_9995D:
 		ACMDF4		$FA
 		ACMDF5		$17
@@ -367,7 +364,6 @@ _mus7_D:
 		AJSR		_asub_99B0B
 		AJSR		_asub_99B48
 		AJMP		_mus7_D
-		ASTOP
 _asub_99A09:
 		ACMDF4		$00
 		ACMDF5		$17
@@ -648,7 +644,6 @@ _mus7_E:
 		AJSR		_asub_99CA2
 		AJSR		_asub_99CFB
 		AJMP		_mus7_E
-		ASTOP
 _asub_99B9F:
 		ACMDF4		$00
 		ACMDF5		$0B

@@ -29,7 +29,6 @@ _aloc_98CA4:
 		ADMC		_pcm1
 		ADATA		$7E
 		AJMP		_aloc_98CA4
-		ASTOP
 _musA_B:
 		ACMDF2		$09
 		ACMDF0		$0D
@@ -39,7 +38,6 @@ _musA_B:
 		AJSR		_asub_98CE6
 		AJSR		_asub_98D16
 		AJMP		_musA_B
-		ASTOP
 _asub_98CE6:
 		ASMPL		_sample13
 		ADATA		$24
@@ -110,7 +108,6 @@ _aloc_98D31:
 		ADATA		$A7
 		ACMDF0		$0A
 		AJMP		_aloc_98D31
-		ASTOP
 _musA_D:
 		ACMDF2		$09
 		ACMDF0		$08
@@ -130,7 +127,6 @@ _aloc_98D4B:
 		ADATA		$B8
 		ACMDF0		$09
 		AJMP		_aloc_98D4B
-		ASTOP
 _musA_E:
 		ACMDF2		$09
 		ASMPL		_sample03
@@ -145,4 +141,3 @@ _aloc_98D6E:
 		ADATAEX		$C4,$6A
 		ADATAEX		$C4,$6A
 		AJMP		_aloc_98D6E
-		ASTOP
