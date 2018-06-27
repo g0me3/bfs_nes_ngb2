@@ -430,7 +430,7 @@ backref_t ref_search (uint8_t *start, uint8_t *current, uint32_t insize, tuple_t
 	if (tuple) for (pos = start + tuple->offset; pos < current; pos++) {
 		// see how many bytes in a row are the same between the current uncompressed data
 		// and the data at the position being searched
-		for (size = 0; size <= LONG_RUN_SIZE && current + size < start + insize; size++) 
+		for (size = 0; size <= LONG_RUN_SIZE && current + size < start + insize && pos + size < current; size++) 
 			if (pos[size] != current[size]) break;
 			
 		// if this is better than the current candidate, use it
