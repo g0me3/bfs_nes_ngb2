@@ -34,7 +34,7 @@ extern "C" {
 #include <stdint.h>
 #include <string.h>
 
-#define DATA_SIZE     65536
+#define DATA_SIZE     1024
 #define RUN_SIZE      32
 #define LONG_RUN_SIZE 1024
 

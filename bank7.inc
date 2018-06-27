@@ -281,13 +281,25 @@ loc_60193:
 		RTS
 
 _scores_1st_extend_list_lo:
-		.BYTE	$32,$64,$96,$C8
+		.BYTE	<[ 50]
+		.BYTE	<[100]
+		.BYTE	<[150]
+		.BYTE	<[200]
 _scores_1st_extend_list_hi:
-		.BYTE	$00,$00,$00,$00
+		.BYTE	>[ 05]
+		.BYTE	>[100]
+		.BYTE	>[150]
+		.BYTE	>[200]
 _scores_2nd_extend_list_lo:
-		.BYTE	$C8,$2C,$90,$F4
+		.BYTE	<[200]
+		.BYTE	<[300]
+		.BYTE	<[400]
+		.BYTE	<[500]
 _scores_2nd_extend_list_hi:
-		.BYTE	$00,$01,$01,$01
+		.BYTE	>[200]
+		.BYTE	>[300]
+		.BYTE	>[400]
+		.BYTE	>[500]
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_exit_arrow_position_adjust:
@@ -5681,52 +5693,6 @@ _nsub_players_scr_suspend:
 		PLA
 		LDX		#$04
 		STA		_scr_trds_spr_idx,X
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_nsub_tlm_raw_arg2_idx_line_draw:
-		JSR		_scr_getc					; custom helper for drawing raw strided
-		STA		_ptr08						; tilemaps for the title and ending screens
-		JSR		_scr_getc					; draw one line per call
-		STA		_ptr08+1
-		LDX		_scr_cur_trd_idx
-		LDA		#$00
-		STA		_ptr06+1
-		LDA		_scr_trds_args2,X
-		ASL
-		ASL
-		ASL
-		STA		_ptr06
-		ASL
-		ROL		_ptr06+1
-		ADC		_ptr06
-		BCC		loc_62D32
-		INC		_ptr06+1
-loc_62D32:
-		CLC
-		ADC		_ptr08
-		STA		_ptr06
-		LDA		_ptr06+1
-		ADC		_ptr08+1
-		STA		_ptr06+1
-		LDY		#$17
-loc_62D3F:
-		LDA		(_ptr06),Y
-		STA		_tmp_buf+4,Y
-		DEY
-		BPL		loc_62D3F
-		LDY		_scr_trds_args2,X
-		INC		_scr_trds_args2,X
-		INY
-		INY
-		LDX		#$04
-		JSR		_ppu_offset_calc
-		LDA		#$18
-		STA		_tmp_buf+2
-		LDA		#$01
-		STA		_tmp_buf+3
-		JSR		_ppu_res_send_param_no_ofs
-		.WORD	_tmp_buf+2
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================

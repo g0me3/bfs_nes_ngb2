@@ -3666,7 +3666,7 @@ _scr_stage_complete:
 		SLOOP_END
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; now unpack tlm for scores info
 			NARGB		_tlm1_score_idx
-		NJSR			_nsub_scores_and_players_lives_draw		; draw the same info as for pause screen
+		NJSR			_nsub_scores_and_players_lives_draw	; draw the same info as for pause screen
 		NJSR			_nsub_bg_pal_load
 			NARGW		_stage_complete_bg_pal
 		NJSR			_nsub_scroll_page_set			; reset scrolls

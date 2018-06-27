@@ -64,6 +64,11 @@
 ; -
 		SJSR			_ssub_pal_fade_in				; and again show it for 1.5 seconds
 		SJSR			_ssub_skip_wait					; NEW, skip intro
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_title_restart:
 		SJSR			_ssub_pal_fade_out
 
 ; !FALLTHROUGH!
@@ -229,47 +234,6 @@ _pal2:
 _pal3:
 		.BYTE	$0F,$35,$15,$05,$0F,$25,$10,$00,$0F,$21,$11,$01,$0F,$30,$2A,$01
 		.BYTE	$0F,$30,$15,$29,$0F,$30,$35,$0F,$0F,$30,$10,$00,$0F,$30,$2A,$01
-_tlm_title_logo:
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$2C,$3C,$20,$30,$40,$50,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0,$F5,$23,$33,$43
-		.BYTE	$FE,$FE,$FE,$FE,$2D,$3D,$21,$31,$41,$51,$61,$71,$81,$91,$A1,$B1,$C1,$D1,$E1,$F1,$F6,$24,$34,$44
-		.BYTE	$FE,$FE,$FE,$FE,$2E,$3E,$22,$32,$42,$52,$62,$72,$82,$EC,$EB,$88,$98,$72,$E2,$F2,$F7,$25,$35,$45
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$83,$93,$A3,$B3,$C3,$D3,$E3,$F3,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$74,$84,$94,$A4,$B4,$C4,$D4,$E4,$FE,$FE,$FE,$FE,$FE,$FE,$FE	; BUGFIX: $B3,$C4 -> $B4,$C4, fix fingers
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$55,$65,$75,$85,$95,$A5,$B5,$C5,$D5,$E5,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$56,$EE,$76,$86,$96,$A6,$B6,$C6,$D6,$E6,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$47,$57,$67,$77,$87,$97,$EE,$B7,$C7,$D7,$E7,$FE,$FE,$FE,$FE,$FE,$FE,$FE	; BUGFIX: $B6->$B7, fix palm
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$48,$58,$68,$78,$EE,$97,$EE,$B8,$C8,$D8,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$49,$59,$69,$EE,$89,$99,$A9,$B9,$C9,$D9,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$4A,$5A,$6A,$89,$8A,$EF,$AA,$BA,$CA,$DA,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$4B,$5B,$6B,$7B,$EF,$9B,$EE,$BB,$CB,$DB,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE	; BUGFIX: $4C->$BB, fix belly
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$2F,$EF,$46,$26,$36,$53,$63,$EA,$FA,$DC,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$3F,$EF,$EF,$27,$FF,$FF,$FF,$FF,$FB,$DD,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$73,$EF,$28,$38,$FF,$FF,$FF,$FC,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$66,$29,$39,$54,$64,$ED,$FD,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-_tlm_title_text:
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$54,$4D,$FF
-		.BYTE	$FF,$FF,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0,$63,$73,$83,$93,$A3,$B3,$C3,$D3,$E3,$F3,$FF,$FF
-		.BYTE	$FF,$FF,$61,$71,$81,$91,$A1,$B1,$C1,$D1,$E1,$F1,$64,$74,$84,$94,$A4,$B4,$C4,$D4,$E4,$F4,$FF,$FF
-		.BYTE	$FF,$FF,$62,$72,$82,$92,$A2,$B2,$C2,$D2,$E2,$F2,$65,$75,$85,$95,$A5,$B5,$C5,$D5,$E5,$F5,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$54,$30,$50,$FF,$20,$20,$20,$20,$20,$30,$30,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$50,$55,$53,$48,$FF,$53,$54,$41,$52,$54,$FF,$42,$55,$54,$54,$4F,$4E,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-; REGION, "HAL lab." changed in the US proto version
-;		.BYTE	$FF,$FF,$FF,$42,$59,$FF,$48,$41,$4C,$FF,$41,$4D,$45,$52,$49,$43,$41,$2C,$49,$4E,$43,$2E,$FF,$FF
-		.BYTE	$20,$20,$20,$20,$42,$59,$20,$48,$41,$4C,$20,$4C,$41,$42,$4F,$52,$41,$54,$4F,$52,$59,$20,$20,$20
-; -
 
 ; =============== S U B R O U T I N E ======n================================
 ; NEW, helper skip input test for intro
@@ -309,6 +273,18 @@ _nsub_title_attr_select0:
 		RTS
 loc_8545:
 
+_attr_title0:
+		.WORD	$23C0
+		.BYTE	$20,$02
+		.BYTE	$AA,$0A,$5A,$5A,$5A,$5A,$5A,$AA
+		.BYTE	$AA,$00,$05,$05,$05,$05,$05,$AA
+		.BYTE	$AA,$00,$00,$00,$00,$00,$00,$AA
+		.BYTE	$AA,$00,$00,$00,$00,$00,$00,$AA
+		.BYTE	$AA,$00,$00,$00,$00,$00,$00,$AA
+		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+		.BYTE	$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
+
 ; =============== S U B R O U T I N E ======n================================
 _nsub_title_attr_select1:
 		JSR		_ppu_res_send_param
@@ -317,16 +293,17 @@ _nsub_title_attr_select1:
 
 ; NOTE: there is no point in sending attrs in rectangular format, we may send it as raw 64x1 line as well (up to 127 allowed)
 ;
-_attr_title0:
-		.WORD	$23C0
-		.BYTE	$20,$02
-		.BYTE	$AA,$0A,$5A,$5A,$5A,$5A,$5A,$AA,$AA,$00,$05,$05,$05,$05,$05,$AA,$AA,$00,$00,$00,$00,$00,$00,$AA,$AA,$00,$00,$00,$00,$00,$00,$AA
-		.BYTE	$AA,$00,$00,$00,$00,$00,$00,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
 _attr_title1:
 		.WORD	$23C0
 		.BYTE	$20,$02
-		.BYTE	$AA,$0A,$0A,$0A,$0A,$0A,$0A,$AA,$AA,$00,$00,$00,$00,$00,$0F,$AA,$AA,$00,$C0,$F0,$F0,$30,$00,$AA,$AA,$00,$00,$00,$10,$51,$00,$AA
-		.BYTE	$AA,$C0,$F5,$F5,$F5,$F5,$31,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
+		.BYTE	$AA,$0A,$0A,$0A,$0A,$0A,$0A,$AA
+		.BYTE	$AA,$00,$00,$00,$00,$00,$0F,$AA
+		.BYTE	$AA,$00,$C0,$F0,$F0,$30,$00,$AA
+		.BYTE	$AA,$00,$00,$00,$10,$51,$00,$AA
+		.BYTE	$AA,$C0,$F5,$F5,$F5,$F5,$31,$AA
+		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+		.BYTE	$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
 
 ; =============== S C R I P T ==========================s====================
 _sub01_intro_slime:
@@ -943,6 +920,7 @@ _scr_secret_menu:
 			NARGB		$FF
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack menu tilemap
 			NARGB		_tlm9_secret_menu_idx
+		NJSR			_nsub_menu_init_draw			; update dynamic info
 		NJSR			_nsum_menu_option_attr_highlight; set highlight to default option
 		NJSR			_nsub_mmc1_chr1_set				; CHR setup
 			NARGB		$05
@@ -956,11 +934,6 @@ _sloc_8F5C:
 		NJSR			_nsub_secret_menu_LR_input		; for hor/vert/AB buttons
 		NJSR			_nsub_secret_menu_AB_input
 		SJMP			_sloc_8F5C
-
-; =============== S C R I P T ==========================s====================
-_scr_title_restart:
-		SJSR			_ssub_pal_fade_out
-		SJMP			_sloc_title_start
 
 _pal_secret_menu:
 		.BYTE	$0F,$11,$11,$11,$0F,$30,$30,$30,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
@@ -1101,6 +1074,18 @@ _menu_controls_max_val_list:
 		.BYTE	$01,$03,$0D,$23
 
 ; =============== S U B R O U T I N E ======n================================
+_nsub_menu_init_draw:
+		LDX		#$00
+		JSR		_menu_update_draw
+		LDX		#$01
+		JSR		_menu_update_draw
+		LDX		#$02
+		JSR		_menu_update_draw
+		LDX		#$03
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
 _menu_update_draw:
 		LDA		off_9068,X
 		STA		_ptr06
@@ -1131,8 +1116,8 @@ loc_907B:
 		.WORD	_tlm_ba_controls
 		RTS
 
-		TXT		$20EA,"A-BEAM  B-TRAP",	_tlm_ab_controls
-		TXT		$20EA,"B-BEAM  A-TRAP",	_tlm_ba_controls
+		TXT		$20E9,"A-BEAM  B-TRAP",	_tlm_ab_controls
+		TXT		$20E9,"B-BEAM  A-TRAP",	_tlm_ba_controls
 
 ; =============== S U B R O U T I N E ======n================================
 _difficult_draw:
@@ -1140,14 +1125,66 @@ _difficult_draw:
 		LDA		off_90C9,X
 		LDY		off_90CD,X
 		JSR		_ppu_res_send_ptr
-		LDX		_menu_difficulty_idx
-		LDA		off_90F9,X
-		LDY		off_90FD,X
-		JSR		_ppu_res_send_ptr
-		LDX		_menu_difficulty_idx
-		LDA		off_9115,X
-		LDY		off_9119,X
-		JMP		_ppu_res_send_ptr
+		LDA		#$04
+		SEC
+		SBC		_menu_difficulty_idx
+		LDX		#$00
+		JSR		_bin2dec
+		LDX		#$11
+		LDY		#$0D
+		JSR		_print_num99999
+		LDY		_menu_difficulty_idx
+		LDA		_scores_1st_extend_list_lo,Y
+		LDX		_scores_1st_extend_list_hi,Y
+		JSR		_bin2dec
+		LDY		#$0F
+		JSR		_score_extent_draw
+		JSR		_2nd_extent_convert
+		LDY		#$11
+		JSR		_score_extent_draw
+		JSR		_2nd_extent_convert
+		LDY		#$13
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_score_extent_draw:
+		LDX		#$16
+		BNE		_j_print_num99999_ex
+
+; =============== S U B R O U T I N E ======n================================
+_2nd_extent_convert:
+		LDY		_menu_difficulty_idx
+		LDA		_scores_2nd_extend_list_lo,Y
+		LDX		_scores_2nd_extend_list_hi,Y
+		JMP		_bin2dec
+
+; =============== S U B R O U T I N E ======n================================
+_sound_test_mus_draw:
+		LDA		_sound_test_mus_idx
+		LDX		#$00
+		JSR		_bin2dec
+		LDY		#$15
+		BNE		_j_print_num99999
+
+; =============== S U B R O U T I N E ======n================================
+_sound_test_se_draw:
+		LDA		_sound_test_snd_idx
+		LDX		#$00
+		JSR		_bin2dec
+		LDY		#$17
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_j_print_num99999:
+		LDX		#$07
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_j_print_num99999_ex:
+		JMP		_print_num99999
 
 off_90C9:
 		.BYTE	<[word_90D1]
@@ -1160,87 +1197,10 @@ off_90CD:
 		.BYTE	>[word_90E5]
 		.BYTE	>[word_90EF]
 
-		TXT		$216A,"EASY  ",	word_90D1
-		TXT		$216A,"NORMAL",	word_90DB
-		TXT		$216A,"HARD  ",	word_90E5
-		TXT		$216A,"PRO   ",	word_90EF
-
-off_90F9:
-		.BYTE	<[word_9101]
-		.BYTE	<[word_9106]
-		.BYTE	<[word_910B]
-		.BYTE	<[word_9110]
-off_90FD:
-		.BYTE	>[word_9101]
-		.BYTE	>[word_9106]
-		.BYTE	>[word_910B]
-		.BYTE	>[word_9110]
-
-		TXT		$21B4,"4",	word_9101
-		TXT		$21B4,"3",	word_9106
-		TXT		$21B4,"2",	word_910B
-		TXT		$21B4,"1",	word_9110
-
-off_9115:
-		.BYTE	<[word_911D]
-		.BYTE	<[word_913A]
-		.BYTE	<[word_9157]
-		.BYTE	<[word_9174]
-off_9119:
-		.BYTE	>[word_911D]
-		.BYTE	>[word_913A]
-		.BYTE	>[word_9157]
-		.BYTE	>[word_9174]
-word_911D:
-		.WORD	$21F8
-		.BYTE	$05,$05
-		.BYTE	" 5000"
-		.BYTE	"     "
-		.BYTE	"20000"
-		.BYTE	"     "
-		.BYTE	"20000"
-word_913A:
-		.WORD	$21F8
-		.BYTE	$05,$05
-		.BYTE	"10000"
-		.BYTE	"     "
-		.BYTE	"30000"
-		.BYTE	"     "
-		.BYTE	"30000"
-word_9157:
-		.WORD	$21F8
-		.BYTE	$05,$05
-		.BYTE	"15000"
-		.BYTE	"     "
-		.BYTE	"40000"
-		.BYTE	"     "
-		.BYTE	"40000"
-word_9174:
-		.WORD	$21F8
-		.BYTE	$05,$05
-		.BYTE	"20000"
-		.BYTE	"     "
-		.BYTE	"50000"
-		.BYTE	"     "
-		.BYTE	"50000"
-
-; =============== S U B R O U T I N E ======n================================
-_sound_test_mus_draw:
-		LDA		_sound_test_mus_idx
-		LDX		#$00
-		JSR		_bin2dec
-		LDX		#$07
-		LDY		#$15
-		JMP		_print_num99999
-
-; =============== S U B R O U T I N E ======n================================
-_sound_test_se_draw:
-		LDA		_sound_test_snd_idx
-		LDX		#$00
-		JSR		_bin2dec
-		LDX		#$07
-		LDY		#$17
-		JMP		_print_num99999
+		TXT		$2169,"EASY  ",	word_90D1
+		TXT		$2169,"NORMAL",	word_90DB
+		TXT		$2169,"HARD  ",	word_90E5
+		TXT		$2169,"PRO   ",	word_90EF
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_AB_input:
@@ -1691,7 +1651,7 @@ _staff_txt6:
 		TXT		$21EA,"MITSURU KAKUTA",	_res_mitsuru_kakuta
 		TXT		$208E,"AND",	_res_and
 ; NOTE: so sad, dasm can treat "" operators but can't disable "," inside
-; this will cause the macros error until now (tried on 2014 year build)
+; this will cause the macros error until now (tried on 2014 year build also)
 _res_all_test_players:
 		.WORD	$20E8
 		.BYTE	$11,$01
@@ -2290,30 +2250,14 @@ _nsub_ending_logo_attr_load:
 _attr_ending_logo:
 		.WORD	$23C0
 		.BYTE	$20,$02
-		.BYTE	$AA,$FA,$FA,$FA,$FA,$FA,$FA,$AA,$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
-		.BYTE	$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA,$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
-		.BYTE	$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
-		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
-
-_tlm_ending_logo:
-		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$5D,$79,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$83,$93,$A3,$B3,$C3,$D3,$E3,$F3,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$74,$84,$94,$A4,$B4,$C4,$D4,$E4,$FE,$FE,$FE,$FE,$FE,$FE,$FE	; BUGFIX: $B3,$C3->$B4,$C4, fix fingers
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$55,$65,$75,$85,$95,$A5,$B5,$C5,$D5,$E5,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$56,$EE,$76,$86,$96,$A6,$B6,$C6,$D6,$E6,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$47,$57,$67,$77,$87,$97,$EE,$B7,$C7,$D7,$E7,$FE,$FE,$FE,$FE,$FE,$FE,$FE	; BUGFIX: $B6->$B7, fix palm
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$48,$58,$68,$78,$EE,$97,$EE,$B8,$C8,$D8,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$49,$59,$69,$EE,$89,$99,$A9,$B9,$C9,$D9,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$4A,$5A,$6A,$89,$8A,$EF,$AA,$BA,$CA,$DA,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$4B,$5B,$6B,$7B,$EF,$9B,$EE,$BB,$CB,$DB,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$2F,$EF,$46,$EF,$9B,$EE,$EE,$4C,$5C,$DC,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$3F,$EF,$EF,$37,$A8,$AB,$EE,$4D,$EF,$DD,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$73,$EF,$9A,$E8,$F8,$DE,$4E,$5E,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$66,$8B,$E9,$F9,$DF,$4F,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
+		.BYTE	$AA,$FA,$FA,$FA,$FA,$FA,$FA,$AA
+		.BYTE	$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
+		.BYTE	$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
+		.BYTE	$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
+		.BYTE	$AA,$FF,$FF,$FF,$FF,$FF,$FF,$AA
+		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+		.BYTE	$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
 
 ; =============== S C R I P T ==========================s====================
 _scr_ending_sub0E:
@@ -4560,6 +4504,175 @@ _spr_rlib07_12_A:
 		SECTION_START
 
 ; =============== S U B R O U T I N E ======n================================
+; custom helper for drawing raw strided tilemaps for the title and ending screens
+; draw one line per call.
+;
+; TODO: adding a special commands to regular packer with line stride and position
+; options may optimize these tilemaps as well in the common way. also they don't
+; need to be drawn line by line then...
+;
+; NEW: optimize these tilemaps by now using pointer tables to similar lines to
+; avoid duplication. more than 600 bytes saved.
+;
+_nsub_tlm_raw_arg2_idx_line_draw:
+		JSR		_scr_getc					; NEW, this is a ofs to a pointer table now
+		STA		_ptr08
+		JSR		_scr_getc
+		STA		_ptr08+1
+		LDX		_scr_cur_trd_idx			; fetch counter from sarg2 of script
+		LDA		_scr_trds_args2,X
+		ASL
+		TAY
+		LDA		(_ptr08),Y
+		STA		_ptr06
+		INY
+		LDA		(_ptr08),Y
+		STA		_ptr06+1
+		LDY		#$17						; now form the data packet
+loc_62D3F:
+		LDA		(_ptr06),Y					; copy data
+		STA		_tmp_buf+4,Y
+		DEY
+		BPL		loc_62D3F
+		LDY		_scr_trds_args2,X			; calculate position offset
+		INC		_scr_trds_args2,X
+		INY									; position X=4, Y=2+N
+		INY
+		LDX		#$04
+		JSR		_ppu_offset_calc
+		LDA		#$18						; width of data chunk
+		STA		_tmp_buf+2
+		LDA		#$01						; height of data chunk
+		STA		_tmp_buf+3
+		JSR		_ppu_res_send_param_no_ofs	; send data buffer
+		.WORD	_tmp_buf+2
+		RTS
+
+_tlm_title_logo:
+		.WORD	_tlm_dummy_FE
+		.WORD	_tlm_title_logo01
+		.WORD	_tlm_title_logo02
+		.WORD	_tlm_title_logo03
+		.WORD	_tlm_title_logo04
+		.WORD	_tlm_title_logo05
+		.WORD	_tlm_title_logo06
+		.WORD	_tlm_title_logo07
+		.WORD	_tlm_title_logo08
+		.WORD	_tlm_title_logo09
+		.WORD	_tlm_title_logo0A
+		.WORD	_tlm_title_logo0B
+		.WORD	_tlm_title_logo0C
+		.WORD	_tlm_title_logo0D
+		.WORD	_tlm_title_logo0E
+		.WORD	_tlm_title_logo0F
+		.WORD	_tlm_title_logo10
+		.WORD	_tlm_dummy_FE
+
+_tlm_ending_logo:
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FE
+		.WORD	_tlm_ending_logo02
+		.WORD	_tlm_title_logo04
+		.WORD	_tlm_title_logo05
+		.WORD	_tlm_title_logo06
+		.WORD	_tlm_title_logo07
+		.WORD	_tlm_title_logo08
+		.WORD	_tlm_title_logo09
+		.WORD	_tlm_title_logo0A
+		.WORD	_tlm_title_logo0B
+		.WORD	_tlm_title_logo0C
+		.WORD	_tlm_ending_logo0C
+		.WORD	_tlm_ending_logo0D
+		.WORD	_tlm_ending_logo0E
+		.WORD	_tlm_ending_logo0F
+		.WORD	_tlm_dummy_FE
+		.WORD	_tlm_dummy_FE
+
+_tlm_title_text:
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text03
+		.WORD	_tlm_title_text04
+		.WORD	_tlm_title_text05
+		.WORD	_tlm_title_text06
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text08
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text0E
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text11
+
+_tlm_title_logo01:
+		.BYTE	$FE,$FE,$FE,$FE,$2C,$3C,$20,$30,$40,$50,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0,$F5,$23,$33,$43
+_tlm_title_logo02:
+		.BYTE	$FE,$FE,$FE,$FE,$2D,$3D,$21,$31,$41,$51,$61,$71,$81,$91,$A1,$B1,$C1,$D1,$E1,$F1,$F6,$24,$34,$44
+_tlm_title_logo03:
+		.BYTE	$FE,$FE,$FE,$FE,$2E,$3E,$22,$32,$42,$52,$62,$72,$82,$EC,$EB,$88,$98,$72,$E2,$F2,$F7,$25,$35,$45
+_tlm_title_logo04:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$83,$93,$A3,$B3,$C3,$D3,$E3,$F3
+_tlm_title_logo05:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$74,$84,$94,$A4,$B4,$C4,$D4,$E4	; BUGFIX: $B3,$C4->$B4,$C4, fix fingers
+_tlm_title_logo06:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$55,$65,$75,$85,$95,$A5,$B5,$C5,$D5,$E5
+_tlm_title_logo07:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$56,$EE,$76,$86,$96,$A6,$B6,$C6,$D6,$E6,$FE
+_tlm_title_logo08:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$47,$57,$67,$77,$87,$97,$EE,$B7,$C7,$D7,$E7,$FE	; BUGFIX: $B6->$B7, fix palm
+_tlm_title_logo09:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$48,$58,$68,$78,$EE,$97,$EE,$B8,$C8,$D8,$FE,$FE
+_tlm_title_logo0A:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$49,$59,$69,$EE,$89,$99,$A9,$B9,$C9,$D9,$FE,$FE
+_tlm_title_logo0B:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$4A,$5A,$6A,$89,$8A,$EF,$AA,$BA,$CA,$DA,$FE,$FE
+_tlm_title_logo0C:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$4B,$5B,$6B,$7B,$EF,$9B,$EE,$BB,$CB,$DB,$FE,$FE	; BUGFIX: $4C->$BB, fix belly
+_tlm_title_logo0D:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$2F,$EF,$46,$26,$36,$53,$63,$EA,$FA,$DC,$FE,$FE
+_tlm_title_logo0E:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$3F,$EF,$EF,$27,$FF,$FF,$FF,$FF,$FB,$DD,$FE
+_tlm_title_logo0F:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$73,$EF,$28,$38,$FF,$FF,$FF,$FC,$FE,$FE
+_tlm_title_logo10:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$66,$29,$39,$54,$64,$ED,$FD
+_tlm_ending_logo02:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$5D,$79,$FE,$FE,$FE
+_tlm_ending_logo0C:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$2F,$EF,$46,$EF,$9B,$EE,$EE,$4C,$5C,$DC,$FE,$FE
+_tlm_ending_logo0D:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$3F,$EF,$EF,$37,$A8,$AB,$EE,$4D,$EF,$DD,$FE
+_tlm_ending_logo0E:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$73,$EF,$9A,$E8,$F8,$DE,$4E,$5E,$FE
+_tlm_ending_logo0F:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$66,$8B,$E9,$F9,$DF,$4F
+_tlm_dummy_FE:
+		.BYTE	$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
+_tlm_dummy_FF:
+		.BYTE	$FF,$FF,$FF
+_tlm_title_text03:
+		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$54,$4D
+_tlm_title_text04:
+		.BYTE	$FF,$FF,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0,$63,$73,$83,$93,$A3,$B3,$C3,$D3,$E3,$F3
+_tlm_title_text05:
+		.BYTE	$FF,$FF,$61,$71,$81,$91,$A1,$B1,$C1,$D1,$E1,$F1,$64,$74,$84,$94,$A4,$B4,$C4,$D4,$E4,$F4
+_tlm_title_text06:
+		.BYTE	$FF,$FF,$62,$72,$82,$92,$A2,$B2,$C2,$D2,$E2,$F2,$65,$75,$85,$95,$A5,$B5,$C5,$D5,$E5,$F5
+_tlm_title_text08:
+		.BYTE	$FF,$FF,$FF,$FF,$FF,$FF,$FF,"T","O","P",$FF,$FF,$FF,$FF,$FF,$FF,"0","0",$FF,$FF
+_tlm_title_text0E:
+		.BYTE	$FF,$FF,$FF,$FF,"P","U","S","H",$FF,"S","T","A","R","T",$FF,"B","U","T","T","O","N"
+_tlm_title_text11:
+; REGION, "HAL lab." changed in the US proto version, also in EU and JP versions spaces are $20 instead $FF
+;		.BYTE	$FF,$FF,$FF,"B","Y",$FF,"H","A","L",$FF,"A","M","E","R","I","C","A",",","I","N","C",".",$FF,$FF
+		.BYTE	$FF,$FF,$FF,$FF,"B","Y",$FF,"H","A","L",$FF,"L","A","B","O","R","A","T","O","R","Y",$FF,$FF,$FF	; NEW, spaces fixed to optimize
+; -
+
+; =============== S U B R O U T I N E ======n================================
 _tlm_lib_unpack:
 		PHA
 		JSR		_ppu_vblank_off
@@ -4763,32 +4876,32 @@ loc_AEF0:
 		CMP		#$C0
 		BEQ		.cmdC0
 .cmd80:
-		JSR		_hi_cmd_cnt_init			; cmd80, copy given number of bytes from
-		JSR		_hi_cmd_ppu_byte_read_reverse; ppu ram (offset following) to current
-		JSR		_hi_cmd_ppu_data_writeback	; ppu write offset in reverse order!
+		JSR		_hi_cmd_set_counter			; cmd80, copy given number of bytes from
+		JSR		_hi_cmd_ppu_data_read		; ppu ram (offset following) to current
+		JSR		_hi_cmd_ppu_data_write		; ppu write offset in reverse order!
 		INC		_var1
 		DEC		_ptr08+1
 		BPL		.cmd80
 		JMP		.unpack_loop
 .cmdA0:
-		JSR		_hi_cmd_cnt_init			; cmdA0, read ppu data already written,
-		JSR		_hi_cmd_ppu_byte_read_reverse; reverse bit order of all bytes read
-		JSR		_hi_cmd_invert_data			; then write it back in reverse order
-		JSR		_hi_cmd_ppu_data_writeback
+		JSR		_hi_cmd_set_counter			; cmdA0, read ppu data already written,
+		JSR		_hi_cmd_ppu_data_read		; reverse bit order of all bytes read
+		JSR		_hi_cmd_data_rotate			; then write it back in reverse order
+		JSR		_hi_cmd_ppu_data_write
 		INC		_var1
 		DEC		_ptr08+1
 		BPL		.cmdA0
 		JMP		.unpack_loop
 .cmdC0:
-		JSR		_hi_cmd_cnt_init			; cmdC0, read ppu data already written,
-		JSR		_hi_cmd_ppu_byte_read		; and write back in original order
-		JSR		_hi_cmd_ppu_data_writeback
+		JSR		_hi_cmd_set_counter			; cmdC0, read ppu data already written,
+		JSR		_hi_cmd_ppu_data_read_invert; and write back in original order
+		JSR		_hi_cmd_ppu_data_write
 		DEC		_ptr08+1
 		BPL		.cmdC0
 		JMP		.unpack_loop
 
 ; =============== S U B R O U T I N E ======n================================
-_hi_cmd_cnt_init:
+_hi_cmd_set_counter:
 		LDX		_ptr08
 		LDA		_ptr08+1
 		BEQ		loc_AF3C
@@ -4798,7 +4911,7 @@ loc_AF3C:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_hi_cmd_ppu_byte_read_reverse:
+_hi_cmd_ppu_data_read:
 		LDA		_var1
 		STA		_PPU_ADDR
 		LDA		_var0
@@ -4812,7 +4925,7 @@ loc_AF4C:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_hi_cmd_ppu_data_writeback:
+_hi_cmd_ppu_data_write:
 		LDX		_tmp1
 		LDA		_ptr0A+1
 		STA		_PPU_ADDR
@@ -4834,7 +4947,7 @@ locret_AF78:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_hi_cmd_invert_data:
+_hi_cmd_data_rotate:
 		LDX		_tmp1
 loc_AF7B:
 		LDA		_ppu_queue_data,X
@@ -4851,7 +4964,7 @@ loc_AF82:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_hi_cmd_ppu_byte_read:
+_hi_cmd_ppu_data_read_invert:
 		STX		_var4
 		DEC		_var4
 		LDA		_var0
@@ -4877,12 +4990,15 @@ loc_AFAF:
 
 _tlm0_title_screen:
 		INCBIN	"..\tlm\tlm0.pak"
+;		INCBIN	"..\tlm\tlm0_bfs.pak"	; NEED PACKER FIX
 _tlm1_score:
-		INCBIN	"..\tlm\tlm1.pak"
+		INCBIN	"..\tlm\tlm1_bfs.pak"
 _tlm2_busterselect:
 		INCBIN	"..\tlm\tlm2.pak"
+;		INCBIN	"..\tlm\tlm2_bfs.pak"	; NEED PACKER FIX
 _tlm3_game_over:
-		INCBIN	"..\tlm\tlm3.pak"
+;		INCBIN	"..\tlm\tlm3.pak"
+		INCBIN	"..\tlm\tlm3_bfs.pak"
 ;_tlm4_score_unused:
 ;		INCBIN	"..\tlm\tlm4.pak"
 ;_tlm5_kanji_unused:
@@ -4898,13 +5014,15 @@ _tlm6_copyrights:
 ; -
 _tlm7_staff:
 		INCBIN	"..\tlm\tlm7.pak"
+;		INCBIN	"..\tlm\tlm7_bfs.pak"	; NEED PACKER FIX
 _tlm8_HAL:
 ; REGION, different type of HAL logo for US region
 ;		INCBIN	"..\tlm\tlm8_halB.pak"
-		INCBIN	"..\tlm\tlm8_halA.pak"
+;		INCBIN	"..\tlm\tlm8_halA.pak"
+		INCBIN	"..\tlm\tlm8_halA_bfs.pak"
 ; -
 _tlm9_secret_menu:
-		INCBIN	"..\tlm\tlm9.pak"
+		INCBIN	"..\tlm\tlm9_bfs.pak"
 
 		SECTION_END	"TLM UNPACKER AND DATA"
 
