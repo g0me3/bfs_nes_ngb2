@@ -1,7 +1,7 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		0
+DEBUG			EQU		1
 OPTIMIZATION	EQU		1
 BUGFIXES		EQU		0
 TWO_PLAYER_MODE	EQU		0
@@ -189,6 +189,16 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 ;------------S-T-R-U-C-T-U-R-E-S----------------
 
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
+
+	MAC		SPR_LIB_START
+{1}		SET		.
+SPR_LIB	SET		.
+	ENDM
+
+	MAC		SPR_IDX
+{1}_idx	SET		[[.-SPR_LIB]>>1]
+	.WORD	{1}
+	ENDM
 
 	MAC	MUS
 {1}_idx	SET	[.-_music_lib]>>1

@@ -385,6 +385,7 @@ _scr_common_pause_handler:
 #if DEBUG==1
 		NJSR			_nsub_ingame_select_input_test	; presumably stage complete test were here
 		SBCC			_skip_stage_select
+		SJSR			_ssub_room_exit_pal_fade_out_ex
 		SSTOP
 _skip_stage_select:
 #endif
@@ -5076,6 +5077,11 @@ _mac_door0F_close:
 		SJMP_SW			$01
 		SCASE			_money_bag_prize
 
+; NOTE: here were unreferenced sprites to draw rotating coin object.
+; judging from the starting section of this script there may be a
+; different modes for this object with either spitting coins or
+; something... or else this initializer just redundant here
+
 ; =============== S C R I P T ==========================s====================
 _money_bag_prize:
 		SARG_SET		SARG0,$00
@@ -5116,47 +5122,46 @@ loc_1698C:
 
 		SECTION_START
 
-_spr_nlib01:
-		.WORD	_spr_nlib01_00
-		.WORD	_spr_nlib01_01
-		.WORD	_spr_nlib01_02
-		.WORD	_spr_nlib01_03
-		.WORD	_spr_nlib01_04
-		.WORD	_spr_nlib01_05
-		.WORD	_spr_nlib01_06
-		.WORD	_spr_nlib01_07
-		.WORD	_spr_nlib01_08
-		.WORD	_spr_nlib01_09
-		.WORD	_spr_nlib01_0A
-		.WORD	_spr_nlib01_0B
-		.WORD	_spr_nlib01_0C
-		.WORD	_spr_nlib01_0D
-		.WORD	_spr_nlib01_0E
-		.WORD	_spr_nlib01_0F
-		.WORD	_spr_nlib01_10
-		.WORD	_spr_nlib01_11
-		.WORD	_spr_nlib01_12
-		.WORD	_spr_nlib01_13
-		.WORD	_spr_nlib01_14
-		.WORD	_spr_nlib01_15
-		.WORD	_spr_nlib01_16
-		.WORD	_spr_nlib01_17
-		.WORD	_spr_nlib01_18
-		.WORD	_spr_nlib01_19
-		.WORD	_spr_nlib01_1A
+_spr_libA01:
+		.WORD	_sprA01_00	; doors open anims
+		.WORD	_sprA01_01
+		.WORD	_sprA01_02
+		.WORD	_sprA01_03
+		.WORD	_sprA01_04
+		.WORD	_sprA01_05
+		.WORD	_sprA01_06
+		.WORD	_sprA01_07
+		.WORD	_sprA01_08
+		.WORD	_sprA01_09
+		.WORD	_sprA01_0A
+		.WORD	_sprA01_0B
+		.WORD	_sprA01_0C
+		.WORD	_sprA01_0D
+		.WORD	_sprA01_0E
+		.WORD	_sprA01_0F
+		.WORD	_sprA01_10
+		.WORD	_sprA01_11
+		.WORD	_sprA01_12
+		.WORD	_sprA01_13
+		.WORD	_sprA01_14
+		.WORD	_sprA01_15	; pause mode sprites
+		.WORD	_sprA01_16
+		.WORD	_sprA01_17	; stage complete sprites
+		.WORD	_sprA01_18
+		.WORD	_sprA01_19	; money bag prize
+		.WORD	_sprA01_1A
 
-; doors open anims
-_spr_nlib01_00:
+_sprA01_00:
 		.BYTE	$04
 		.BYTE	$F0,$31,$43,$08
 		.BYTE	$00,$33,$43,$08
 		.BYTE	$00,$33,$03,$F0
 		.BYTE	$F0,$31,$03,$F0
-_spr_nlib01_01:
+_sprA01_01:
 		.BYTE	$02
 		.BYTE	$F0,$EF,$83,$00
 		.BYTE	$00,$EF,$03,$00
-_spr_nlib01_02:
+_sprA01_02:
 		.BYTE	$06
 		.BYTE	$0B,$F9,$43,$00
 		.BYTE	$0B,$F9,$43,$F8
@@ -5164,57 +5169,57 @@ _spr_nlib01_02:
 		.BYTE	$F8,$FB,$03,$00
 		.BYTE	$F8,$EB,$03,$F8
 		.BYTE	$F8,$DB,$03,$F0
-_spr_nlib01_03:
+_sprA01_03:
 		.BYTE	$04
 		.BYTE	$0B,$F9,$03,$F8
 		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F8,$DD,$03,$F8
 		.BYTE	$F8,$CD,$03,$F0
-_spr_nlib01_04:
+_sprA01_04:
 		.BYTE	$02
 		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F4,$CB,$03,$F1
-_spr_nlib01_05:
+_sprA01_05:
 		.BYTE	$01
 		.BYTE	$00,$D9,$03,$FF
-_spr_nlib01_06:
+_sprA01_06:
 		.BYTE	$01
 		.BYTE	$00,$E9,$03,$FF
-_spr_nlib01_07:
+_sprA01_07:
 		.BYTE	$02
 		.BYTE	$F0,$AF,$40,$F8
 		.BYTE	$00,$8B,$40,$F8
-_spr_nlib01_08:
+_sprA01_08:
 		.BYTE	$04
 		.BYTE	$00,$43,$02,$08
 		.BYTE	$F0,$41,$02,$08
 		.BYTE	$F0,$41,$42,$F0
 		.BYTE	$00,$43,$42,$F0
-_spr_nlib01_09:
+_sprA01_09:
 		.BYTE	$04
 		.BYTE	$00,$23,$02,$08
 		.BYTE	$F0,$21,$02,$08
 		.BYTE	$00,$33,$02,$F0
 		.BYTE	$F0,$31,$02,$F0
-_spr_nlib01_0A:
+_sprA01_0A:
 		.BYTE	$04
 		.BYTE	$00,$CF,$00,$08
 		.BYTE	$00,$CF,$00,$00
 		.BYTE	$00,$CF,$00,$F0
 		.BYTE	$00,$CF,$00,$F8
-_spr_nlib01_0B:
+_sprA01_0B:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$00
 		.BYTE	$00,$DF,$00,$00
-_spr_nlib01_0C:
+_sprA01_0C:
 		.BYTE	$02
 		.BYTE	$00,$CF,$00,$08
 		.BYTE	$00,$CF,$00,$00
-_spr_nlib01_0D:
+_sprA01_0D:
 		.BYTE	$02
 		.BYTE	$F0,$DD,$00,$08
 		.BYTE	$00,$DF,$00,$08
-_spr_nlib01_0E:
+_sprA01_0E:
 		.BYTE	$08
 		.BYTE	$F0,$7D,$00,$08
 		.BYTE	$F0,$7D,$00,$00
@@ -5224,35 +5229,34 @@ _spr_nlib01_0E:
 		.BYTE	$00,$7F,$00,$08
 		.BYTE	$00,$7F,$00,$00
 		.BYTE	$00,$7F,$00,$F8
-_spr_nlib01_0F:
+_sprA01_0F:
 		.BYTE	$04
 		.BYTE	$00,$6F,$00,$08
 		.BYTE	$00,$6F,$00,$00
 		.BYTE	$00,$6F,$00,$F8
 		.BYTE	$00,$6F,$00,$F0
-_spr_nlib01_10:
+_sprA01_10:
 		.BYTE	$04
 		.BYTE	$00,$7D,$00,$08
 		.BYTE	$00,$7D,$00,$00
 		.BYTE	$00,$7D,$00,$F8
 		.BYTE	$00,$7D,$00,$F0
-_spr_nlib01_11:
+_sprA01_11:
 		.BYTE	$02
 		.BYTE	$F4,$5F,$00,$00
 		.BYTE	$00,$5F,$00,$00
-_spr_nlib01_12:
+_sprA01_12:
 		.BYTE	$02
 		.BYTE	$F8,$5D,$00,$00
 		.BYTE	$00,$5D,$00,$00
-_spr_nlib01_13:
+_sprA01_13:
 		.BYTE	$02
 		.BYTE	$FC,$5D,$00,$00
 		.BYTE	$00,$5D,$00,$00
-_spr_nlib01_14:
+_sprA01_14:
 		.BYTE	$01
 		.BYTE	$00,$6D,$00,$00
-; pause mode sprites
-_spr_nlib01_15:
+_sprA01_15:
 		.BYTE	$07
 		.BYTE	$F0,$3B,$22,$00
 		.BYTE	$00,$3D,$22,$08
@@ -5261,7 +5265,7 @@ _spr_nlib01_15:
 		.BYTE	$00,$1F,$22,$F8
 		.BYTE	$F0,$0D,$22,$F0
 		.BYTE	$F0,$1D,$22,$F8
-_spr_nlib01_16:
+_sprA01_16:
 		.BYTE	$07
 		.BYTE	$00,$3D,$62,$F0
 		.BYTE	$00,$3F,$62,$F8
@@ -5270,8 +5274,7 @@ _spr_nlib01_16:
 		.BYTE	$00,$0F,$62,$08
 		.BYTE	$F0,$0D,$62,$08
 		.BYTE	$F0,$1D,$62,$00
-; stage complete sprites
-_spr_nlib01_17:
+_sprA01_17:
 		.BYTE	$10
 		.BYTE	$00,$8E,$03,$18
 		.BYTE	$00,$8C,$03,$10
@@ -5289,7 +5292,7 @@ _spr_nlib01_17:
 		.BYTE	$F0,$6C,$03,$F0
 		.BYTE	$F0,$6E,$03,$F8
 		.BYTE	$F0,$70,$03,$00
-_spr_nlib01_18:
+_sprA01_18:
 		.BYTE	$10
 		.BYTE	$00,$8F,$03,$18
 		.BYTE	$00,$8D,$03,$10
@@ -5307,32 +5310,27 @@ _spr_nlib01_18:
 		.BYTE	$F0,$6D,$03,$F0
 		.BYTE	$F0,$6F,$03,$F8
 		.BYTE	$F0,$71,$03,$00
-; NOTE: unreferenced sprites below intended to draw rotating coin
-; judging from the starting section of this script there may be a different
-; mode for this object with either spitting coins or something...
-; or else this initializer just redundant here
-;_spr_unref:
-;		.BYTE	$02
-;		.BYTE	$F8,$BB,$00,$00
-;		.BYTE	$F8,$AB,$00,$F8
-;_spr_unref_0:
-;		.BYTE	$01
-;		.BYTE	$F8,$BF,$00,$FC
-;_spr_unref_1:
-;		.BYTE	$01
-;		.BYTE	$F8,$AF,$00,$FC
-;_spr_unref_2:
-;		.BYTE	$01
-;		.BYTE	$F8,$BF,$40,$FC
-; money bag prize
-_spr_nlib01_19:
+_sprA01_19:
 		.BYTE	$02
 		.BYTE	$F8,$BD,$00,$00
 		.BYTE	$F8,$AD,$00,$F8
-_spr_nlib01_1A:
+_sprA01_1A:
 		.BYTE	$02
 		.BYTE	$F8,$BD,$01,$00
 		.BYTE	$F8,$AD,$01,$F8
+_spr_unref_0:
+		.BYTE	$01
+		.BYTE	$F8,$BF,$00,$FC
+_spr_unref_1:
+		.BYTE	$01
+		.BYTE	$F8,$AF,$00,$FC
+_spr_unref_2:
+		.BYTE	$01
+		.BYTE	$F8,$BF,$40,$FC
+_spr_unref_3:
+		.BYTE	$02
+		.BYTE	$F8,$BB,$00,$00
+		.BYTE	$F8,$AB,$00,$F8
 
 		SECTION_END	"PRG1 SPRITES DATA"
 
