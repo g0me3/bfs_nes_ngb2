@@ -142,14 +142,14 @@ _MAIN_ENTRY:
 		LDA		#$00
 		JSR		_event_thread_start			; load main title script
 		LDA		#$00
-		STA		_scr_trds_pause_mode		; now starting the simple version of
-		STA		_scr_trds_out_of_screen_test; threads manager
+		STA		_pause_mode_flag			; now starting the simple version of
+		STA		_out_of_screen_test_flag	; threads manager
 loc_600AF:
 		JSR		_wait_for_nmi				; wait for nmi
 		JSR		_spr_shuffle_update			; prepare sprites shuffle
 		JSR		_threads_manager			; execute threads
 		JSR		_spr_finish					; all sprites should be done now, finalize
-		LDA		_scr_trds_idx				; repeat until main thread is stopped
+		LDA		_trds_obj_idx				; repeat until main thread is stopped
 		BPL		loc_600AF
 _GAME_ENTRY:
 		LDX		_difficulty					; this means we ready to setup game
@@ -186,7 +186,7 @@ _MAIN_GAME_LOOP:
 		LDA		_scores_1st_extend+1
 		STA		_scores_to_next_life+1
 		LDA		#$01						; out-of-screen check activate
-		STA		_scr_trds_out_of_screen_test
+		STA		_out_of_screen_test_flag
 		LDA		#$04
 		SEC
 		SBC		_difficulty
@@ -210,7 +210,7 @@ loc_60123:
 		JSR		_spr_finish					; finalize sprites when done
 		JSR		_obj_exit_arrow_position_adjust	; also extra object arrow test here
 		JSR		_obj_garbage_collector		; special garbage collector
-		LDA		_scr_trds_idx				; if main thread stopped, then stage completed
+		LDA		_trds_obj_idx				; if main thread stopped, then stage completed
 		BPL		loc_60123
 		LDA		_game_flags					; also to complete stage you nedd $80 value here
 		BPL		loc_6015A					; if not, just restart the game from the beginnging
@@ -251,29 +251,29 @@ _lvl_scripts_list:
 _obj_garbage_collector:
 		LDX		#$06
 loc_60168:
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_60193
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		BPL		loc_60193
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_x
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		SBC		_ppu_scroll_pos_x+1
 		BNE		loc_6018E
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_y
 		BCS		loc_60187
 		SBC		#$0F
 		CLC
 loc_60187:
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		SBC		_ppu_scroll_pos_y+1
 		BEQ		loc_60193
 loc_6018E:
 		LDA		#$FF
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 loc_60193:
 		INX
 		CPX		#$0E
@@ -308,7 +308,7 @@ _obj_exit_arrow_position_adjust:
 		STA		_var1
 		LDX		#$06
 loc_601B1:
-		LDA		_scr_trds_idx,X				; look for active objects
+		LDA		_trds_obj_idx,X				; look for active objects
 		BMI		loc_601C4
 		CMP		#_scr13_slow_moving_slime_idx	; all above are enemies,
 		BCS		loc_601C2					; increment enemies counter
@@ -329,10 +329,10 @@ loc_601C4:
 		LDA		_ppu_scroll_pos_x			; if arrow deployed, calculate current
 		CLC									; coordinates for screen center
 		ADC		#$80						; and set the arrow position there
-		STA		_scr_trds_x_pos_lo,X		; it is always positioned in the center
+		STA		_obj_x_pos_lo,X				; it is always positioned in the center
 		LDA		_ppu_scroll_pos_x+1
 		ADC		#$00
-		STA		_scr_trds_x_pos_hi,X		; so this method allows to show an arrow
+		STA		_obj_x_pos_hi,X				; so this method allows to show an arrow
 		LDA		_ppu_scroll_pos_y			; object in a particular cases, despite
 		CLC									; it's always active in room...
 		ADC		#$78
@@ -343,10 +343,10 @@ loc_601EA:
 		ADC		#$0F
 		SEC
 loc_601ED:
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		_ppu_scroll_pos_y+1
 		ADC		#$00
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 locret_601F6:
 		RTS
 
@@ -366,8 +366,8 @@ _sloc_601FA:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_exit_arrow_off_test:
-		LDX		_scr_cur_trd_idx			; the arrow sarg2 parameter contains
-		LDA		_scr_trds_args2,X			; an index of next room where the
+		LDX		_cur_trd_slot				; the arrow sarg2 parameter contains
+		LDA		_trds_args2,X				; an index of next room where the
 		CMP		_cur_lvl_room_idx			; arrow should disappear, test it here
 		BEQ		loc_6020F					; and off current thread if test passed
 		RTS
@@ -386,7 +386,7 @@ _scr08_beamer_handler:
 ; =============== S C R I P T ==========================s====================
 _scr_beamer_reinit:
 		NJSR			_nsub_mcmp						; special test for additional handler.
-			NARGW		_scr_trds_idx					; after setting the control routines
+			NARGW		_trds_obj_idx					; after setting the control routines
 			NARGB		$04								; this thread is suspended
 		SBCC			_sloc_6029B						; but object still active and controlled
 		NBG_HNDL_SET	_nbgsub_beamer_controlB			; purely by native subroutine
@@ -559,17 +559,17 @@ loc_6034B:
 ; player's speed if they walking on a particular meta tiles.
 ;
 _lvl4_speed_modifier_calc:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_y_pos_lo,X		; calculate currently hovered meta pos
+		LDX		_cur_trd_slot
+		LDA		_obj_y_pos_lo,X				; calculate currently hovered meta pos
 		CLC
 		ADC		#$04
 		TAY
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		ADC		#$00
 		STA		_tmp_var1
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		STA		_tmp_var0
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		TAX
 		JSR		_far_room_macro_block_read	; read room data, test if meta is in
 		BEQ		loc_60388					; needed range ($01-$0C)
@@ -610,8 +610,8 @@ _nsub_beamer_spr_base_reset:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beamer_decrement_players_lives:
 #if TWO_PLAYER_MODE==1
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args2,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args2,X
 		TAX
 		DEC		_players_lives,X
 #else
@@ -625,8 +625,8 @@ _nsub_beamer_decrement_players_lives:
 		RTS
 loc_603B7:
 #if TWO_PLAYER_MODE==1
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args2,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args2,X
 		TAX
 		LDA		#$00						; otherwise, clear hit flag
 		STA		_players_hit_flag,X
@@ -643,8 +643,8 @@ loc_603B7:
 
 ; =============== S U B R O U T I N E ======n================================
 _beamer_control_move_test:
-		LDA		_scr_trds_x_pos_lo+2		; these objects moving only by 8
-		ORA		_scr_trds_y_pos_lo+2		; pixels at once, when start to
+		LDA		_obj_x_pos_lo+2				; these objects moving only by 8
+		ORA		_obj_y_pos_lo+2				; pixels at once, when start to
 		AND		#$07						; move, you couldn't control it unless
 		BNE		.beamer_speed_calc			; it reaches another gap
 		LDA		_pad0_held
@@ -663,8 +663,8 @@ _beamer_control_move_test:
 		BEQ		.beamer_exit
 		BNE		.beamer_step
 .beamer_next_step:
-		LDA		_scr_trds_x_pos_lo+2		; while doing other steps, also test
-		ORA		_scr_trds_y_pos_lo+2		; controls only at 8x8 pixels grid
+		LDA		_obj_x_pos_lo+2				; while doing other steps, also test
+		ORA		_obj_y_pos_lo+2				; controls only at 8x8 pixels grid
 		AND		#$07
 		BNE		.beamer_step
 		LDA		_pad0_held
@@ -676,8 +676,8 @@ _beamer_control_move_test:
 		BCC		.beamer_step
 .beamer_speed_reset:
 		LDA		#$80
-		STA		_scr_trds_x_center+2
-		STA		_scr_trds_y_center+2
+		STA		_obj_x_center+2
+		STA		_obj_y_center+2
 		BNE		.beamer_exit
 .beamer_step:
 		LDA		_beamer_direction_idx		; beamer direction determined only by
@@ -922,8 +922,8 @@ loc_604CA:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg1_direction_extract:
-		LDX		_scr_cur_trd_idx			; get the direction bits of the obj
-		LDA		_scr_trds_args1,X			; orientation value
+		LDX		_cur_trd_slot				; get the direction bits of the obj
+		LDA		_trds_args1,X				; orientation value
 		ASL
 		ROL
 		ROL
@@ -932,11 +932,11 @@ _nsub_sarg1_direction_extract:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg1_direction_update:
 		PHA									; put back orientation value
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		LSR
 		ROR
 		ROR
-		STA		_scr_trds_args1,Y
+		STA		_trds_args1,Y
 		PLA
 		RTS
 
@@ -991,38 +991,38 @@ byte_60508:
 _players_speed_calc:
 		STX		_var0
 		STY		_var1
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		TAY
 		BNE		loc_60523
-		LDA		_scr_trds_y_center,X
+		LDA		_obj_y_center,X
 		SEC
 		SBC		_var0
-		STA		_scr_trds_y_center,X
+		STA		_obj_y_center,X
 		BCS		loc_60550
 		BCC		loc_6054E
 loc_60523:
 		DEY
 		BNE		loc_60533
-		LDA		_scr_trds_x_center,X
+		LDA		_obj_x_center,X
 		CLC
 		ADC		_var0
-		STA		_scr_trds_x_center,X
+		STA		_obj_x_center,X
 		BCC		loc_60550
 		BCS		loc_6054E
 loc_60533:
 		DEY
 		BNE		loc_60543
-		LDA		_scr_trds_y_center,X
+		LDA		_obj_y_center,X
 		CLC
 		ADC		_var0
-		STA		_scr_trds_y_center,X
+		STA		_obj_y_center,X
 		BCC		loc_60550
 		BCS		loc_6054E
 loc_60543:
-		LDA		_scr_trds_x_center,X
+		LDA		_obj_x_center,X
 		SEC
 		SBC		_var0
-		STA		_scr_trds_x_center,X
+		STA		_obj_x_center,X
 		BCS		loc_60550
 loc_6054E:
 		INC		_var1
@@ -1037,47 +1037,47 @@ loc_60550:
 ;
 _players_move_step:
 		STA		_tmp0
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		DEC		_tmp0
 		BPL		loc_6056A
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		SEC
 		SBC		#$01
 		BCS		loc_60567
 		SBC		#$0F
-		DEC		_scr_trds_y_pos_hi,X
+		DEC		_obj_y_pos_hi,X
 loc_60567:
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		RTS
 loc_6056A:
 		DEC		_tmp0
 		BPL		loc_60576
-		INC		_scr_trds_x_pos_lo,X
+		INC		_obj_x_pos_lo,X
 		BNE		locret_60575
-		INC		_scr_trds_x_pos_hi,X
+		INC		_obj_x_pos_hi,X
 locret_60575:
 		RTS
 loc_60576:
 		DEC		_tmp0
 		BPL		loc_6058B
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		CLC
 		ADC		#$01
 		CMP		#$F0
 		BCC		loc_60588
 		ADC		#$0F
-		INC		_scr_trds_y_pos_hi,X
+		INC		_obj_y_pos_hi,X
 loc_60588:
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		RTS
 loc_6058B:
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		SEC
 		SBC		#$01
 		BCS		loc_60595
-		DEC		_scr_trds_x_pos_hi,X
+		DEC		_obj_x_pos_hi,X
 loc_60595:
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		RTS
 
 #if TWO_PLAYER_MODE==1
@@ -1086,8 +1086,8 @@ _beamer_direction_calc:
 _catcher_direction_calc:
 		TYA
 		PHA
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_args2,X
+		LDX		_cur_trd_slot
+		LDY		_trds_args2,X
 		LDA		_pad0_held,Y
 		LSR
 		BCC		loc_605AC
@@ -1108,7 +1108,7 @@ loc_605B6:
 		BCC		locret_605C6
 		LDA		#$00
 loc_605BE:
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 		ASL
 		ROL
 		ROL
@@ -1160,7 +1160,7 @@ loc_605B6:
 		BEQ		locret_605C6
 		LDA		#$C0
 loc_605BE:
-		STA		_scr_trds_args1+2
+		STA		_trds_args1+2
 		ASL
 		ROL
 		ROL
@@ -1171,23 +1171,23 @@ locret_605C6:
 
 ; =============== S U B R O U T I N E ======n================================
 _beamer_spr_selector:
-		LDA		_scr_trds_idx+3				; if beam is deployed
+		LDA		_trds_obj_idx+3				; if beam is deployed
 		BMI		loc_605D5					; adjust the beamer sprite and direction
-		LDA		_scr_trds_args0+3
+		LDA		_trds_args0+3
 		BMI		loc_605D5
 		JSR		_obj_to_obj_vector_calc
-		STA		_scr_trds_args1+2
+		STA		_trds_args1+2
 loc_605D5:
 		LDA		_pad0_held
 		AND		#$0F
 		BEQ		loc_605DD
-		INC		_scr_trds_args0+2
+		INC		_trds_args0+2
 loc_605DD:
 		LDA		_players_inv_timer			; otherwise just select either empty
 		LSR									; sprite if blinked or actual beamer sprite
 		BCC		_nsub_beamer_spr_idx_calc	; beamer object will be displayed as
 		LDA		#$FF						; regular objects after thread manager finished
-		STA		_scr_trds_spr_idx+2			; with all other threads
+		STA		_obj_spr_idx+2				; with all other threads
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -1199,8 +1199,8 @@ _nsub_beamer_spr_idx_calc:
 ; =============== S U B R O U T I N E ======n================================
 _players_spr_idx_calc:
 		STA		_tmp0
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args1,X
 		CLC
 		ADC		#$20
 		AND		#$C0
@@ -1209,13 +1209,13 @@ _players_spr_idx_calc:
 		LSR
 		LSR
 		STA		_var0
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		AND		#$0C
 		LSR
 		LSR
 		ADC		_var0
 		ADC		_tmp0
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -1223,7 +1223,7 @@ _beamer_control_beam_test:
 		LDA		_pad0_pressed
 		AND		_control_beam_button_code	; reploy beam object if beam button
 		BEQ		locret_60622				; pressed, also if there is no
-		LDA		_scr_trds_idx+3				; beam object already deployed
+		LDA		_trds_obj_idx+3				; beam object already deployed
 		BPL		locret_60622
 		LDA		#$03						; slot start (always here!)
 		STA		_var4
@@ -1237,16 +1237,16 @@ locret_60622:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beamer_hit_spr_select:
 #if TWO_PLAYER_MODE==1
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args2,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args2,X
 		TAX
 		LDA		_beamer_spr_base,X
 #else
 		LDA		_beamer_spr_base
 #endif
 		STA		_tmp0
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args1,X
 		CLC
 		ADC		#$20
 		AND		#$C0
@@ -1255,7 +1255,7 @@ _nsub_beamer_hit_spr_select:
 		LSR
 		LSR
 		ADC		_tmp0
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -1296,19 +1296,19 @@ loc_60CBB:
 		LDA		#_snd00_idx					; in both cases restart beam sound
 		JSR		_far_prg6_apu_snd_load
 loc_60CC0:
-		LDX		_scr_trds_args0+3			; fetch beamed object idx
+		LDX		_trds_args0+3				; fetch beamed object idx
 		BMI		locret_60CCF
-		LDA		_scr_trds_idx,X				; check if it still active
+		LDA		_trds_obj_idx,X				; check if it still active
 		BMI		loc_60CDD
-		LDA		_scr_trds_args0,X			; get its beamed state also
+		LDA		_trds_args0,X				; get its beamed state also
 		BMI		loc_60CDD					; when if 00 or FF, stop beam
 		BEQ		loc_60CDD
 locret_60CCF:
 		RTS									; otherwise, do nothing
 loc_60CD0:
-		LDX		_scr_trds_args0+3			; same set of test for case when you
+		LDX		_trds_args0+3				; same set of test for case when you
 		BMI		loc_60CDD					; release buttons,
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		BMI		loc_60CDD
 		BEQ		loc_60CDD
 		JSR		_nsub_obj_to_beam_release_test	; if release, then release lol
@@ -1320,11 +1320,11 @@ _nsub_beam_idle_draw:
 		LDX		#$02						; when you just fire the beam in air
 		JSR		_obj_screen_pos_calc		; its sprite is plain and simple
 		STY		_tmp2
-		LDA		_scr_trds_args1+2			; fetch beamer position and direction
+		LDA		_trds_args1+2				; fetch beamer position and direction
 		CLC
 		ADC		#$20
 		AND		#$C0
-		STA		_scr_trds_args1+3			; update object parameters
+		STA		_trds_args1+3				; update object parameters
 		ASL
 		ROL
 		ROL
@@ -1343,7 +1343,7 @@ _nsub_beam_idle_draw:
 		LDA		_nmi_counter				; here we calculate time based
 		AND		#$07						; animation frame for beam
 		STA		_tmp0
-		LDA		_scr_trds_args1+3
+		LDA		_trds_args1+3
 		AND		#$40
 		LSR
 		LSR
@@ -1351,7 +1351,7 @@ _nsub_beam_idle_draw:
 		ORA		_tmp0
 		CLC
 		ADC		#$00
-		STA		_scr_trds_spr_idx+3			; finally set sprite idx
+		STA		_obj_spr_idx+3				; finally set sprite idx
 		RTS
 byte_60D1F:
 		.BYTE	$00,$1C,$00,$E4
@@ -1360,7 +1360,7 @@ byte_60D23:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beam_active_draw:
-		LDX		_scr_trds_args0+3			; active beam much harder, it's flexible
+		LDX		_trds_args0+3				; active beam much harder, it's flexible
 		JSR		_obj_screen_pos_calc		; get the beamed object pos
 		BCC		loc_60D2F
 locret_60D2E:
@@ -1375,7 +1375,7 @@ loc_60D2F:
 		LDX		#$02
 		JSR		_obj_screen_pos_calc		; get the beamer position then
 		STX		_tmp1
-		LDA		_scr_trds_args1+2
+		LDA		_trds_args1+2
 		CLC
 		ADC		#$20
 		AND		#$C0
@@ -1385,77 +1385,77 @@ loc_60D2F:
 		TAX
 		LDA		_tmp1
 		ADC		byte_60E67,X
-		STA		_scr_trds_x_pos_lo+3		; lots of vector/calcs follows
+		STA		_obj_x_pos_lo+3				; lots of vector/calcs follows
 		STA		_var2						; to calculate current beam sprite
 		TYA
 		CLC
 		ADC		byte_60E6B,X
-		STA		_scr_trds_y_pos_lo+3
+		STA		_obj_y_pos_lo+3
 		STA		_var3
 		JSR		_point_to_point_vector_calc
 		STA		_var7
 		LDA		#$00
-		STA		_scr_trds_x_pos_hi+3
-		STA		_scr_trds_y_pos_hi+3
+		STA		_obj_x_pos_hi+3
+		STA		_obj_y_pos_hi+3
 		PLA
 		STA		_tmp0
 		PLA
 		SEC
-		SBC		_scr_trds_x_pos_lo+3
+		SBC		_obj_x_pos_lo+3
 		BCS		loc_60D78
-		DEC		_scr_trds_x_pos_hi+3
+		DEC		_obj_x_pos_hi+3
 		EOR		#$FF
 		ADC		#$01
 loc_60D78:
 		CMP		#$50
 		BCS		locret_60D2E
-		STA		_scr_trds_x_move_delta+3
+		STA		_obj_x_delta+3
 		LDA		_tmp0
 		SEC
-		SBC		_scr_trds_y_pos_lo+3
+		SBC		_obj_y_pos_lo+3
 		BCS		loc_60D8D
-		DEC		_scr_trds_y_pos_hi+3
+		DEC		_obj_y_pos_hi+3
 		EOR		#$FF
 		ADC		#$01
 loc_60D8D:
 		CMP		#$50
 		BCS		locret_60D2E
-		STA		_scr_trds_y_move_delta+3
-		LDX		_scr_trds_x_move_delta+3
+		STA		_obj_y_delta+3
+		LDX		_obj_x_delta+3
 		LDA		#$00
 		LDY		#$05
 		JSR		_div16
-		STA		_scr_trds_x_move_speed+3
-		STX		_scr_trds_x_move_delta+3
-		LDA		_scr_trds_x_pos_hi+3
+		STA		_obj_x_speed+3
+		STX		_obj_x_delta+3
+		LDA		_obj_x_pos_hi+3
 		BPL		loc_60DBE
-		LDA		_scr_trds_x_move_speed+3
+		LDA		_obj_x_speed+3
 		EOR		#$FF
 		CLC
 		ADC		#$01
-		STA		_scr_trds_x_move_speed+3
-		LDA		_scr_trds_x_move_delta+3
+		STA		_obj_x_speed+3
+		LDA		_obj_x_delta+3
 		EOR		#$FF
 		ADC		#$00
-		STA		_scr_trds_x_move_delta+3
+		STA		_obj_x_delta+3
 loc_60DBE:
-		LDX		_scr_trds_y_move_delta+3
+		LDX		_obj_y_delta+3
 		LDA		#$00
 		LDY		#$05
 		JSR		_div16
-		STA		_scr_trds_y_move_speed+3
-		STX		_scr_trds_y_move_delta+3
-		LDA		_scr_trds_y_pos_hi+3
+		STA		_obj_y_speed+3
+		STX		_obj_y_delta+3
+		LDA		_obj_y_pos_hi+3
 		BPL		loc_60DE8
-		LDA		_scr_trds_y_move_speed+3
+		LDA		_obj_y_speed+3
 		EOR		#$FF
 		CLC
 		ADC		#$01
-		STA		_scr_trds_y_move_speed+3
-		LDA		_scr_trds_y_move_delta+3
+		STA		_obj_y_speed+3
+		LDA		_obj_y_delta+3
 		EOR		#$FF
 		ADC		#$00
-		STA		_scr_trds_y_move_delta+3
+		STA		_obj_y_delta+3
 loc_60DE8:
 		LDA		_nmi_counter
 		AND		#$01
@@ -1474,8 +1474,8 @@ loc_60DE8:
 		ASL
 		TAX
 		LDA		#$80
-		STA		_scr_trds_x_center+3
-		STA		_scr_trds_y_center+3
+		STA		_obj_x_center+3
+		STA		_obj_y_center+3
 		LDA		#$05						; when calcs are done, draw 5 segments
 		STA		_var1						; of the beam manually, using raw spr
 		LDY		_spr_buf_pos				; buffer access
@@ -1490,7 +1490,7 @@ loc_60E12:
 		LDA		#$00
 		STA		_ppu_spr_buf+3,Y
 ; -
-		LDA		_scr_trds_y_pos_lo+3
+		LDA		_obj_y_pos_lo+3
 		CLC
 		ADC		byte_60E71,X
 		STA		_ppu_spr_buf,Y
@@ -1501,26 +1501,26 @@ loc_60E12:
 		LDA		byte_60E71+2,X
 		STA		_ppu_spr_buf,Y
 		INY
-		LDA		_scr_trds_x_pos_lo+3
+		LDA		_obj_x_pos_lo+3
 		CLC
 		ADC		byte_60E71+3,X
 		STA		_ppu_spr_buf,Y
 		INY
 loc_60E3D:
-		LDA		_scr_trds_x_center+3
+		LDA		_obj_x_center+3
 		CLC
-		ADC		_scr_trds_x_move_speed+3
-		STA		_scr_trds_x_center+3
-		LDA		_scr_trds_x_pos_lo+3
-		ADC		_scr_trds_x_move_delta+3
-		STA		_scr_trds_x_pos_lo+3
-		LDA		_scr_trds_y_center+3
+		ADC		_obj_x_speed+3
+		STA		_obj_x_center+3
+		LDA		_obj_x_pos_lo+3
+		ADC		_obj_x_delta+3
+		STA		_obj_x_pos_lo+3
+		LDA		_obj_y_center+3
 		CLC
-		ADC		_scr_trds_y_move_speed+3
-		STA		_scr_trds_y_center+3
-		LDA		_scr_trds_y_pos_lo+3
-		ADC		_scr_trds_y_move_delta+3
-		STA		_scr_trds_y_pos_lo+3
+		ADC		_obj_y_speed+3
+		STA		_obj_y_center+3
+		LDA		_obj_y_pos_lo+3
+		ADC		_obj_y_delta+3
+		STA		_obj_y_pos_lo+3
 		DEC		_var1
 		BNE		loc_60E12
 		STY		_spr_buf_pos
@@ -1568,16 +1568,16 @@ byte_60E71:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_to_beam_release_test:
-		LDX		_scr_trds_args0+3			; get the beamed object idx
-		LDA		_scr_trds_args0,X			; test if it is still not catched
+		LDX		_trds_args0+3				; get the beamed object idx
+		LDA		_trds_args0,X				; test if it is still not catched
 		BMI		locret_60F02
 		CMP		#$02
 		BNE		loc_60EFE					; also test if it stunned by beam
-		INC		_scr_trds_args0,X
+		INC		_trds_args0,X
 		RTS
 loc_60EFE:
 		LDA		#$00
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 locret_60F02:
 		RTS
 
@@ -1646,9 +1646,9 @@ loc_60317:
 		DEC		_players_inv_timer+1
 loc_6031F:
 #endif
-		LDA		_scr_trds_idx+5				; do nothing, while catch is deployed
+		LDA		_trds_obj_idx+5				; do nothing, while catch is deployed
 		BPL		locret_6101E
-		LDA		_scr_trds_idx				; also additionally test if current level is 4
+		LDA		_trds_obj_idx				; also additionally test if current level is 4
 		CMP		#$04
 		BNE		loc_61015
 		JSR		_lvl4_catcher_speed_modifier_calc
@@ -1662,8 +1662,8 @@ locret_6101E:
 #if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_move_test:
-		LDA		_scr_trds_x_pos_lo+4
-		ORA		_scr_trds_y_pos_lo+4
+		LDA		_obj_x_pos_lo+4
+		ORA		_obj_y_pos_lo+4
 		AND		#$07
 		BNE		.catcher_speed_calc
 		LDA		_pad1_held
@@ -1682,8 +1682,8 @@ _catcher_control_move_test:
 		BEQ		.catcher_exit
 		BNE		.catcher_step
 .catcher_next_step:
-		LDA		_scr_trds_x_pos_lo+4
-		ORA		_scr_trds_y_pos_lo+4
+		LDA		_obj_x_pos_lo+4
+		ORA		_obj_y_pos_lo+4
 		AND		#$07
 		BNE		.catcher_step
 		LDA		_pad1_held
@@ -1695,8 +1695,8 @@ _catcher_control_move_test:
 		BCC		.catcher_step
 .catcher_speed_reset:
 		LDA		#$80
-		STA		_scr_trds_x_center+4
-		STA		_scr_trds_y_center+4
+		STA		_obj_x_center+4
+		STA		_obj_y_center+4
 		BNE		.catcher_exit
 .catcher_step:
 		LDA		_catcher_direction_idx
@@ -1710,8 +1710,8 @@ _catcher_control_move_test:
 #else
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_move_test:
-		LDA		_scr_trds_x_pos_lo+4		; move control for catcher mostly the same
-		ORA		_scr_trds_y_pos_lo+4		; as for beemer, but with some difference
+		LDA		_obj_x_pos_lo+4				; move control for catcher mostly the same
+		ORA		_obj_y_pos_lo+4				; as for beemer, but with some difference
 		AND		#$07
 		BNE		.catcher_speed_calc
 		JSR		_catcher_target_follow		; here is the AI routine to follow the target
@@ -1726,8 +1726,8 @@ _catcher_control_move_test:
 		BEQ		.catcher_exit
 		BNE		.catcher_step
 .catcher_next_step:
-		LDA		_scr_trds_x_pos_lo+4
-		ORA		_scr_trds_y_pos_lo+4
+		LDA		_obj_x_pos_lo+4
+		ORA		_obj_y_pos_lo+4
 		AND		#$07
 		BNE		.catcher_step
 		JSR		_catcher_target_follow
@@ -1735,8 +1735,8 @@ _catcher_control_move_test:
 		BPL		.catcher_step
 .catcher_speed_reset:
 		LDA		#$80
-		STA		_scr_trds_x_center+4
-		STA		_scr_trds_y_center+4
+		STA		_obj_x_center+4
+		STA		_obj_y_center+4
 		BNE		.catcher_exit
 .catcher_step:
 		JSR		_nsub_sarg1_direction_extract
@@ -1805,18 +1805,18 @@ _catcher_spr_selector:
 		LDA		_pad1_held
 		AND		#$0F
 		BEQ		loc_605DE
-		INC		_scr_trds_args0+4
+		INC		_trds_args0+4
 loc_605DE:
 		LDA		_players_inv_timer+1
 		LSR
 		BCC		_nsub_catcher_spr_idx_calc
 		LDA		#$FF
-		STA		_scr_trds_spr_idx+4
+		STA		_obj_spr_idx+4
 		RTS
 #else
 		LDA		_catcher_direction_idx		; when catcher stand still its direction idx
 		BMI		_nsub_catcher_spr_idx_calc	; =$FF.
-		INC		_scr_trds_args0+4			; run player's animation counter
+		INC		_trds_args0+4				; run player's animation counter
 #endif
 
 ; !FALLTHROUGH!
@@ -1841,9 +1841,9 @@ _catcher_target_follow:
 		BCS		.catcher_do_targeting
 		BCC		.catcher_beamed_found
 .catcher_beamed_follow:
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		.catcher_beamed_lookup		; if already catched, restart lookup
-		LDA		_scr_trds_args0,X			; for other beamed objects
+		LDA		_trds_args0,X				; for other beamed objects
 		BEQ		.catcher_beamed_lookup
 		JSR		_obj_screen_pos_calc		; when still beamed, recalc its position
 		BCC		.catcher_do_targeting		; again. it won't change, but previously
@@ -1876,7 +1876,7 @@ _catcher_target_follow:
 		CLC									; position the face to the direction
 		ADC		#$20						; of the object. but actually I see it
 		AND		#$C0						; a lot more funnier when catcher always
-		STA		_scr_trds_args1+4			; turns to the beamer dynamically
+		STA		_trds_args1+4				; turns to the beamer dynamically
 loc_61112:
 		LDA		#$00						; for beamer target we don't have to face it
 		STA		_catcher_turns_count		; all the way.
@@ -1944,9 +1944,9 @@ loc_61184:
 _beamed_enemy_lookup:
 		LDX		#$06						; look for enemy object in gen slots
 loc_6118F:
-		LDA		_scr_trds_idx,X				; with beamed active flag set
+		LDA		_trds_obj_idx,X				; with beamed active flag set
 		BMI		loc_611A3
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		CMP		#$02
 		BNE		loc_611A3
 		TXA
@@ -1971,13 +1971,13 @@ _cur_obj_to_target_nearest_path_calc:
 		STX		_tmp1
 		INX
 		STX		_tmp2
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo,Y
+		LDX		_cur_trd_slot
+		LDA		_obj_x_pos_lo,Y
 		SEC
-		SBC		_scr_trds_x_pos_lo,X
+		SBC		_obj_x_pos_lo,X
 		STA		_var0
-		LDA		_scr_trds_x_pos_hi,Y
-		SBC		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,Y
+		SBC		_obj_x_pos_hi,X
 		BCS		loc_611D2
 		INC		_tmp1
 		PHA
@@ -1994,12 +1994,12 @@ loc_611D2:
 		ASL
 		ADC		#$01
 		STA		_tmp1
-		LDA		_scr_trds_y_pos_lo,Y
+		LDA		_obj_y_pos_lo,Y
 		SEC
-		SBC		_scr_trds_y_pos_lo,X
+		SBC		_obj_y_pos_lo,X
 		STA		_var2
-		LDA		_scr_trds_y_pos_hi,Y
-		SBC		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,Y
+		SBC		_obj_y_pos_hi,X
 		BCS		loc_611FB
 		DEC		_tmp2
 		PHA
@@ -2207,17 +2207,17 @@ loc_61305:
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_screen_x_pos_calc:
-		LDA		_scr_trds_x_pos_lo+4
+		LDA		_obj_x_pos_lo+4
 		SEC
 		SBC		_ppu_scroll_pos_x
 		TAY
-		LDA		_scr_trds_x_pos_hi+4
+		LDA		_obj_x_pos_hi+4
 		SBC		_ppu_scroll_pos_x+1
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_screen_y_pos_calc:
-		LDA		_scr_trds_y_pos_lo+4
+		LDA		_obj_y_pos_lo+4
 		SEC
 		SBC		_ppu_scroll_pos_y
 		BCS		loc_61330
@@ -2225,20 +2225,20 @@ _catcher_screen_y_pos_calc:
 		CLC
 loc_61330:
 		TAY
-		LDA		_scr_trds_y_pos_hi+4
+		LDA		_obj_y_pos_hi+4
 		SBC		_ppu_scroll_pos_y+1
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_screen_x_pos_calc:
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_x
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_screen_y_pos_calc:
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_y
 		BCS		locret_61346
@@ -2284,40 +2284,40 @@ _sloc_6136D:
 _nbgsub_catch_ctest:
 		JSR		_catch_obj_beamed_search	; search for any beamed object first
 		BCS		locret_613C4
-		LDA		_scr_trds_idx+3				; if beam is not active, skip this part
+		LDA		_trds_obj_idx+3				; if beam is not active, skip this part
 		BMI		loc_6138C
-		CPX		_scr_trds_args0+3			; if beamed object and object we found is the same
+		CPX		_trds_args0+3				; if beamed object and object we found is the same
 		BNE		loc_6138C					; disable the beam, it's work done
 		LDA		#$FF
-		STA		_scr_trds_idx+3
+		STA		_trds_obj_idx+3
 loc_6138C:
 		LDY		#$00						; calc X distance betwee beamed obj and catch
-		LDA		_scr_trds_x_pos_lo+5
+		LDA		_obj_x_pos_lo+5
 		SEC
-		SBC		_scr_trds_x_pos_lo,X
-		LDA		_scr_trds_x_pos_hi+5
-		SBC		_scr_trds_x_pos_hi,X
+		SBC		_obj_x_pos_lo,X
+		LDA		_obj_x_pos_hi+5
+		SBC		_obj_x_pos_hi,X
 		BCS		loc_6139C
 		INY
 loc_6139C:
 		TYA									; force beamed object to be at catch now
 		ORA		#$80						; adjust positions
-		STA		_scr_trds_args0,X
-		LDA		_scr_trds_x_pos_lo+5
-		STA		_scr_trds_x_pos_lo,X
-		LDA		_scr_trds_x_pos_hi+5
-		STA		_scr_trds_x_pos_hi,X
-		LDA		_scr_trds_y_pos_lo+5
+		STA		_trds_args0,X
+		LDA		_obj_x_pos_lo+5
+		STA		_obj_x_pos_lo,X
+		LDA		_obj_x_pos_hi+5
+		STA		_obj_x_pos_hi,X
+		LDA		_obj_y_pos_lo+5
 		SEC
 		SBC		#$12
 		BCS		loc_613B5
 		SBC		#$0F
 		CLC
 loc_613B5:
-		STA		_scr_trds_y_pos_lo,X
-		LDA		_scr_trds_y_pos_hi+5
+		STA		_obj_y_pos_lo,X
+		LDA		_obj_y_pos_hi+5
 		SBC		#$00
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		JSR		_cur_thread_reload_param	; now reload the current script with active type
 		.WORD	_scr_catch_active
 locret_613C4:
@@ -2329,13 +2329,13 @@ _nsub_catch_deploy_init:
 		ASL
 		TAY
 		LDA		byte_613E3+6,Y
-		STA		_scr_trds_x_move_speed+5
+		STA		_obj_x_speed+5
 		LDA		byte_613E3+7,Y
-		STA		_scr_trds_x_move_delta+5
+		STA		_obj_x_delta+5
 		LDA		byte_613E3+4,Y
-		STA		_scr_trds_y_move_speed+5
+		STA		_obj_y_speed+5
 		LDA		byte_613E3+5,Y
-		STA		_scr_trds_y_move_delta+5
+		STA		_obj_y_delta+5
 		RTS
 byte_613E3:
 		.BYTE	$00,$04,$00,$00,$00,$FC,$00
@@ -2344,12 +2344,12 @@ byte_613E3:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catch_deploy_anim:
 		JSR		_catch_spr_idx_select
-		INC		_scr_trds_args0+5
+		INC		_trds_args0+5
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catch_deploy_stop_test:
-		LDA		_scr_trds_args0+5
+		LDA		_trds_args0+5
 		CMP		#$08
 		RTS
 
@@ -2359,24 +2359,24 @@ _nsub_catch_remove_init:
 		ASL
 		TAY
 		LDA		byte_613E3+2,Y
-		STA		_scr_trds_x_move_speed+5
+		STA		_obj_x_speed+5
 		LDA		byte_613E3+3,Y
-		STA		_scr_trds_x_move_delta+5
+		STA		_obj_x_delta+5
 		LDA		byte_613E3,Y
-		STA		_scr_trds_y_move_speed+5
+		STA		_obj_y_speed+5
 		LDA		byte_613E3+1,Y
-		STA		_scr_trds_y_move_delta+5
+		STA		_obj_y_delta+5
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catch_remove_anim:
-		LDX		_scr_cur_trd_idx
-		DEC		_scr_trds_args0+5
+		LDX		_cur_trd_slot
+		DEC		_trds_args0+5
 		JMP		_catch_spr_idx_select
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catch_remove_stop_test:
-		LDA		_scr_trds_args0+5
+		LDA		_trds_args0+5
 		BNE		loc_61427
 		SEC
 		RTS
@@ -2386,25 +2386,25 @@ loc_61427:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catch_work_anim:
-		DEC		_scr_trds_args0+5
+		DEC		_trds_args0+5
 		JSR		_catch_spr_idx_select
-		LDA		_scr_trds_spr_idx+5
+		LDA		_obj_spr_idx+5
 		CLC
 		ADC		#$10
-		STA		_scr_trds_spr_idx+5
-		INC		_scr_trds_args0+5
+		STA		_obj_spr_idx+5
+		INC		_trds_args0+5
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _catch_spr_idx_select:
 		JSR		_nsub_sarg1_direction_extract
 		STA		_tmp0
-		LDA		_scr_trds_args0+5
+		LDA		_trds_args0+5
 		AND		#$06
 		ASL
 		ADC		_tmp0
 		ADC		#$10
-		STA		_scr_trds_spr_idx+5
+		STA		_obj_spr_idx+5
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2416,9 +2416,9 @@ _catch_obj_beamed_search:
 loc_61452:
 		TXA									; now look for any object in beamed state
 		PHA
-		LDA		_scr_trds_idx,X				; skip inactive objects
+		LDA		_trds_obj_idx,X				; skip inactive objects
 		BMI		loc_61480
-		LDA		_scr_trds_args0,X			; beamed object has $02 here
+		LDA		_trds_args0,X				; beamed object has $02 here
 		BMI		loc_61480
 		CMP		#$02
 		BCC		loc_61480
@@ -2514,10 +2514,10 @@ _room_doors_ctest:
 loc_61812:
 		TXA
 		SEC
-		SBC		_obj_door_x_hi_poss,Y		; calculate distance to object
+		SBC		_doors_x_pos_hi,Y			; calculate distance to object
 		STA		_tmp0
 		LDA		_tmp_var0
-		SBC		_obj_door_x_lo_poss,Y
+		SBC		_doors_x_pos_lo,Y
 		BCS		loc_6182E
 		PHA
 		LDA		_tmp0
@@ -2529,15 +2529,15 @@ loc_61812:
 		ADC		#$00
 loc_6182E:
 		BNE		loc_6185D
-		LDA		_obj_doors_widths,Y			; now test if we in door bound box
+		LDA		_doors_width,Y				; now test if we in door bound box
 		CMP		_tmp0
 		BCC		loc_6185D
 		LDA		_tmp2
 		SEC
-		SBC		_obj_doors_y_hi_poss,Y
+		SBC		_doors_y_pos_hi,Y
 		STA		_tmp0
 		LDA		_tmp_var1
-		SBC		_obj_doors_y_lo_poss,Y
+		SBC		_doors_y_pos_lo,Y
 		BCS		loc_61854
 		PHA
 		LDA		_tmp0
@@ -2549,7 +2549,7 @@ loc_6182E:
 		ADC		#$00
 loc_61854:
 		BNE		loc_6185D
-		LDA		_obj_doors_heights,Y
+		LDA		_doors_height,Y
 		CMP		_tmp0
 		BCS		loc_61861
 loc_6185D:
@@ -2570,24 +2570,24 @@ _obj_to_room_macro_ctest:
 		BPL		loc_6186F
 		DEC		_tmp_var0
 loc_6186F:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		CLC
-		ADC		_scr_trds_x_pos_lo,X
+		ADC		_obj_x_pos_lo,X
 		PHA
 		LDA		_tmp_var0
-		ADC		_scr_trds_x_pos_hi,X
+		ADC		_obj_x_pos_hi,X
 		STA		_tmp_var0
 		CLC
 		TYA
 		BPL		loc_6188B
 		DEC		_tmp_var1
-		ADC		_scr_trds_y_pos_lo,X
+		ADC		_obj_y_pos_lo,X
 		BCS		loc_61896
 		SBC		#$0F
 		CLC
 		BCC		loc_61896
 loc_6188B:
-		ADC		_scr_trds_y_pos_lo,X
+		ADC		_obj_y_pos_lo,X
 		BCS		loc_61893
 		CMP		#$F0
 		BCC		loc_61896
@@ -2597,7 +2597,7 @@ loc_61893:
 loc_61896:
 		TAY
 		LDA		_tmp_var1
-		ADC		_scr_trds_y_pos_hi,X
+		ADC		_obj_y_pos_hi,X
 		STA		_tmp_var1
 		PLA
 		TAX
@@ -2869,18 +2869,18 @@ loc_619FB:
 
 ; =============== S U B R O U T I N E ======n================================
 _cur_obj_screen_pos_calc:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_screen_pos_calc:
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		STA		_tmp_var0
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		STA		_tmp_var1
-		LDY		_scr_trds_y_pos_lo,X
-		LDA		_scr_trds_x_pos_lo,X
+		LDY		_obj_y_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		TAX
 
 ; !FALLTHROUGH!
@@ -2915,15 +2915,15 @@ _obj_new_lvl_pos_set:
 		JSR		_obj_new_lvl_pos_calc
 		TXA
 		PHA
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		PLA
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		TYA
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		_tmp_var0
-		STA		_scr_trds_x_pos_hi,X
+		STA		_obj_x_pos_hi,X
 		LDA		_tmp_var1
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2991,16 +2991,16 @@ loc_61A71:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_beamer_vector_calc:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo+2
+		LDX		_cur_trd_slot
+		LDA		_obj_x_pos_lo+2
 		STA		_var0
-		LDA		_scr_trds_y_pos_lo+2
+		LDA		_obj_y_pos_lo+2
 		SEC
 		SBC		#$10
 		STA		_var1
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		STA		_var2
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		STA		_var3
 		JMP		_point_to_point_vector_calc
 
@@ -3225,13 +3225,13 @@ byte_61C4D:
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_obj_in_range_test:
 		STY		_tmp0						; store desired range value
-		LDY		_scr_cur_trd_idx			; load current object idx in Y
-		LDA		_scr_trds_x_pos_lo,Y		; X has already object target idx
+		LDY		_cur_trd_slot				; load current object idx in Y
+		LDA		_obj_x_pos_lo,Y				; X has already object target idx
 		SEC
-		SBC		_scr_trds_x_pos_lo,X		; calculate X pos delta
+		SBC		_obj_x_pos_lo,X				; calculate X pos delta
 		STA		_tmp1
-		LDA		_scr_trds_x_pos_hi,Y
-		SBC		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,Y
+		SBC		_obj_x_pos_hi,X
 		BCS		loc_61C80					; when negative, do ABS operation
 		PHA
 		LDA		_tmp1
@@ -3248,15 +3248,15 @@ loc_61C80:
 		BCS		loc_61CD4
 		LDA		#$00						; if passed, do the same for Y delta
 		STA		_var0
-		LDA		_scr_trds_y_pos_lo,Y		; for Y is little bit harder since
+		LDA		_obj_y_pos_lo,Y				; for Y is little bit harder since
 		SEC									; there is a case when both players
-		SBC		_scr_trds_y_pos_lo,X		; may be in different NT pages and
+		SBC		_obj_y_pos_lo,X				; may be in different NT pages and
 		STA		_tmp2						; thus need the warp by 16 pixels
 		BCS		loc_61C98
 		INC		_var0
 loc_61C98:
-		LDA		_scr_trds_y_pos_hi,Y
-		SBC		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,Y
+		SBC		_obj_y_pos_hi,X
 		BCS		loc_61CB4
 		PHA
 		LDA		_var0
@@ -3473,13 +3473,13 @@ loc_61DC8:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_beam_ctest:
-		LDA		_scr_trds_idx+3				; check if beam object deployed
+		LDA		_trds_obj_idx+3				; check if beam object deployed
 		BMI		loc_61E28
-		LDA		_scr_trds_args0+3			; also check if nothing is catched already
+		LDA		_trds_args0+3				; also check if nothing is catched already
 		BPL		loc_61E28
 		TXA
 		PHA
-		LDA		_scr_trds_args1+3			; get the beam direction value from arg1
+		LDA		_trds_args1+3				; get the beam direction value from arg1
 		ASL
 		ROL
 		ROL
@@ -3511,10 +3511,10 @@ loc_61E04:
 loc_61E13:
 		CMP		_var1
 		BCS		loc_61E28
-		LDX		_scr_cur_trd_idx			; if yes, switch beam to active state,
+		LDX		_cur_trd_slot				; if yes, switch beam to active state,
 		LDA		#$01						; set object's args0 "beamed" flag
-		STA		_scr_trds_args0,X			; also save objects idx to args0 of beam
-		STX		_scr_trds_args0+3
+		STA		_trds_args0,X				; also save objects idx to args0 of beam
+		STX		_trds_args0+3
 		LDX		#$03
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_beam_active
@@ -3664,10 +3664,10 @@ loc_61E86:
 loc_61E94:
 		CMP		_var1
 		BCS		locret_61EA9
-		LDX		_scr_cur_trd_idx			; when collide, shut down the money bag thread
+		LDX		_cur_trd_slot				; when collide, shut down the money bag thread
 		LDA		#$FF						; and add a scores from its ARG2 parameter
-		STA		_scr_trds_idx,X
-		LDA		_scr_trds_args2,X
+		STA		_trds_obj_idx,X
+		LDA		_trds_args2,X
 		JSR		_scores_add					; add scores from sarg2 var
 		LDA		#_snd0D_idx					; play a sound
 		JSR		_far_prg6_apu_snd_load
@@ -4356,8 +4356,8 @@ _nsub_prize_sequence_test:
 		JSR		_mmc1_prg_safe				; all data is a part of level handlers
 		LDY		#$00
 		LDA		(_room_prize_sequence_ptr),Y
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_idx,X
+		LDX		_cur_trd_slot
+		CMP		_trds_obj_idx,X
 		BNE		loc_62583
 		INC		_room_prize_sequence_ptr
 		BNE		loc_6257B
@@ -4636,7 +4636,7 @@ _nsub_thread_off:
 		JSR		_scr_getc
 		TAX
 		LDA		#$FF
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4651,7 +4651,7 @@ _nsub_thread_off:
 ;		ASL
 ;		TAX
 ;		LDA		#$00
-;		STA		_scr_trds_ptr+1,X
+;		STA		_trd_ptr+1,X
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4660,14 +4660,14 @@ _nsub_thread_off:
 _nsub_obj_delay_set_from_sarg:
 		JSR		_scr_getc
 		TAX
-		LDA		_scr_args_list_ptr_lo,X
+		LDA		_trds_args_ptrs_lo,X
 		STA		_ptr06
-		LDA		_scr_args_list_ptr_hi,X
+		LDA		_trds_args_ptrs_hi,X
 		STA		_ptr06+1
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		LDA		(_ptr06),Y
-		LDX		_scr_cur_trd_idxw
-		STA		_scr_trds_delay,X
+		LDX		_cur_trd_scr_slot
+		STA		_trds_scr_delay,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4679,8 +4679,8 @@ _nsub_obj_delay_set_from_sarg:
 ;		TAX
 ;		PLA
 ;		JSR		_div8
-;		LDX		_scr_cur_trd_idxw
-;		STA		_scr_trds_delay,X
+;		LDX		_cur_trd_scr_slot
+;		STA		_trds_scr_delay,X
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4690,17 +4690,17 @@ _nsub_cur_obj_spr_from_sarg1_calc:
 		JSR		_scr_getc
 		TAY
 		LSR
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		CLC
-		ADC		_scr_trds_args1,X
+		ADC		_trds_args1,X
 		LDX		#$00
 		JSR		_div16
 		STA		_var0
 		PLA
 		CLC
 		ADC		_var0
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_spr_idx,X
+		LDX		_cur_trd_slot
+		STA		_obj_spr_idx,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4765,7 +4765,7 @@ _mmc1_chr1_set:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_new_thread_start:
-		LDX		_scr_cur_trd_idx			; start a new thread from current thread
+		LDX		_cur_trd_slot				; start a new thread from current thread
 		JSR		_scr_getc					; usually loads the same script with different
 		PHA									; parameters
 		LDA		#$00
@@ -4785,20 +4785,20 @@ loc_627B7:
 		STA		_var0						; thread entity selector
 		JSR		_scr_getc					; sarg1 as direction modifier
 		CLC
-		ADC		_scr_trds_args1,X
+		ADC		_trds_args1,X
 		STA		_var1
-		LDA		_scr_trds_y_pos_lo,X		; calc new position
+		LDA		_obj_y_pos_lo,X				; calc new position
 		CLC
 		ADC		_tmp2
 		TAY
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		ADC		_var7
 		STA		_tmp_var1
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		CLC
 		ADC		_tmp1
 		PHA
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		ADC		_var6
 		STA		_tmp_var0
 		PLA
@@ -4809,18 +4809,18 @@ loc_627B7:
 		LSR									; X here is last added slot idx *4
 		LSR									; so div it back
 		TAX									; store current thread idx into SARG2
-		LDA		_scr_cur_trd_idx			; to link it
-		STA		_scr_trds_args2,X
+		LDA		_cur_trd_slot				; to link it
+		STA		_trds_args2,X
 		TXA									; and return back the new object IDX
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg01_load_data_ofs:
-		LDX		_scr_cur_trd_idx			; custom usage of sargs with general purpose
+		LDX		_cur_trd_slot				; custom usage of sargs with general purpose
 		JSR		_scr_getc					; scripts as a pointer for example
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 		JSR		_scr_getc
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4834,10 +4834,10 @@ _nsub_sarg01_load_data_ofs:
 ; nsub routine
 ;
 _nsub_chain_thread_lib_load_enemy:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X			; load chain scripts data ptr
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X				; load chain scripts data ptr
 		STA		_ptr06
-		LDA		_scr_trds_args1,X
+		LDA		_trds_args1,X
 		STA		_ptr06+1
 		LDA		#$00
 		STA		_var4
@@ -4859,31 +4859,31 @@ loc_62819:
 loc_62822:
 		INY
 		LDA		(_ptr06),Y					; every new script will have its own
-		LDX		_scr_cur_trd_idxw			; delay value at start
-		STA		_scr_trds_delay,X
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_scr_slot			; delay value at start
+		STA		_trds_scr_delay,X
+		LDX		_cur_trd_slot
 		INY
 		TYA
 		CLC
 		ADC		_ptr06
-		STA		_scr_trds_args0,X			; put ptr to the next chunk
+		STA		_trds_args0,X				; put ptr to the next chunk
 		LDA		_ptr06+1
 		ADC		#$00
-		STA		_scr_trds_args1,X
-		LDA		_scr_trds_idx,X
+		STA		_trds_args1,X
+		LDA		_trds_obj_idx,X
 		PHA
-		LDA		_scr_trds_y_pos_lo,X		; deploy currently loaded thread, one
+		LDA		_obj_y_pos_lo,X				; deploy currently loaded thread, one
 		CLC									; at a time. to read out all data you
 		ADC		_tmp2						; need this routine as much times as
 		TAY									; much chunks in data
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		ADC		_var5
 		STA		_tmp_var1
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		CLC
 		ADC		_tmp1
 		PHA
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		ADC		_var4
 		STA		_tmp_var0
 		PLA
@@ -4895,12 +4895,12 @@ loc_62822:
 _nsub_obj_sarg_add_imm_test:
 		JSR		_scr_getc					; main commonly used nsub routine
 		TAX									; to getch sarg value and test its value
-		LDA		_scr_args_list_ptr_lo,X		; after selected displacement. used
+		LDA		_trds_args_ptrs_lo,X		; after selected displacement. used
 		STA		_ptr06						; to get indexes of the script switch cases
-		LDA		_scr_args_list_ptr_hi,X
+		LDA		_trds_args_ptrs_hi,X
 		STA		_ptr06+1
 		JSR		_scr_getc
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		CLC
 		ADC		(_ptr06),Y
 		BMI		loc_62877
@@ -4963,21 +4963,21 @@ _nsub_cur_obj_linear_dst_pos_from_sarg1_set:
 		PHA
 		JSR		_scr_getc
 		PHA
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		LDY		_trds_args1,X
 		PLA
 		TAX
 		PLA
 		JSR		_linear_dst_pos_calc
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		_ptr06
-		STA		_scr_trds_x_move_speed,X
+		STA		_obj_x_speed,X
 		LDA		_ptr06+1
-		STA		_scr_trds_x_move_delta,X
+		STA		_obj_x_delta,X
 		LDA		_ptr08
-		STA		_scr_trds_y_move_speed,X
+		STA		_obj_y_speed,X
 		LDA		_ptr08+1
-		STA		_scr_trds_y_move_delta,X
+		STA		_obj_y_delta,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5036,10 +5036,10 @@ loc_62954:
 		LDX		#$02						; have no use with doors code itself
 		JSR		_scr_getc					; doors are just for blocking your way
 		SEC									; but exits are always active
-		SBC		_scr_trds_x_pos_lo+2
+		SBC		_obj_x_pos_lo+2
 		STA		_var1
 		JSR		_scr_getc
-		SBC		_scr_trds_x_pos_hi+2
+		SBC		_obj_x_pos_hi+2
 		STA		_var2
 		BCS		loc_62976
 		LDA		_var1
@@ -5058,10 +5058,10 @@ loc_62976:
 		DEX
 		JSR		_scr_getc
 		SEC
-		SBC		_scr_trds_y_pos_lo+2
+		SBC		_obj_y_pos_lo+2
 		STA		_var1
 		JSR		_scr_getc
-		SBC		_scr_trds_y_pos_hi+2
+		SBC		_obj_y_pos_hi+2
 		STA		_var2
 		BCS		loc_629A0
 		LDA		_var1
@@ -5079,10 +5079,10 @@ loc_629A0:
 loc_629A8:
 		TXA
 		CLC
-		ADC		_scr_pc						; adjust script pointer to next
-		STA		_scr_pc						; data chunk untill there are no left
+		ADC		_cur_scr_pc					; adjust script pointer to next
+		STA		_cur_scr_pc					; data chunk untill there are no left
 		BCC		loc_629B2
-		INC		_scr_pc+1
+		INC		_cur_scr_pc+1
 loc_629B2:
 		INC		_var3
 		DEC		_var0
@@ -5094,10 +5094,10 @@ loc_629BA:
 		LDA		_var0
 		ASL
 		ASL
-		ADC		_scr_pc
-		STA		_scr_pc
+		ADC		_cur_scr_pc
+		STA		_cur_scr_pc
 		BCC		loc_629C8
-		INC		_scr_pc+1
+		INC		_cur_scr_pc+1
 loc_629C8:
 		LDA		_var3						; exit with C=1 if exit reached
 		STA		_tmp_idx
@@ -5114,87 +5114,87 @@ _nsub_players_room_start_pos_init:
 		TAY
 		INY
 		LDA		#$00
-		STA		_scr_trds_x_pos_hi+2
-		STA		_scr_trds_y_pos_hi+2
-		LDA		(_scr_pc),Y
+		STA		_obj_x_pos_hi+2
+		STA		_obj_y_pos_hi+2
+		LDA		(_cur_scr_pc),Y
 		ASL
-		ROL		_scr_trds_x_pos_hi+2
+		ROL		_obj_x_pos_hi+2
 		ASL
-		ROL		_scr_trds_x_pos_hi+2
+		ROL		_obj_x_pos_hi+2
 		ASL
-		ROL		_scr_trds_x_pos_hi+2
-		STA		_scr_trds_x_pos_lo+2
+		ROL		_obj_x_pos_hi+2
+		STA		_obj_x_pos_lo+2
 		INY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		ASL
-		ROL		_scr_trds_y_pos_hi+2
+		ROL		_obj_y_pos_hi+2
 		ASL
-		ROL		_scr_trds_y_pos_hi+2
+		ROL		_obj_y_pos_hi+2
 		ASL
-		ROL		_scr_trds_y_pos_hi+2
-		STA		_scr_trds_y_pos_lo+2
+		ROL		_obj_y_pos_hi+2
+		STA		_obj_y_pos_lo+2
 		INY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		TAX
 		LSR
 		ROR
 		ROR
-		STA		_scr_trds_args1+2			; position data stored only for beamer
-		STA		_scr_trds_args1+4			; position of catched auto calculated
-		LDA		_scr_trds_x_pos_lo+2		; by direction of beamer and starting position
+		STA		_trds_args1+2				; position data stored only for beamer
+		STA		_trds_args1+4				; position of catched auto calculated
+		LDA		_obj_x_pos_lo+2				; by direction of beamer and starting position
 		CLC									; at the door
 		ADC		byte_62A87,X
-		STA		_scr_trds_x_pos_lo+2
-		LDA		_scr_trds_x_pos_hi+2
+		STA		_obj_x_pos_lo+2
+		LDA		_obj_x_pos_hi+2
 		ADC		byte_62A8B,X
-		STA		_scr_trds_x_pos_hi+2
+		STA		_obj_x_pos_hi+2
 		STA		_ppu_scroll_pos_x+1
-		LDA		_scr_trds_y_pos_lo+2
+		LDA		_obj_y_pos_lo+2
 		CLC
 		ADC		byte_62A8F,X
-		STA		_scr_trds_y_pos_lo+2
-		LDA		_scr_trds_y_pos_hi+2
+		STA		_obj_y_pos_lo+2
+		LDA		_obj_y_pos_hi+2
 		ADC		byte_62A93,X
-		STA		_scr_trds_y_pos_hi+2
+		STA		_obj_y_pos_hi+2
 		STA		_ppu_scroll_pos_y+1
-		LDA		_scr_trds_x_pos_lo+2
+		LDA		_obj_x_pos_lo+2
 		CLC
 		ADC		byte_62A97,X
-		STA		_scr_trds_x_pos_lo+4
-		LDA		_scr_trds_x_pos_hi+2
+		STA		_obj_x_pos_lo+4
+		LDA		_obj_x_pos_hi+2
 		ADC		byte_62A9B,X
-		STA		_scr_trds_x_pos_hi+4
-		LDA		_scr_trds_y_pos_lo+2
+		STA		_obj_x_pos_hi+4
+		LDA		_obj_y_pos_lo+2
 		CLC
 		ADC		byte_62A9F,X
-		STA		_scr_trds_y_pos_lo+4
-		LDA		_scr_trds_y_pos_hi+2
+		STA		_obj_y_pos_lo+4
+		LDA		_obj_y_pos_hi+2
 		ADC		byte_62AA3,X
-		STA		_scr_trds_y_pos_hi+4
-		LDA		_scr_trds_args1+2
+		STA		_obj_y_pos_hi+4
+		LDA		_trds_args1+2
 		ASL
 		ROL
 		ROL
 		ASL
 		ASL
 		ADC		_beamer_spr_base_tmp
-		STA		_scr_trds_spr_idx+2
-		LDA		_scr_trds_args1+4
+		STA		_obj_spr_idx+2
+		LDA		_trds_args1+4
 		ASL
 		ROL
 		ROL
 		ASL
 		ASL
 		ADC		_catcher_spr_base_tmp
-		STA		_scr_trds_spr_idx+4
+		STA		_obj_spr_idx+4
 		PLA
 		STA		_tmp0
 		ASL
 		ADC		_tmp0
-		ADC		_scr_pc
-		STA		_scr_pc
+		ADC		_cur_scr_pc
+		STA		_cur_scr_pc
 		BCC		loc_62A7E
-		INC		_scr_pc+1
+		INC		_cur_scr_pc+1
 loc_62A7E:
 		LDA		#$00						; also this routine resets the scrolls
 		STA		_ppu_scroll_pos_x			; and removes all possible threads garbage
@@ -5238,7 +5238,7 @@ _nsub_get_checkpoint_tmp_idx:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg1_obj_to_beamer_vector_set:
 		JSR		_obj_to_beamer_vector_calc
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5252,15 +5252,15 @@ _nsub_sarg1_obj_to_beamer_vector_set:
 ;		TAX
 ;		PLA
 ;		JSR		_linear_dst_pos_calc
-;		LDX		_scr_cur_trd_idx
+;		LDX		_cur_trd_slot
 ;		LDA		_ptr06
-;		STA		_scr_trds_x_move_speed,X
+;		STA		_obj_x_speed,X
 ;		LDA		_ptr06+1
-;		STA		_scr_trds_x_move_delta,X
+;		STA		_obj_x_delta,X
 ;		LDA		_ptr08
-;		STA		_scr_trds_y_move_speed,X
+;		STA		_obj_y_speed,X
 ;		LDA		_ptr08+1
-;		STA		_scr_trds_y_move_delta,X
+;		STA		_obj_y_delta,X
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5282,19 +5282,19 @@ _nsub_obj_to_beamer_vector_adjust:
 		ADC		_tmp0
 		AND		_var0
 		SEC
-		SBC		_scr_trds_args1,X
+		SBC		_trds_args1,X
 		BEQ		locret_62B1D
 		BMI		loc_62B16
-		LDA		_scr_trds_args1,X
+		LDA		_trds_args1,X
 		CLC
 		ADC		_var1
 		JMP		loc_62B1B
 loc_62B16:
-		LDA		_scr_trds_args1,X
+		LDA		_trds_args1,X
 		SEC
 		SBC		_var1
 loc_62B1B:
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 locret_62B1D:
 		RTS
 
@@ -5311,13 +5311,13 @@ _nsub_obj_to_obj_in_range_test:
 _nsub_obj_spr_idx_set_from_sarg:
 		JSR		_scr_getc
 		TAX
-		LDA		_scr_args_list_ptr_lo,X
+		LDA		_trds_args_ptrs_lo,X
 		STA		_ptr06
-		LDA		_scr_args_list_ptr_hi,X
+		LDA		_trds_args_ptrs_hi,X
 		STA		_ptr06+1
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		LDA		(_ptr06),Y
-		STA		_scr_trds_spr_idx,Y
+		STA		_obj_spr_idx,Y
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5325,9 +5325,9 @@ _nsub_all_threads_off_except_cur:
 		LDX		#$0D
 		LDA		#$FF
 loc_62B44:
-		CPX		_scr_cur_trd_idx
+		CPX		_cur_trd_slot
 		BEQ		loc_62B4B
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 loc_62B4B:
 		DEX
 		BPL		loc_62B44
@@ -5338,9 +5338,9 @@ _nsub_gen_threads_off_except_cur:
 		LDX		#$06
 		LDA		#$FF
 loc_62B53:
-		CPX		_scr_cur_trd_idx
+		CPX		_cur_trd_slot
 		BEQ		loc_62B5A
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 loc_62B5A:
 		INX
 		CPX		#$0E
@@ -5350,15 +5350,15 @@ loc_62B5A:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_cur_pos_x_lo_icmp:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_x_pos_lo,X
+		LDX		_cur_trd_slot
+		CMP		_obj_x_pos_lo,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_cur_pos_y_lo_icmp:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_y_pos_lo,X
+		LDX		_cur_trd_slot
+		CMP		_obj_y_pos_lo,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5392,9 +5392,9 @@ _nsub_stage_complete_test:
 		BNE		locret_62BB0				; reaches its end, and all enemies
 		LDX		#$06						; are inactive anymore
 loc_62B9B:
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_62BA4
-		CPX		_scr_cur_trd_idx
+		CPX		_cur_trd_slot
 		BNE		locret_62BB0
 loc_62BA4:
 		INX
@@ -5418,31 +5418,31 @@ locret_62BB0:
 ; but now its usage seems very redundant.
 ;
 _nsub_obj_screen_pos_set:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		CLC
 		ADC		_ppu_scroll_pos_x
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		LDA		_ppu_scroll_pos_x+1
 		ADC		#$00
-		STA		_scr_trds_x_pos_hi,X
+		STA		_obj_x_pos_hi,X
 		JSR		_scr_getc
 		CLC
 		ADC		_ppu_scroll_pos_y
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		_ppu_scroll_pos_y+1
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_sarg_set_from_nsub_return_value:
 		JSR		_scr_getc
 		TAX
-		LDA		_scr_args_list_ptr_lo,X
+		LDA		_trds_args_ptrs_lo,X
 		STA		_ptr06
-		LDA		_scr_args_list_ptr_hi,X
+		LDA		_trds_args_ptrs_hi,X
 		STA		_ptr06+1
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		LDA		_nsub_return_value
 		STA		(_ptr06),Y
 		RTS
@@ -5451,11 +5451,11 @@ _nsub_obj_sarg_set_from_nsub_return_value:
 _nsub_is_any_enemy_active:
 		LDX		#$06
 loc_62BE7:
-		LDA		_scr_trds_idx,X				; test if there are no enemies, used
+		LDA		_trds_obj_idx,X				; test if there are no enemies, used
 		BMI		loc_62BF4					; mostly for special small cutscenes
 		CMP		#$13						; on the stages
 		BCC		loc_62BF4
-		CPX		_scr_cur_trd_idx
+		CPX		_cur_trd_slot
 		BNE		loc_62BFB
 loc_62BF4:
 		INX
@@ -5469,8 +5469,8 @@ loc_62BFB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_wait_for_beam_hold:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BEQ		loc_62C09
 		CMP		#$03
 		BEQ		loc_62C09
@@ -5483,8 +5483,8 @@ loc_62C09:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_get_obj_stun_state:
 		LDY		#$00
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		loc_62C18
 		INY
 		LSR
@@ -5492,7 +5492,7 @@ _nsub_get_obj_stun_state:
 		INY
 loc_62C18:
 		LDA		#$00
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 		TYA
 		RTS
 
@@ -5536,15 +5536,15 @@ _nsub_catcher_handler_start:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_to_room_x_ctestA:
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo,Y
+		LDY		_cur_trd_slot
+		LDA		_obj_x_pos_lo,Y
 		AND		#$07
 		CMP		#$04
 		BNE		loc_62C6A
 		TXA
 		PHA
 		LDX		#$00
-		LDA		_scr_trds_args1,Y
+		LDA		_trds_args1,Y
 		BMI		loc_62C5E
 		INX
 loc_62C5E:
@@ -5574,16 +5574,16 @@ byte_62C75:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_obj_to_room_y_ctestA:
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_y_pos_lo,Y
+		LDY		_cur_trd_slot
+		LDA		_obj_y_pos_lo,Y
 		AND		#$07
 		CMP		#$04
 		BNE		loc_62CA0
 		TXA
 		PHA
 		LDX		#$00
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,Y
+		LDY		_cur_trd_slot
+		LDA		_trds_args1,Y
 		CLC
 		ADC		#$40
 		BPL		loc_62C94
@@ -5615,20 +5615,20 @@ byte_62CAB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_cur_obj_sarg1_hor_complement:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$00
 		SEC
-		SBC		_scr_trds_args1,X
-		STA		_scr_trds_args1,X
+		SBC		_trds_args1,X
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_cur_obj_sarg1_vert_complement:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$80
 		SEC
-		SBC		_scr_trds_args1,X
-		STA		_scr_trds_args1,X
+		SBC		_trds_args1,X
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5644,8 +5644,8 @@ _nsub_sarg1_obj_to_beamer_sqare_vector_set:
 		CLC
 		ADC		#$20
 		AND		#$C0
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5669,30 +5669,30 @@ off_62CE4:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_cur_center_reset:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$80
-		STA		_scr_trds_x_center,X
-		STA		_scr_trds_y_center,X
+		STA		_obj_x_center,X
+		STA		_obj_y_center,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_scr_suspend:
 		LDX		#$02						; suspend player's scripts
-		LDA		_scr_trds_spr_idx,X			; but keed it's current sprite idxes
+		LDA		_obj_spr_idx,X				; but keed it's current sprite idxes
 		PHA
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_suspend
 		PLA
 		LDX		#$02
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		LDX		#$04
-		LDA		_scr_trds_spr_idx,X
+		LDA		_obj_spr_idx,X
 		PHA
 		JSR		_thread_reload_param_ex
 		.WORD	_scr_suspend
 		PLA
 		LDX		#$04
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5712,13 +5712,13 @@ loc_62D76:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_room_macro_ctest_raw:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_hi,X
+		LDX		_cur_trd_slot
+		LDA		_obj_x_pos_hi,X
 		STA		_tmp_var0
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		STA		_tmp_var1
-		LDY		_scr_trds_y_pos_lo,X
-		LDA		_scr_trds_x_pos_lo,X
+		LDY		_obj_y_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		TAX
 		JSR		_room_macro_ctest_ex
 		BCS		loc_62D90
@@ -5764,7 +5764,7 @@ _ssub_room_entry_pal_fade_in_ex:
 			NARGB		$FF
 		SDELAY			$03
 		SLOOP_END
-		STORE8			_scr_trds_pause_mode,$00
+		STORE8			_pause_mode_flag,$00
 		SRET
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -5776,7 +5776,7 @@ _ssub_room_exit_pal_fade_out:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_room_exit_pal_fade_out_ex:
-		STORE8			_scr_trds_pause_mode,$01
+		STORE8			_pause_mode_flag,$01
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_dec_by_mask
 			NARGB		$FF
@@ -5870,7 +5870,7 @@ _scr_trds_list_reset:
 		LDA		#$FF
 		LDX		#$0D
 loc_62E6E:
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 		DEX
 		BPL		loc_62E6E
 		LDA		#$00
@@ -5918,7 +5918,7 @@ _thread_lib_load:
 		STY		_tmp2
 		LDX		_var4
 loc_62EB2:
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_62EBD
 		INX
 		CPX		_var5
@@ -5926,24 +5926,24 @@ loc_62EB2:
 		RTS
 loc_62EBD:
 		LDA		_tmp1
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		LDA		_tmp2
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		_tmp_var0
-		STA		_scr_trds_x_pos_hi,X
+		STA		_obj_x_pos_hi,X
 		LDA		_tmp_var1
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		LDA		_var0
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 		LDA		_var1
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 		LDA		_var2
-		STA		_scr_trds_args2,X
+		STA		_trds_args2,X
 		LDA		#$80
-		STA		_scr_trds_x_center,X
-		STA		_scr_trds_y_center,X
+		STA		_obj_x_center,X
+		STA		_obj_y_center,X
 		LDA		_tmp0
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 		BMI		_nbgsub_dummy
 		TAY
 		LDA		_scr_lib_lo,Y
@@ -5960,37 +5960,37 @@ _thread_load:
 		TYA									; to load that not in the library
 		PHA
 		LDA		#$FF
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		STA		_trds_manager_restart_flag
 		LDA		#$00
-		STA		_scr_trds_x_move_speed,X
-		STA		_scr_trds_x_move_delta,X
-		STA		_scr_trds_y_move_speed,X
-		STA		_scr_trds_y_move_delta,X
+		STA		_obj_x_speed,X
+		STA		_obj_x_delta,X
+		STA		_obj_y_speed,X
+		STA		_obj_y_delta,X
 		LDA		#$01
-		STA		_scr_trds_exec_req,X
+		STA		_trds_exec_req,X
 		TXA
 		ASL
 		PHA
 		TAX
 		LDA		#<[_nbgsub_dummy]
-		STA		_scr_trds_nbgsub_ptr,X
+		STA		_trds_nbgsub_ptr,X
 		LDA		#>[_nbgsub_dummy]
-		STA		_scr_trds_nbgsub_ptr+1,X
+		STA		_trds_nbgsub_ptr+1,X
 		LDA		#$00
-		STA		_scr_trds_sp,X
-		STA		_scr_trds_sp+1,X
-		STA		_scr_trds_delay,X
-		STA		_scr_trds_delay+1,X
+		STA		_trds_scr_sp,X
+		STA		_trds_scr_sp+1,X
+		STA		_trds_scr_delay,X
+		STA		_trds_scr_delay+1,X
 		PLA
 		ASL
 		TAX
 		LDA		#$00
-		STA		_scr_trds_ptr._ptr1+1,X		; set secondary script pointer to 00
+		STA		_trd_ptr._ptr1+1,X			; set secondary script pointer to 00
 		PLA
-		STA		_scr_trds_ptr._ptr0+1,X		; load first script pointer with main script
+		STA		_trd_ptr._ptr0+1,X			; load first script pointer with main script
 		PLA
-		STA		_scr_trds_ptr._ptr0,X
+		STA		_trd_ptr._ptr0,X
 
 ; !FALLTHROUGH!
 
@@ -6009,23 +6009,23 @@ _threads_manager:
 		LDX		#$0D						; set thread execution request at new iteration
 		LDA		#$01						; every thread with flag set to 1 marked for execution
 loc_62F45:
-		STA		_scr_trds_exec_req,X		; total 14 threads here
+		STA		_trds_exec_req,X			; total 14 threads here
 		DEX
 		BPL		loc_62F45
 .trds_manager_restart:
 		LDA		#$00
-		STA		_scr_cur_trd_idx			; init thread index counter, start from thread 0
+		STA		_cur_trd_slot				; init thread index counter, start from thread 0
 		STA		_trds_manager_restart_flag	; this flag may be set if any new script loaded runtime
 .trds_manager_loop:
-		LDX		_scr_cur_trd_idx			; here we check thread execution request first,
-		LDA		_scr_trds_exec_req,X		; on the first loop they are all 1, so pass here
+		LDX		_cur_trd_slot				; here we check thread execution request first,
+		LDA		_trds_exec_req,X			; on the first loop they are all 1, so pass here
 		BEQ		.trds_skip_exec
-		DEC		_scr_trds_exec_req,X		; clear request as soon as we start to manage thread
-		LDA		_scr_trds_idx,X				; check if thread initialized with script index
+		DEC		_trds_exec_req,X			; clear request as soon as we start to manage thread
+		LDA		_trds_obj_idx,X				; check if thread initialized with script index
 		BMI		.trds_skip_exec				; if FF, then thrd is empty, skip it
-		LDA		_scr_trds_out_of_screen_test; check if out-of-screen test needed beforehead
+		LDA		_out_of_screen_test_flag	; check if out-of-screen test needed beforehead
 		BEQ		.trds_do_exec				; if no, then just execute
-		LDA		_scr_trds_pause_mode		; if not paused, performing out-of-screen test for
+		LDA		_pause_mode_flag			; if not paused, performing out-of-screen test for
 		BEQ		loc_62F6A					; all level threads, skip system threads (<6)
 ; NOTE: this TXA is redundant, comparison performed on X red directly!
 ; and A never used after that...
@@ -6041,15 +6041,15 @@ loc_62F6A:
 		BCS		.trds_skip_exec				; halted, but will resume if visible again...
 #endif
 .trds_do_exec:
-		LDX		_scr_cur_trd_idx			; now, finally do execute. fetch current thread index
-		LDY		_scr_trds_idx,X				; and set corresponding PRG bank before executing
+		LDX		_cur_trd_slot				; now, finally do execute. fetch current thread index
+		LDY		_trds_obj_idx,X				; and set corresponding PRG bank before executing
 		LDA		_scr_bank_lib,Y				; scripts may be executed independently, but must
 		STA		_prg_cur_bank				; inherit one of existing library indexes to be able
 		JSR		_mmc1_prg_safe				; to use proper programm bank and sprite library
 		JSR		_thread_exec
 .trds_skip_exec:
-		INC		_scr_cur_trd_idx			; repeat for all 14 threds
-		LDA		_scr_cur_trd_idx
+		INC		_cur_trd_slot				; repeat for all 14 threds
+		LDA		_cur_trd_slot
 		CMP		#$0E
 		BCC		.trds_manager_loop
 		LDA		_trds_manager_restart_flag	; if one of threads added a new script, it must set
@@ -6120,7 +6120,7 @@ loc_62FFC:
 loc_62FFE:
 		LDX		#$00
 loc_63000:
-		LDY		_scr_trds_idx,X				; after all scroll and shifts are recalculated
+		LDY		_trds_obj_idx,X				; after all scroll and shifts are recalculated
 		BMI		loc_63014					; we may draw sprite finally. one sprite for one thread
 		LDA		_scr_bank_lib,Y				; every object has its own sprite library in a
 		STA		_prg_cur_bank				; corresponding bank, so select bank again
@@ -6138,14 +6138,14 @@ loc_63014:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_spr_insert:
-		LDA		_scr_trds_x_pos_lo,X		; calculate screen position for
+		LDA		_obj_x_pos_lo,X				; calculate screen position for
 		SEC									; current object on the fly
 		SBC		_ppu_scroll_pos_x
 		STA		_tmp1						; tmp1 = _screen_pos_x
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		SBC		_ppu_scroll_pos_x+1
 		BNE		locret_6309C
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_y
 		BCS		loc_63032
@@ -6153,44 +6153,47 @@ _obj_spr_insert:
 		CLC
 loc_63032:
 		STA		_tmp2						; tmp2 = _screen_pos_y
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		SBC		_ppu_scroll_pos_y+1
 		BNE		locret_6309C
-		LDY		_scr_trds_idx,X
-		LDA		_scr_trds_spr_idx,X
+		LDY		_trds_obj_idx,X
+		LDA		_spr_libs_list,Y
+		TAY
+		LDA		_obj_spr_idx,X
 		CMP		#$C0
 		BCS		loc_6309D
 		LDA		#$00
 		STA		_var0
-		LDA		_scr_trds_spr_idx,X
+		LDA		_obj_spr_idx,X
 		ASL
 		ROL		_var0
-		ADC		_spr_libAs_lo,Y
+		CLC
+		ADC		_spr_libA_ofs_tbl_lo,Y
 		STA		_ptr06
 		LDA		_var0
-		ADC		_spr_libAs_hi,Y
+		ADC		_spr_libA_ofs_tbl_hi,Y
 		STA		_ptr06+1
 		LDY		#$00
 		LDA		(_ptr06),Y
 ; NEW, prepare to convert sprites format. let's make all sprites
 ; be either single or multiple chunk format
-		STA		_scr_pc
+		STA		_cur_scr_pc
 		INY
 		LDA		(_ptr06),Y
-		STA		_scr_pc+1
+		STA		_cur_scr_pc+1
 		LDY		#$00
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		BMI		.spr_typeB_insert
 .spr_typeA_insert:
-		LDA		_scr_pc
+		LDA		_cur_scr_pc
 		STA		_ptr08
-		LDA		_scr_pc+1
+		LDA		_cur_scr_pc+1
 		STA		_ptr08+1
 ; -
 		LDA		#$00
 		STA		_tmpD8
 		STA		_tmpD9
-		JSR		_spr_clip_insert_ex
+		JSR		_spr_clip_insert
 locret_6309C:
 		RTS
 loc_6309D:
@@ -6198,42 +6201,42 @@ loc_6309D:
 		BEQ		locret_6309C
 		SBC		#$BF
 		ASL
-		ADC		_spr_libBs_lo,Y
+		ADC		_spr_libB_ofs_tbl_lo,Y
 		STA		_ptr06
 		LDA		#$00
-		ADC		_spr_libBs_hi,Y
+		ADC		_spr_libB_ofs_tbl_hi,Y
 		STA		_ptr06+1
 		LDY		#$00
 		LDA		(_ptr06),Y
-		STA		_scr_pc
+		STA		_cur_scr_pc
 		INY
 		LDA		(_ptr06),Y
-		STA		_scr_pc+1
+		STA		_cur_scr_pc+1
 		DEY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		BPL		.spr_typeA_insert
 ;		BMI		.spr_modeC_insert			; TODO, reimplement
 .spr_typeB_insert:
 		AND		#$7F
-		STA		_scr_loop_count
+		STA		_tmp_loop_cnt
 		INY
 .spr_typeB_loop:
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		STA		_ptr08
 		INY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		STA		_ptr08+1
 		INY
 		TYA
 		PHA
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$00
 		STA		_tmpD8
 		STA		_tmpD9
-		JSR		_spr_clip_insert_ex
+		JSR		_spr_clip_insert
 		PLA
 		TAY
-		DEC		_scr_loop_count
+		DEC		_tmp_loop_cnt
 		BNE		.spr_typeB_loop
 		RTS
 ; TODO: this is a special case for sprite data, never used
@@ -6245,7 +6248,7 @@ loc_6309D:
 ;
 ;.spr_modeC_insert:
 ;		AND		#$7F
-;		STA		_scr_loop_count
+;		STA		_tmp_loop_cnt
 ;		INY
 ;.spr_typeC_loop:
 ;		LDA		_tmp1
@@ -6255,7 +6258,7 @@ loc_6309D:
 ;		LDA		#$00
 ;		STA		_tmpD8
 ;		STA		_tmpD9
-;		LDA		(_scr_pc),Y
+;		LDA		(_cur_scr_pc),Y
 ;		BPL		loc_630FC
 ;		DEC		_tmpD8
 ;loc_630FC:
@@ -6265,7 +6268,7 @@ loc_6309D:
 ;		INC		_tmpD8
 ;loc_63104:
 ;		INY
-;		LDA		(_scr_pc),Y
+;		LDA		(_cur_scr_pc),Y
 ;		BPL		loc_6310B
 ;		DEC		_tmpD9
 ;loc_6310B:
@@ -6276,10 +6279,10 @@ loc_6309D:
 ;		INC		_tmpD9
 ;loc_63114:
 ;		INY
-;		LDA		(_scr_pc),Y
+;		LDA		(_cur_scr_pc),Y
 ;		STA		_ptr08
 ;		INY
-;		LDA		(_scr_pc),Y
+;		LDA		(_cur_scr_pc),Y
 ;		STA		_ptr08+1
 ;		INY
 ;		TYA
@@ -6293,7 +6296,7 @@ loc_6309D:
 ;		STA		_tmp2
 ;		PLA
 ;		STA		_tmp1
-;		DEC		_scr_loop_count
+;		DEC		_tmp_loop_cnt
 ;		BNE		.spr_typeC_loop
 ;		RTS
 
@@ -6308,63 +6311,63 @@ loc_6309D:
 ;
 _thread_exec:
 		LDA		#$00
-		STA		_scr_loop_count				; init scripts counter here
+		STA		_tmp_loop_cnt				; init scripts counter here
 loc_63139:
-		LDA		_scr_cur_trd_idx			; calc the current script pointer offset
-		ASL									; NOTE, _scr_cur_trd_idxw is used to separate
-		ADC		_scr_loop_count				; both script stack operations, delays and exec flow.
-		STA		_scr_cur_trd_idxw			; but both scripts will refer as _scr_cur_trd_idx
+		LDA		_cur_trd_slot				; calc the current script pointer offset
+		ASL									; NOTE, _cur_trd_scr_slot is used to separate
+		ADC		_tmp_loop_cnt				; both script stack operations, delays and exec flow.
+		STA		_cur_trd_scr_slot			; but both scripts will refer as _cur_trd_slot
 		ASL									; for all other parameters
-		TAX									;
-		LDA		_scr_trds_ptr+1,X			; if high nibble of script offset is zero
+		TAX
+		LDA		_trd_ptr+1,X				; if high nibble of script offset is zero
 		BEQ		loc_6314A					; then this script is disabled, skip it
 		JSR		_script_exec				; execute if not
 loc_6314A:
-		INC		_scr_loop_count				; repeat for both scripts
-		LDA		_scr_loop_count
+		INC		_tmp_loop_cnt				; repeat for both scripts
+		LDA		_tmp_loop_cnt
 		CMP		#$02
 		BCC		loc_63139
-		LDA		_scr_cur_trd_idx			; now execute additional native
+		LDA		_cur_trd_slot				; now execute additional native
 		ASL									; background routine, this routine always
 		TAX									; defined to some dummy procedure by default
-		LDA		_scr_trds_nbgsub_ptr,X		; so no need to check if it used at all
+		LDA		_trds_nbgsub_ptr,X			; so no need to check if it used at all
 		STA		_ptr06
-		LDA		_scr_trds_nbgsub_ptr+1,X
+		LDA		_trds_nbgsub_ptr+1,X
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_idx,X				; if thread not stopped during execution,
+		LDX		_cur_trd_slot
+		LDA		_trds_obj_idx,X				; if thread not stopped during execution,
 		BPL		_scr_trd_adjust_pos			; calculate new objexct position with parameters given
 		RTS
 _scr_trd_adjust_pos:
 		LDA		#$00
 		STA		_var0
 		STA		_var1
-		LDA		_scr_trds_x_move_delta,X	; all move parameters are defined, so just calculate
+		LDA		_obj_x_delta,X				; all move parameters are defined, so just calculate
 		BPL		loc_63178					; final positions and update them
 		DEC		_var0
 loc_63178:
-		LDA		_scr_trds_y_move_delta,X
+		LDA		_obj_y_delta,X
 		BPL		loc_6317F
 		DEC		_var1
 loc_6317F:
-		LDA		_scr_trds_x_center,X
+		LDA		_obj_x_center,X
 		CLC
-		ADC		_scr_trds_x_move_speed,X
-		STA		_scr_trds_x_center,X
-		LDA		_scr_trds_x_pos_lo,X
-		ADC		_scr_trds_x_move_delta,X
-		STA		_scr_trds_x_pos_lo,X
-		LDA		_scr_trds_x_pos_hi,X
+		ADC		_obj_x_speed,X
+		STA		_obj_x_center,X
+		LDA		_obj_x_pos_lo,X
+		ADC		_obj_x_delta,X
+		STA		_obj_x_pos_lo,X
+		LDA		_obj_x_pos_hi,X
 		ADC		_var0
-		STA		_scr_trds_x_pos_hi,X
-		LDA		_scr_trds_y_move_speed,X
+		STA		_obj_x_pos_hi,X
+		LDA		_obj_y_speed,X
 		CLC
-		ADC		_scr_trds_y_center,X
-		STA		_scr_trds_y_center,X
-		LDA		_scr_trds_y_move_delta,X
+		ADC		_obj_y_center,X
+		STA		_obj_y_center,X
+		LDA		_obj_y_delta,X
 		BMI		loc_631B4
-		ADC		_scr_trds_y_pos_lo,X
+		ADC		_obj_y_pos_lo,X
 		BCS		loc_631AF
 		CMP		#$F0
 		BCC		loc_631BB
@@ -6373,15 +6376,15 @@ loc_631AF:
 		SEC
 		BCS		loc_631BB
 loc_631B4:
-		ADC		_scr_trds_y_pos_lo,X
+		ADC		_obj_y_pos_lo,X
 		BCS		loc_631BB
 		SBC		#$0F
 		CLC
 loc_631BB:
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		_var1
-		ADC		_scr_trds_y_pos_hi,X
-		STA		_scr_trds_y_pos_hi,X		; that's all here
+		ADC		_obj_y_pos_hi,X
+		STA		_obj_y_pos_hi,X				; that's all here
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6389,38 +6392,38 @@ loc_631BB:
 ; SDELAY command or with any delayed command
 ;
 _script_exec:
-		LDX		_scr_cur_trd_idxw			; every script has delay priority option
-		LDA		_scr_trds_delay,X			; if not zero, skip this iteration
+		LDX		_cur_trd_scr_slot			; every script has delay priority option
+		LDA		_trds_scr_delay,X			; if not zero, skip this iteration
 		BNE		loc_63240					; and decrement delay
 		TXA
 		ASL
 		TAX
-		LDA		_scr_trds_ptr,X				; fetch corresponding script pointer
-		STA		_scr_pc
-		LDA		_scr_trds_ptr+1,X
-		STA		_scr_pc+1
+		LDA		_trd_ptr,X					; fetch corresponding script pointer
+		STA		_cur_scr_pc
+		LDA		_trd_ptr+1,X
+		STA		_cur_scr_pc+1
 		LDA		#$00
-		STA		_scr_cur_trd_stack_ptr+1	; calculate current stack array pos
+		STA		_cur_scr_sp+1				; calculate current stack array pos
 		TXA
 		ASL
 		ASL
-		ROL		_scr_cur_trd_stack_ptr+1
-		ADC		#<[_scr_trds_stack]
-		STA		_scr_cur_trd_stack_ptr
-		LDA		_scr_cur_trd_stack_ptr+1
-		ADC		#>[_scr_trds_stack]
-		STA		_scr_cur_trd_stack_ptr+1
+		ROL		_cur_scr_sp+1
+		ADC		#<[_trds_scr_stack]
+		STA		_cur_scr_sp
+		LDA		_cur_scr_sp+1
+		ADC		#>[_trds_scr_stack]
+		STA		_cur_scr_sp+1
 loc_631ED:
 		LDY		#$00						; start to fetch comand
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		PHA
 		CMP		#$20						; commands below 0x20 are regular
 		BCS		.script_delayed_cmd			; continuos commands except SDELAY
 		PLA									; which forced the script execution
 		BNE		.script_regular_cmd			; flow interruption
-		LDX		_scr_cur_trd_idx			; command 00 is a STOP command
+		LDX		_cur_trd_slot				; command 00 is a STOP command
 		LDA		#$FF						; disables the thread idx flag and
-		STA		_scr_trds_idx,X				; exit from _thread_exec as well
+		STA		_trds_obj_idx,X				; exit from _thread_exec as well
 		PLA
 		PLA
 		RTS
@@ -6431,11 +6434,11 @@ loc_631ED:
 		LDA		_scmd_lib_hi-1,X
 		BNE		.script_cmd_exec
 .script_delayed_cmd:
-		LDX		_scr_cur_trd_idxw			; delayed cmd may be executed continuosly
+		LDX		_cur_trd_scr_slot			; delayed cmd may be executed continuosly
 		PLA									; if no delay set, if set, every time it
 		PHA									; executed, script flow stopped to the next
 		AND		#$07						; iteration
-		STA		_scr_trds_delay,X
+		STA		_trds_scr_delay,X
 		PLA
 		SEC
 		SBC		#$20
@@ -6449,19 +6452,19 @@ loc_631ED:
 .script_cmd_exec:
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
-		LDX		_scr_cur_trd_idxw			; if no delays set during execution, continue
-		LDA		_scr_trds_delay,X			; script code flow
+		LDX		_cur_trd_scr_slot			; if no delays set during execution, continue
+		LDA		_trds_scr_delay,X			; script code flow
 		BEQ		loc_631ED					; otherwise stop execution and continue to the
 		TXA									; next script/thread
 		ASL
 		TAX
-		LDA		_scr_pc						; flush current PC pointer
-		STA		_scr_trds_ptr,X
-		LDA		_scr_pc+1
-		STA		_scr_trds_ptr+1,X
+		LDA		_cur_scr_pc					; flush current PC pointer
+		STA		_trd_ptr,X
+		LDA		_cur_scr_pc+1
+		STA		_trd_ptr+1,X
 loc_63240:
-		LDX		_scr_cur_trd_idxw			; do delays count as well
-		DEC		_scr_trds_delay,X
+		LDX		_cur_trd_scr_slot			; do delays count as well
+		DEC		_trds_scr_delay,X
 		RTS
 
 ; NOTE: there are two sets of script comands. this block describes
@@ -6576,48 +6579,48 @@ _dcmd_lib_hi:
 _scmd01_loop_begin:
 		JSR		_scr_getc
 		PHA
-		LDX		_scr_cur_trd_idxw
-		LDY		_scr_trds_sp,X
-		LDA		_scr_pc
+		LDX		_cur_trd_scr_slot
+		LDY		_trds_scr_sp,X
+		LDA		_cur_scr_pc
 		CLC
 		ADC		#$01
 		PHA
-		LDA		_scr_pc+1
+		LDA		_cur_scr_pc+1
 		ADC		#$00
-		STA		(_scr_cur_trd_stack_ptr),Y
+		STA		(_cur_scr_sp),Y
 		INY
 		PLA
-		STA		(_scr_cur_trd_stack_ptr),Y
+		STA		(_cur_scr_sp),Y
 		INY
 		PLA
-		STA		(_scr_cur_trd_stack_ptr),Y
+		STA		(_cur_scr_sp),Y
 		INY
 		TYA
-		STA		_scr_trds_sp,X
-		JMP		_scr_pc_inc
+		STA		_trds_scr_sp,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd02_loop_end:
-		LDX		_scr_cur_trd_idxw
-		LDY		_scr_trds_sp,X
+		LDX		_cur_trd_scr_slot
+		LDY		_trds_scr_sp,X
 		DEY
-		LDA		(_scr_cur_trd_stack_ptr),Y
+		LDA		(_cur_scr_sp),Y
 		SEC
 		SBC		#$01
-		STA		(_scr_cur_trd_stack_ptr),Y
+		STA		(_cur_scr_sp),Y
 		BNE		loc_632E1
 		DEY
 		DEY
 		TYA
-		STA		_scr_trds_sp,X
-		JMP		_scr_pc_inc
+		STA		_trds_scr_sp,X
+		JMP		_cur_scr_pc_inc
 loc_632E1:
 		DEY
-		LDA		(_scr_cur_trd_stack_ptr),Y
-		STA		_scr_pc
+		LDA		(_cur_scr_sp),Y
+		STA		_cur_scr_pc
 		DEY
-		LDA		(_scr_cur_trd_stack_ptr),Y
-		STA		_scr_pc+1
+		LDA		(_cur_scr_sp),Y
+		STA		_cur_scr_pc+1
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6625,9 +6628,9 @@ _scmd03_sjmp:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
-		STA		_scr_pc+1
+		STA		_cur_scr_pc+1
 		PLA
-		STA		_scr_pc
+		STA		_cur_scr_pc
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6636,41 +6639,41 @@ _scmd04_sjsr:
 		PHA
 		JSR		_scr_getc
 		PHA
-		JSR		_scr_pc_inc
-		LDX		_scr_cur_trd_idxw
-		LDY		_scr_trds_sp,X
-		LDA		_scr_pc+1
-		STA		(_scr_cur_trd_stack_ptr),Y
+		JSR		_cur_scr_pc_inc
+		LDX		_cur_trd_scr_slot
+		LDY		_trds_scr_sp,X
+		LDA		_cur_scr_pc+1
+		STA		(_cur_scr_sp),Y
 		INY
-		LDA		_scr_pc
-		STA		(_scr_cur_trd_stack_ptr),Y
+		LDA		_cur_scr_pc
+		STA		(_cur_scr_sp),Y
 		INY
 		TYA
-		STA		_scr_trds_sp,X
+		STA		_trds_scr_sp,X
 		PLA
-		STA		_scr_pc+1
+		STA		_cur_scr_pc+1
 		PLA
-		STA		_scr_pc
+		STA		_cur_scr_pc
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd05_ret:
-		LDX		_scr_cur_trd_idxw			; NOTE, the method of handling parallel
-		LDY		_scr_trds_sp,X				; scripts sometime causes clear script
+		LDX		_cur_trd_scr_slot			; NOTE, the method of handling parallel
+		LDY		_trds_scr_sp,X				; scripts sometime causes clear script
 		BEQ		loc_63334					; stacks during execution of the sub routines...
 		DEY
-		LDA		(_scr_cur_trd_stack_ptr),Y
-		STA		_scr_pc
+		LDA		(_cur_scr_sp),Y
+		STA		_cur_scr_pc
 		DEY
-		LDA		(_scr_cur_trd_stack_ptr),Y
-		STA		_scr_pc+1
+		LDA		(_cur_scr_sp),Y
+		STA		_cur_scr_pc+1
 		TYA
-		STA		_scr_trds_sp,X
+		STA		_trds_scr_sp,X
 		RTS
 loc_63334:
-		LDX		_scr_cur_trd_idx			; ...so if script trying to return from _ssub
+		LDX		_cur_trd_slot				; ...so if script trying to return from _ssub
 		LDA		#$FF						; with empty stack, we just silently exit it
-		STA		_scr_trds_idx,X				; and keep executing the res.
+		STA		_trds_obj_idx,X				; and keep executing the res.
 		PLA
 		PLA
 		PLA
@@ -6680,84 +6683,84 @@ loc_63334:
 ; =============== S U B R O U T I N E ======n================================
 _scmd06_delay:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idxw
-		STA		_scr_trds_delay,X
-		JMP		_scr_pc_inc
+		LDX		_cur_trd_scr_slot
+		STA		_trds_scr_delay,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd00_spr_idx_set:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
-		STA		_scr_trds_spr_idx,X
-		JMP		_scr_pc_inc
+		STA		_obj_spr_idx,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd01_pos_x_set:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		JSR		_scr_getc
-		STA		_scr_trds_x_pos_hi,X
+		STA		_obj_x_pos_hi,X
 		LDA		#$80
-		STA		_scr_trds_x_center,X
-		JMP		_scr_pc_inc
+		STA		_obj_x_center,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd02_pos_y_set:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		JSR		_scr_getc
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		LDA		#$80
-		STA		_scr_trds_y_center,X
-		JMP		_scr_pc_inc
+		STA		_obj_y_center,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd05_pos_x_delta:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
-		STA		_scr_trds_x_move_speed,X
+		STA		_obj_x_speed,X
 		JSR		_scr_getc
-		STA		_scr_trds_x_move_delta,X
-		JMP		_scr_pc_inc
+		STA		_obj_x_delta,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd06_pos_y_delta:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
-		STA		_scr_trds_y_move_speed,X
+		STA		_obj_y_speed,X
 		JSR		_scr_getc
-		STA		_scr_trds_y_move_delta,X
-		JMP		_scr_pc_inc
+		STA		_obj_y_delta,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd07_pos_x_delta_add:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		CLC
-		ADC		_scr_trds_x_move_speed,X
-		STA		_scr_trds_x_move_speed,X
+		ADC		_obj_x_speed,X
+		STA		_obj_x_speed,X
 		PHP
 		JSR		_scr_getc
 		PLP
-		ADC		_scr_trds_x_move_delta,X
-		STA		_scr_trds_x_move_delta,X
-		JMP		_scr_pc_inc
+		ADC		_obj_x_delta,X
+		STA		_obj_x_delta,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd08_pos_y_delta_add:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		CLC
-		ADC		_scr_trds_y_move_speed,X
-		STA		_scr_trds_y_move_speed,X
+		ADC		_obj_y_speed,X
+		STA		_obj_y_speed,X
 		PHP
 		JSR		_scr_getc
 		PLP
-		ADC		_scr_trds_y_move_delta,X
-		STA		_scr_trds_y_move_delta,X
-		JMP		_scr_pc_inc
+		ADC		_obj_y_delta,X
+		STA		_obj_y_delta,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
@@ -6768,7 +6771,7 @@ _dcmd09_scrl_x_set:
 		STA		_ppu_scroll_pos_x+1
 		LDA		#$80
 		STA		_ppu_scroll_x_clk
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd0A_scrl_y_sey:
@@ -6778,7 +6781,7 @@ _dcmd0A_scrl_y_sey:
 		STA		_ppu_scroll_pos_y+1
 		LDA		#$80
 		STA		_ppu_scroll_y_clk
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
@@ -6787,7 +6790,7 @@ _dcmd0B_scrl_x_move_set:
 		STA		_ppu_scroll_x_shift
 		JSR		_scr_getc
 		STA		_ppu_scroll_x_shift+1
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd0C_scrl_move_y_set:
@@ -6795,7 +6798,7 @@ _dcmd0C_scrl_move_y_set:
 		STA		_ppu_scroll_y_shift
 		JSR		_scr_getc
 		STA		_ppu_scroll_y_shift+1
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
@@ -6809,7 +6812,7 @@ _dcmd0D_scrl_x_move_add:
 		PLP
 		ADC		_ppu_scroll_x_shift+1
 		STA		_ppu_scroll_x_shift+1
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
@@ -6823,11 +6826,11 @@ _dcmd0E_scrl_y_move_add:
 		PLP
 		ADC		_ppu_scroll_y_shift+1
 		STA		_ppu_scroll_y_shift+1
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd03_pos_x_move:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		LDY		#$00
 		STY		_var0
@@ -6836,77 +6839,77 @@ _dcmd03_pos_x_move:
 		DEC		_var0
 loc_63447:
 		CLC
-		ADC		_scr_trds_x_pos_lo,X
-		STA		_scr_trds_x_pos_lo,X
-		LDA		_scr_trds_x_pos_hi,X
+		ADC		_obj_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
+		LDA		_obj_x_pos_hi,X
 		ADC		_var0
-		STA		_scr_trds_x_pos_hi,X
-		JMP		_scr_pc_inc
+		STA		_obj_x_pos_hi,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd04_pos_y_move:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		CLC
 		BMI		loc_63471
-		ADC		_scr_trds_y_pos_lo,X
+		ADC		_obj_y_pos_lo,X
 		BCS		loc_63467
 		CMP		#$F0
 		BCC		loc_6346C
 loc_63467:
 		ADC		#$0F
-		INC		_scr_trds_y_pos_hi,X
+		INC		_obj_y_pos_hi,X
 loc_6346C:
-		STA		_scr_trds_y_pos_lo,X
-		JMP		_scr_pc_inc
+		STA		_obj_y_pos_lo,X
+		JMP		_cur_scr_pc_inc
 loc_63471:
-		ADC		_scr_trds_y_pos_lo,X
+		ADC		_obj_y_pos_lo,X
 		BCS		loc_6347A
 		SBC		#$0F
-		DEC		_scr_trds_y_pos_hi,X
+		DEC		_obj_y_pos_hi,X
 loc_6347A:
-		STA		_scr_trds_y_pos_lo,X
-		JMP		_scr_pc_inc
+		STA		_obj_y_pos_lo,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
 _dcmd12_byte_D5_add:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		CLC
 		ADC		_ppu_scroll_x_page
 		STA		_ppu_scroll_x_page
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
 _dcmd13_byte_D6_add:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		JSR		_scr_getc
 		CLC
 		ADC		_ppu_scroll_y_page
 		STA		_ppu_scroll_y_page
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd14_pos_move_stop:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$00
-		STA		_scr_trds_x_move_speed,X
-		STA		_scr_trds_x_move_delta,X
-		STA		_scr_trds_y_move_speed,X
-		STA		_scr_trds_y_move_delta,X
-		JMP		_scr_pc_inc
+		STA		_obj_x_speed,X
+		STA		_obj_x_delta,X
+		STA		_obj_y_speed,X
+		STA		_obj_y_delta,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd15_scrl_move_stop:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$00
 		STA		_ppu_scroll_x_shift
 		STA		_ppu_scroll_x_shift+1
 		STA		_ppu_scroll_y_shift
 		STA		_ppu_scroll_y_shift+1
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd07_njsr:
@@ -6919,7 +6922,7 @@ _scmd07_njsr:
 		PHP
 		PLA
 		STA		_nsub_return_flags
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd0C_bcc:
@@ -6931,20 +6934,20 @@ _scmd0C_bcc:
 		TAX
 		PLA
 		LSR
-		BCS		_j_scr_pc_incB
+		BCS		_j_cur_scr_pc_incB
 
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
-_scr_pc_set:
-		STX		_scr_pc+1
+_cur_scr_pc_set:
+		STX		_cur_scr_pc+1
 		LDA		_tmp0
-		STA		_scr_pc
+		STA		_cur_scr_pc
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_j_scr_pc_incB:
-		JMP		_scr_pc_inc
+_j_cur_scr_pc_incB:
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd0B_bcs:
@@ -6956,13 +6959,13 @@ _scmd0B_bcs:
 		TAX
 		PLA
 		LSR
-		BCC		_j_scr_pc_incB
-		BCS		_scr_pc_set
+		BCC		_j_cur_scr_pc_incB
+		BCS		_cur_scr_pc_set
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd11_sloc_sw:
 		JSR		_scr_getc
-		JSR		_scr_pc_inc
+		JSR		_cur_scr_pc_inc
 		CMP		_nsub_return_value
 		BCC		_scmd_skip
 		BNE		_cmd_switch_case
@@ -6972,10 +6975,10 @@ _scmd11_sloc_sw:
 ; =============== S U B R O U T I N E ======n================================
 _scmd_skip:
 		ASL
-		ADC		_scr_pc
-		STA		_scr_pc
+		ADC		_cur_scr_pc
+		STA		_cur_scr_pc
 		BCC		locret_63512
-		INC		_scr_pc+1
+		INC		_cur_scr_pc+1
 locret_63512:
 		RTS
 
@@ -6984,43 +6987,43 @@ _cmd_switch_case:
 		LDA		_nsub_return_value
 		ASL
 		TAY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		PHA
 		INY
-		LDA		(_scr_pc),Y
-		STA		_scr_pc+1
+		LDA		(_cur_scr_pc),Y
+		STA		_cur_scr_pc+1
 		PLA
-		STA		_scr_pc
+		STA		_cur_scr_pc
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd12_ssub_sw:
 		JSR		_scr_getc
-		JSR		_scr_pc_inc
+		JSR		_cur_scr_pc_inc
 		CMP		_nsub_return_value
 		BCC		_scmd_skip
 		BEQ		_scmd_skip
-		LDX		_scr_cur_trd_idxw
-		LDY		_scr_trds_sp,X
+		LDX		_cur_trd_scr_slot
+		LDY		_trds_scr_sp,X
 		INY
 		ASL
-		ADC		_scr_pc
-		STA		(_scr_cur_trd_stack_ptr),Y
+		ADC		_cur_scr_pc
+		STA		(_cur_scr_sp),Y
 		DEY
 		LDA		#$00
-		ADC		_scr_pc+1
-		STA		(_scr_cur_trd_stack_ptr),Y
+		ADC		_cur_scr_pc+1
+		STA		(_cur_scr_sp),Y
 		INY
 		INY
 		TYA
-		STA		_scr_trds_sp,X
+		STA		_trds_scr_sp,X
 		BNE		_cmd_switch_case
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
 _scmd19_njsr_sw:
 		JSR		_scr_getc
-		JSR		_scr_pc_inc
+		JSR		_cur_scr_pc_inc
 		CMP		_nsub_return_value
 		BCC		_scmd_skip
 		BEQ		_scmd_skip
@@ -7028,10 +7031,10 @@ _scmd19_njsr_sw:
 		LDA		_nsub_return_value
 		ASL
 		TAY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		STA		_ptr06
 		INY
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		STA		_ptr06+1
 		JSR		_jump_ptr_ind
 		STA		_nsub_return_value
@@ -7045,11 +7048,11 @@ _scmd19_njsr_sw:
 ; disables currently executing script for given thread
 ;
 _scmd0A_script0_off:
-		LDA		_scr_cur_trd_idxw
+		LDA		_cur_trd_scr_slot
 		ASL
 		TAX
 		LDA		#$00
-		STA		_scr_trds_ptr+1,X
+		STA		_trd_ptr+1,X
 		PLA
 		PLA
 		RTS
@@ -7068,21 +7071,21 @@ _scmd08_script1_start:
 		STA		_var1
 		JSR		_scr_getc
 		STA		_var2
-		LDA		_scr_cur_trd_idx
+		LDA		_cur_trd_slot
 		ASL
 		ADC		_var0
 		TAX
 		LDA		#$00
-		STA		_scr_trds_sp,X
-		STA		_scr_trds_delay,X
+		STA		_trds_scr_sp,X
+		STA		_trds_scr_delay,X
 		TXA
 		ASL
 		TAX
 		LDA		_var1
-		STA		_scr_trds_ptr,X
+		STA		_trd_ptr,X
 		LDA		_var2
-		STA		_scr_trds_ptr+1,X
-		JMP		_scr_pc_inc
+		STA		_trd_ptr+1,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; disables the selected script for current thread. also never used to disable
@@ -7094,63 +7097,63 @@ _scmd08_script1_start:
 _scmd14_script1_off:
 		JSR		_scr_getc
 		STA		_tmp0
-		LDA		_scr_cur_trd_idx
+		LDA		_cur_trd_slot
 		ASL
 		ADC		_tmp0
 		ASL
 		TAX
 		LDA		#$00
-		STA		_scr_trds_ptr+1,X
-		JMP		_scr_pc_inc
+		STA		_trd_ptr+1,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd09_nbg_hndl_set:
-		LDA		_scr_cur_trd_idx
+		LDA		_cur_trd_slot
 		ASL
 		TAX
 		JSR		_scr_getc
-		STA		_scr_trds_nbgsub_ptr,X
+		STA		_trds_nbgsub_ptr,X
 		JSR		_scr_getc
-		STA		_scr_trds_nbgsub_ptr+1,X
-		JMP		_scr_pc_inc
+		STA		_trds_nbgsub_ptr+1,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd0A_suspend:
-		LDX		_scr_cur_trd_idxw
+		LDX		_cur_trd_scr_slot
 		LDA		#$FF
-		STA		_scr_trds_delay,X
+		STA		_trds_scr_delay,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd0F_spr_idx_inc:
-		LDX		_scr_cur_trd_idx
-		INC		_scr_trds_spr_idx,X
-		JMP		_scr_pc_inc
+		LDX		_cur_trd_slot
+		INC		_obj_spr_idx,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd10_spr_idx_dec:
-		LDX		_scr_cur_trd_idx
-		DEC		_scr_trds_spr_idx,X
-		JMP		_scr_pc_inc
+		LDX		_cur_trd_slot
+		DEC		_obj_spr_idx,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd11_spr_idx_add_imm:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		CLC
-		ADC		_scr_trds_spr_idx,X
-		STA		_scr_trds_spr_idx,X
-		JMP		_scr_pc_inc
+		ADC		_obj_spr_idx,X
+		STA		_obj_spr_idx,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd15_sarg_alu:
 		JSR		_scr_getc
 		TAX
-		LDA		_scr_args_list_ptr_lo,X
+		LDA		_trds_args_ptrs_lo,X
 		CLC
-		ADC		_scr_cur_trd_idx
+		ADC		_cur_trd_slot
 		STA		_ptr08
-		LDA		_scr_args_list_ptr_hi,X
+		LDA		_trds_args_ptrs_hi,X
 		ADC		#$00
 		STA		_ptr08+1
 		BCC		_scr_alu_exec
@@ -7169,7 +7172,7 @@ _scr_alu_exec:
 		TAX
 		JSR		_scr_getc
 		STA		_tmp0
-		JSR		_scr_pc_inc
+		JSR		_cur_scr_pc_inc
 		LDA		_scmd0E_sub_lib_lo,X
 		STA		_ptr06
 		LDA		_scmd0E_sub_lib_hi,X
@@ -7212,33 +7215,34 @@ _scmd0E_adc:
 _scmd0F_sarg_set:
 		JSR		_scr_getc
 		TAX
-		LDA		_scr_args_list_ptr_lo,X
+		LDA		_trds_args_ptrs_lo,X
 		STA		_ptr06
-		LDA		_scr_args_list_ptr_hi,X
+		LDA		_trds_args_ptrs_hi,X
 		STA		_ptr06+1
 		JSR		_scr_getc
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		STA		(_ptr06),Y
-		JMP		_scr_pc_inc
-_scr_args_list_ptr_lo:
-		.BYTE	<[_scr_trds_args0]
-		.BYTE	<[_scr_trds_args1]
-		.BYTE	<[_scr_trds_args2]
-_scr_args_list_ptr_hi:
-		.BYTE	>[_scr_trds_args0]
-		.BYTE	>[_scr_trds_args1]
-		.BYTE	>[_scr_trds_args2]
+		JMP		_cur_scr_pc_inc
+
+_trds_args_ptrs_lo:
+		.BYTE	<[_trds_args0]
+		.BYTE	<[_trds_args1]
+		.BYTE	<[_trds_args2]
+_trds_args_ptrs_hi:
+		.BYTE	>[_trds_args0]
+		.BYTE	>[_trds_args1]
+		.BYTE	>[_trds_args2]
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd10_nbg_hndl_reset:
-		LDA		_scr_cur_trd_idx
+		LDA		_cur_trd_slot
 		ASL
 		TAX
 		LDA		#<[_nbgsub_dummy]
-		STA		_scr_trds_nbgsub_ptr,X
+		STA		_trds_nbgsub_ptr,X
 		LDA		#>[_nbgsub_dummy]
-		STA		_scr_trds_nbgsub_ptr+1,X
-		JMP		_scr_pc_inc
+		STA		_trds_nbgsub_ptr+1,X
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd13_store8:
@@ -7248,7 +7252,7 @@ _scmd13_store8:
 		STA		_ptr06+1
 		JSR		_scr_getc
 		STA		(_ptr06),Y
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd16_store16:
@@ -7261,7 +7265,7 @@ _scmd16_store16:
 		JSR		_scr_getc
 		INY
 		STA		(_ptr06),Y
-		JMP		_scr_pc_inc
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd18_sbcc_break:
@@ -7273,23 +7277,23 @@ _scmd18_sbcc_break:
 		TAX
 		PLA
 		LSR
-		BCS		_j_scr_pc_incA
+		BCS		_j_cur_scr_pc_incA
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_break:
-		STX		_scr_pc+1
+		STX		_cur_scr_pc+1
 		LDA		_tmp0
-		STA		_scr_pc
-		LDX		_scr_cur_trd_idxw
-		LDA		_scr_trds_sp,X
+		STA		_cur_scr_pc
+		LDX		_cur_trd_scr_slot
+		LDA		_trds_scr_sp,X
 		SEC
 		SBC		#$03
-		STA		_scr_trds_sp,X
+		STA		_trds_scr_sp,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_j_scr_pc_incA:
-		JMP		_scr_pc_inc
+_j_cur_scr_pc_incA:
+		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd17_sbcs_break:
@@ -7301,23 +7305,23 @@ _scmd17_sbcs_break:
 		TAX
 		PLA
 		LSR
-		BCC		_j_scr_pc_incA
+		BCC		_j_cur_scr_pc_incA
 		BCS		_scr_break
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_getc:
-		INC		_scr_pc
+		INC		_cur_scr_pc
 		BNE		loc_636DD
-		INC		_scr_pc+1
+		INC		_cur_scr_pc+1
 loc_636DD:
-		LDA		(_scr_pc),Y
+		LDA		(_cur_scr_pc),Y
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_scr_pc_inc:
-		INC		_scr_pc
+_cur_scr_pc_inc:
+		INC		_cur_scr_pc
 		BNE		locret_636E6
-		INC		_scr_pc+1
+		INC		_cur_scr_pc+1
 locret_636E6:
 		RTS
 
@@ -7356,19 +7360,7 @@ loc_6370F:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_spr_player_pause_insert:
-		STX		_tmp1
-		STY		_tmp2
-		TAY
-		LDA		_spr_pause_lib_lo,Y
-		STA		_ptr08
-		LDA		_spr_pause_lib_hi,Y
-		STA		_ptr08+1
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-_spr_clip_insert_ex:
+_spr_clip_insert:
 		LDA		_tmp2						; adjust vertical sprite pos to match
 		BNE		loc_6373A					; real PPU sprite line
 		LDA		_tmpD9
@@ -7453,11 +7445,11 @@ _jump_ptr_ind:
 ; this is a special thread loading routine to replace currently executing
 ; script for given thread with a new one with full reset of the execution
 ; flow. after this thread started from the beginning with all parameters
-; reset but still have the same _scr_cur_trd_idx thus using the same data
+; reset but still have the same _cur_trd_slot thus using the same data
 ; bank
 ;
 _cur_thread_reload_param:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 
 ; !FALLTHROUGH!
 
@@ -7490,9 +7482,9 @@ _thread_reload_param_ex:
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_cur_trd_off:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		#$FF
-		STA		_scr_trds_idx,X
+		STA		_trds_obj_idx,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -8423,790 +8415,594 @@ _scr_lib_hi:
 		SCR_IDX_HI	_scr2F_lvl5_boss_keykeeper
 		SCR_IDX_HI	_scr30_lvl6_boss_vega
 
-_spr_libAs_lo:
+_spr_libs_list:
+		.BYTE	$00,$01,$01,$01,$01,$01,$01,$02,$03,$04,$03,$04,$01,$01,$05,$06
+		.BYTE	$06,$07,$03,$05,$05,$05,$05,$07,$07,$07,$08,$05,$07,$05,$05,$05
+		.BYTE	$05,$05,$08,$06,$06,$06,$06,$06,$06,$06,$07,$05,$05,$06,$08,$08
+		.BYTE	$08
+
+_spr_libA_ofs_tbl_lo:
 		.BYTE	<[_spr_libA00]
-		.BYTE	<[_spr_libA01]
-		.BYTE	<[_spr_libA01]
-		.BYTE	<[_spr_libA01]
-		.BYTE	<[_spr_libA01]
-		.BYTE	<[_spr_libA01]
 		.BYTE	<[_spr_libA01]
 		.BYTE	<[_spr_libA07]
 		.BYTE	<[_spr_libA08]
 		.BYTE	<[_spr_libA09]
-		.BYTE	<[_spr_libA08]
-		.BYTE	<[_spr_libA09]
-		.BYTE	<[_spr_libA01]
-		.BYTE	<[_spr_libA01]
 		.BYTE	<[_spr_libA0E]
 		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA11]
-		.BYTE	<[_spr_libA08]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA11]
-		.BYTE	<[_spr_libA11]
 		.BYTE	<[_spr_libA11]
 		.BYTE	<[_spr_libA1A]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA11]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA1A]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA11]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA1A]
-		.BYTE	<[_spr_libA1A]
-		.BYTE	<[_spr_libA1A]
-_spr_libAs_hi:
+_spr_libA_ofs_tbl_hi:
 		.BYTE	>[_spr_libA00]
-		.BYTE	>[_spr_libA01]
-		.BYTE	>[_spr_libA01]
-		.BYTE	>[_spr_libA01]
-		.BYTE	>[_spr_libA01]
-		.BYTE	>[_spr_libA01]
 		.BYTE	>[_spr_libA01]
 		.BYTE	>[_spr_libA07]
 		.BYTE	>[_spr_libA08]
 		.BYTE	>[_spr_libA09]
-		.BYTE	>[_spr_libA08]
-		.BYTE	>[_spr_libA09]
-		.BYTE	>[_spr_libA01]
-		.BYTE	>[_spr_libA01]
 		.BYTE	>[_spr_libA0E]
 		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA11]
-		.BYTE	>[_spr_libA08]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA11]
-		.BYTE	>[_spr_libA11]
 		.BYTE	>[_spr_libA11]
 		.BYTE	>[_spr_libA1A]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA11]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA1A]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA11]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA1A]
-		.BYTE	>[_spr_libA1A]
-		.BYTE	>[_spr_libA1A]
-_spr_libBs_lo:
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
+_spr_libB_ofs_tbl_lo:
 		.BYTE	$00
 		.BYTE	$00
 		.BYTE	<[_spr_libB07]
 		.BYTE	$00
 		.BYTE	$00
 		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
 		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB11]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	<[_spr_libB11]
-		.BYTE	<[_spr_libB11]
 		.BYTE	<[_spr_libB11]
 		.BYTE	<[_spr_libB1A]
-		.BYTE	$00
-		.BYTE	<[_spr_libB11]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB11]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB1A]
-		.BYTE	<[_spr_libB1A]
-		.BYTE	<[_spr_libB1A]
-_spr_libBs_hi:
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
+_spr_libB_ofs_tbl_hi:
 		.BYTE	$00
 		.BYTE	$00
 		.BYTE	>[_spr_libB07]
 		.BYTE	$00
 		.BYTE	$00
 		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	>[_spr_libB0F]
 		.BYTE	>[_spr_libB0F]
 		.BYTE	>[_spr_libB11]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	>[_spr_libB11]
-		.BYTE	>[_spr_libB11]
-		.BYTE	>[_spr_libB11]
-		.BYTE	>[_spr_libB1A]
-		.BYTE	$00
-		.BYTE	>[_spr_libB11]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB11]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB1A]
-		.BYTE	>[_spr_libB1A]
 		.BYTE	>[_spr_libB1A]
 
 		SECTION_START
 
-_spr_pause_lib_lo:
-		.BYTE	<[_sprA08_0A]
-		.BYTE	<[_sprA08_09]
-		.BYTE	<[_sprA08_0A]
-		.BYTE	<[_sprA08_0B]
-		.BYTE	<[_sprA08_1A]
-		.BYTE	<[_sprA08_19]
-		.BYTE	<[_sprA08_1A]
-		.BYTE	<[_sprA08_1B]
-		.BYTE	<[_sprA08_2A]
-		.BYTE	<[_sprA08_29]
-		.BYTE	<[_sprA08_2A]
-		.BYTE	<[_sprA08_2B]
-		.BYTE	<[_sprA08_3A]
-		.BYTE	<[_sprA08_39]
-		.BYTE	<[_sprA08_3A]
-		.BYTE	<[_sprA08_3B]
-		.BYTE	<[_sprA08_4A]
-		.BYTE	<[_sprA08_49]
-		.BYTE	<[_sprA08_4A]
-		.BYTE	<[_sprA08_4B]
-_spr_pause_lib_hi:
-		.BYTE	>[_sprA08_0A]
-		.BYTE	>[_sprA08_09]
-		.BYTE	>[_sprA08_0A]
-		.BYTE	>[_sprA08_0B]
-		.BYTE	>[_sprA08_1A]
-		.BYTE	>[_sprA08_19]
-		.BYTE	>[_sprA08_1A]
-		.BYTE	>[_sprA08_1B]
-		.BYTE	>[_sprA08_2A]
-		.BYTE	>[_sprA08_29]
-		.BYTE	>[_sprA08_2A]
-		.BYTE	>[_sprA08_2B]
-		.BYTE	>[_sprA08_3A]
-		.BYTE	>[_sprA08_39]
-		.BYTE	>[_sprA08_3A]
-		.BYTE	>[_sprA08_3B]
-		.BYTE	>[_sprA08_4A]
-		.BYTE	>[_sprA08_49]
-		.BYTE	>[_sprA08_4A]
-		.BYTE	>[_sprA08_4B]
+		SPR_LIB_START	_spr_libA08
 
-_spr_libA08:
-		.WORD	_sprA08_02
-		.WORD	_sprA08_01
-		.WORD	_sprA08_02
-		.WORD	_sprA08_03
-		.WORD	_sprA08_06
-		.WORD	_sprA08_05
-		.WORD	_sprA08_06
-		.WORD	_sprA08_07
-		.WORD	_sprA08_0A
-		.WORD	_sprA08_09
-		.WORD	_sprA08_0A
-		.WORD	_sprA08_0B
-		.WORD	_sprA08_0E
-		.WORD	_sprA08_0D
-		.WORD	_sprA08_0E
-		.WORD	_sprA08_0F
-		.WORD	_sprA08_12
-		.WORD	_sprA08_11
-		.WORD	_sprA08_12
-		.WORD	_sprA08_13
-		.WORD	_sprA08_16
-		.WORD	_sprA08_15
-		.WORD	_sprA08_16
-		.WORD	_sprA08_17
-		.WORD	_sprA08_1A
-		.WORD	_sprA08_19
-		.WORD	_sprA08_1A
-		.WORD	_sprA08_1B
-		.WORD	_sprA08_1E
-		.WORD	_sprA08_1D
-		.WORD	_sprA08_1E
-		.WORD	_sprA08_1F
-		.WORD	_sprA08_22
-		.WORD	_sprA08_21
-		.WORD	_sprA08_22
-		.WORD	_sprA08_23
-		.WORD	_sprA08_26
-		.WORD	_sprA08_25
-		.WORD	_sprA08_26
-		.WORD	_sprA08_27
-		.WORD	_sprA08_2A
-		.WORD	_sprA08_29
-		.WORD	_sprA08_2A
-		.WORD	_sprA08_2B
-		.WORD	_sprA08_2E
-		.WORD	_sprA08_2D
-		.WORD	_sprA08_2E
-		.WORD	_sprA08_2F
-		.WORD	_sprA08_32
-		.WORD	_sprA08_31
-		.WORD	_sprA08_32
-		.WORD	_sprA08_33
-		.WORD	_sprA08_36
-		.WORD	_sprA08_35
-		.WORD	_sprA08_36
-		.WORD	_sprA08_37
-		.WORD	_sprA08_3A
-		.WORD	_sprA08_39
-		.WORD	_sprA08_3A
-		.WORD	_sprA08_3B
-		.WORD	_sprA08_3E
-		.WORD	_sprA08_3D
-		.WORD	_sprA08_3E
-		.WORD	_sprA08_3F
-		.WORD	_sprA08_42
-		.WORD	_sprA08_41
-		.WORD	_sprA08_42
-		.WORD	_sprA08_43
-		.WORD	_sprA08_46
-		.WORD	_sprA08_45
-		.WORD	_sprA08_46
-		.WORD	_sprA08_47
-		.WORD	_sprA08_4A
-		.WORD	_sprA08_49
-		.WORD	_sprA08_4A
-		.WORD	_sprA08_4B
-		.WORD	_sprA08_4E
-		.WORD	_sprA08_4D
-		.WORD	_sprA08_4E
-		.WORD	_sprA08_4F
-		.WORD	_sprA08_52
-		.WORD	_sprA08_53
-		.WORD	_sprA08_52
-		.WORD	_sprA08_53
-		.WORD	_sprA08_56
-		.WORD	_sprA08_57
-		.WORD	_sprA08_56
-		.WORD	_sprA08_57
-		.WORD	_sprA08_5A
-		.WORD	_sprA08_5B
-		.WORD	_sprA08_5A
-		.WORD	_sprA08_5B
-		.WORD	_sprA08_5E
-		.WORD	_sprA08_5F
-		.WORD	_sprA08_5E
-		.WORD	_sprA08_5F
-		.WORD	_sprA08_62
-		.WORD	_sprA08_63
-		.WORD	_sprA08_62
-		.WORD	_sprA08_63
-		.WORD	_sprA08_66
-		.WORD	_sprA08_67
-		.WORD	_sprA08_66
-		.WORD	_sprA08_67
-		.WORD	_sprA08_6A
-		.WORD	_sprA08_6B
-		.WORD	_sprA08_6A
-		.WORD	_sprA08_6B
-		.WORD	_sprA08_6E
-		.WORD	_sprA08_6F
-		.WORD	_sprA08_6E
-		.WORD	_sprA08_6F
-		.WORD	_sprA08_72
-		.WORD	_sprA08_73
-		.WORD	_sprA08_72
-		.WORD	_sprA08_73
-		.WORD	_sprA08_76
-		.WORD	_sprA08_77
-		.WORD	_sprA08_76
-		.WORD	_sprA08_77
-		.WORD	_sprA08_7A
-		.WORD	_sprA08_7B
-		.WORD	_sprA08_7A
-		.WORD	_sprA08_7B
-		.WORD	_sprA08_7E
-		.WORD	_sprA08_7F
-		.WORD	_sprA08_7E
-		.WORD	_sprA08_7F
-		.WORD	_sprA08_82
-		.WORD	_sprA08_83
-		.WORD	_sprA08_82
-		.WORD	_sprA08_83
-		.WORD	_sprA08_86
-		.WORD	_sprA08_87
-		.WORD	_sprA08_86
-		.WORD	_sprA08_87
-		.WORD	_sprA08_8A
-		.WORD	_sprA08_8B
-		.WORD	_sprA08_8A
-		.WORD	_sprA08_8B
-		.WORD	_sprA08_8E
-		.WORD	_sprA08_8F
-		.WORD	_sprA08_8E
-		.WORD	_sprA08_8F
-		.WORD	_sprA08_92
-		.WORD	_sprA08_93
-		.WORD	_sprA08_92
-		.WORD	_sprA08_93
-		.WORD	_sprA08_96
-		.WORD	_sprA08_97
-		.WORD	_sprA08_96
-		.WORD	_sprA08_97
-		.WORD	_sprA08_9A
-		.WORD	_sprA08_9B
-		.WORD	_sprA08_9A
-		.WORD	_sprA08_9B
-		.WORD	_sprA08_9E
-		.WORD	_sprA08_9F
-		.WORD	_sprA08_9E
-		.WORD	_sprA08_9F
-		.WORD	_sprA08_A0
-		.WORD	_sprA08_A1
-		.WORD	_sprA08_A2
-		.WORD	_sprA08_A3
-		.WORD	_sprA08_A4
-		.WORD	_sprA08_A5
-		.WORD	_sprA08_A6
-		.WORD	_sprA08_A7
-		.WORD	_sprA08_A8
-		.WORD	_sprA08_A9
-		.WORD	_sprA08_AA
-		.WORD	_sprA08_AB
-		.WORD	_sprA08_AC
-		.WORD	_sprA08_AD	; exit arrows
-		.WORD	_sprA08_AE
-		.WORD	_sprA08_AF
+		SPR_IDX	_sprA08_02
+		SPR_IDX	_sprA08_01
+		SPR_IDX	_sprA08_02
+		SPR_IDX	_sprA08_03
+		SPR_IDX	_sprA08_06
+		SPR_IDX	_sprA08_05
+		SPR_IDX	_sprA08_06
+		SPR_IDX	_sprA08_07
+		SPR_IDX	_sprA08_0A
+		SPR_IDX	_sprA08_09
+		SPR_IDX	_sprA08_0A
+		SPR_IDX	_sprA08_0B
+		SPR_IDX	_sprA08_0E
+		SPR_IDX	_sprA08_0D
+		SPR_IDX	_sprA08_0E
+		SPR_IDX	_sprA08_0F
+		SPR_IDX	_sprA08_12
+		SPR_IDX	_sprA08_11
+		SPR_IDX	_sprA08_12
+		SPR_IDX	_sprA08_13
+		SPR_IDX	_sprA08_16
+		SPR_IDX	_sprA08_15
+		SPR_IDX	_sprA08_16
+		SPR_IDX	_sprA08_17
+		SPR_IDX	_sprA08_1A
+		SPR_IDX	_sprA08_19
+		SPR_IDX	_sprA08_1A
+		SPR_IDX	_sprA08_1B
+		SPR_IDX	_sprA08_1E
+		SPR_IDX	_sprA08_1D
+		SPR_IDX	_sprA08_1E
+		SPR_IDX	_sprA08_1F
+		SPR_IDX	_sprA08_22
+		SPR_IDX	_sprA08_21
+		SPR_IDX	_sprA08_22
+		SPR_IDX	_sprA08_23
+		SPR_IDX	_sprA08_26
+		SPR_IDX	_sprA08_25
+		SPR_IDX	_sprA08_26
+		SPR_IDX	_sprA08_27
+		SPR_IDX	_sprA08_2A
+		SPR_IDX	_sprA08_29
+		SPR_IDX	_sprA08_2A
+		SPR_IDX	_sprA08_2B
+		SPR_IDX	_sprA08_2E
+		SPR_IDX	_sprA08_2D
+		SPR_IDX	_sprA08_2E
+		SPR_IDX	_sprA08_2F
+		SPR_IDX	_sprA08_32
+		SPR_IDX	_sprA08_31
+		SPR_IDX	_sprA08_32
+		SPR_IDX	_sprA08_33
+		SPR_IDX	_sprA08_36
+		SPR_IDX	_sprA08_35
+		SPR_IDX	_sprA08_36
+		SPR_IDX	_sprA08_37
+		SPR_IDX	_sprA08_3A
+		SPR_IDX	_sprA08_39
+		SPR_IDX	_sprA08_3A
+		SPR_IDX	_sprA08_3B
+		SPR_IDX	_sprA08_3E
+		SPR_IDX	_sprA08_3D
+		SPR_IDX	_sprA08_3E
+		SPR_IDX	_sprA08_3F
+		SPR_IDX	_sprA08_42
+		SPR_IDX	_sprA08_41
+		SPR_IDX	_sprA08_42
+		SPR_IDX	_sprA08_43
+		SPR_IDX	_sprA08_46
+		SPR_IDX	_sprA08_45
+		SPR_IDX	_sprA08_46
+		SPR_IDX	_sprA08_47
+		SPR_IDX	_sprA08_4A
+		SPR_IDX	_sprA08_49
+		SPR_IDX	_sprA08_4A
+		SPR_IDX	_sprA08_4B
+		SPR_IDX	_sprA08_4E
+		SPR_IDX	_sprA08_4D
+		SPR_IDX	_sprA08_4E
+		SPR_IDX	_sprA08_4F
+		SPR_IDX	_sprA08_52
+		SPR_IDX	_sprA08_53
+		SPR_IDX	_sprA08_52
+		SPR_IDX	_sprA08_53
+		SPR_IDX	_sprA08_56
+		SPR_IDX	_sprA08_57
+		SPR_IDX	_sprA08_56
+		SPR_IDX	_sprA08_57
+		SPR_IDX	_sprA08_5A
+		SPR_IDX	_sprA08_5B
+		SPR_IDX	_sprA08_5A
+		SPR_IDX	_sprA08_5B
+		SPR_IDX	_sprA08_5E
+		SPR_IDX	_sprA08_5F
+		SPR_IDX	_sprA08_5E
+		SPR_IDX	_sprA08_5F
+		SPR_IDX	_sprA08_62
+		SPR_IDX	_sprA08_63
+		SPR_IDX	_sprA08_62
+		SPR_IDX	_sprA08_63
+		SPR_IDX	_sprA08_66
+		SPR_IDX	_sprA08_67
+		SPR_IDX	_sprA08_66
+		SPR_IDX	_sprA08_67
+		SPR_IDX	_sprA08_6A
+		SPR_IDX	_sprA08_6B
+		SPR_IDX	_sprA08_6A
+		SPR_IDX	_sprA08_6B
+		SPR_IDX	_sprA08_6E
+		SPR_IDX	_sprA08_6F
+		SPR_IDX	_sprA08_6E
+		SPR_IDX	_sprA08_6F
+		SPR_IDX	_sprA08_72
+		SPR_IDX	_sprA08_73
+		SPR_IDX	_sprA08_72
+		SPR_IDX	_sprA08_73
+		SPR_IDX	_sprA08_76
+		SPR_IDX	_sprA08_77
+		SPR_IDX	_sprA08_76
+		SPR_IDX	_sprA08_77
+		SPR_IDX	_sprA08_7A
+		SPR_IDX	_sprA08_7B
+		SPR_IDX	_sprA08_7A
+		SPR_IDX	_sprA08_7B
+		SPR_IDX	_sprA08_7E
+		SPR_IDX	_sprA08_7F
+		SPR_IDX	_sprA08_7E
+		SPR_IDX	_sprA08_7F
+		SPR_IDX	_sprA08_82
+		SPR_IDX	_sprA08_83
+		SPR_IDX	_sprA08_82
+		SPR_IDX	_sprA08_83
+		SPR_IDX	_sprA08_86
+		SPR_IDX	_sprA08_87
+		SPR_IDX	_sprA08_86
+		SPR_IDX	_sprA08_87
+		SPR_IDX	_sprA08_8A
+		SPR_IDX	_sprA08_8B
+		SPR_IDX	_sprA08_8A
+		SPR_IDX	_sprA08_8B
+		SPR_IDX	_sprA08_8E
+		SPR_IDX	_sprA08_8F
+		SPR_IDX	_sprA08_8E
+		SPR_IDX	_sprA08_8F
+		SPR_IDX	_sprA08_92
+		SPR_IDX	_sprA08_93
+		SPR_IDX	_sprA08_92
+		SPR_IDX	_sprA08_93
+		SPR_IDX	_sprA08_96
+		SPR_IDX	_sprA08_97
+		SPR_IDX	_sprA08_96
+		SPR_IDX	_sprA08_97
+		SPR_IDX	_sprA08_9A
+		SPR_IDX	_sprA08_9B
+		SPR_IDX	_sprA08_9A
+		SPR_IDX	_sprA08_9B
+		SPR_IDX	_sprA08_9E
+		SPR_IDX	_sprA08_9F
+		SPR_IDX	_sprA08_9E
+		SPR_IDX	_sprA08_9F
+		SPR_IDX	_sprA08_A0
+		SPR_IDX	_sprA08_A1
+		SPR_IDX	_sprA08_A2
+		SPR_IDX	_sprA08_A3
+		SPR_IDX	_sprA08_A4
+		SPR_IDX	_sprA08_A5
+		SPR_IDX	_sprA08_A6
+		SPR_IDX	_sprA08_A7
+		SPR_IDX	_sprA08_A8
+		SPR_IDX	_sprA08_A9
+		SPR_IDX	_sprA08_AA
+		SPR_IDX	_sprA08_AB
+		SPR_IDX	_sprA08_AC
+		SPR_IDX	_sprA08_AD	; exit arrows
+		SPR_IDX	_sprA08_AE
+		SPR_IDX	_sprA08_AF
 
 _sprA08_01:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$18,$00,$F8
-		.BYTE	$F1,$18,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$18,$00,$F8 ; 8_002
+		.BYTE	$F1,$18,$40,$00 ; 8_003
 _sprA08_02:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$18,$00,$F8
-		.BYTE	$F0,$18,$40,$00
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$18,$00,$F8 ; 8_006
+		.BYTE	$F0,$18,$40,$00 ; 8_007
 _sprA08_03:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$18,$00,$F8
-		.BYTE	$F1,$18,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$18,$00,$F8 ; 8_002
+		.BYTE	$F1,$18,$40,$00 ; 8_003
 _sprA08_05:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$00,$40,$00
-		.BYTE	$F1,$10,$40,$F8
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$00,$40,$00 ; 8_00C
+		.BYTE	$F1,$10,$40,$F8 ; 8_00D
 _sprA08_06:
 		.BYTE	$04
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
-		.BYTE	$F0,$00,$40,$00
-		.BYTE	$F0,$10,$40,$F8
+		.BYTE	$00,$28,$40,$00 ; 8_00E
+		.BYTE	$00,$38,$40,$F8 ; 8_00F
+		.BYTE	$F0,$00,$40,$00 ; 8_010
+		.BYTE	$F0,$10,$40,$F8 ; 8_011
 _sprA08_07:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$00,$40,$00
-		.BYTE	$F1,$10,$40,$F8
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$00,$40,$00 ; 8_00C
+		.BYTE	$F1,$10,$40,$F8 ; 8_00D
 _sprA08_09:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$08,$00,$F8
-		.BYTE	$F1,$08,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$08,$00,$F8 ; 8_014
+		.BYTE	$F1,$08,$40,$00 ; 8_015
 _sprA08_0A:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$08,$00,$F8
-		.BYTE	$F0,$08,$40,$00
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$08,$00,$F8 ; 8_016
+		.BYTE	$F0,$08,$40,$00 ; 8_017
 _sprA08_0B:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$08,$00,$F8
-		.BYTE	$F1,$08,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$08,$00,$F8 ; 8_014
+		.BYTE	$F1,$08,$40,$00 ; 8_015
 _sprA08_0D:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$00,$00,$F8
-		.BYTE	$F1,$10,$00,$00
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$00,$00,$F8 ; 8_018
+		.BYTE	$F1,$10,$00,$00 ; 8_019
 _sprA08_0E:
 		.BYTE	$04
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
-		.BYTE	$F0,$00,$00,$F8
-		.BYTE	$F0,$10,$00,$00
+		.BYTE	$00,$28,$00,$F8 ; 8_01A
+		.BYTE	$00,$38,$00,$00 ; 8_01B
+		.BYTE	$F0,$00,$00,$F8 ; 8_01C
+		.BYTE	$F0,$10,$00,$00 ; 8_01D
 _sprA08_0F:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$00,$00,$F8
-		.BYTE	$F1,$10,$00,$00
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$00,$00,$F8 ; 8_018
+		.BYTE	$F1,$10,$00,$00 ; 8_019
 _sprA08_11:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$1A,$00,$F8
-		.BYTE	$F1,$1A,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$1A,$00,$F8 ; 8_01E
+		.BYTE	$F1,$1A,$40,$00 ; 8_01F
 _sprA08_12:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$1A,$00,$F8
-		.BYTE	$F0,$1A,$40,$00
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$1A,$00,$F8 ; 8_020
+		.BYTE	$F0,$1A,$40,$00 ; 8_021
 _sprA08_13:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$1A,$00,$F8
-		.BYTE	$F1,$1A,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$1A,$00,$F8 ; 8_01E
+		.BYTE	$F1,$1A,$40,$00 ; 8_01F
 _sprA08_15:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$02,$40,$00
-		.BYTE	$F1,$12,$40,$F8
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$02,$40,$00 ; 8_022
+		.BYTE	$F1,$12,$40,$F8 ; 8_023
 _sprA08_16:
 		.BYTE	$04
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
-		.BYTE	$F0,$02,$40,$00
-		.BYTE	$F0,$12,$40,$F8
+		.BYTE	$00,$28,$40,$00 ; 8_00E
+		.BYTE	$00,$38,$40,$F8 ; 8_00F
+		.BYTE	$F0,$02,$40,$00 ; 8_024
+		.BYTE	$F0,$12,$40,$F8 ; 8_025
 _sprA08_17:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$02,$40,$00
-		.BYTE	$F1,$12,$40,$F8
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$02,$40,$00 ; 8_022
+		.BYTE	$F1,$12,$40,$F8 ; 8_023
 _sprA08_19:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$0A,$00,$F8
-		.BYTE	$F1,$0A,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$0A,$00,$F8 ; 8_026
+		.BYTE	$F1,$0A,$40,$00 ; 8_027
 _sprA08_1A:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$0A,$00,$F8 ; 003
-		.BYTE	$F0,$0A,$40,$00 ; 004
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$0A,$00,$F8 ; 8_028
+		.BYTE	$F0,$0A,$40,$00 ; 8_029
 _sprA08_1B:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$0A,$00,$F8
-		.BYTE	$F1,$0A,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$0A,$00,$F8 ; 8_026
+		.BYTE	$F1,$0A,$40,$00 ; 8_027
 _sprA08_1D:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$02,$00,$F8
-		.BYTE	$F1,$12,$00,$00
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$02,$00,$F8 ; 8_02A
+		.BYTE	$F1,$12,$00,$00 ; 8_02B
 _sprA08_1E:
 		.BYTE	$04
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
-		.BYTE	$F0,$02,$00,$F8
-		.BYTE	$F0,$12,$00,$00
+		.BYTE	$00,$28,$00,$F8 ; 8_01A
+		.BYTE	$00,$38,$00,$00 ; 8_01B
+		.BYTE	$F0,$02,$00,$F8 ; 8_02C
+		.BYTE	$F0,$12,$00,$00 ; 8_02D
 _sprA08_1F:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$02,$00,$F8
-		.BYTE	$F1,$12,$00,$00
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$02,$00,$F8 ; 8_02A
+		.BYTE	$F1,$12,$00,$00 ; 8_02B
 _sprA08_21:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$1C,$00,$F8
-		.BYTE	$F1,$1C,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$1C,$00,$F8 ; 8_02E
+		.BYTE	$F1,$1C,$40,$00 ; 8_02F
 _sprA08_22:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$1C,$00,$F8
-		.BYTE	$F0,$1C,$40,$00
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$1C,$00,$F8 ; 8_030
+		.BYTE	$F0,$1C,$40,$00 ; 8_031
 _sprA08_23:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$1C,$00,$F8
-		.BYTE	$F1,$1C,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$1C,$00,$F8 ; 8_02E
+		.BYTE	$F1,$1C,$40,$00 ; 8_02F
 _sprA08_25:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$04,$40,$00
-		.BYTE	$F1,$14,$40,$F8
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$04,$40,$00 ; 8_032
+		.BYTE	$F1,$14,$40,$F8 ; 8_033
 _sprA08_26:
 		.BYTE	$04
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
-		.BYTE	$F0,$04,$40,$00
-		.BYTE	$F0,$14,$40,$F8
+		.BYTE	$00,$28,$40,$00 ; 8_00E
+		.BYTE	$00,$38,$40,$F8 ; 8_00F
+		.BYTE	$F0,$04,$40,$00	; 8_034
+		.BYTE	$F0,$14,$40,$F8 ; 8_035
 _sprA08_27:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$04,$40,$00
-		.BYTE	$F1,$14,$40,$F8
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$04,$40,$00 ; 8_032
+		.BYTE	$F1,$14,$40,$F8 ; 8_033
 _sprA08_29:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$0C,$00,$F8
-		.BYTE	$F1,$0C,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$0C,$00,$F8 ; 8_036
+		.BYTE	$F1,$0C,$40,$00 ; 8_037
 _sprA08_2A:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$0C,$00,$F8 ; 005
-		.BYTE	$F0,$0C,$40,$00 ; 006
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$0C,$00,$F8 ; 8_038
+		.BYTE	$F0,$0C,$40,$00 ; 8_039
 _sprA08_2B:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$0C,$00,$F8
-		.BYTE	$F1,$0C,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$0C,$00,$F8 ; 8_036
+		.BYTE	$F1,$0C,$40,$00 ; 8_037
 _sprA08_2D:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$04,$00,$F8
-		.BYTE	$F1,$14,$00,$00
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$04,$00,$F8 ; 8_03A
+		.BYTE	$F1,$14,$00,$00 ; 8_03B
 _sprA08_2E:
 		.BYTE	$04
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
-		.BYTE	$F0,$04,$00,$F8
-		.BYTE	$F0,$14,$00,$00
+		.BYTE	$00,$28,$00,$F8 ; 8_01A
+		.BYTE	$00,$38,$00,$00 ; 8_01B
+		.BYTE	$F0,$04,$00,$F8 ; 8_03C
+		.BYTE	$F0,$14,$00,$00 ; 8_03D
 _sprA08_2F:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$04,$00,$F8
-		.BYTE	$F1,$14,$00,$00
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$04,$00,$F8 ; 8_03A
+		.BYTE	$F1,$14,$00,$00 ; 8_03B
 _sprA08_31:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$1E,$00,$F8
-		.BYTE	$F1,$1E,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$1E,$00,$F8 ; 8_03E
+		.BYTE	$F1,$1E,$40,$00 ; 8_03F
 _sprA08_32:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$1E,$00,$F8
-		.BYTE	$F0,$1E,$40,$00
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$1E,$00,$F8 ; 8_040
+		.BYTE	$F0,$1E,$40,$00 ; 8_041
 _sprA08_33:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$1E,$00,$F8
-		.BYTE	$F1,$1E,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$1E,$00,$F8 ; 8_03E
+		.BYTE	$F1,$1E,$40,$00 ; 8_03F
 _sprA08_35:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$06,$40,$00
-		.BYTE	$F1,$16,$40,$F8
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$06,$40,$00 ; 8_042
+		.BYTE	$F1,$16,$40,$F8 ; 8_043
 _sprA08_36:
 		.BYTE	$04
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
-		.BYTE	$F0,$06,$40,$00
-		.BYTE	$F0,$16,$40,$F8
+		.BYTE	$00,$28,$40,$00 ; 8_00E
+		.BYTE	$00,$38,$40,$F8 ; 8_00F
+		.BYTE	$F0,$06,$40,$00 ; 8_044
+		.BYTE	$F0,$16,$40,$F8 ; 8_045
 _sprA08_37:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$06,$40,$00
-		.BYTE	$F1,$16,$40,$F8
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$06,$40,$00 ; 8_042
+		.BYTE	$F1,$16,$40,$F8 ; 8_043
 _sprA08_39:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$0E,$00,$F8
-		.BYTE	$F1,$0E,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$0E,$00,$F8 ; 8_044
+		.BYTE	$F1,$0E,$40,$00 ; 8_045
 _sprA08_3A:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$0E,$00,$F8 ; 007
-		.BYTE	$F0,$0E,$40,$00 ; 008
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$0E,$00,$F8 ; 8_046
+		.BYTE	$F0,$0E,$40,$00 ; 8_047
 _sprA08_3B:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$0E,$00,$F8
-		.BYTE	$F1,$0E,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$0E,$00,$F8 ; 8_044
+		.BYTE	$F1,$0E,$40,$00 ; 8_045
 _sprA08_3D:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$06,$00,$F8
-		.BYTE	$F1,$16,$00,$00
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$06,$00,$F8 ; 8_048
+		.BYTE	$F1,$16,$00,$00 ; 8_049
 _sprA08_3E:
 		.BYTE	$04
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
-		.BYTE	$F0,$06,$00,$F8
-		.BYTE	$F0,$16,$00,$00
+		.BYTE	$00,$28,$00,$F8 ; 8_01A
+		.BYTE	$00,$38,$00,$00 ; 8_01B
+		.BYTE	$F0,$06,$00,$F8 ; 8_04A
+		.BYTE	$F0,$16,$00,$00 ; 8_04B
 _sprA08_3F:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$06,$00,$F8
-		.BYTE	$F1,$16,$00,$00
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$06,$00,$F8 ; 8_048
+		.BYTE	$F1,$16,$00,$00 ; 8_049
 _sprA08_41:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$32,$00,$F8
-		.BYTE	$F1,$32,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$32,$00,$F8 ; 8_04C
+		.BYTE	$F1,$32,$40,$00 ; 8_04D
 _sprA08_42:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$32,$00,$F8
-		.BYTE	$F0,$32,$40,$00
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$32,$00,$F8 ; 8_04E
+		.BYTE	$F0,$32,$40,$00 ; 8_04F
 _sprA08_43:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$32,$00,$F8
-		.BYTE	$F1,$32,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$32,$00,$F8 ; 8_04C
+		.BYTE	$F1,$32,$40,$00 ; 8_04D
 _sprA08_45:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$20,$40,$00
-		.BYTE	$F1,$30,$40,$F8
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$20,$40,$00 ; 8_050
+		.BYTE	$F1,$30,$40,$F8 ; 8_051
 _sprA08_46:
 		.BYTE	$04
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
-		.BYTE	$F0,$20,$40,$00
-		.BYTE	$F0,$30,$40,$F8
+		.BYTE	$00,$28,$40,$00 ; 8_00E
+		.BYTE	$00,$38,$40,$F8 ; 8_00F
+		.BYTE	$F0,$20,$40,$00 ; 8_052
+		.BYTE	$F0,$30,$40,$F8 ; 8_053
 _sprA08_47:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$20,$40,$00
-		.BYTE	$F1,$30,$40,$F8
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$20,$40,$00 ; 8_050
+		.BYTE	$F1,$30,$40,$F8 ; 8_051
 _sprA08_49:
 		.BYTE	$04
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-		.BYTE	$F1,$22,$00,$F8
-		.BYTE	$F1,$22,$40,$00
+		.BYTE	$00,$24,$00,$F8 ; 8_000
+		.BYTE	$00,$34,$00,$00 ; 8_001
+		.BYTE	$F1,$22,$00,$F8 ; 8_054
+		.BYTE	$F1,$22,$40,$00 ; 8_055
 _sprA08_4A:
 		.BYTE	$04
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-		.BYTE	$F0,$22,$00,$F8 ; 009
-		.BYTE	$F0,$22,$40,$00 ; 00A
+		.BYTE	$00,$26,$00,$F8 ; 8_004
+		.BYTE	$00,$36,$00,$00 ; 8_005
+		.BYTE	$F0,$22,$00,$F8 ; 8_056
+		.BYTE	$F0,$22,$40,$00 ; 8_057
 _sprA08_4B:
 		.BYTE	$04
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-		.BYTE	$F1,$22,$00,$F8
-		.BYTE	$F1,$22,$40,$00
+		.BYTE	$00,$24,$40,$00 ; 8_008
+		.BYTE	$00,$34,$40,$F8 ; 8_009
+		.BYTE	$F1,$22,$00,$F8 ; 8_054
+		.BYTE	$F1,$22,$40,$00 ; 8_055
 _sprA08_4D:
 		.BYTE	$04
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-		.BYTE	$F1,$20,$00,$F8
-		.BYTE	$F1,$30,$00,$00
+		.BYTE	$00,$2A,$00,$F8 ; 8_012
+		.BYTE	$00,$3A,$00,$00 ; 8_013
+		.BYTE	$F1,$20,$00,$F8 ; 8_058
+		.BYTE	$F1,$30,$00,$00 ; 8_059
 _sprA08_4E:
 		.BYTE	$04
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
-		.BYTE	$F0,$20,$00,$F8
-		.BYTE	$F0,$30,$00,$00
+		.BYTE	$00,$28,$00,$F8 ; 8_01A
+		.BYTE	$00,$38,$00,$00 ; 8_01B
+		.BYTE	$F0,$20,$00,$F8 ; 8_05A
+		.BYTE	$F0,$30,$00,$00 ; 8_05B
 _sprA08_4F:
 		.BYTE	$04
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-		.BYTE	$F1,$20,$00,$F8
-		.BYTE	$F1,$30,$00,$00
+		.BYTE	$00,$2A,$40,$00 ; 8_00A
+		.BYTE	$00,$3A,$40,$F8 ; 8_00B
+		.BYTE	$F1,$20,$00,$F8 ; 8_058
+		.BYTE	$F1,$30,$00,$00 ; 8_059
 _sprA08_52:
 		.BYTE	$02
 		.BYTE	$F4,$18,$00,$F8
@@ -9369,9 +9165,9 @@ _sprA08_9F:
 		.BYTE	$F5,$30,$00,$00
 _sprA08_A0:
 		.BYTE	$04
-		.BYTE	$00,$4E,$00,$F8
-		.BYTE	$00,$4E,$40,$00
-		.BYTE	$F0,$4C,$00,$F8
+		.BYTE	$00,$4E,$00,$F8 ; 8_05C
+		.BYTE	$00,$4E,$40,$00 ; 8_05D
+		.BYTE	$F0,$4C,$00,$F8 ; 8_05E
 		.BYTE	$F0,$4C,$40,$00
 _sprA08_A1:
 		.BYTE	$03
@@ -9391,9 +9187,9 @@ _sprA08_A3:
 		.BYTE	$F8,$3C,$00,$FE
 _sprA08_A4:
 		.BYTE	$06
-		.BYTE	$00,$4E,$00,$F8
-		.BYTE	$00,$4E,$40,$00
-		.BYTE	$F0,$4C,$00,$F8
+		.BYTE	$00,$4E,$00,$F8 ; 8_05C
+		.BYTE	$00,$4E,$40,$00 ; 8_05D
+		.BYTE	$F0,$4C,$00,$F8 ; 8_05E
 		.BYTE	$F0,$4C,$40,$00
 		.BYTE	$F3,$48,$00,$07
 		.BYTE	$FC,$48,$00,$F2
@@ -9419,9 +9215,9 @@ _sprA08_A7:
 		.BYTE	$F8,$3C,$00,$FE
 _sprA08_A8:
 		.BYTE	$06
-		.BYTE	$00,$4E,$00,$F8
-		.BYTE	$00,$4E,$40,$00
-		.BYTE	$F0,$4C,$00,$F8
+		.BYTE	$00,$4E,$00,$F8 ; 8_05C
+		.BYTE	$00,$4E,$40,$00 ; 8_05D
+		.BYTE	$F0,$4C,$00,$F8 ; 8_05E
 		.BYTE	$F0,$4C,$40,$00
 		.BYTE	$F0,$58,$00,$0B
 		.BYTE	$FE,$58,$00,$EF

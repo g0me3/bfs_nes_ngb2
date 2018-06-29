@@ -120,8 +120,8 @@ loc_380B1:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_slow_moving_slime_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X			; test if catched
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X				; test if catched
 		BPL		locret_380D1
 		LSR
 		LDA		#$01
@@ -143,8 +143,8 @@ _nsub_sarg1_rand08_mul8_set:
 		ASL
 		ASL
 		ASL
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -213,8 +213,8 @@ loc_382A2:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_fast_moving_slime_catch_test:
-		LDX		_scr_cur_trd_idx			; here is the difference only in scores
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot				; here is the difference only in scores
+		LDA		_trds_args0,X
 		BPL		locret_382C2
 		LSR
 		LDA		#$02
@@ -288,8 +288,8 @@ loc_3830B:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_trolley_kick_slime_catch_test:
-		LDX		_scr_cur_trd_idx			; TODO: more copies
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot				; TODO: more copies
+		LDA		_trds_args0,X
 		BPL		locret_3832B
 		LSR
 		LDA		#$02
@@ -376,8 +376,8 @@ loc_383A1:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_still_throw_forward_slime_catch_test:
-		LDX		_scr_cur_trd_idx			; TODO: full copy of 02 scored slimes
-		LDA		_scr_trds_args0,X			; pure duplicate here. however, they did
+		LDX		_cur_trd_slot				; TODO: full copy of 02 scored slimes
+		LDA		_trds_args0,X				; pure duplicate here. however, they did
 		BPL		locret_383C1				; it on purpose for some reason, every object
 		LSR									; has it's own block and components
 		LDA		#$02						; copypasted, its easier to debug...
@@ -422,8 +422,8 @@ _nsub_still_throw_forward_slime_proj_spr_set:
 		AND		#$0C
 		CLC
 		ADC		#$15
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_spr_idx,X
+		LDX		_cur_trd_slot
+		STA		_obj_spr_idx,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -476,13 +476,13 @@ _nbgsub_court_chair_ctest:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_court_chair_move:
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_args1,X			; NOTE, sarg1 is a parameter of object list data
+		LDX		_cur_trd_slot
+		LDY		_trds_args1,X				; NOTE, sarg1 is a parameter of object list data
 		LDA		off_384BF,Y					; there are total 4 chair used (0-3)
 		STA		_ptr06						; the array for animation data is 5 items long
 		LDA		off_384C4,Y					; so one is unused. seems they planned 5 chairs
 		STA		_ptr06+1					; in this place, but only 4 are allowed at once
-		LDY		_scr_trds_args2,X			; in the released version.
+		LDY		_trds_args2,X				; in the released version.
 loc_38491:
 		TYA
 		PHA
@@ -494,19 +494,19 @@ loc_38491:
 loc_3849C:
 		TAY									; read delta table, move one direction at once
 		LDA		byte_384BA+1,Y
-		STA		_scr_trds_x_move_delta,X
+		STA		_obj_x_delta,X
 		LDA		byte_384BA,Y
-		STA		_scr_trds_y_move_delta,X
+		STA		_obj_y_delta,X
 		PLA
 		TAY
 		INY
-		LDX		_scr_cur_trd_idxw			; load movement duration (delay)
+		LDX		_cur_trd_scr_slot			; load movement duration (delay)
 		LDA		(_ptr06),Y
-		STA		_scr_trds_delay,X
+		STA		_trds_scr_delay,X
 		INY
-		LDX		_scr_cur_trd_idx			; store position
+		LDX		_cur_trd_slot				; store position
 		TYA
-		STA		_scr_trds_args2,X
+		STA		_trds_args2,X
 		RTS
 
 ; 0 = y--	U
@@ -666,17 +666,17 @@ _scr_miner_catch_anim_R:
 _nbgsub_air_hammer_miner_ctest:
 		JSR		_nsub_obj_to_room_x_ctestA	; NOTE: in case of this object
 		BCC		loc_38611					; they handle its collisions at native
-		LDX		_scr_cur_trd_idx			; bg subroutine, while all others objects
+		LDX		_cur_trd_slot				; bg subroutine, while all others objects
 		LDA		#$00						; doing this in active section of its scripts!
-		STA		_scr_trds_x_move_speed,X	; when reach obstacles, stop in this direction!
-		STA		_scr_trds_x_move_delta,X
+		STA		_obj_x_speed,X				; when reach obstacles, stop in this direction!
+		STA		_obj_x_delta,X
 loc_38611:
 		JSR		_nsub_obj_to_room_y_ctestA
 		BCC		loc_38620					; when stopped, just wait to next retarget
-		LDX		_scr_cur_trd_idx			; move again
+		LDX		_cur_trd_slot				; move again
 		LDA		#$00
-		STA		_scr_trds_y_move_speed,X	; there are a script commands to write imm to delta
-		STA		_scr_trds_y_move_delta,X	; X/Y separately which may be used same way
+		STA		_obj_y_speed,X				; there are a script commands to write imm to delta
+		STA		_obj_y_delta,X				; X/Y separately which may be used same way
 loc_38620:
 		LDX		#$0A
 		LDY		#$0E
@@ -692,8 +692,8 @@ loc_3862F:
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_air_hammer_miner_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3864F
 		LSR
 		LDA		#$01
@@ -797,8 +797,8 @@ loc_38775:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_pick_axe_miner_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_38795
 		LSR
 		LDA		#$01
@@ -906,8 +906,8 @@ loc_389FC:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_hammer_miner_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_38A1C
 		LSR
 		LDA		#$01
@@ -953,15 +953,15 @@ _nbgsub_empty_miner_trolley_ctest:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_empty_miner_trolley_path_select:
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_y_pos_lo,X
-		LDA		_scr_trds_y_pos_hi,X
+		LDX		_cur_trd_slot
+		LDY		_obj_y_pos_lo,X
+		LDA		_obj_y_pos_hi,X
 		STA		_tmp_var1
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		STA		_tmp_var0
-		LDA		_scr_trds_x_pos_lo,X
+		LDA		_obj_x_pos_lo,X
 		TAX
-		JSR		_far_room_macro_block_read		; read the current rail macro from level data
+		JSR		_far_room_macro_block_read	; read the current rail macro from level data
 		LDY		#$0B
 loc_38C71:
 		CMP		_mac_rails_list,Y			; check if this tile is valid rail macro
@@ -972,8 +972,8 @@ loc_38C79:
 		SEC									; if not, stop
 		RTS
 loc_38C7B:
-		LDX		_scr_cur_trd_idx			; if yes, get the direction of current
-		LDA		_scr_trds_args1,X			; movement
+		LDX		_cur_trd_slot				; if yes, get the direction of current
+		LDA		_trds_args1,X				; movement
 		ASL
 		ROL
 		ROL
@@ -1001,8 +1001,8 @@ loc_38CA5:
 		LSR
 		ROR
 		ROR
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X			; update direction parameter
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X				; update direction parameter
 		RTS
 _mac_rails_list:
 		.BYTE	$01	; vert plain
@@ -1117,8 +1117,8 @@ loc_38D8C:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_trolley_miner_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_38DAC
 		LSR
 		LDA		#$07						; very valuable enemy, but you may miss it!
@@ -1260,8 +1260,8 @@ loc_38F94:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_train_ghost_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_38FB4
 		LSR
 		LDA		#$01						; very cheap enemy but there are a lot of them
@@ -1278,12 +1278,12 @@ locret_38FB4:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_train_ghost_spr_idx_select:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		ASL
-		ADC		_scr_trds_args0,X
+		ADC		_trds_args0,X
 		ADC		#$64
-		STA		_scr_trds_args2,X
+		STA		_trds_args2,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -1318,8 +1318,8 @@ _nsub_train_ghost_proj_target_set:
 		JSR		_rand
 		CLC
 		ADC		#$70						; spit always goes down
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -1387,8 +1387,8 @@ loc_39152:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_still_throw_ballistic_slime_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_39172
 		LSR
 		LDA		#$05						; middle valued slime here
@@ -1442,8 +1442,8 @@ _nsub_slime_ballistic_proj_spr_idx_select:
 		ASL
 		ASL
 		ADC		#$7C
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_spr_idx,X
+		LDX		_cur_trd_slot
+		STA		_obj_spr_idx,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -1527,8 +1527,8 @@ loc_392DE:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_fast_throw_forward_slime_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_392FE
 		LSR
 		LDA		#$02						; weird, same scores as for regular fast slime
@@ -1665,8 +1665,8 @@ loc_394ED:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_halloween_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3950D
 		LSR
 		LDA		#$02
@@ -1809,8 +1809,8 @@ loc_39794:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_flying_elephant_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_397B4
 		LSR
 		LDA		#$02
@@ -1904,8 +1904,8 @@ loc_39A3D:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_stinging_elephant_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_39A5D
 		LSR
 		LDA		#$05
@@ -2117,8 +2117,8 @@ loc_39D88:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_sword_ninja_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_39DA8
 		LSR
 		LDA		#$0A
@@ -2399,8 +2399,8 @@ _nbgsub_pink_goo_active_ctestB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_pink_goo_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3A241
 		LSR
 		LDA		#$02
@@ -2617,8 +2617,8 @@ loc_3A3AD:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_sewer_worm_catch_testA:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3A3CD
 		LSR
 		LDA		#$05
@@ -2649,8 +2649,8 @@ loc_3A3DD:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_sewer_worm_catch_testB:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3A3FD
 		LSR
 		LDA		#$05
@@ -2669,31 +2669,31 @@ locret_3A3FD:
 _nsub_sewer_worm_move_anim:
 		LDA		#$04						; select random movement direction
 		JSR		_rand
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		TAY
 		LSR
 		ROR
 		ROR
-		STA		_scr_trds_args1,X			; store it to SARG1
-		LDA		_scr_trds_x_pos_lo,X		; calculate next tile position
+		STA		_trds_args1,X				; store it to SARG1
+		LDA		_obj_x_pos_lo,X				; calculate next tile position
 		CLC									; in given direction
 		ADC		byte_3A439,Y
 		PHA
-		LDA		_scr_trds_x_pos_hi,X
+		LDA		_obj_x_pos_hi,X
 		ADC		byte_3A43D,Y
 		STA		_tmp_var0
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		CLC
 		ADC		byte_3A441,Y
 		PHA
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		ADC		byte_3A445,Y
 		STA		_tmp_var1
 		PLA
 		TAY
 		PLA
 		TAX
-		JSR		_far_room_macro_block_read		; calculate room offset,
+		JSR		_far_room_macro_block_read	; calculate room offset,
 		BEQ		loc_3A437					; and read out macro tile data
 		CMP		#$0D						; macroses $01-$0C are floatable
 		BCS		loc_3A437
@@ -2712,12 +2712,12 @@ byte_3A445:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sewer_worm_pos_test:
-		LDX		_scr_cur_trd_idx			; wait for worm reached particular
-		LDA		_scr_trds_x_pos_lo,X		; position for release, most of the
+		LDX		_cur_trd_slot				; wait for worm reached particular
+		LDA		_obj_x_pos_lo,X				; position for release, most of the
 		AND		#$0F						; time, test here is passed, Y test
 		CMP		#$08						; never performed. also Y set in release
 		BEQ		locret_3A45C				; script to 8 manually as well
-		LDA		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo,X
 		AND		#$0F
 		CMP		#$08
 		BEQ		locret_3A45C
@@ -2753,8 +2753,8 @@ _nsub_sewer_worm_proj_direction_select:
 		LDA		#$00
 		JSR		_rand
 		AND		#$E0						; choose cardinal directions as well
-		LDX		_scr_cur_trd_idx			; as diagonal ones, 8 possible ways
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot				; as diagonal ones, 8 possible ways
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -2860,8 +2860,8 @@ loc_3A5F2:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_rotator_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3A612
 		LSR
 		LDA		#$0A
@@ -2917,13 +2917,13 @@ _sloc_3A745:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_candle_activate_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_y_pos_hi+2					; test beamer Y pos with object's Y pos
-		CMP		_scr_trds_y_pos_hi,X
+		LDX		_cur_trd_slot
+		LDA		_obj_y_pos_hi+2				; test beamer Y pos with object's Y pos
+		CMP		_obj_y_pos_hi,X
 		BCC		loc_3A761
 		BNE		loc_3A763
-		LDA		_scr_trds_y_pos_lo+2
-		CMP		_scr_trds_y_pos_lo,X
+		LDA		_obj_y_pos_lo+2
+		CMP		_obj_y_pos_lo,X
 		BCC		loc_3A761
 		BNE		loc_3A763
 loc_3A761:
@@ -2956,24 +2956,24 @@ _sloc_3A78E:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_semaphore_screen_pos_init:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		_ppu_scroll_pos_y
 		CLC
 		ADC		#$E8
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		_ppu_scroll_pos_y+1
 		ADC		#$00
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_semaphore_screen_pos_adjust:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_y_pos_lo,X
+		LDX		_cur_trd_slot
+		LDA		_obj_y_pos_lo,X
 		SEC
 		SBC		_ppu_scroll_pos_y
 		STA		_tmp0
-		LDA		_scr_trds_y_pos_hi,X
+		LDA		_obj_y_pos_hi,X
 		SBC		_ppu_scroll_pos_y+1
 		BNE		loc_3A7C0
 		LDA		_tmp0
@@ -3119,32 +3119,32 @@ loc_3A9C2:
 		LDY		off_3AA19,X					; routine, seems this is an early design
 		JSR		_obj_to_room_bound_box_ctest; here is the analog of square move direction
 		BCC		locret_3AA14				; test in scripts for similar objects
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,X			; object running clockwize if any obstacle is
+		LDX		_cur_trd_slot
+		LDA		_trds_args1,X				; object running clockwize if any obstacle is
 		CLC									; before him, always turn right
 		ADC		#$40
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 		JSR		_nsub_sarg1_direction_extract
 		TAX									; if there is another obstacle in the new direction
 		LDA		off_3AA15,X					; bounce back in the opposite direction
 		LDY		off_3AA19,X					; NOTE: this case occurs only in one case only for one
 		JSR		_obj_to_room_bound_box_ctest; object, this is rarely possible case in this game
 		BCC		loc_3AA0F
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args1,X
 		CLC
 		ADC		#$80
-		STA		_scr_trds_args1,X
+		STA		_trds_args1,X
 		JSR		_nsub_sarg1_direction_extract
 		TAX
 		LDA		off_3AA15,X					; and final check, if there is an obstacle in
 		LDY		off_3AA19,X					; opposite direction, turn right one more time
 		JSR		_obj_to_room_bound_box_ctest; so this will bounce object up
 		BCC		loc_3AA0F
-		LDA		_scr_trds_args1,X			; TODO: unless any other similar logic for other objects
+		LDA		_trds_args1,X				; TODO: unless any other similar logic for other objects
 		CLC									; this one adds $40 instead of $C0 which uses
 		ADC		#$40						; in other objects... it looks like an overlook
-		STA		_scr_trds_args1,X			; because $C0 here is working as well...
+		STA		_trds_args1,X				; because $C0 here is working as well...
 loc_3AA0F:
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_runner_active
@@ -3179,8 +3179,8 @@ byte_3AA2C:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_runner_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3AA4A
 		LSR
 		LDA		#$01
@@ -3316,8 +3316,8 @@ loc_3ACF9:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_chain_saw_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3AD19
 		LSR
 		LDA		#$02
@@ -3424,8 +3424,8 @@ loc_3B05A:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_toilet_snake_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3B07A
 		LSR
 		LDA		#$01
@@ -3550,8 +3550,8 @@ loc_3B290:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_morning_star_troll_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3B2B0
 		LSR
 		LDA		#$0F						; valuable bastart
@@ -3577,8 +3577,8 @@ _nsub_morning_star_troll_action_select:
 loc_3B2BD:
 		ADC		#$01						; rest values range $00-$0E turns to $01-$0F
 		STA		_tmp0
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo,X		; calculate X/16
+		LDX		_cur_trd_slot
+		LDA		_obj_x_pos_lo,X				; calculate X/16
 		LSR
 		LSR
 		LSR
@@ -3808,8 +3808,8 @@ loc_3B6E9:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_floater_pairing_test:
-		LDX		_scr_cur_trd_idx			; common additional test if other
-		LDA		_scr_trds_args2,X			; paired object is not active anymore
+		LDX		_cur_trd_slot				; common additional test if other
+		LDA		_trds_args2,X				; paired object is not active anymore
 		BPL		locret_3B6FB
 		JSR		_cur_thread_reload_param
 		.WORD	_scr_floater_start_to_evolve; turn current active floater into jumpers then
@@ -3818,14 +3818,14 @@ locret_3B6FB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_floaterA_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3B71E
 		LSR
-		LDY		_scr_trds_args2,X			; this is extra initialization, when one
+		LDY		_trds_args2,X				; this is extra initialization, when one
 		BMI		loc_3B70C					; of floaters being catched, remove link
 		LDA		#$FF
-		STA		_scr_trds_args2,Y
+		STA		_trds_args2,Y
 loc_3B70C:
 		LDA		#$05
 		STA		_scores_obj_value
@@ -4024,8 +4024,8 @@ _nbgsub_jumpers_ctestB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_jumpers_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_3BAF8
 		LSR
 		LDA		#$01

@@ -119,30 +119,23 @@ _ppu_scroll_pos_y:
 		.BYTE	0,0
 _trds_manager_restart_flag:
 		.BYTE	0
-_scr_trds_exec_req:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0  ; запрос на исполнение и флаг	уже исполненного треда,
-					; выставляется менеджером для всех тредов в 1 и	гасится
-					; после	успешного его исполнения или если данный тред
-					; неактивен. позволяет менеджеру не исполнять один и тот
-					; эже тред повторно в случае, когда при	добавлении нового
-					; треда	в процессе исполнения текущих происходит повторный
-					; запуск цикла исполнения тредов. т.е. исполнются только
-					; новодобавленные.
-_scr_trds_x_pos_lo:
+_trds_exec_req:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_pos_lo:
+_obj_x_pos_lo:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_spr_idx:
+_obj_y_pos_lo:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_args0:
+_obj_spr_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_args1:
+_trds_args0:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_args2:
+_trds_args1:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_pc:
+_trds_args2:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_cur_scr_pc:
 		.BYTE	0,0
-_scr_cur_trd_stack_ptr:
+_cur_scr_sp:
 		.BYTE	0,0
 _ppu_scroll_x_shift:
 		.BYTE	0,0
@@ -152,11 +145,11 @@ _ppu_scroll_x_clk:
 		.BYTE	0
 _ppu_scroll_y_clk:
 		.BYTE	0
-_scr_cur_trd_idx:
+_cur_trd_slot:
 		.BYTE	0
-_scr_loop_count:
+_tmp_loop_cnt:
 		.BYTE	0
-_scr_cur_trd_idxw:
+_cur_trd_scr_slot:
 		.BYTE	0
 _nsub_return_flags:
 		.BYTE	0
@@ -205,9 +198,9 @@ _tmp_var0:
 		.BYTE	0
 _tmp_var1:
 		.BYTE	0
-_scr_trds_pause_mode:
+_pause_mode_flag:
 		.BYTE	0
-_scr_trds_out_of_screen_test:
+_out_of_screen_test_flag:
 		.BYTE	0
 
 		ECHO "-------------"
@@ -220,22 +213,22 @@ _tmp_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0
-_scr_trds_idx:
+_trds_obj_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_x_move_speed:
+_obj_x_speed:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_move_speed:
+_obj_y_speed:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_nbgsub_ptr:
+_trds_nbgsub_ptr:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_x_center:
+_obj_x_center:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_center:
+_obj_y_center:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_x_pos_hi:
+_obj_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_pos_hi:
+_obj_y_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 		ORG		$200
@@ -357,33 +350,33 @@ _apu_stack:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _apu_var580:
 		.BYTE	0
-_scr_trds_x_move_delta:
+_obj_x_delta:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_y_move_delta:
+_obj_y_delta:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_sp:
+_trds_scr_sp:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_scr_trds_delay:
+_trds_scr_delay:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
-		_ttrd _scr_trds_ptr
-		_ttrd _scr_trds_ptr1
-		_ttrd _scr_trds_ptr2
-		_ttrd _scr_trds_ptr3
-		_ttrd _scr_trds_ptr4
-		_ttrd _scr_trds_ptr5
-		_ttrd _scr_trds_ptr6
-		_ttrd _scr_trds_ptr7
-		_ttrd _scr_trds_ptr8
-		_ttrd _scr_trds_ptr9
-		_ttrd _scr_trds_ptrA
-		_ttrd _scr_trds_ptrB
-		_ttrd _scr_trds_ptrC
-		_ttrd _scr_trds_ptrD
+		_ttrd _trd_ptr
+		_ttrd _trd_ptr1
+		_ttrd _trd_ptr2
+		_ttrd _trd_ptr3
+		_ttrd _trd_ptr4
+		_ttrd _trd_ptr5
+		_ttrd _trd_ptr6
+		_ttrd _trd_ptr7
+		_ttrd _trd_ptr8
+		_ttrd _trd_ptr9
+		_ttrd _trd_ptrA
+		_ttrd _trd_ptrB
+		_ttrd _trd_ptrC
+		_ttrd _trd_ptrD
 
-_scr_trds_stack:
+_trds_scr_stack:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -398,6 +391,7 @@ _scr_trds_stack:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
 _cur_room_doors_cnt:
 		.BYTE	0
 _menu_controls_idx:
@@ -410,17 +404,17 @@ _sound_test_snd_idx:
 		.BYTE	0
 ;_unused_var_0:
 ;		.BYTE	0,0,0
-_obj_door_x_hi_poss:
+_doors_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0
-_obj_doors_y_hi_poss:
+_doors_y_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0
-_obj_door_x_lo_poss:
+_doors_x_pos_lo:
 		.BYTE	0,0,0,0,0,0,0,0
-_obj_doors_y_lo_poss:
+_doors_y_pos_lo:
 		.BYTE	0,0,0,0,0,0,0,0
-_obj_doors_widths:
+_doors_width:
 		.BYTE	0,0,0,0,0,0,0,0
-_obj_doors_heights:
+_doors_height:
 		.BYTE	0,0,0,0,0,0,0,0
 ;_unused_14:
 ;		.BYTE	0

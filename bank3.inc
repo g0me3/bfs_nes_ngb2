@@ -149,8 +149,8 @@ _pal_judges_red_patch:
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_fat_judge_ctest:
 		LDY		#$00
-		LDX		_scr_cur_trd_idx			; there is no room obstacles test,
-		LDA		_scr_trds_x_pos_lo,X		; just limit the min-max X range for
+		LDX		_cur_trd_slot				; there is no room obstacles test,
+		LDA		_obj_x_pos_lo,X				; just limit the min-max X range for
 		CMP		#$10						; movement
 		BCS		loc_2C0E5
 		LDA		#$10
@@ -160,14 +160,14 @@ loc_2C0E5:
 		BCC		loc_2C0F5
 		LDA		#$EF
 loc_2C0EB:
-		STA		_scr_trds_x_pos_lo,X		; when edges reached, bounce in opposite
+		STA		_obj_x_pos_lo,X				; when edges reached, bounce in opposite
 		INY									; direction on the same vector
 		LDA		#$00						; also set the flag that direction is changed
 		SEC
-		SBC		_scr_trds_args1,X
-		STA		_scr_trds_args1,X
+		SBC		_trds_args1,X
+		STA		_trds_args1,X
 loc_2C0F5:
-		LDA		_scr_trds_y_pos_lo,X		; the same for Y
+		LDA		_obj_y_pos_lo,X				; the same for Y
 		CMP		#$10
 		BCS		loc_2C0FF
 		LDA		#$10
@@ -177,12 +177,12 @@ loc_2C0FF:
 		BCC		loc_2C10F
 		LDA		#$DF
 loc_2C105:
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		INY									; also sets the change signal
 		LDA		#$80
 		SEC
-		SBC		_scr_trds_args1,X
-		STA		_scr_trds_args1,X
+		SBC		_trds_args1,X
+		STA		_trds_args1,X
 loc_2C10F:
 		TYA
 		BEQ		loc_2C118					; if direction is changed need to recalc sprites
@@ -204,8 +204,8 @@ loc_2C127:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_judges_fat_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_2C147
 		LSR
 		LDA		#$0A
@@ -389,8 +389,8 @@ loc_2C24E:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_judges_tall_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_2C26E
 		LSR
 		LDA		#$0A
@@ -407,11 +407,11 @@ locret_2C26E:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_judges_tall_pos_set:
-		LDX		_scr_cur_trd_idx			; read hardcoded positions from script
+		LDX		_cur_trd_slot				; read hardcoded positions from script
 		JSR		_scr_getc
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		JSR		_scr_getc
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -551,8 +551,8 @@ loc_2C706:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_train_slime_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_2C72B
 		PHA
 		JSR		_nsub_gen_threads_off_except_cur
@@ -583,12 +583,12 @@ _scr_train_slime_dead:
 			NARGB		_snd13_idx
 		SDELAY			$3C
 		SLOOP_BEGIN		$3C
-		STORE8			_scr_trds_y_pos_hi+2,$05		; now do the scroll trick, set
-		STORE8			_scr_trds_y_pos_hi+4,$05		; level scroll to room 0 then 1,
+		STORE8			_obj_y_pos_hi+2,$05		; now do the scroll trick, set
+		STORE8			_obj_y_pos_hi+4,$05		; level scroll to room 0 then 1,
 		SCRL_Y_SET		0,$00,$05						; do not forget to adjust player's scrolls
 		POS_Y_SET		1,$00,$05						; as well... looks like train
-		STORE8			_scr_trds_y_pos_hi+2,$06		; disappears.
-		STORE8			_scr_trds_y_pos_hi+4,$06
+		STORE8			_obj_y_pos_hi+2,$06		; disappears.
+		STORE8			_obj_y_pos_hi+4,$06
 		SCRL_Y_SET		0,$00,$06
 		POS_Y_SET		1,$00,$06
 		SLOOP_END
@@ -604,9 +604,9 @@ _nsub_lvl_native_handler_disable:
 		ASL
 		TAX
 		LDA		#<[_nbgsub_dummy]
-		STA		_scr_trds_nbgsub_ptr,X
+		STA		_trds_nbgsub_ptr,X
 		LDA		#>[_nbgsub_dummy]
-		STA		_scr_trds_nbgsub_ptr+1,X
+		STA		_trds_nbgsub_ptr+1,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -653,8 +653,8 @@ _nsub_train_slime_projectile_dir_select:
 		JSR		_rand
 		CLC
 		ADC		#$F0
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -857,8 +857,8 @@ loc_2CABE:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_dragons_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_2CADE
 		LSR
 		LDA		#$1E
@@ -880,7 +880,7 @@ _nsub_dragons_obj_num_test:
 		LDY		#$00
 		LDX		#$06
 loc_2CAE8:
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_2CAEE
 		INY
 loc_2CAEE:
@@ -892,16 +892,16 @@ loc_2CAEE:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_dragons_obstacle_test:
-		LDY		_scr_cur_trd_idx			; since there are no actual obstacles
-		LDA		_scr_trds_args1,Y			; this test only preventing the
+		LDY		_cur_trd_slot				; since there are no actual obstacles
+		LDA		_trds_args1,Y				; this test only preventing the
 		ASL									; objects to get close to the screen
 		ROL									; edges
 		ROL
 		TAX
-		LDA		_scr_trds_x_pos_lo,Y
+		LDA		_obj_x_pos_lo,Y
 		CMP		byte_2CB13,X
 		BEQ		loc_2CB11
-		LDA		_scr_trds_y_pos_lo,Y
+		LDA		_obj_y_pos_lo,Y
 		CMP		byte_2CB17,X
 		BEQ		loc_2CB11
 		CLC
@@ -928,10 +928,10 @@ _nsub_dragons_start_pos_select:
 		ASL
 		ASL
 		ASL
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_y_pos_lo,X
+		LDX		_cur_trd_slot
+		STA		_obj_y_pos_lo,X
 		LDA		#$00
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		PLA
 		CLC
 		ADC		#$03
@@ -939,13 +939,13 @@ _nsub_dragons_start_pos_select:
 		ASL
 		ASL
 		ASL
-		STA		_scr_trds_x_pos_lo,X		; set current location of the object
+		STA		_obj_x_pos_lo,X				; set current location of the object
 		LDA		#$03
-		STA		_scr_trds_x_pos_hi,X
+		STA		_obj_x_pos_hi,X
 		LDA		#$00
 		JSR		_rand
 		AND		#$C0
-		STA		_scr_trds_args1,X			; then select movement direction
+		STA		_trds_args1,X				; then select movement direction
 		RTS									; also randomly
 
 ; =============== S U B R O U T I N E ======n================================
@@ -956,8 +956,8 @@ _nsub_dragons_direction_update:
 		BCC		locret_2CB5E
 		ASL
 		AND		#$C0
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X
 locret_2CB5E:
 		RTS
 
@@ -1407,8 +1407,8 @@ loc_2D178:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_keykeeper_catch_test:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
 		BPL		locret_2D198
 		LSR
 		LDA		#$0F
@@ -1450,10 +1450,10 @@ locret_2D1B0:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_keykeeper_spr_reverse:
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_spr_idx,X
+		LDX		_cur_trd_slot
+		LDY		_obj_spr_idx,X
 		LDA		byte_2D1BB-$5A,Y
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		RTS
 byte_2D1BB:
 		.BYTE	$5D,$5A,$5B,$5C
@@ -1470,9 +1470,9 @@ loc_2D1CB:
 		PHA
 		LDX		_boss_tmp_list,Y
 		BMI		loc_2D1EC
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_2D1EC
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		BNE		loc_2D1EC
 		LDA		_tmp2
 		PHA
@@ -1497,11 +1497,11 @@ _nsub_keykeeper_get_beamed_status:
 		BEQ		locret_2D214
 		LDY		#$02
 loc_2D1F9:
-		LDX		_boss_tmp_list,Y		; look for currently beamed
+		LDX		_boss_tmp_list,Y			; look for currently beamed
 		BMI		loc_2D207					; return $02 if any
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_2D207
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		BNE		loc_2D212
 loc_2D207:
 		DEY
@@ -1521,10 +1521,10 @@ _nsub_keykeeper_pos_lock:
 loc_2D217:
 		LDX		_boss_tmp_list,Y
 		BMI		loc_2D225
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_2D225
-		LDA		_scr_trds_args1,X
-		STA		_scr_trds_args2,X
+		LDA		_trds_args1,X
+		STA		_trds_args2,X
 loc_2D225:
 		DEY
 		BPL		loc_2D217
@@ -1536,10 +1536,10 @@ _nsub_keykeeper_pos_unlock:
 loc_2D22B:
 		LDX		_boss_tmp_list,Y
 		BMI		loc_2D239
-		LDA		_scr_trds_idx,X
+		LDA		_trds_obj_idx,X
 		BMI		loc_2D239
-		LDA		_scr_trds_args2,X
-		STA		_scr_trds_args1,X
+		LDA		_trds_args2,X
+		STA		_trds_args1,X
 loc_2D239:
 		DEY
 		BPL		loc_2D22B
@@ -1550,7 +1550,7 @@ _nsub_keykeeper_thread_idx_remove:
 		LDY		#$02
 loc_2D23F:
 		LDA		_boss_tmp_list,Y
-		CMP		_scr_cur_trd_idx
+		CMP		_cur_trd_slot
 		BEQ		loc_2D24C
 		DEY
 		BPL		loc_2D23F
@@ -1596,17 +1596,17 @@ _keykeeper_clone_to_near_thread_slot:
 		JSR		_keykeeper_get_near_thread_idx_slot
 		TAY
 		LDX		_boss_tmp_list,Y
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_x_pos_lo,X
-		STA		_scr_trds_x_pos_lo,Y
-		LDA		_scr_trds_x_pos_hi,X
-		STA		_scr_trds_x_pos_hi,Y
-		LDA		_scr_trds_y_pos_lo,X
-		STA		_scr_trds_y_pos_lo,Y
-		LDA		_scr_trds_y_pos_hi,X
-		STA		_scr_trds_y_pos_hi,Y
-		LDA		_scr_trds_args1,X
-		STA		_scr_trds_args1,Y
+		LDY		_cur_trd_slot
+		LDA		_obj_x_pos_lo,X
+		STA		_obj_x_pos_lo,Y
+		LDA		_obj_x_pos_hi,X
+		STA		_obj_x_pos_hi,Y
+		LDA		_obj_y_pos_lo,X
+		STA		_obj_y_pos_lo,Y
+		LDA		_obj_y_pos_hi,X
+		STA		_obj_y_pos_hi,Y
+		LDA		_trds_args1,X
+		STA		_trds_args1,Y
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -1628,11 +1628,11 @@ byte_2D2B8:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_keykeeper_R_limit_test:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_x_pos_lo,X
+		LDX		_cur_trd_slot
+		CMP		_obj_x_pos_lo,X
 		BEQ		loc_2D2C8
 		BCS		loc_2D2CA
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 loc_2D2C8:
 		SEC
 		RTS
@@ -1643,31 +1643,31 @@ loc_2D2CA:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_keykeeper_L_limit_test:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_x_pos_lo,X
+		LDX		_cur_trd_slot
+		CMP		_obj_x_pos_lo,X
 		BCC		locret_2D2D7
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 locret_2D2D7:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_keykeeper_U_limit_test:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_y_pos_lo,X
+		LDX		_cur_trd_slot
+		CMP		_obj_y_pos_lo,X
 		BCC		locret_2D2E3
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 locret_2D2E3:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_keykeeper_D_limit_test:
 		JSR		_scr_getc
-		LDX		_scr_cur_trd_idx
-		CMP		_scr_trds_y_pos_lo,X
+		LDX		_cur_trd_slot
+		CMP		_obj_y_pos_lo,X
 		BEQ		loc_2D2F1
 		BCS		loc_2D2F3
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 loc_2D2F1:
 		SEC
 		RTS
@@ -1717,8 +1717,8 @@ _nbgsub_keykeeper_projectile_ctest:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_keykeeper_projectile_init:
-		LDY		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,Y
+		LDY		_cur_trd_slot
+		LDA		_trds_args1,Y
 		CLC
 		ADC		#$20
 		AND		#$C0
@@ -1726,25 +1726,25 @@ _nsub_keykeeper_projectile_init:
 		ROL
 		ROL
 		TAX
-		LDA		_scr_trds_x_pos_lo,Y
+		LDA		_obj_x_pos_lo,Y
 		CLC
 		ADC		byte_2D886,X
-		STA		_scr_trds_x_pos_lo,Y
-		LDA		_scr_trds_x_pos_hi,Y
+		STA		_obj_x_pos_lo,Y
+		LDA		_obj_x_pos_hi,Y
 		ADC		byte_2D88A,X
-		STA		_scr_trds_x_pos_hi,Y
-		LDA		_scr_trds_y_pos_lo,Y
+		STA		_obj_x_pos_hi,Y
+		LDA		_obj_y_pos_lo,Y
 		CLC
 		ADC		byte_2D88E,X
-		STA		_scr_trds_y_pos_lo,Y
-		LDA		_scr_trds_y_pos_hi,Y
+		STA		_obj_y_pos_lo,Y
+		LDA		_obj_y_pos_hi,Y
 		ADC		byte_2D892,X
-		STA		_scr_trds_y_pos_hi,Y
+		STA		_obj_y_pos_hi,Y
 		TXA
 		AND		#$01
 		CLC
 		ADC		#$7A
-		STA		_scr_trds_args2,Y
+		STA		_trds_args2,Y
 		RTS
 byte_2D886:
 		.BYTE	$00,$05,$00,$FB
@@ -1973,8 +1973,8 @@ _nbgsub_vega_ctest:
 		LDX		#$10
 		LDY		#$18
 		JSR		_obj_to_beam_ctest			; this is not regular ctest for beam
-		LDX		_scr_cur_trd_idx			; we don't have stun or beamed scripts for vega
-		LDA		_scr_trds_args0,X			; it is only an amount of beam damage
+		LDX		_cur_trd_slot				; we don't have stun or beamed scripts for vega
+		LDA		_trds_args0,X				; it is only an amount of beam damage
 		BEQ		locret_2DA6F				; that counts
 		LDA		_boss_tmp_list
 		SEC
@@ -1998,8 +1998,8 @@ _nsub_vega_shot_targeting:
 		JSR		_rand
 		SEC
 		SBC		#$10
-		LDX		_scr_cur_trd_idx
-		STA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2055,11 +2055,11 @@ _nbgsub_vega_projectileA_ctest:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_vega_projectileA_shrink:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args1,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args1,X
 		CLC
-		ADC		_scr_trds_args2,X
-		STA		_scr_trds_args1,X
+		ADC		_trds_args2,X
+		STA		_trds_args1,X
 		RTS
 
 ; =============== S C R I P T ==========================s====================

@@ -20,18 +20,18 @@
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
 		SJMP_SW			$0C
-		SCASE			_sub01_intro_slime		; 01
-		SCASE			_sub02_intro_busterA	; 02
-		SCASE			_sub03_intro_busterB	; 03
-		SCASE			_sub04_intro_busterC	; 04
-		SCASE			_sub05_intro_busterD	; 05
-		SCASE			_sub06_select_peter		; 06
-		SCASE			_sub07_select_ray		; 07
-		SCASE			_sub08_select_egon		; 08
-		SCASE			_sub09_select_winston	; 09
-		SCASE			_sub0A_select_louis		; 0A
-		SCASE			_intro_sub0B_title_ghost; 0B
-		SCASE			_intro_sub0C_title_new	; 0C
+		SCASE			_sub01_intro_slime				; 01
+		SCASE			_sub02_intro_busterA			; 02
+		SCASE			_sub03_intro_busterB			; 03
+		SCASE			_sub04_intro_busterC			; 04
+		SCASE			_sub05_intro_busterD			; 05
+		SCASE			_sub06_select_peter				; 06
+		SCASE			_sub07_select_ray				; 07
+		SCASE			_sub08_select_egon				; 08
+		SCASE			_sub09_select_winston			; 09
+		SCASE			_sub0A_select_louis				; 0A
+		SCASE			_intro_sub0B_title_ghost		; 0B
+		SCASE			_intro_sub0C_title_new			; 0C
 
 ; !FALLTHROUGH!
 
@@ -443,11 +443,11 @@ _nsub_patch_pal_blink:
 		TAX
 		JSR		_scr_getc
 		TAY
-		LDA		_scr_args_list_ptr_lo,Y
+		LDA		_trds_args_ptrs_lo,Y
 		STA		_ptr08
-		LDA		_scr_args_list_ptr_hi,Y
+		LDA		_trds_args_ptrs_hi,Y
 		STA		_ptr08+1
-		LDY		_scr_cur_trd_idx
+		LDY		_cur_trd_slot
 		LDA		(_ptr08),Y
 		TAY
 		LDA		(_ptr06),Y
@@ -469,7 +469,7 @@ _scr_select_busters:
 			NARGW		_pal_select_busters
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$06
-		STORE8			_beamer_spr_base_tmp,$FF				; no players selected yet, reset
+		STORE8			_beamer_spr_base_tmp,$FF		; no players selected yet, reset
 		STORE8			_catcher_spr_base_tmp,$FF
 		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
 		STORE8			_cur_room_x_pageB,$00			; not by its ingame meanings
@@ -547,21 +547,21 @@ byte_8BC3:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_select_buster_input:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		_pad0_pressed				; test for L/R buttons press
 		AND		#PAD_R
 		BEQ		loc_8BE6
 		LDA		#_snd0B_idx
 		JSR		_far_prg6_apu_snd_load
 loc_8BD5:
-		INC		_scr_trds_args0,X			; increment current selection index
-		LDA		_scr_trds_args0,X
+		INC		_trds_args0,X				; increment current selection index
+		LDA		_trds_args0,X
 		CMP		#$05
 		BCC		loc_8BE1
 		LDA		#$00
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 loc_8BE1:
-		CMP		_beamer_spr_base_tmp				; skip if first player already selected
+		CMP		_beamer_spr_base_tmp		; skip if first player already selected
 		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
 		LDA		_pad0_pressed
@@ -570,12 +570,12 @@ loc_8BE6:
 		LDA		#_snd0B_idx
 		JSR		_far_prg6_apu_snd_load
 loc_8BF1:
-		DEC		_scr_trds_args0,X			; same but for decrement
+		DEC		_trds_args0,X				; same but for decrement
 		BPL		loc_8BF9
 		LDA		#$04
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 loc_8BF9:
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8BF1
 loc_8C00:
@@ -584,7 +584,7 @@ loc_8C00:
 		BEQ		loc_8C36
 		LDA		#_snd0C_idx
 		JSR		_far_prg6_apu_snd_load		; init one of two players indexes
-		LDA		_scr_trds_args0,X
+		LDA		_trds_args0,X
 		LDY		_beamer_spr_base_tmp
 		BPL		loc_8C17
 		STA		_beamer_spr_base_tmp
@@ -593,34 +593,34 @@ loc_8C17:
 		STA		_catcher_spr_base_tmp
 loc_8C1A:
 		LDA		#$FF
-		STA		_scr_trds_spr_idx,X			; disable obj name sprite, jump to
+		STA		_obj_spr_idx,X				; disable obj name sprite, jump to
 		LDA		#$00						; next object
 		STA		_cur_room_x_pageA
 loc_8C23:
-		INC		_scr_trds_args0,X
-		LDA		_scr_trds_args0,X
+		INC		_trds_args0,X
+		LDA		_trds_args0,X
 		CMP		#$05
 		BCC		loc_8C2F
 		LDA		#$00
-		STA		_scr_trds_args0,X
+		STA		_trds_args0,X
 loc_8C2F:
 		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8C23
 		SEC									; when selection is done, set carry to
 		RTS									; signal the main code to do next part
 loc_8C36:
-		LDY		_scr_trds_args0,X			; display the name sprite for currently
+		LDY		_trds_args0,X				; display the name sprite for currently
 		LDA		byte_8C51,Y					; highlighted player
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		LDA		byte_8C56,Y
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		#$00
-		STA		_scr_trds_x_pos_hi,X
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_x_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		TYA
 		CLC
 		ADC		#$40
-		STA		_scr_trds_spr_idx,X
+		STA		_obj_spr_idx,X
 		RTS
 
 byte_8C51:
@@ -798,7 +798,7 @@ _scr_buster_walk_left_anim:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_beamer_selected:
-		LDA		_beamer_spr_base_tmp				; names are selfexplanatory here and below
+		LDA		_beamer_spr_base_tmp		; names are selfexplanatory here and below
 		BPL		loc_8DE4
 		CLC
 		RTS
@@ -808,9 +808,9 @@ loc_8DE4:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_cur_buster_select_for_beam_player:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		_beamer_spr_base_tmp
-		CMP		_scr_trds_args0,X
+		CMP		_trds_args0,X
 		BEQ		loc_8DF1
 		CLC
 		RTS
@@ -830,9 +830,9 @@ loc_8DFA:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_cur_buster_select_for_catch_player:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDA		_catcher_spr_base_tmp
-		CMP		_scr_trds_args0,X
+		CMP		_trds_args0,X
 		BEQ		loc_8E07
 		CLC
 		RTS
@@ -1271,7 +1271,7 @@ locret_91EC:
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
-		STORE8			_scr_trds_out_of_screen_test,$00; default
+		STORE8			_out_of_screen_test_flag,$00; default
 		SDELAY			$5A								; delay before start
 		NJSR			_nsub_mmc1_chr1_set				; setup CHR for BG
 			NARGB		$09
@@ -1482,9 +1482,9 @@ loc_9436:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_ending_scenario_data_fetch:
-		LDA		_scr_trds_args0
+		LDA		_trds_args0
 		STA		_ptr06
-		LDA		_scr_trds_args1
+		LDA		_trds_args1
 		STA		_ptr06+1
 		LDY		#$00
 		LDA		(_ptr06),Y					; any value in this script below 80 is
@@ -1496,9 +1496,9 @@ loc_9484:
 		CLC									; sub_idx = (cmd & 0x7F) + 1
 		ADC		#$01
 		PHA
-		INC		_scr_trds_args0
+		INC		_trds_args0
 		BNE		loc_9490
-		INC		_scr_trds_args1
+		INC		_trds_args1
 loc_9490:
 		PLA
 		RTS
@@ -1506,15 +1506,15 @@ loc_9490:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_next_scenario_byte_sarg2_store:
 		JSR		_next_scenario_byte_get
-		STA		_scr_trds_args2
+		STA		_trds_args2
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_window_line_clear:
 		LDA		#$20
 		STA		_tmp_buf+4
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_args2,X
+		LDX		_cur_trd_slot
+		LDY		_trds_args2,X
 		INY
 		INY
 		LDX		#$04
@@ -1525,21 +1525,21 @@ _nsub_window_line_clear:
 		STA		_tmp_buf+3
 		JSR		_ppu_res_send_param_repeat_no_ofs
 		.WORD	_tmp_buf+2
-		LDX		_scr_cur_trd_idx
-		INC		_scr_trds_args2,X
+		LDX		_cur_trd_slot
+		INC		_trds_args2,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _next_scenario_byte_get:
-		LDA		_scr_trds_args0
+		LDA		_trds_args0
 		STA		_ptr06
-		LDA		_scr_trds_args1
+		LDA		_trds_args1
 		STA		_ptr06+1
 		LDY		#$00
 		LDA		(_ptr06),Y
-		INC		_scr_trds_args0
+		INC		_trds_args0
 		BNE		locret_94CE
-		INC		_scr_trds_args1
+		INC		_trds_args1
 locret_94CE:
 		RTS
 
@@ -2495,9 +2495,9 @@ _sloc_A784:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_end_spr_pal_anim:
-		LDX		_scr_cur_trd_idx
-		LDA		_scr_trds_args0,X
-		INC		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDA		_trds_args0,X
+		INC		_trds_args0,X
 		ASL
 		ASL
 		ADC		#<[_pal_end_sprite_lib]
@@ -2656,8 +2656,8 @@ _sprA00_04:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$08,$00,$F8
-		.BYTE	$F0,$08,$40,$00
+		.BYTE	$F0,$08,$00,$F8 ; 8_016
+		.BYTE	$F0,$08,$40,$00 ; 8_017
 _sprA00_0B:
 		.BYTE	$04
 		.BYTE	$00,$6E,$00,$FE
@@ -2680,8 +2680,8 @@ _sprA00_0E:
 		.BYTE	$04
 		.BYTE	$00,$EE,$00,$F8
 		.BYTE	$00,$EE,$40,$00
-		.BYTE	$F0,$18,$00,$F8
-		.BYTE	$F0,$18,$40,$00
+		.BYTE	$F0,$18,$00,$F8 ; 8_006
+		.BYTE	$F0,$18,$40,$00 ; 8_007
 _sprA00_0F:
 		.BYTE	$02
 		.BYTE	$F0,$C8,$40,$FA
@@ -2690,8 +2690,8 @@ _sprA00_10:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$0C,$00,$F8 ; 005
-		.BYTE	$F0,$0C,$40,$00 ; 006
+		.BYTE	$F0,$0C,$00,$F8 ; 8_038
+		.BYTE	$F0,$0C,$40,$00 ; 8_039
 _sprA00_17:
 		.BYTE	$04
 		.BYTE	$00,$6E,$00,$FE
@@ -2714,8 +2714,8 @@ _sprA00_1A:
 		.BYTE	$04
 		.BYTE	$00,$EE,$00,$F8
 		.BYTE	$00,$EE,$40,$00
-		.BYTE	$F0,$1C,$00,$F8
-		.BYTE	$F0,$1C,$40,$00
+		.BYTE	$F0,$1C,$00,$F8 ; 8_030
+		.BYTE	$F0,$1C,$40,$00 ; 8_031
 _sprA00_1B:
 		.BYTE	$02
 		.BYTE	$F0,$CC,$40,$FA
@@ -2724,8 +2724,8 @@ _sprA00_1C:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$0E,$00,$F8 ; 007
-		.BYTE	$F0,$0E,$40,$00 ; 008
+		.BYTE	$F0,$0E,$00,$F8 ; 8_046
+		.BYTE	$F0,$0E,$40,$00 ; 8_047
 _sprA00_23:
 		.BYTE	$04
 		.BYTE	$00,$6E,$00,$FE
@@ -2748,8 +2748,8 @@ _sprA00_26:
 		.BYTE	$04
 		.BYTE	$00,$EE,$00,$F8
 		.BYTE	$00,$EE,$40,$00
-		.BYTE	$F0,$1E,$00,$F8
-		.BYTE	$F0,$1E,$40,$00
+		.BYTE	$F0,$1E,$00,$F8 ; 8_040
+		.BYTE	$F0,$1E,$40,$00 ; 8_041
 _sprA00_27:
 		.BYTE	$02
 		.BYTE	$F0,$CE,$40,$FA
@@ -2758,8 +2758,8 @@ _sprA00_28:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$0A,$00,$F8 ; 003
-		.BYTE	$F0,$0A,$40,$00 ; 004
+		.BYTE	$F0,$0A,$00,$F8 ; 8_028
+		.BYTE	$F0,$0A,$40,$00 ; 8_029
 _sprA00_2F:
 		.BYTE	$04
 		.BYTE	$00,$6E,$00,$FE
@@ -2782,8 +2782,8 @@ _sprA00_32:
 		.BYTE	$04
 		.BYTE	$00,$EE,$00,$F8
 		.BYTE	$00,$EE,$40,$00
-		.BYTE	$F0,$1A,$00,$F8
-		.BYTE	$F0,$1A,$40,$00
+		.BYTE	$F0,$1A,$00,$F8 ; 8_020
+		.BYTE	$F0,$1A,$40,$00 ; 8_021
 _sprA00_33:
 		.BYTE	$02
 		.BYTE	$F0,$CA,$40,$FA
@@ -2810,8 +2810,8 @@ _sprA00_3E:
 		.BYTE	$04
 		.BYTE	$00,$EE,$00,$F8
 		.BYTE	$00,$EE,$40,$00
-		.BYTE	$F0,$32,$00,$F8
-		.BYTE	$F0,$32,$40,$00
+		.BYTE	$F0,$32,$00,$F8 ; 8_04E
+		.BYTE	$F0,$32,$40,$00 ; 8_04F
 _sprA00_3F:
 		.BYTE	$02
 		.BYTE	$F0,$EA,$40,$FA
@@ -3873,8 +3873,8 @@ _sprA07_70:
 		.BYTE	$F8,$BB,$63,$ED
 _sprA07_AD:
 		.BYTE	$04
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
+		.BYTE	$00,$28,$00,$F8 ; 8_01A
+		.BYTE	$00,$38,$00,$00 ; 8_01B
 		.BYTE	$F0,$82,$00,$F8
 		.BYTE	$F0,$92,$00,$00
 _sprA07_AE:
@@ -3891,8 +3891,8 @@ _sprA07_AF:
 		.BYTE	$F1,$92,$00,$00
 _sprA07_B0:
 		.BYTE	$04
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
+		.BYTE	$00,$28,$40,$00 ; 8_00E
+		.BYTE	$00,$38,$40,$F8 ; 8_00F
 		.BYTE	$F0,$82,$40,$00
 		.BYTE	$F0,$92,$40,$F8
 _sprA07_B1:
@@ -3914,26 +3914,26 @@ _sprA07_B4:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$0A,$00,$F8 ; 003
-		.BYTE	$F0,$0A,$40,$00 ; 004
+		.BYTE	$F0,$0A,$00,$F8 ; 8_028
+		.BYTE	$F0,$0A,$40,$00 ; 8_029
 _sprA07_B5:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$0C,$00,$F8 ; 005
-		.BYTE	$F0,$0C,$40,$00 ; 006
+		.BYTE	$F0,$0C,$00,$F8 ; 8_038
+		.BYTE	$F0,$0C,$40,$00 ; 8_039
 _sprA07_B6:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$0E,$00,$F8 ; 007
-		.BYTE	$F0,$0E,$40,$00 ; 008
+		.BYTE	$F0,$0E,$00,$F8 ; 8_046
+		.BYTE	$F0,$0E,$40,$00 ; 8_047
 _sprA07_B7:
 		.BYTE	$04
 		.BYTE	$00,$5E,$00,$00 ; 001
 		.BYTE	$00,$5E,$40,$F8 ; 002
-		.BYTE	$F0,$22,$00,$F8 ; 009
-		.BYTE	$F0,$22,$40,$00 ; 00A
+		.BYTE	$F0,$22,$00,$F8 ; 8_056
+		.BYTE	$F0,$22,$40,$00 ; 8_057
 _sprA07_B8:
 		.BYTE	$04
 		.BYTE	$E8,$4E,$80,$F8
@@ -4324,8 +4324,8 @@ _nsub_tlm_raw_arg2_idx_line_draw:
 		STA		_ptr08
 		JSR		_scr_getc
 		STA		_ptr08+1
-		LDX		_scr_cur_trd_idx			; fetch counter from sarg2 of script
-		LDA		_scr_trds_args2,X
+		LDX		_cur_trd_slot				; fetch counter from sarg2 of script
+		LDA		_trds_args2,X
 		ASL
 		TAY
 		LDA		(_ptr08),Y
@@ -4339,8 +4339,8 @@ loc_62D3F:
 		STA		_tmp_buf+4,Y
 		DEY
 		BPL		loc_62D3F
-		LDY		_scr_trds_args2,X			; calculate position offset
-		INC		_scr_trds_args2,X
+		LDY		_trds_args2,X				; calculate position offset
+		INC		_trds_args2,X
 		INY									; position X=4, Y=2+N
 		INY
 		LDX		#$04

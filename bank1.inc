@@ -929,14 +929,14 @@ _lvl2_roomA_patch_pal_list:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_lvl2_roomA:
-		LDA		_scr_trds_args0
+		LDA		_trds_args0
 		CLC
 		ADC		#$01
 		CMP		#$03
 		BCC		loc_147FC
 		LDA		#$00
 loc_147FC:
-		STA		_scr_trds_args0
+		STA		_trds_args0
 		ASL
 		ASL
 		ADC		#<[_lvl2_roomA_patch_pal_list]
@@ -2409,7 +2409,7 @@ _nbgsub_lvl4_common:
 		LDA		_nmi_counter
 		AND		#$07
 		BNE		loc_15558
-		LDA		_scr_trds_args0
+		LDA		_trds_args0
 		ASL
 		ASL
 		ADC		#<[_lvl4_patch_pal_lib]
@@ -2420,12 +2420,12 @@ _nbgsub_lvl4_common:
 		PLA
 		LDY		#$03
 		JSR		_patch_pal_load
-		INC		_scr_trds_args0
-		LDA		_scr_trds_args0
+		INC		_trds_args0
+		LDA		_trds_args0
 		CMP		#$06
 		BCC		loc_15558
 		LDA		#$00
-		STA		_scr_trds_args0
+		STA		_trds_args0
 loc_15558:
 		JMP		_nbgsub_lvl_room_objects_handler
 
@@ -3412,7 +3412,7 @@ _lvl6_room1_handler:
 			NARGB		$DD
 		SDELAY			$03
 		SLOOP_END
-		STORE8			_scr_trds_pause_mode,$00		; not sure why they disable pause here
+		STORE8			_pause_mode_flag,$00		; not sure why they disable pause here
 		NJSR			_nsub_lvl6_players_auto_scriptsA_set	; reload players scripts with auto walk
 		SCRL_Y_MOVE_SET 0,$80,$FF						; set scroll animation parameter
 		SDELAY			$F0								; do animation while scrolling and walking up
@@ -3479,7 +3479,7 @@ _nsub_lvl6_players_auto_scriptsA_set:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_ingame_start_input_test:
-		LDA		_scr_trds_pause_mode		; sub constantly called from
+		LDA		_pause_mode_flag			; sub constantly called from
 		BNE		loc_15E56					; level secondary script to
 		LDA		_pad0_pressed				; check if START was pressed ot nor
 		AND		#$10
@@ -3594,10 +3594,20 @@ loc_15ED8:
 
 ; =============== S U B R O U T I N E ======n================================
 _pause_screen_anim:
-		LDA		#$00						; custom sprite insert routine
-		STA		_tmpD8
-		STA		_tmpD9
-		LDA		_beamer_spr_base_tmp				; using the beamer spr idx
+		LDX		#$90						; and put it to fixed location
+		LDY		#$B8
+		LDA		_beamer_spr_base_tmp		; using the beamer spr idx
+		JSR		_player_spr_insert
+		LDX		#$80						; TEST
+		LDY		#$B8
+		LDA		_catcher_spr_base_tmp
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_player_spr_insert:
+		STX		_tmp1
+		STY		_tmp2
 		AND		#$F0						; animate it based on frames counter
 		LSR
 		LSR
@@ -3607,9 +3617,45 @@ _pause_screen_anim:
 		LSR
 		LSR
 		ADC		_tmp0
-		LDX		#$90						; and put it to fixed location
-		LDY		#$B8
-		JMP		_spr_player_pause_insert
+		TAY
+		LDA		_spr_pause_list,Y
+		ASL									; NEW, WARNING, may oveflow if idx are
+		TAY									; higher than 80!
+		LDA		_spr_libA08,Y
+		STA		_ptr08
+		LDA		_spr_libA08+1,Y
+		STA		_ptr08+1
+		LDA		#$00						; custom sprite insert routine
+		STA		_tmpD8
+		STA		_tmpD9
+		JMP		_spr_clip_insert
+
+; NEW, WARNING! there are a lot shared sprites here between various
+; libraries. to make sure you using the correct index for particular
+; library, we need to replace all duplicated offsets with unique ones
+; pointing to the same place anyway.
+;
+_spr_pause_list:
+		.BYTE	$0A	; _sprA08_0A_idx
+		.BYTE	$09	; _sprA08_09_idx
+		.BYTE	$0A	; _sprA08_0A_idx
+		.BYTE	$0B	; _sprA08_0B_idx
+		.BYTE	$1A	; _sprA08_1A_idx
+		.BYTE	$19	; _sprA08_19_idx
+		.BYTE	$1A	; _sprA08_1A_idx
+		.BYTE	$1B	; _sprA08_1B_idx
+		.BYTE	$2A	; _sprA08_2A_idx
+		.BYTE	$29	; _sprA08_29_idx
+		.BYTE	$2A	; _sprA08_2A_idx
+		.BYTE	$2B	; _sprA08_2B_idx
+		.BYTE	$3A	; _sprA08_3A_idx
+		.BYTE	$39	; _sprA08_39_idx
+		.BYTE	$3A	; _sprA08_3A_idx
+		.BYTE	$3B	; _sprA08_3B_idx
+		.BYTE	$4A	; _sprA08_4A_idx
+		.BYTE	$49	; _sprA08_49_idx
+		.BYTE	$4A	; _sprA08_4A_idx
+		.BYTE	$4B	; _sprA08_4B_idx
 
 off_15F18:
 		.WORD	_nsub_door00_open_draw
@@ -3646,7 +3692,7 @@ _scr_stage_complete:
 			NARGB		$FF								; music off, wait for 10 frames
 		STORE8			_apu_mus_volume,$FF
 		SDELAY			$10
-		STORE8			_scr_trds_pause_mode,$01		; set pause mode to disable all scripts
+		STORE8			_pause_mode_flag,$01		; set pause mode to disable all scripts
 		SDELAY			$4B								; stand still for about 1.25 seconds
 		NJSR			_nsub_all_threads_off_except_cur; then off all threads except this one
 		SDELAY			$2D
@@ -3704,7 +3750,7 @@ _ngsub_stage_complete_pal_anim:
 		LDA		_nmi_counter
 		AND		#$03
 		BNE		locret_15FFD
-		LDA		_scr_trds_args0
+		LDA		_trds_args0
 		ASL
 		ASL
 		TAY
@@ -3717,12 +3763,12 @@ loc_15FE3:
 		CPX		#$04
 		BCC		loc_15FE3
 		JSR		_full_pal_fade
-		INC		_scr_trds_args0
-		LDA		_scr_trds_args0
+		INC		_trds_args0
+		LDA		_trds_args0
 		CMP		#$0E
 		BCC		locret_15FFD
 		LDA		#$00
-		STA		_scr_trds_args0
+		STA		_trds_args0
 locret_15FFD:
 		RTS
 
@@ -3896,12 +3942,12 @@ _nsub_game_over_menu_item_input:
 		EOR		#$01
 		STA		_game_flags
 loc_16201:
-		LDX		_scr_cur_trd_idx
+		LDX		_cur_trd_slot
 		LDY		_game_flags
 		LDA		byte_16211,Y
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		LDA		#$00
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		RTS
 byte_16211:
 		.BYTE	$AD,$8D
@@ -3982,25 +4028,25 @@ loc_162B8:
 		BMI		loc_162F7
 		CPY		_active_door_data_pos
 		BEQ		loc_162F0
-		STA		_obj_door_x_lo_poss+1,X		; position of the door taken from arrays
+		STA		_doors_x_pos_lo+1,X			; position of the door taken from arrays
 		INY
 		LDA		(_room_doors_data_ptr),Y
-		STA		_obj_door_x_hi_poss+1,X
+		STA		_doors_x_pos_hi+1,X
 		INY
 		LDA		(_room_doors_data_ptr),Y
-		STA		_obj_doors_y_lo_poss+1,X
+		STA		_doors_y_pos_lo+1,X
 		INY
 		LDA		(_room_doors_data_ptr),Y
-		STA		_obj_doors_y_hi_poss+1,X
+		STA		_doors_y_pos_hi+1,X
 		INY
 		TYA
 		PHA
 		LDA		(_room_doors_data_ptr),Y	; diminsions are fixed for particular door
 		TAY									; and fetched from arrays additionally
-		LDA		_obj_doors_widths_list,Y
-		STA		_obj_doors_widths+1,X
-		LDA		_obj_doors_heights_list,Y
-		STA		_obj_doors_heights+1,X
+		LDA		_doors_width_list,Y
+		STA		_doors_width+1,X
+		LDA		_doors_height_list,Y
+		STA		_doors_height+1,X
 		PLA
 		TAY
 		INY
@@ -4018,9 +4064,9 @@ loc_162F7:
 		STX		_cur_room_doors_cnt
 		RTS
 
-_obj_doors_widths_list:
+_doors_width_list:
 		.BYTE	$10,$04,$10,$04,$08,$10,$10,$10,$10,$04,$04,$04,$04,$04,$10,$04,$04
-_obj_doors_heights_list:
+_doors_height_list:
 		.BYTE	$0F,$10,$04,$10,$0F,$0F,$0F,$0F,$0F,$10,$10,$10,$10,$08,$0F,$10,$10
 
 ; =============== S U B R O U T I N E ======n================================
@@ -4031,7 +4077,7 @@ _nsub_room_doors_handler_and_data_init:
 		STA		_room_doors_data_ptr+1
 		LDA		#$FF
 		STA		_active_door_data_pos		; init to make sure this thread will
-		STA		_scr_trds_idx+1				; load in slot 01
+		STA		_trds_obj_idx+1				; load in slot 01
 		LDA		#$01						; also run the doors handler thread
 		STA		_var4
 		LDA		#$02
@@ -4083,19 +4129,19 @@ loc_1636B:
 		TAY
 		JSR		_jump_ptr_ind				; and run it, if door allowed to open
 		BCC		loc_1635B					; CARRY=1 returned
-		LDX		_scr_cur_trd_idx			; if so, load current door coordinates
+		LDX		_cur_trd_slot				; if so, load current door coordinates
 		LDY		_active_door_data_pos		; as current thread object sprite coordinates
 		LDA		(_room_doors_data_ptr),Y
-		STA		_scr_trds_x_pos_hi,X
+		STA		_obj_x_pos_hi,X
 		INY
 		LDA		(_room_doors_data_ptr),Y
-		STA		_scr_trds_x_pos_lo,X
+		STA		_obj_x_pos_lo,X
 		INY
 		LDA		(_room_doors_data_ptr),Y
-		STA		_scr_trds_y_pos_hi,X
+		STA		_obj_y_pos_hi,X
 		INY
 		LDA		(_room_doors_data_ptr),Y
-		STA		_scr_trds_y_pos_lo,X
+		STA		_obj_y_pos_lo,X
 		INY
 		LDA		(_room_doors_data_ptr),Y
 		SEC
@@ -4181,7 +4227,7 @@ _room_door_gen_clear_open:
 		STX		_tmp1						; this is the main routine to test
 		LDX		#$06						; if all enemy objects in the room are
 loc_16400:									; gone
-		LDA		_scr_trds_idx,X				; fetch object index
+		LDA		_trds_obj_idx,X				; fetch object index
 		BMI		loc_16409
 		CMP		#$13						; all objects above 13 are enemies
 		BCS		loc_16419					; others aren't preventing doors to be shut
@@ -4261,18 +4307,18 @@ loc_16460:
 		PHA
 		LDA		(_ptr06),Y
 		PHA
-		LDA		_scr_trds_x_pos_lo+1
+		LDA		_obj_x_pos_lo+1
 		CLC
 		ADC		_door_x_lo_deltasA,Y
 		PHA
-		LDA		_scr_trds_x_pos_hi+1
+		LDA		_obj_x_pos_hi+1
 		ADC		_door_x_hi_deltasA,Y
 		STA		_tmp_var0
-		LDA		_scr_trds_y_pos_lo+1
+		LDA		_obj_y_pos_lo+1
 		CLC
 		ADC		_door_y_lo_deltasA,Y
 		PHA
-		LDA		_scr_trds_y_pos_hi+1
+		LDA		_obj_y_pos_hi+1
 		ADC		_door_y_hi_deltasA,Y
 		STA		_tmp_var1
 		PLA
@@ -4357,14 +4403,14 @@ loc_164F6:
 		PHA
 		LDA		(_ptr06),Y
 		PHA
-		LDX		_scr_trds_x_pos_lo+1
-		LDA		_scr_trds_x_pos_hi+1
+		LDX		_obj_x_pos_lo+1
+		LDA		_obj_x_pos_hi+1
 		STA		_tmp_var0
-		LDA		_scr_trds_y_pos_lo+1
+		LDA		_obj_y_pos_lo+1
 		CLC
 		ADC		_door_y_lo_deltasB,Y
 		PHA
-		LDA		_scr_trds_y_pos_hi+1
+		LDA		_obj_y_pos_hi+1
 		ADC		_door_y_hi_deltasB,Y
 		STA		_tmp_var1
 		PLA
@@ -4420,15 +4466,15 @@ _nsub_door02_open_draw:
 loc_1655C:									; to draw horizontal arranged door
 		TYA									; tiles (2x1)
 		PHA
-		LDA		_scr_trds_x_pos_lo+1
+		LDA		_obj_x_pos_lo+1
 		CLC
 		ADC		_door02_x_lo_deltaA,Y
 		TAX
-		LDA		_scr_trds_x_pos_hi+1
+		LDA		_obj_x_pos_hi+1
 		ADC		_door02_x_hi_deltaA,Y
 		STA		_tmp_var0
-		LDY		_scr_trds_y_pos_lo+1
-		LDA		_scr_trds_y_pos_hi+1
+		LDY		_obj_y_pos_lo+1
+		LDA		_obj_y_pos_hi+1
 		STA		_tmp_var1
 		LDA		#$14						; both open macros are the same here
 		JSR		_ppu_macro_block_draw		; hardcoded as a constant
@@ -4461,15 +4507,15 @@ loc_16585:									; mine doors in horizontal arrangement
 		PHA
 		LDA		_mac_door2_closed,Y			; two macroses hardcoded in array
 		PHA
-		LDA		_scr_trds_x_pos_lo+1
+		LDA		_obj_x_pos_lo+1
 		CLC
 		ADC		_door02_x_lo_deltaA,Y
 		TAX
-		LDA		_scr_trds_x_pos_hi+1
+		LDA		_obj_x_pos_hi+1
 		ADC		_door02_x_hi_deltaA,Y
 		STA		_tmp_var0
-		LDY		_scr_trds_y_pos_lo+1
-		LDA		_scr_trds_y_pos_hi+1
+		LDY		_obj_y_pos_lo+1
+		LDA		_obj_y_pos_hi+1
 		STA		_tmp_var1
 		PLA
 		JSR		_ppu_macro_block_draw
@@ -4774,8 +4820,8 @@ _mac_door09_close:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_lvl4_doors_open_drawB:
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDY		_trds_args0,X
 
 ; !FALLTHROUGH!
 
@@ -4824,8 +4870,8 @@ _nsub_door0C_open_draw:
 ; no need to call it from any wrappers this time
 ;
 _nsub_lvl4_doors_close_drawB:
-		LDX		_scr_cur_trd_idx
-		LDY		_scr_trds_args0,X
+		LDX		_cur_trd_slot
+		LDY		_trds_args0,X
 		LDA		_lvl4_mac_close_lib_lo,Y
 		LDX		_lvl4_mac_close_lib_hi,Y
 		JMP		_door_macro_drawB
