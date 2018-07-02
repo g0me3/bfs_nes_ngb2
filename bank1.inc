@@ -3622,13 +3622,10 @@ _player_spr_insert:
 		ASL									; NEW, WARNING, may oveflow if idx are
 		TAY									; higher than 80!
 		LDA		_spr_libA08,Y
-		STA		_ptr08
+		STA		_ptr0A
 		LDA		_spr_libA08+1,Y
-		STA		_ptr08+1
-		LDA		#$00						; custom sprite insert routine
-		STA		_tmpD8
-		STA		_tmpD9
-		JMP		_spr_clip_insert
+		STA		_ptr0A+1
+		JMP		_spr_mode_select_ex
 
 ; NEW, WARNING! there are a lot shared sprites here between various
 ; libraries. to make sure you using the correct index for particular

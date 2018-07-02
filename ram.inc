@@ -170,9 +170,9 @@ _ppu_scroll_y_page:
 		.BYTE	0
 _spr_buf_shuffle:
 		.BYTE	0
-_tmpD8:
+_spr_x_clip_flag:
 		.BYTE	0
-_tmpD9:
+_spr_y_clip_flag:
 		.BYTE	0
 _lvl_macroA_ptr:
 		.BYTE	0,0

@@ -6,7 +6,7 @@ cd nas
 
 echo assemble...
 
-rem dasm bank0.nas -f3 -l!ngb.lst -obank0.bin >> !err.log
+rem dasm bank0.nas -f3 -l!ngb2.lst -obank0.bin >> !err.log
 
 for %%f in (*.nas) do call :dodasm %%f > NUL
 
@@ -19,20 +19,20 @@ goto :eof
 :build
 echo build...
 
-rename hdr.bin !ngb.hdr > NUL
-rename chr.bin !ngb.chr > NUL
+rename hdr.bin !ngb2.hdr > NUL
+rename chr.bin !ngb2.chr > NUL
 
-copy /b bank0.bin+bank1.bin+bank2.bin+bank3.bin+bank4.bin+bank5.bin+bank6.bin+bank7.bin !ngb.prg > NUL
+copy /b bank0.bin+bank1.bin+bank2.bin+bank3.bin+bank4.bin+bank5.bin+bank6.bin+bank7.bin !ngb2.prg > NUL
 
-nesimage j !ngb > NUL
+nesimage j !ngb2 > NUL
 
 echo cleanup...
 for %%f in (*.bin) do del %%f
-del !ngb.prg
-del !ngb.hdr
-del !ngb.chr
+del !ngb2.prg
+del !ngb2.hdr
+del !ngb2.chr
 
-copy /b !ngb.nes ..\!ngb.nes > NUL
+copy /b !ngb2.nes ..\!ngb2.nes > NUL
 cd ..
 
 echo done.
