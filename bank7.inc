@@ -8539,14 +8539,14 @@ _spr_libB_ofs_tbl_hi:
 
 		SPR_LIB_START	_spr_libA08
 
-		SPR_IDX	_sprA08_02
-		SPR_IDX	_sprA08_01
-		SPR_IDX	_sprA08_02
-		SPR_IDX	_sprA08_03
-		SPR_IDX	_sprA08_06
-		SPR_IDX	_sprA08_05
-		SPR_IDX	_sprA08_06
-		SPR_IDX	_sprA08_07
+		SPR_IDX	_sprA08_02	; peter	U	A
+		SPR_IDX	_sprA08_01	; 			B
+		SPR_IDX	_sprA08_02	;			C
+		SPR_IDX	_sprA08_03	;			D
+		SPR_IDX	_sprA08_06	;		R	A
+		SPR_IDX	_sprA08_05	;			B
+		SPR_IDX	_sprA08_06	;			C
+		SPR_IDX	_sprA08_07	;			D
 		SPR_IDX	_sprA08_0A
 		SPR_IDX	_sprA08_09
 		SPR_IDX	_sprA08_0A
