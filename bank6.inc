@@ -25,6 +25,8 @@ loc_50018:
 		JSR		_apu_mus_load
 		LDA		#$FF
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _apu_snd_load:
 		STA		_tmp0

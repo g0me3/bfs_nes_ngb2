@@ -3622,9 +3622,9 @@ _player_spr_insert:
 		ASL									; NEW, WARNING, may oveflow if idx are
 		TAY									; higher than 80!
 		LDA		_spr_libA08,Y
-		STA		_ptr0A
+		STA		_ptr1E
 		LDA		_spr_libA08+1,Y
-		STA		_ptr0A+1
+		STA		_ptr1E+1
 		JMP		_spr_mode_select_ex
 
 ; NEW, WARNING! there are a lot shared sprites here between various

@@ -203,13 +203,26 @@ loc_60112:
 		JSR		_event_thread_start			; and start main level thread
 loc_60123:
 		JSR		_wait_for_nmi				; main ingame loop goes here
+#if DEBUG==1
+		LDA		_ppu_mask_shadow
+		EOR		#$02
+		STA		_PPU_MASK
+#endif
 		LDA		#$00						; all mostly the same as simple loop above
 		STA		_cur_room_doors_cnt			; but with extra special inits
+#if DEBUG==1
+;		STA		_spr_buf_shuffle
+;		STA		_spr_buf_pos
+#endif
 		JSR		_spr_shuffle_update
 		JSR		_threads_manager			; all work run here
 		JSR		_spr_finish					; finalize sprites when done
 		JSR		_obj_exit_arrow_position_adjust	; also extra object arrow test here
 		JSR		_obj_garbage_collector		; special garbage collector
+#if DEBUG==1
+		LDA		_ppu_mask_shadow
+		STA		_PPU_MASK
+#endif
 		LDA		_trds_obj_idx				; if main thread stopped, then stage completed
 		BPL		loc_60123
 		LDA		_game_flags					; also to complete stage you nedd $80 value here
@@ -5789,6 +5802,8 @@ _ssub_common_catch_anim_L_snd02:
 		NJSR			_nsub_apu_snd_load
 			NARGB		_snd02_idx
 
+; !FALLTHROUGH!
+
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_L_ex:
 		SLOOP_BEGIN		$03
@@ -6136,6 +6151,48 @@ loc_63014:
 		BCC		loc_63000					; repeat for all threads...
 		RTS
 
+#if DEBUG==1
+; =============== S U B R O U T I N E ======n================================
+_debug_spr_insert:
+		LDY		_debug_lib_idx
+		LDA		_prg_cur_bank
+		PHA
+		LDA		_debug_spr_bank_list,Y
+		STA		_prg_cur_bank
+		JSR		_mmc1_prg_safe
+		LDA		_debug_lib_type
+		BNE		.debug_typeB
+		LDA		#$00
+		STA		_var0
+		LDA		_debug_spr
+		ASL
+		ROL		_var0
+		CLC
+		ADC		_spr_libA_ofs_tbl_lo,Y
+		STA		_ptr06
+		LDA		_var0
+		ADC		_spr_libA_ofs_tbl_hi,Y
+		STA		_ptr06+1
+		JSR		_spr_mode_select
+		JMP		.debug_end
+.debug_typeB:
+		LDA		_debug_spr
+		ASL
+		ADC		_spr_libB_ofs_tbl_lo,Y
+		STA		_ptr06
+		LDA		#$00
+		ADC		_spr_libB_ofs_tbl_hi,Y
+		STA		_ptr06+1
+		JSR		_spr_mode_select
+.debug_end:
+		PLA
+		STA		_prg_cur_bank
+		JMP		_mmc1_prg_safe
+
+_debug_spr_bank_list:
+		.BYTE	$00,$01,$00,$01,$01,$04,$04,$04,$03
+#endif
+
 ; =============== S U B R O U T I N E ======n================================
 _obj_spr_insert:
 		LDA		_obj_x_pos_lo,X				; calculate screen position for
@@ -6197,22 +6254,22 @@ loc_6309D:
 _spr_mode_select:
 		LDY		#$00						; fetch library ptr
 		LDA		(_ptr06),Y
-		STA		_ptr0A
+		STA		_ptr1E
 		INY
 		LDA		(_ptr06),Y
-		STA		_ptr0A+1
+		STA		_ptr1E+1
 
 ; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _spr_mode_select_ex:
 		LDY		#$00
-		LDA		(_ptr0A),Y
+		LDA		(_ptr1E),Y
 		BMI		.spr_typeB_insert
 ;		BMI		.spr_modeC_insert			; TODO, reimplement
-		LDA		_ptr0A						; sprite mode A, simple sprite
+		LDA		_ptr1E						; sprite mode A, simple sprite
 		STA		_ptr08
-		LDA		_ptr0A+1
+		LDA		_ptr1E+1
 		STA		_ptr08+1
 		JMP		_spr_clip_insert
 .spr_typeB_insert:
@@ -6220,10 +6277,10 @@ _spr_mode_select_ex:
 		STA		_tmp_loop_cnt
 		INY
 .spr_typeB_loop:
-		LDA		(_ptr0A),Y
+		LDA		(_ptr1E),Y
 		STA		_ptr08
 		INY
-		LDA		(_ptr0A),Y
+		LDA		(_ptr1E),Y
 		STA		_ptr08+1
 		INY
 		TYA
@@ -6258,7 +6315,7 @@ _spr_mode_select_ex:
 ;		LDA		#$00
 ;		STA		_spr_x_clip_flag
 ;		STA		_spr_y_clip_flag
-;		LDA		(_ptr0A),Y
+;		LDA		(_ptr1E),Y
 ;		BPL		loc_630FC
 ;		DEC		_spr_x_clip_flag
 ;loc_630FC:
@@ -6268,7 +6325,7 @@ _spr_mode_select_ex:
 ;		INC		_spr_x_clip_flag
 ;loc_63104:
 ;		INY
-;		LDA		(_ptr0A),Y
+;		LDA		(_ptr1E),Y
 ;		BPL		loc_6310B
 ;		DEC		_spr_y_clip_flag
 ;loc_6310B:
@@ -6279,10 +6336,10 @@ _spr_mode_select_ex:
 ;		INC		_spr_y_clip_flag
 ;loc_63114:
 ;		INY
-;		LDA		(_ptr0A),Y
+;		LDA		(_ptr1E),Y
 ;		STA		_ptr08
 ;		INY
-;		LDA		(_ptr0A),Y
+;		LDA		(_ptr1E),Y
 ;		STA		_ptr08+1
 ;		INY
 ;		TYA
@@ -7690,11 +7747,11 @@ loc_63884:
 		LDA		_ppu_mask_shadow
 		BNE		.res_send_hor_queue
 ; REGION, replaced in the EU version
-;		LDA		#$01
-;		STA		_ppu_forbid_flag
-		LDA		_ppu_ctrl_shadow
-		PHA
-		JSR		_ppu_nmi_off
+		LDA		#$01
+		STA		_ppu_forbid_flag
+;		LDA		_ppu_ctrl_shadow
+;		PHA
+;		JSR		_ppu_nmi_off
 ; -
 		LDA		_ppu_ctrl_shadow
 		STA		_PPU_CTRL
@@ -7716,10 +7773,10 @@ loc_638C3:
 		DEX
 		BNE		loc_638B3
 ; REGION, replaced in the EU version
-;		LDA		#$00
-;		STA		_ppu_forbid_flag
-		PLA
-		JSR		_ppu_ctrl_write
+		LDA		#$00
+		STA		_ppu_forbid_flag
+;		PLA
+;		JSR		_ppu_ctrl_write
 ; -
 		JMP		loc_638EC
 .res_send_hor_queue:
@@ -7773,11 +7830,11 @@ _vertical_mode:
 		LDA		_ppu_mask_shadow
 		BNE		.res_send_vert_queue
 ; REGION, replaced in the EU version
-;		LDA		#$01
-;		STA		_ppu_forbid_flag
-		LDA		_ppu_ctrl_shadow
-		PHA
-		JSR		_ppu_nmi_off
+		LDA		#$01
+		STA		_ppu_forbid_flag
+;		LDA		_ppu_ctrl_shadow
+;		PHA
+;		JSR		_ppu_nmi_off
 ; -
 		LDA		_ppu_ctrl_shadow
 		ORA		#$04
@@ -7804,10 +7861,10 @@ loc_63947:
 		DEX
 		BNE		loc_63932
 ; REGION, replaced in the EU version
-;		LDA		#$00
-;		STA		_ppu_forbid_flag
-		PLA
-		JSR		_ppu_ctrl_write
+		LDA		#$00
+		STA		_ppu_forbid_flag
+;		PLA
+;		JSR		_ppu_ctrl_write
 ; -
 		JMP		loc_63975
 .res_send_vert_queue:
@@ -8057,12 +8114,12 @@ NMI:
 		LDA		#$02
 		STA		_PPU_OAM_DMA
 ; REGION, added in EU version
-;		LDA		_ppu_forbid_flag
-;		BNE
+		LDA		_ppu_forbid_flag
+		BNE		loc_63AA1
 ; -
 		JSR		_ppu_dequeue
 		JSR		_ppu_set_scroll
-;loc_63AA1:
+loc_63AA1:
 		INC		_nmi_flag
 		INC		_nmi_counter
 		JSR		_get_input
@@ -8153,12 +8210,15 @@ _mmc1_ctrl:
 
 ; =============== S U B R O U T I N E ======n================================
 _mmc1_prg_safe:
+		CMP		_prg_bank
+		BEQ		locret_63B6E
 		PHA									; very safe bank switching routine and
 		STA		_prg_bank					; very SLOOOOOW because of that sometimes
-		LDA		_mmc1_busy					; backup busy flag, however thechnically
-		PHA									; no one else set it, so we basicly just
-		LDA		#$01						; save zero then restore it, thus clear it again
-		STA		_mmc1_busy					; set our own busy flag, now when nmi
+;		LDA		_mmc1_busy					; backup busy flag, however thechnically
+;		PHA									; no one else set it, so we basicly just
+;		LDA		#$01						; save zero then restore it, thus clear it again
+;		STA		_mmc1_busy					; set our own busy flag, now when nmi
+		INC		_mmc1_busy
 		LDA		_prg_bank					; occurs, it will skip any mapper operations
 		STA		$FFF9						; this includes calling apu player routine
 		LSR
@@ -8169,8 +8229,9 @@ _mmc1_prg_safe:
 		STA		$FFF9
 		LSR
 		STA		$FFF9
-		PLA
-		STA		_mmc1_busy					; so after changing the bank here, we need to
+;		PLA
+;		STA		_mmc1_busy					; so after changing the bank here, we need to
+		DEC		_mmc1_busy
 		LDA		_apu_play_delayed_req		; test if nmi occurs in the middle of process
 		BEQ		loc_63B6E					; if yes, then we need to call apu player manually
 		LDA		#$00						; this preventing music from slow downs when
@@ -8194,6 +8255,7 @@ _mmc1_prg_safe:
 		TAX
 loc_63B6E:
 		PLA
+locret_63B6E:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -8433,15 +8495,15 @@ _spr_libs_list:
 		.BYTE	$08
 
 _spr_libA_ofs_tbl_lo:
-		.BYTE	<[_spr_libA00]
-		.BYTE	<[_spr_libA01]
-		.BYTE	<[_spr_libA07]
-		.BYTE	<[_spr_libA08]
-		.BYTE	<[_spr_libA09]
-		.BYTE	<[_spr_libA0E]
-		.BYTE	<[_spr_libA0F]
-		.BYTE	<[_spr_libA11]
-		.BYTE	<[_spr_libA1A]
+		.BYTE	<[_spr_libA00]	; 00 bank
+		.BYTE	<[_spr_libA01]	; 01 bank
+		.BYTE	<[_spr_libA07]	; 00 bank
+		.BYTE	<[_spr_libA08]	; 01 bank
+		.BYTE	<[_spr_libA09]	; 01 bank
+		.BYTE	<[_spr_libA0E]	; 04 bank
+		.BYTE	<[_spr_libA0F]	; 04 bank
+		.BYTE	<[_spr_libA11]	; 04 bank
+		.BYTE	<[_spr_libA1A]	; 03 bank
 _spr_libA_ofs_tbl_hi:
 		.BYTE	>[_spr_libA00]
 		.BYTE	>[_spr_libA01]
@@ -8637,22 +8699,22 @@ _spr_libB_ofs_tbl_hi:
 		SPR_IDX	_sprA08_9F
 		SPR_IDX	_sprA08_9E
 		SPR_IDX	_sprA08_9F
-		SPR_IDX	_sprA08_A0
-		SPR_IDX	_sprA08_A1
-		SPR_IDX	_sprA08_A2
-		SPR_IDX	_sprA08_A3
-		SPR_IDX	_sprA08_A4
-		SPR_IDX	_sprA08_A5
-		SPR_IDX	_sprA08_A6
-		SPR_IDX	_sprA08_A7
-		SPR_IDX	_sprA08_A8
-		SPR_IDX	_sprA08_A9
-		SPR_IDX	_sprA08_AA
-		SPR_IDX	_sprA08_AB
-		SPR_IDX	_sprA08_AC
-		SPR_IDX	_sprA08_AD	; exit arrows
-		SPR_IDX	_sprA08_AE
-		SPR_IDX	_sprA08_AF
+		SPR_IDX	_sprA08_A0	; death	A	U
+		SPR_IDX	_sprA08_A1	; 			R
+		SPR_IDX	_sprA08_A2	;			D
+		SPR_IDX	_sprA08_A3	;			L
+		SPR_IDX	_sprA08_A4	; death B	U
+		SPR_IDX	_sprA08_A5	;			R
+		SPR_IDX	_sprA08_A6	;			D
+		SPR_IDX	_sprA08_A7	;			L
+		SPR_IDX	_sprA08_A8	; death C	U
+		SPR_IDX	_sprA08_A9	;			R
+		SPR_IDX	_sprA08_AA	;			D
+		SPR_IDX	_sprA08_AB	;			L
+		SPR_IDX	_sprA08_AC	; exit arrowU
+		SPR_IDX	_sprA08_AD	;			R
+		SPR_IDX	_sprA08_AE	; 			D
+		SPR_IDX	_sprA08_AF	;			L
 
 _sprA08_01:
 		.BYTE	$82
@@ -9244,9 +9306,9 @@ _sprA08_9F:
 		.BYTE	$F5,$30,$00,$00
 _sprA08_A0:
 		.BYTE	$04
-		.BYTE	$00,$4E,$00,$F8 ; 8_05C
-		.BYTE	$00,$4E,$40,$00 ; 8_05D
-		.BYTE	$F0,$4C,$00,$F8 ; 8_05E
+		.BYTE	$00,$4E,$00,$F8
+		.BYTE	$00,$4E,$40,$00
+		.BYTE	$F0,$4C,$00,$F8
 		.BYTE	$F0,$4C,$40,$00
 _sprA08_A1:
 		.BYTE	$03
@@ -9265,60 +9327,64 @@ _sprA08_A3:
 		.BYTE	$F8,$2E,$00,$06
 		.BYTE	$F8,$3C,$00,$FE
 _sprA08_A4:
-		.BYTE	$06
-		.BYTE	$00,$4E,$00,$F8 ; 8_05C
-		.BYTE	$00,$4E,$40,$00 ; 8_05D
-		.BYTE	$F0,$4C,$00,$F8 ; 8_05E
-		.BYTE	$F0,$4C,$40,$00
+		.BYTE	$82
+		.WORD	_sprA08_A0
+		.WORD	_sprA08_A4_B
+_sprA08_A4_B:
+		.BYTE	$02
 		.BYTE	$F3,$48,$00,$07
 		.BYTE	$FC,$48,$00,$F2
 _sprA08_A5:
-		.BYTE	$04
+		.BYTE	$82
+		.WORD	_sprA08_A5_A
+		.WORD	_sprA08_A1
+_sprA08_A5_A:
+		.BYTE	$01
 		.BYTE	$01,$48,$40,$0A
-		.BYTE	$F8,$2C,$40,$04
-		.BYTE	$F8,$2E,$40,$F4
-		.BYTE	$F8,$3C,$40,$FC
 _sprA08_A6:
-		.BYTE	$06
-		.BYTE	$00,$4C,$80,$F8
-		.BYTE	$00,$4C,$C0,$00
-		.BYTE	$F0,$4E,$80,$F8
-		.BYTE	$F0,$4E,$C0,$00
+		.BYTE	$82
+		.WORD	_sprA08_A2
+		.WORD	_sprA08_A6_B
+_sprA08_A6_B
+		.BYTE	$02
 		.BYTE	$F3,$48,$80,$06
 		.BYTE	$FB,$48,$80,$F1
 _sprA08_A7:
-		.BYTE	$04
+		.BYTE	$82
+		.WORD	_sprA08_A7_A
+		.WORD	_sprA08_A3
+_sprA08_A7_A:
+		.BYTE	$01
 		.BYTE	$01,$48,$00,$F0
-		.BYTE	$F8,$2C,$00,$F6
-		.BYTE	$F8,$2E,$00,$06
-		.BYTE	$F8,$3C,$00,$FE
 _sprA08_A8:
-		.BYTE	$06
-		.BYTE	$00,$4E,$00,$F8 ; 8_05C
-		.BYTE	$00,$4E,$40,$00 ; 8_05D
-		.BYTE	$F0,$4C,$00,$F8 ; 8_05E
-		.BYTE	$F0,$4C,$40,$00
+		.BYTE	$82
+		.WORD	_sprA08_A0
+		.WORD	_sprA08_A8_B
+_sprA08_A8_B:
+		.BYTE	$02
 		.BYTE	$F0,$58,$00,$0B
 		.BYTE	$FE,$58,$00,$EF
 _sprA08_A9:
-		.BYTE	$04
-		.BYTE	$F8,$2C,$40,$04
-		.BYTE	$F8,$2E,$40,$F4
-		.BYTE	$F8,$3C,$40,$FC
+		.BYTE	$82
+		.WORD	_sprA08_A1
+		.WORD	_sprA08_A9_B
+_sprA08_A9_B:
+		.BYTE	$01
 		.BYTE	$FC,$58,$40,$0D
 _sprA08_AA:
-		.BYTE	$06
-		.BYTE	$00,$4C,$80,$F8
-		.BYTE	$00,$4C,$C0,$00
-		.BYTE	$F0,$4E,$80,$F8
-		.BYTE	$F0,$4E,$C0,$00
+		.BYTE	$82
+		.WORD	_sprA08_A2
+		.WORD	_sprA08_AA_B
+_sprA08_AA_B:
+		.BYTE	$02
 		.BYTE	$F0,$58,$80,$09
 		.BYTE	$FE,$58,$80,$ED
 _sprA08_AB:
-		.BYTE	$04
-		.BYTE	$F8,$2C,$00,$F6
-		.BYTE	$F8,$2E,$00,$06
-		.BYTE	$F8,$3C,$00,$FE
+		.BYTE	$82
+		.WORD	_sprA08_A3
+		.WORD	_sprA08_AB_B
+_sprA08_AB_B:
+		.BYTE	$01
 		.BYTE	$FC,$58,$00,$ED
 _sprA08_AC:
 		.BYTE	$06

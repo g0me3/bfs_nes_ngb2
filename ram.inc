@@ -69,8 +69,25 @@ _tmp1D:
 ;_unused_12:
 ;		.BYTE	0
 #else
+_ptr1E:
+		.BYTE	0,0
 ;_unused_12:
 ;		.BYTE	0,0,0,0,0		; NOTE: compatibility issues, remove me if no any left
+#endif
+#if DEBUG==1
+_debug_vars_list:
+_debug_chr0:
+		.BYTE	0
+_debug_chr1:
+		.BYTE	0
+_debug_lib_idx:
+		.BYTE	0
+_debug_lib_type:
+		.BYTE	0
+_debug_spr:
+		.BYTE	0
+_debug_pos_idx:
+		.BYTE	0
 #endif
 _random_seed:
 		.BYTE	0,0
@@ -93,8 +110,8 @@ _apu_play_delayed_req:
 _prg_bank:
 		.BYTE	0
 ; REGION, new var added in the EU version
-;_ppu_forbid_flag:
-;		.BYTE	0
+_ppu_forbid_flag:
+		.BYTE	0
 _ppu_queue_head:
 		.BYTE	0
 _ppu_queue_tail:
