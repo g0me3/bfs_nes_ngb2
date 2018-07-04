@@ -4727,7 +4727,7 @@ _far_prg0_tlm_lib_unpack:
 		STA		_tmp0
 		LDA		_prg_cur_bank
 		PHA
-		LDA		#$00
+		LDA		#_tlm_lib_unpack_bank
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
 		LDA		_tmp0

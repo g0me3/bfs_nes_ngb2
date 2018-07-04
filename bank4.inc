@@ -5321,7 +5321,7 @@ _spr_libA0F:
 		.WORD	_sprA0F_5E
 		.WORD	_sprA0F_5F
 		.WORD	_sprA0F_60
-		.WORD	_sprA0F_61
+		.WORD	_sprA0F_61	; NOTE: object sprite little bit odd, test
 		.WORD	_sprA0F_62
 		.WORD	_sprA0F_63
 		.WORD	_sprA0F_64
