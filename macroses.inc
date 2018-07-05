@@ -1,7 +1,7 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		0
+DEBUG			EQU		1
 OPTIMIZATION	EQU		1
 BUGFIXES		EQU		0
 TWO_PLAYER_MODE	EQU		0
@@ -187,6 +187,13 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	ENDM
 
 ;------------S-T-R-U-C-T-U-R-E-S----------------
+
+	MAC	_tarray
+{1}		SET	.
+		DS	{2}
+{1}_end	SET	.
+{1}_size SET [{1}_end-{1}]
+	ENDM
 
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
 

@@ -211,6 +211,8 @@ _lvl_objects_ptr:
 		.BYTE	0,0
 _room_prize_sequence_ptr:
 		.BYTE	0,0
+_room_exits_ptr:
+		.BYTE	0,0
 _tmp_var0:
 		.BYTE	0
 _tmp_var1:
@@ -229,7 +231,7 @@ _out_of_screen_test_flag:
 _tmp_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		.BYTE	0,0,0,0,0
+		.BYTE	0,0,0,0
 _trds_obj_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_x_speed:
@@ -267,7 +269,7 @@ _ppu_spr_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_ppu_queue_data:
+_ppu_queue_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -558,6 +560,10 @@ _control_beam_button_code:
 		.BYTE	0
 _control_catch_button_code:
 		.BYTE	0
+
+		ECHO "-------------"
+		ECHO "general ram free:",[$800-.]
+		ECHO "-------------"
 
 ;--------------------P-P-U----------------------
 

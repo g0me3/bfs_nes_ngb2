@@ -1064,7 +1064,7 @@ OUTPUT_POS_Y	EQU $02
 _debug_mode_limits:
 		.BYTE	$20,$20,$09,$02,$00
 _debug_typeA_limits:
-		.BYTE	$4D,$1B,$BD,$B0,$30,$98,$6E,$8E,$95
+		.BYTE	$4D,$1F,$BD,$B0,$30,$98,$6E,$8E,$95
 _debug_typeB_limits:
 		.BYTE	$00,$00,$13,$00,$00,$00,$2C,$0B,$08
 _hex_pos:
@@ -5059,7 +5059,7 @@ _hi_cmd_ppu_data_read:
 		LDA		_PPU_DATA
 loc_AF4C:
 		LDA		_PPU_DATA
-		STA		_ppu_queue_data,X
+		STA		_ppu_queue_buf,X
 		DEX
 		BNE		loc_AF4C
 		RTS
@@ -5072,7 +5072,7 @@ _hi_cmd_ppu_data_write:
 		LDA		_ptr0A
 		STA		_PPU_ADDR
 loc_AF62:
-		LDA		_ppu_queue_data,X
+		LDA		_ppu_queue_buf,X
 		STA		_PPU_DATA
 		DEX
 		BNE		loc_AF62
@@ -5090,7 +5090,7 @@ locret_AF78:
 _hi_cmd_data_rotate:
 		LDX		_tmp1
 loc_AF7B:
-		LDA		_ppu_queue_data,X
+		LDA		_ppu_queue_buf,X
 		STA		_var4
 		LDY		#$08
 loc_AF82:
@@ -5098,7 +5098,7 @@ loc_AF82:
 		ROR
 		DEY
 		BNE		loc_AF82
-		STA		_ppu_queue_data,X
+		STA		_ppu_queue_buf,X
 		DEX
 		BNE		loc_AF7B
 		RTS
@@ -5123,7 +5123,7 @@ _hi_cmd_ppu_data_read_invert:
 loc_AFAF:
 		INX
 		LDA		_PPU_DATA
-		STA		_ppu_queue_data,X
+		STA		_ppu_queue_buf,X
 		CPX		_tmp1
 		BNE		loc_AFAF
 		RTS

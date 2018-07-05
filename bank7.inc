@@ -3317,7 +3317,7 @@ loc_61CD4:
 ; position index, next time engine restarting the level, room data
 ; will start from previously saved checkpoint data offset
 ;
-_nbgsub_lvl_room_objects_handler:
+_nbgsub_room_obj_handler:
 		LDA		_prg_cur_bank				; backup current PRG bank
 		PHA
 		LDA		_lvl_data_prg_bank			; set the level data bank
@@ -5040,6 +5040,77 @@ loc_62948:
 		JMP		_ppu_vblank_on
 
 ; =============== S U B R O U T I N E ======n================================
+_nsub_players_room_exit_test_from_ptr:
+		LDA		(_room_exits_ptr),Y
+		INY
+		STA		_var0						; and compares with current beamed position
+		LDA		#$00						; return flag if position reached
+		STA		_var3
+loc_62954A:
+		LDX		#$02						; have no use with doors code itself
+		LDA		(_room_exits_ptr),Y
+		INY
+		SEC									; but exits are always active
+		SBC		_obj_x_pos_lo+2
+		STA		_var1
+		LDA		(_room_exits_ptr),Y
+		INY
+		SBC		_obj_x_pos_hi+2
+		STA		_var2
+		BCS		loc_62976A
+		LDA		_var1
+		EOR		#$FF
+		ADC		#$01
+		STA		_var1
+		LDA		_var2
+		EOR		#$FF
+		ADC		#$00
+loc_62976A:
+		BNE		loc_629A8A
+		LDA		_var1
+		CMP		#$11
+		BCS		loc_629A8A
+		DEX
+		DEX
+		LDA		(_room_exits_ptr),Y
+		INY
+		SEC
+		SBC		_obj_y_pos_lo+2
+		STA		_var1
+		LDA		(_room_exits_ptr),Y
+		INY
+		SBC		_obj_y_pos_hi+2
+		STA		_var2
+		BCS		loc_629A0A
+		LDA		_var1
+		EOR		#$FF
+		ADC		#$01
+		STA		_var1
+		LDA		_var2
+		EOR		#$FF
+		ADC		#$00
+loc_629A0A:
+		BNE		loc_629B2A
+		LDA		_var1
+		CMP		#$11
+		BCC		loc_629BAA
+		BCS		loc_629B2A
+loc_629A8A:
+		INY
+		INY
+loc_629B2A:
+		INC		_var3
+		DEC		_var0
+		BNE		loc_62954A
+		CLC									; exit with C=0 if no exit reached
+		RTS
+loc_629BAA:
+		LDA		_var3						; exit with C=1 if exit reached
+		STA		_tmp_idx
+		SEC
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
 _nsub_players_room_exit_test:
 		JSR		_scr_getc					; fetches the exit locations of the level
 		STA		_var0						; and compares with current beamed position
@@ -5116,6 +5187,100 @@ loc_629C8:
 		STA		_tmp_idx
 		SEC
 		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_nsub_players_room_start_pos_init_from_ptr:
+		LDA		(_room_exits_ptr),Y
+		ASL
+		ASL
+		SEC
+		ADC		_room_exits_ptr
+		STA		_room_exits_ptr
+		BCC		.no_increment
+		INC		_room_exits_ptr+1
+.no_increment:
+		LDA		_tmp_idx
+		ASL
+		ADC		_tmp_idx
+		TAY
+		LDA		#$00
+		STA		_obj_x_pos_hi+2
+		STA		_obj_y_pos_hi+2
+		LDA		(_room_exits_ptr),Y
+		ASL
+		ROL		_obj_x_pos_hi+2
+		ASL
+		ROL		_obj_x_pos_hi+2
+		ASL
+		ROL		_obj_x_pos_hi+2
+		STA		_obj_x_pos_lo+2
+		INY
+		LDA		(_room_exits_ptr),Y
+		ASL
+		ROL		_obj_y_pos_hi+2
+		ASL
+		ROL		_obj_y_pos_hi+2
+		ASL
+		ROL		_obj_y_pos_hi+2
+		STA		_obj_y_pos_lo+2
+		INY
+		LDA		(_room_exits_ptr),Y
+		TAX
+		LSR
+		ROR
+		ROR
+		STA		_trds_args1+2				; position data stored only for beamer
+		STA		_trds_args1+4				; position of catched auto calculated
+		LDA		_obj_x_pos_lo+2				; by direction of beamer and starting position
+		CLC									; at the door
+		ADC		byte_62A87,X
+		STA		_obj_x_pos_lo+2
+		LDA		_obj_x_pos_hi+2
+		ADC		byte_62A8B,X
+		STA		_obj_x_pos_hi+2
+		STA		_ppu_scroll_pos_x+1
+		LDA		_obj_y_pos_lo+2
+		CLC
+		ADC		byte_62A8F,X
+		STA		_obj_y_pos_lo+2
+		LDA		_obj_y_pos_hi+2
+		ADC		byte_62A93,X
+		STA		_obj_y_pos_hi+2
+		STA		_ppu_scroll_pos_y+1
+		LDA		_obj_x_pos_lo+2
+		CLC
+		ADC		byte_62A97,X
+		STA		_obj_x_pos_lo+4
+		LDA		_obj_x_pos_hi+2
+		ADC		byte_62A9B,X
+		STA		_obj_x_pos_hi+4
+		LDA		_obj_y_pos_lo+2
+		CLC
+		ADC		byte_62A9F,X
+		STA		_obj_y_pos_lo+4
+		LDA		_obj_y_pos_hi+2
+		ADC		byte_62AA3,X
+		STA		_obj_y_pos_hi+4
+		LDA		_trds_args1+2
+		ASL
+		ROL
+		ROL
+		ASL
+		ASL
+		ADC		_beamer_spr_base_tmp
+		STA		_obj_spr_idx+2
+		LDA		_trds_args1+4
+		ASL
+		ROL
+		ROL
+		ASL
+		ASL
+		ADC		_catcher_spr_base_tmp
+		STA		_obj_spr_idx+4
+		LDA		#$00						; also this routine resets the scrolls
+		STA		_ppu_scroll_pos_x			; and removes all possible threads garbage
+		STA		_ppu_scroll_pos_y
+		JMP		_nsub_gen_threads_off_except_cur
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_room_start_pos_init:
@@ -7934,10 +8099,10 @@ loc_639AF:
 		STX		_var4
 		LDX		_ppu_queue_head
 		LDA		_ptr08+1
-		STA		_ppu_queue_data,X
+		STA		_ppu_queue_buf,X
 		INX
 		LDA		_ptr08
-		STA		_ppu_queue_data,X
+		STA		_ppu_queue_buf,X
 		INX
 		STX		_ppu_queue_pos
 		LDX		_var4
@@ -7947,7 +8112,7 @@ loc_639AF:
 _ppu_queue_putc:
 		STX		_var4
 		LDX		_ppu_queue_pos
-		STA		_ppu_queue_data,X
+		STA		_ppu_queue_buf,X
 		INC		_ppu_queue_pos
 		LDX		_var4
 		RTS
@@ -7972,12 +8137,12 @@ loc_639DE:
 		CMP		#$30
 		BCS		locret_63A30
 		LDX		_ppu_queue_tail
-		LDA		_ppu_queue_data,X
+		LDA		_ppu_queue_buf,X
 		INX
 		STA		_tmp1A
 		AND		#$7F
 		STA		_PPU_ADDR
-		LDA		_ppu_queue_data,X
+		LDA		_ppu_queue_buf,X
 		INX
 		STA		_PPU_ADDR
 		LDA		_ppu_ctrl_shadow
@@ -7986,10 +8151,10 @@ loc_639DE:
 		ORA		#$04
 loc_63A03:
 		STA		_PPU_CTRL
-		LDY		_ppu_queue_data,X
+		LDY		_ppu_queue_buf,X
 		INX
 loc_63A0A:
-		LDA		_ppu_queue_data,X
+		LDA		_ppu_queue_buf,X
 		INX
 		STA		_PPU_DATA
 		DEY
