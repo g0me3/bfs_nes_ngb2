@@ -1442,14 +1442,12 @@ loc_60D8D:
 		STX		_obj_x_delta+3
 		LDA		_obj_x_pos_hi+3
 		BPL		loc_60DBE
-		LDA		_obj_x_speed+3
-		EOR		#$FF
-		CLC
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_obj_x_speed+3
 		STA		_obj_x_speed+3
-		LDA		_obj_x_delta+3
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_obj_x_delta+3
 		STA		_obj_x_delta+3
 loc_60DBE:
 		LDX		_obj_y_delta+3
@@ -1460,14 +1458,12 @@ loc_60DBE:
 		STX		_obj_y_delta+3
 		LDA		_obj_y_pos_hi+3
 		BPL		loc_60DE8
-		LDA		_obj_y_speed+3
-		EOR		#$FF
-		CLC
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_obj_y_speed+3
 		STA		_obj_y_speed+3
-		LDA		_obj_y_delta+3
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_obj_y_delta+3
 		STA		_obj_y_delta+3
 loc_60DE8:
 		LDA		_nmi_counter
@@ -3074,14 +3070,12 @@ loc_61B0E:
 		STA		_ptr06+1
 		LDA		_tmp2
 		BPL		loc_61B25
-		LDA		_ptr06
-		EOR		#$FF
-		CLC
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_ptr06
 		STA		_ptr06
-		LDA		_ptr06+1
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_ptr06+1
 		STA		_ptr06+1
 loc_61B25:
 		LDA		_tmp2
@@ -3129,14 +3123,12 @@ loc_61B64:
 		CMP		#$C0
 		BCC		locret_61B81
 loc_61B70:
-		LDA		_ptr08
-		EOR		#$FF
-		CLC
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_ptr08
 		STA		_ptr08
-		LDA		_ptr08+1
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_ptr08+1
 		STA		_ptr08+1
 locret_61B81:
 		RTS

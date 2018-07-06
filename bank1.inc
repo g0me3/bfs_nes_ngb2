@@ -3405,7 +3405,7 @@ loc_1621B:
 
 ; =============== S C R I P T ==========================s====================
 		FAR_OFS			_scr0C_room_doors_handler
-		NBG_HNDL_SET	_nbgsub_cur_door_data_load	; initialize the doors data on start
+		NBG_HNDL_SET	_nbgsub_cur_door_data_load		; initialize the doors data on start
 		NJSR			_nsub_player_to_doors_ctest		; now test if player appears at the door
 		SBCC			_sloc_16284						; in this case draw it open manually
 		SJSR_SW	$11										; without animation and sounds
@@ -3516,6 +3516,7 @@ _nsub_room_init:
 		JSR		_scr_getc
 		STA		_cur_room_data_row
 		JSR		_room_draw
+		LDY		#$00
 		JSR		_scr_getc
 		STA		_room_prize_sequence_ptr
 		JSR		_scr_getc
