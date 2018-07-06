@@ -4935,7 +4935,9 @@ loc_62883:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_lvl_data_ptrs_load:
+_nsub_level_init:
+		JSR		_scr_getc
+		STA		_lvl_data_prg_bank
 		JSR		_scr_getc					; common data load for current stage
 		STA		_lvl_macroA_ptr
 		JSR		_scr_getc
@@ -4956,7 +4958,15 @@ _nsub_lvl_data_ptrs_load:
 		STA		_lvl_attrs_ptr
 		JSR		_scr_getc
 		STA		_lvl_attrs_ptr+1
-		RTS
+		JSR		_scr_getc
+		STA		_lvl_rooms_lib_ptr
+		JSR		_scr_getc
+		STA		_lvl_rooms_lib_ptr+1
+		JSR		_scr_getc
+		STA		_lvl_objects_ptr
+		JSR		_scr_getc
+		STA		_lvl_objects_ptr+1
+		JMP		_nsub_apu_mus_load
 
 ; =============== S U B R O U T I N E ======n================================
 ;_nsub_room_page_set_unref:
@@ -4996,20 +5006,9 @@ _nsub_cur_obj_linear_dst_pos_from_sarg1_set:
 ; =============== S U B R O U T I N E ======n================================
 ; there are three types of rooms, size 1x1 screens, 1x2 and 2x1. this routine
 ; determines the room type and number of screens in it, then draw one or
-; two at once. this endine does not draw room data while scrolling as in other
+; two at once. this engine does not draw room data while scrolling as in other
 ; games. single room always fit into two name tables for one mirroring mode.
 ;
-_nsub_room_draw:
-		JSR		_scr_getc					; most of room draw called from scripts
-		STA		_cur_room_orientation_idx
-		JSR		_scr_getc
-		STA		_cur_room_data_col
-		JSR		_scr_getc
-		STA		_cur_room_data_row
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
 _room_draw:
 		JSR		_ppu_vblank_off				; this is the only routine for native callers
 		LDA		_cur_room_orientation_idx	; used when redraw pause screen.
@@ -5042,7 +5041,7 @@ loc_62948:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_room_exit_test_from_ptr:
 		LDA		(_room_exits_ptr),Y
-		INY
+		INY									; fetches the exit locations of the level
 		STA		_var0						; and compares with current beamed position
 		LDA		#$00						; return flag if position reached
 		STA		_var3
@@ -5111,88 +5110,13 @@ loc_629BAA:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_players_room_exit_test:
-		JSR		_scr_getc					; fetches the exit locations of the level
-		STA		_var0						; and compares with current beamed position
-		LDA		#$00						; return flag if position reached
-		STA		_var3
-loc_62954:
-		LDX		#$02						; have no use with doors code itself
-		JSR		_scr_getc					; doors are just for blocking your way
-		SEC									; but exits are always active
-		SBC		_obj_x_pos_lo+2
-		STA		_var1
-		JSR		_scr_getc
-		SBC		_obj_x_pos_hi+2
-		STA		_var2
-		BCS		loc_62976
-		LDA		_var1
-		EOR		#$FF
-		ADC		#$01
-		STA		_var1
-		LDA		_var2
-		EOR		#$FF
-		ADC		#$00
-loc_62976:
-		BNE		loc_629A8
-		LDA		_var1
-		CMP		#$11
-		BCS		loc_629A8
-		DEX
-		DEX
-		JSR		_scr_getc
-		SEC
-		SBC		_obj_y_pos_lo+2
-		STA		_var1
-		JSR		_scr_getc
-		SBC		_obj_y_pos_hi+2
-		STA		_var2
-		BCS		loc_629A0
-		LDA		_var1
-		EOR		#$FF
-		ADC		#$01
-		STA		_var1
-		LDA		_var2
-		EOR		#$FF
-		ADC		#$00
-loc_629A0:
-		BNE		loc_629A8
-		LDA		_var1
-		CMP		#$11
-		BCC		loc_629BA
-loc_629A8:
-		TXA
-		CLC
-		ADC		_cur_scr_pc					; adjust script pointer to next
-		STA		_cur_scr_pc					; data chunk untill there are no left
-		BCC		loc_629B2
-		INC		_cur_scr_pc+1
-loc_629B2:
-		INC		_var3
-		DEC		_var0
-		BNE		loc_62954
-		CLC									; exit with C=0 if no exit reached
-		RTS
-loc_629BA:
-		DEC		_var0
-		LDA		_var0
-		ASL
-		ASL
-		ADC		_cur_scr_pc
-		STA		_cur_scr_pc
-		BCC		loc_629C8
-		INC		_cur_scr_pc+1
-loc_629C8:
-		LDA		_var3						; exit with C=1 if exit reached
-		STA		_tmp_idx
-		SEC
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
+; common routine for init starting position of players at the lbeginning
+; of the level or at the beginning of new room
+;
 _nsub_players_room_start_pos_init_from_ptr:
-		LDA		(_room_exits_ptr),Y
-		ASL
-		ASL
+		LDA		(_room_exits_ptr),Y			; NEW, this pointer always set to
+		ASL									; exits data, which need to be skipped first
+		ASL									; also we know for sure its size here
 		SEC
 		ADC		_room_exits_ptr
 		STA		_room_exits_ptr
@@ -5277,103 +5201,6 @@ _nsub_players_room_start_pos_init_from_ptr:
 		ASL
 		ADC		_catcher_spr_base_tmp
 		STA		_obj_spr_idx+4
-		LDA		#$00						; also this routine resets the scrolls
-		STA		_ppu_scroll_pos_x			; and removes all possible threads garbage
-		STA		_ppu_scroll_pos_y
-		JMP		_nsub_gen_threads_off_except_cur
-
-; =============== S U B R O U T I N E ======n================================
-_nsub_players_room_start_pos_init:
-		JSR		_scr_getc					; also common routine for init starting
-		PHA									; position of players at the level start
-		LDA		_tmp_idx					; or at the beginning of any new room
-		ASL
-		ADC		_tmp_idx
-		TAY
-		INY
-		LDA		#$00
-		STA		_obj_x_pos_hi+2
-		STA		_obj_y_pos_hi+2
-		LDA		(_cur_scr_pc),Y
-		ASL
-		ROL		_obj_x_pos_hi+2
-		ASL
-		ROL		_obj_x_pos_hi+2
-		ASL
-		ROL		_obj_x_pos_hi+2
-		STA		_obj_x_pos_lo+2
-		INY
-		LDA		(_cur_scr_pc),Y
-		ASL
-		ROL		_obj_y_pos_hi+2
-		ASL
-		ROL		_obj_y_pos_hi+2
-		ASL
-		ROL		_obj_y_pos_hi+2
-		STA		_obj_y_pos_lo+2
-		INY
-		LDA		(_cur_scr_pc),Y
-		TAX
-		LSR
-		ROR
-		ROR
-		STA		_trds_args1+2				; position data stored only for beamer
-		STA		_trds_args1+4				; position of catched auto calculated
-		LDA		_obj_x_pos_lo+2				; by direction of beamer and starting position
-		CLC									; at the door
-		ADC		byte_62A87,X
-		STA		_obj_x_pos_lo+2
-		LDA		_obj_x_pos_hi+2
-		ADC		byte_62A8B,X
-		STA		_obj_x_pos_hi+2
-		STA		_ppu_scroll_pos_x+1
-		LDA		_obj_y_pos_lo+2
-		CLC
-		ADC		byte_62A8F,X
-		STA		_obj_y_pos_lo+2
-		LDA		_obj_y_pos_hi+2
-		ADC		byte_62A93,X
-		STA		_obj_y_pos_hi+2
-		STA		_ppu_scroll_pos_y+1
-		LDA		_obj_x_pos_lo+2
-		CLC
-		ADC		byte_62A97,X
-		STA		_obj_x_pos_lo+4
-		LDA		_obj_x_pos_hi+2
-		ADC		byte_62A9B,X
-		STA		_obj_x_pos_hi+4
-		LDA		_obj_y_pos_lo+2
-		CLC
-		ADC		byte_62A9F,X
-		STA		_obj_y_pos_lo+4
-		LDA		_obj_y_pos_hi+2
-		ADC		byte_62AA3,X
-		STA		_obj_y_pos_hi+4
-		LDA		_trds_args1+2
-		ASL
-		ROL
-		ROL
-		ASL
-		ASL
-		ADC		_beamer_spr_base_tmp
-		STA		_obj_spr_idx+2
-		LDA		_trds_args1+4
-		ASL
-		ROL
-		ROL
-		ASL
-		ASL
-		ADC		_catcher_spr_base_tmp
-		STA		_obj_spr_idx+4
-		PLA
-		STA		_tmp0
-		ASL
-		ADC		_tmp0
-		ADC		_cur_scr_pc
-		STA		_cur_scr_pc
-		BCC		loc_62A7E
-		INC		_cur_scr_pc+1
-loc_62A7E:
 		LDA		#$00						; also this routine resets the scrolls
 		STA		_ppu_scroll_pos_x			; and removes all possible threads garbage
 		STA		_ppu_scroll_pos_y

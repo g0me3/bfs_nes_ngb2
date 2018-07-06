@@ -4,7 +4,7 @@
 		ECHO "PROGRAM BEGIN"
 		ECHO "-------------"
 
-		INCBIN "..\copyrights.txt"
+		INCBIN "../copyrights.txt"
 
 		BANK_START $00
 

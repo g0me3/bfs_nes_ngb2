@@ -1,7 +1,7 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		1
+DEBUG			EQU		0
 OPTIMIZATION	EQU		1
 BUGFIXES		EQU		0
 TWO_PLAYER_MODE	EQU		0
@@ -31,8 +31,6 @@ DEBUG_MAX_ENEMY	EQU		$0E		; ($0A default, $0E - max)
 ;
 DEBUG_LEVEL		EQU		$00
 DEBUG_CHKPOINT	EQU		$01
-
-;-------------------F-O-N-T-S-------------------
 
 ;--------------------A-P-U----------------------
 
@@ -646,4 +644,3 @@ CUR_SEC_START	SET $FFFFFFFF
 		ECHO "WARNING! there is no block start!"
 #endif
 	ENDM
-
