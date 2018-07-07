@@ -1990,9 +1990,9 @@ _cur_obj_to_target_nearest_path_calc:
 		BCS		loc_611D2
 		INC		_tmp1
 		PHA
-		LDA		_var0
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_var0
 		STA		_var0
 		PLA
 		EOR		#$FF
@@ -2012,9 +2012,9 @@ loc_611D2:
 		BCS		loc_611FB
 		DEC		_tmp2
 		PHA
-		LDA		_var2
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_var2
 		STA		_var2
 		PLA
 		EOR		#$FF
@@ -2529,9 +2529,9 @@ loc_61812:
 		SBC		_doors_x_pos_lo,Y
 		BCS		loc_6182E
 		PHA
-		LDA		_tmp0
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_tmp0
 		STA		_tmp0
 		PLA
 		EOR		#$FF
@@ -2549,9 +2549,9 @@ loc_6182E:
 		SBC		_doors_y_pos_lo,Y
 		BCS		loc_61854
 		PHA
-		LDA		_tmp0
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_tmp0
 		STA		_tmp0
 		PLA
 		EOR		#$FF
@@ -3056,11 +3056,11 @@ loc_61AF5:
 		LDA		byte_61B82,X
 		PHA
 		LDX		_ptr0A
-		JSR		_div8
+		JSR		_mul8
 		STX		_ptr06
 		PLA
 		LDX		_ptr0A+1
-		JSR		_div8
+		JSR		_mul8
 		CLC
 		ADC		_ptr06
 		STA		_ptr06
@@ -3105,11 +3105,11 @@ loc_61B4B:
 		LDA		byte_61B82,X
 		PHA
 		LDX		_ptr0A
-		JSR		_div8
+		JSR		_mul8
 		STX		_ptr08
 		PLA
 		LDX		_ptr0A+1
-		JSR		_div8
+		JSR		_mul8
 		CLC
 		ADC		_ptr08
 		STA		_ptr08
@@ -3239,9 +3239,9 @@ _obj_to_obj_in_range_test:
 		SBC		_obj_x_pos_hi,X
 		BCS		loc_61C80					; when negative, do ABS operation
 		PHA
-		LDA		_tmp1
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_tmp1
 		STA		_tmp1
 		PLA
 		EOR		#$FF
@@ -3267,9 +3267,9 @@ loc_61C98:
 		LDA		_var0
 		EOR		#$01
 		STA		_var0
-		LDA		_tmp2
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_tmp2
 		STA		_tmp2
 		PLA
 		EOR		#$FF
@@ -4196,8 +4196,13 @@ byte_621B8:
 		.BYTE	$00,$10,$20,$30,$40
 
 ; =============== S U B R O U T I N E ======n================================
+; fast div, input  A = divident low nibble
+;                  X = divident high nibble
+;                  Y = divider
+;           result A = result low nibble
+;                  X = result high nibble
 _div16:
-		CPY		#$02						; we don't div by 0 and 1 by obvious reasons
+		CPY		#$02						; we don't mul by 0 and 1 by obvious reasons
 		BCC		locret_621EB
 		DEY
 		DEY
@@ -4205,16 +4210,16 @@ _div16:
 		TXA
 		PHA
 		LDA		_tmp0
-		LDX		_div_table,Y
-		JSR		_div8
+		LDX		_div16_tbl,Y				; and yes, this is a fixed point multiplication
+		JSR		_mul8						; magic!
 		STX		_tmp1
 		PLA
 		STA		_tmp0
 		LDA		_tmp1
 		PHA
 		LDA		_tmp0
-		LDX		_div_table,Y
-		JSR		_div8
+		LDX		_div16_tbl,Y
+		JSR		_mul8						; two multiply to div!
 		STA		_tmp0
 		PLA
 		CLC
@@ -4226,7 +4231,7 @@ _div16:
 		PLA
 locret_621EB:
 		RTS
-_div_table:
+_div16_tbl:
 		.BYTE	$80,$55,$40,$33,$2A,$24,$20,$1C,$19,$17,$15,$13,$12,$11,$10,$0F
 		.BYTE	$0E,$0D,$0C,$0C,$0B,$0B,$0A,$0A,$09,$09,$09,$08,$08,$08,$08,$07
 		.BYTE	$07,$07,$07,$06,$06,$06,$06,$06,$06,$05,$05,$05,$05,$05,$05,$05
@@ -4272,7 +4277,7 @@ loc_622F5:
 		TAX
 		PLA
 		BEQ		loc_62314
-		JSR		_div8
+		JSR		_mul8
 loc_62314:
 		STX		_tmp1
 		PLA
@@ -4281,24 +4286,26 @@ loc_62314:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_div8:
-		STA		_tmp0						; fast div8 routine however takes
-		STX		_tmp1						; as much as 512k of div tables
+; fast mul8 routine however uses as much as 512k of div tables
+;
+_mul8:
+		STA		_tmp0
+		STX		_tmp1
 		STX		_var0
 		AND		_tmp1
 		AND		#$01
 		STA		_var1
 		LDX		_tmp0
-		LDA		_div_tbl0,X
+		LDA		_mul8_tbl1,X
 		STA		_var2
 		CLC
 		LDA		_var1
-		ADC		_div_tbl1,X
+		ADC		_mul8_tbl0,X
 		LDX		_tmp1
-		ADC		_div_tbl1,X
+		ADC		_mul8_tbl0,X
 		STA		_var1
 		LDA		_var2
-		ADC		_div_tbl0,X
+		ADC		_mul8_tbl1,X
 		STA		_var2
 		LDA		_tmp0
 		CMP		_tmp1
@@ -4310,14 +4317,14 @@ loc_6234C:
 		SBC		_var0
 		TAX
 		LDA		_var1
-		SBC		_div_tbl1,X
+		SBC		_mul8_tbl0,X
 		STA		_tmp0
 		LDA		_var2
-		SBC		_div_tbl0,X
+		SBC		_mul8_tbl1,X
 		TAX
 		LDA		_tmp0
 		RTS
-_div_tbl1:
+_mul8_tbl0:
 		.BYTE	$00,$00,$02,$04,$08,$0C,$12,$18,$20,$28,$32,$3C,$48,$54,$62,$70
 		.BYTE	$80,$90,$A2,$B4,$C8,$DC,$F2,$08,$20,$38,$52,$6C,$88,$A4,$C2,$E0
 		.BYTE	$00,$20,$42,$64,$88,$AC,$D2,$F8,$20,$48,$72,$9C,$C8,$F4,$22,$50
@@ -4334,7 +4341,7 @@ _div_tbl1:
 		.BYTE	$80,$50,$22,$F4,$C8,$9C,$72,$48,$20,$F8,$D2,$AC,$88,$64,$42,$20
 		.BYTE	$00,$E0,$C2,$A4,$88,$6C,$52,$38,$20,$08,$F2,$DC,$C8,$B4,$A2,$90
 		.BYTE	$80,$70,$62,$54,$48,$3C,$32,$28,$20,$18,$12,$0C,$08,$04,$02,$00
-_div_tbl0:
+_mul8_tbl1:
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 		.BYTE	$00,$00,$00,$00,$00,$00,$00,$01,$01,$01,$01,$01,$01,$01,$01,$01
 		.BYTE	$02,$02,$02,$02,$02,$02,$02,$02,$03,$03,$03,$03,$03,$03,$04,$04
@@ -4683,7 +4690,7 @@ _nsub_obj_delay_set_from_sarg:
 ;		JSR		_rand
 ;		TAX
 ;		PLA
-;		JSR		_div8
+;		JSR		_mul8
 ;		LDX		_cur_trd_scr_slot
 ;		STA		_trds_scr_delay,X
 ;		RTS
@@ -4693,14 +4700,28 @@ _nsub_cur_obj_spr_from_sarg1_calc:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
-		TAY
+		STA		_tmp0
 		LSR
 		LDX		_cur_trd_slot
 		CLC
 		ADC		_trds_args1,X
 		LDX		#$00
-		JSR		_div16
-		STA		_var0
+		STX		_var0
+		ASL
+		ROL		_var0
+		ASL		_tmp0
+		BCS		.div_stop
+		ASL
+		ROL		_var0
+		ASL		_tmp0
+		BCS		.div_stop
+		ASL
+		ROL		_var0
+		ASL		_tmp0
+		BCS		.div_stop
+		ASL
+		ROL		_var0						; up to 4 bits, there aren't something else
+.div_stop:
 		PLA
 		CLC
 		ADC		_var0
@@ -4740,8 +4761,7 @@ _nsub_mmc1_mirror_horizontal:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_mmc1_mirror_vertical:
-		LDA		#$1E
-		ORA		#$01
+		LDA		#$1F
 		JMP		_mmc1_ctrl
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5049,13 +5069,12 @@ loc_62954A:
 		SBC		_obj_x_pos_hi+2
 		STA		_var2
 		BCS		loc_62976A
-		LDA		_var1
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_var1
 		STA		_var1
-		LDA		_var2
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_var2
 loc_62976A:
 		BNE		loc_629A8A
 		LDA		_var1
@@ -5073,13 +5092,12 @@ loc_62976A:
 		SBC		_obj_y_pos_hi+2
 		STA		_var2
 		BCS		loc_629A0A
-		LDA		_var1
-		EOR		#$FF
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_var1
 		STA		_var1
-		LDA		_var2
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_var2
 loc_629A0A:
 		BNE		loc_629B2A
 		LDA		_var1
@@ -6096,14 +6114,12 @@ loc_62FD5:
 		STA		_ppu_scroll_pos_y
 		JMP		loc_62FFE
 loc_62FDA:
-		LDA		_ppu_scroll_y_shift
-		EOR		#$FF
-		CLC
-		ADC		#$01
+		LDA		#$00
+		SEC
+		SBC		_ppu_scroll_y_shift
 		STA		_var0
-		LDA		_tmp0
-		EOR		#$FF
-		ADC		#$00
+		LDA		#$00
+		SBC		_tmp0
 		STA		_var1
 		LDA		_ppu_scroll_y_clk
 		SEC
@@ -6373,7 +6389,7 @@ loc_6314A:
 		STA		_ptr06
 		LDA		_trds_nbgsub_ptr+1,X
 		STA		_ptr06+1
-		JSR		_jump_ptr_ind
+		JSR		_jmp_ptr06
 		LDX		_cur_trd_slot
 		LDA		_trds_obj_idx,X				; if thread not stopped during execution,
 		BPL		_scr_trd_adjust_pos			; calculate new objexct position with parameters given
@@ -6433,7 +6449,7 @@ loc_631BB:
 _script_exec:
 		LDX		_cur_trd_scr_slot			; every script has delay priority option
 		LDA		_trds_scr_delay,X			; if not zero, skip this iteration
-		BNE		loc_63240					; and decrement delay
+		BNE		.scr_exec_delay_skip		; and decrement delay
 		TXA
 		ASL
 		TAX
@@ -6452,7 +6468,7 @@ _script_exec:
 		LDA		_cur_scr_sp+1
 		ADC		#>[_trds_scr_stack]
 		STA		_cur_scr_sp+1
-loc_631ED:
+.scr_exec_loop:
 		LDY		#$00						; start to fetch comand
 		LDA		(_cur_scr_pc),Y
 		PHA
@@ -6490,10 +6506,10 @@ loc_631ED:
 		LDA		_dcmd_lib_hi,X
 .script_cmd_exec:
 		STA		_ptr06+1
-		JSR		_jump_ptr_ind
+		JSR		_jmp_ptr06
 		LDX		_cur_trd_scr_slot			; if no delays set during execution, continue
 		LDA		_trds_scr_delay,X			; script code flow
-		BEQ		loc_631ED					; otherwise stop execution and continue to the
+		BEQ		.scr_exec_loop				; otherwise stop execution and continue to the
 		TXA									; next script/thread
 		ASL
 		TAX
@@ -6501,7 +6517,7 @@ loc_631ED:
 		STA		_trd_ptr,X
 		LDA		_cur_scr_pc+1
 		STA		_trd_ptr+1,X
-loc_63240:
+.scr_exec_delay_skip:
 		LDX		_cur_trd_scr_slot			; do delays count as well
 		DEC		_trds_scr_delay,X
 		RTS
@@ -6533,8 +6549,8 @@ _scmd_lib_lo:
 		CMD_IDX_LO	_scmd15_sarg_alu
 		CMD_IDX_LO	_scmd16_store16
 		CMD_IDX_LO	_scmd17_sbcs_break
-		CMD_IDX_LO	_scmd18_sbcc_break	; unused
-		CMD_IDX_LO	_scmd19_njsr_sw		; unused
+;		CMD_IDX_LO	_scmd18_sbcc_break		; unused
+;		CMD_IDX_LO	_scmd19_njsr_sw			; unused
 _scmd_lib_hi:
 		CMD_IDX_HI	_scmd01_loop_begin
 		CMD_IDX_HI	_scmd02_loop_end
@@ -6559,8 +6575,8 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd15_sarg_alu
 		CMD_IDX_HI	_scmd16_store16
 		CMD_IDX_HI	_scmd17_sbcs_break
-		CMD_IDX_HI	_scmd18_sbcc_break
-		CMD_IDX_HI	_scmd19_njsr_sw
+;		CMD_IDX_HI	_scmd18_sbcc_break
+;		CMD_IDX_HI	_scmd19_njsr_sw
 ; NOTE: every opcode in this block has additional parameter of delay
 ; command is executed then script delayed for a number of frames from
 ; 1 to 7. if delay 0 selected, then there is no delay there.
@@ -6580,14 +6596,14 @@ _dcmd_lib_lo:
 		DCMD_IDX_LO	_dcmd09_scrl_x_set		; unused
 		DCMD_IDX_LO	_dcmd0A_scrl_y_sey
 		DCMD_IDX_LO	_dcmd0B_scrl_x_move_set
-		DCMD_IDX_LO	_dcmd0C_scrl_move_y_set	; unused
-		DCMD_IDX_LO	_dcmd0D_scrl_x_move_add	; unused
-		DCMD_IDX_LO	_dcmd0E_scrl_y_move_add	; unused
+		DCMD_IDX_LO	_dcmd0C_scrl_y_move_set	; unused
+;		DCMD_IDX_LO	_dcmd0D_scrl_x_move_add	; unused
+;		DCMD_IDX_LO	_dcmd0E_scrl_y_move_add	; unused
 		DCMD_IDX_LO	_dcmd0F_spr_idx_inc
 		DCMD_IDX_LO	_dcmd10_spr_idx_dec
 		DCMD_IDX_LO	_dcmd11_spr_idx_add_imm
-		DCMD_IDX_LO	_dcmd12_byte_D5_add		; unused
-		DCMD_IDX_LO	_dcmd13_byte_D6_add		; unused
+;		DCMD_IDX_LO	_dcmd12_scrl_x_page_add	; unused
+;		DCMD_IDX_LO	_dcmd13_scrl_y_page_add	; unused
 		DCMD_IDX_LO	_dcmd14_pos_move_stop
 		DCMD_IDX_LO	_dcmd15_scrl_move_stop
 _dcmd_lib_hi:
@@ -6603,14 +6619,14 @@ _dcmd_lib_hi:
 		DCMD_IDX_HI	_dcmd09_scrl_x_set
 		DCMD_IDX_HI	_dcmd0A_scrl_y_sey
 		DCMD_IDX_HI	_dcmd0B_scrl_x_move_set
-		DCMD_IDX_HI	_dcmd0C_scrl_move_y_set
-		DCMD_IDX_HI	_dcmd0D_scrl_x_move_add
-		DCMD_IDX_HI	_dcmd0E_scrl_y_move_add
+		DCMD_IDX_HI	_dcmd0C_scrl_y_move_set
+;		DCMD_IDX_HI	_dcmd0D_scrl_x_move_add
+;		DCMD_IDX_HI	_dcmd0E_scrl_y_move_add
 		DCMD_IDX_HI	_dcmd0F_spr_idx_inc
 		DCMD_IDX_HI	_dcmd10_spr_idx_dec
 		DCMD_IDX_HI	_dcmd11_spr_idx_add_imm
-		DCMD_IDX_HI	_dcmd12_byte_D5_add
-		DCMD_IDX_HI	_dcmd13_byte_D6_add
+;		DCMD_IDX_HI	_dcmd12_scrl_x_page_add
+;		DCMD_IDX_HI	_dcmd13_scrl_y_page_add
 		DCMD_IDX_HI	_dcmd14_pos_move_stop
 		DCMD_IDX_HI	_dcmd15_scrl_move_stop
 
@@ -6832,7 +6848,7 @@ _dcmd0B_scrl_x_move_set:
 		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
-_dcmd0C_scrl_move_y_set:
+_dcmd0C_scrl_y_move_set:
 		JSR		_scr_getc
 		STA		_ppu_scroll_y_shift
 		JSR		_scr_getc
@@ -6841,31 +6857,31 @@ _dcmd0C_scrl_move_y_set:
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
-_dcmd0D_scrl_x_move_add:
-		JSR		_scr_getc
-		CLC
-		ADC		_ppu_scroll_x_shift
-		STA		_ppu_scroll_x_shift
-		PHP
-		JSR		_scr_getc
-		PLP
-		ADC		_ppu_scroll_x_shift+1
-		STA		_ppu_scroll_x_shift+1
-		JMP		_cur_scr_pc_inc
+;_dcmd0D_scrl_x_move_add:
+;		JSR		_scr_getc
+;		CLC
+;		ADC		_ppu_scroll_x_shift
+;		STA		_ppu_scroll_x_shift
+;		PHP
+;		JSR		_scr_getc
+;		PLP
+;		ADC		_ppu_scroll_x_shift+1
+;		STA		_ppu_scroll_x_shift+1
+;		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
-_dcmd0E_scrl_y_move_add:
-		JSR		_scr_getc
-		CLC
-		ADC		_ppu_scroll_y_shift
-		STA		_ppu_scroll_y_shift
-		PHP
-		JSR		_scr_getc
-		PLP
-		ADC		_ppu_scroll_y_shift+1
-		STA		_ppu_scroll_y_shift+1
-		JMP		_cur_scr_pc_inc
+;_dcmd0E_scrl_y_move_add:
+;		JSR		_scr_getc
+;		CLC
+;		ADC		_ppu_scroll_y_shift
+;		STA		_ppu_scroll_y_shift
+;		PHP
+;		JSR		_scr_getc
+;		PLP
+;		ADC		_ppu_scroll_y_shift+1
+;		STA		_ppu_scroll_y_shift+1
+;		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd03_pos_x_move:
@@ -6912,23 +6928,23 @@ loc_6347A:
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
-_dcmd12_byte_D5_add:
-		LDX		_cur_trd_slot
-		JSR		_scr_getc
-		CLC
-		ADC		_ppu_scroll_x_page
-		STA		_ppu_scroll_x_page
-		JMP		_cur_scr_pc_inc
+;_dcmd12_scrl_x_page_add:
+;		LDX		_cur_trd_slot
+;		JSR		_scr_getc
+;		CLC
+;		ADC		_ppu_scroll_x_page
+;		STA		_ppu_scroll_x_page
+;		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
-_dcmd13_byte_D6_add:
-		LDX		_cur_trd_slot
-		JSR		_scr_getc
-		CLC
-		ADC		_ppu_scroll_y_page
-		STA		_ppu_scroll_y_page
-		JMP		_cur_scr_pc_inc
+;_dcmd13_scrl_y_page_add:
+;		LDX		_cur_trd_slot
+;		JSR		_scr_getc
+;		CLC
+;		ADC		_ppu_scroll_y_page
+;		STA		_ppu_scroll_y_page
+;		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
 _dcmd14_pos_move_stop:
@@ -6956,7 +6972,7 @@ _scmd07_njsr:
 		STA		_ptr06
 		JSR		_scr_getc
 		STA		_ptr06+1
-		JSR		_jump_ptr_ind
+		JSR		_jmp_ptr06
 		STA		_nsub_return_value
 		PHP
 		PLA
@@ -7060,28 +7076,28 @@ _scmd12_ssub_sw:
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused
-_scmd19_njsr_sw:
-		JSR		_scr_getc
-		JSR		_cur_scr_pc_inc
-		CMP		_nsub_return_value
-		BCC		_scmd_skip
-		BEQ		_scmd_skip
-		PHA
-		LDA		_nsub_return_value
-		ASL
-		TAY
-		LDA		(_cur_scr_pc),Y
-		STA		_ptr06
-		INY
-		LDA		(_cur_scr_pc),Y
-		STA		_ptr06+1
-		JSR		_jump_ptr_ind
-		STA		_nsub_return_value
-		PHP
-		PLA
-		STA		_nsub_return_flags
-		PLA
-		JMP		_scmd_skip
+;_scmd19_njsr_sw:
+;		JSR		_scr_getc
+;		JSR		_cur_scr_pc_inc
+;		CMP		_nsub_return_value
+;		BCC		_scmd_skip
+;		BEQ		_scmd_skip
+;		PHA
+;		LDA		_nsub_return_value
+;		ASL
+;		TAY
+;		LDA		(_cur_scr_pc),Y
+;		STA		_ptr06
+;		INY
+;		LDA		(_cur_scr_pc),Y
+;		STA		_ptr06+1
+;		JSR		_jmp_ptr06
+;		STA		_nsub_return_value
+;		PHP
+;		PLA
+;		STA		_nsub_return_flags
+;		PLA
+;		JMP		_scmd_skip
 
 ; =============== S U B R O U T I N E ======n================================
 ; disables currently executing script for given thread
@@ -7307,16 +7323,16 @@ _scmd16_store16:
 		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
-_scmd18_sbcc_break:
-		LDA		_nsub_return_flags
-		PHA
-		JSR		_scr_getc
-		STA		_tmp0
-		JSR		_scr_getc
-		TAX
-		PLA
-		LSR
-		BCS		_j_cur_scr_pc_incA
+;_scmd18_sbcc_break:
+;		LDA		_nsub_return_flags
+;		PHA
+;		JSR		_scr_getc
+;		STA		_tmp0
+;		JSR		_scr_getc
+;		TAX
+;		PLA
+;		LSR
+;		BCS		_j_cur_scr_pc_incA
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_break:
@@ -7490,7 +7506,7 @@ loc_637A2:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_jump_ptr_ind:
+_jmp_ptr06:
 		JMP		(_ptr06)
 
 ; =============== S U B R O U T I N E ======n================================
@@ -7550,6 +7566,8 @@ _ppu_queue_reset:
 _ppu_nmi_off:
 		LDA		_ppu_ctrl_shadow
 		AND		#$7F
+
+; !FALLTHROUGH!
 
 ; =============== S U B R O U T I N E ======n================================
 _ppu_ctrl_write:
@@ -7721,9 +7739,9 @@ loc_63884:
 		LDA		(_ptr0A),Y
 		STA		_var2
 		INY
-		LDA		_var1
-		CMP		_var2
-		BCC		_vertical_mode
+;		LDA		_var1						; REDUNDANT, currently not neded
+;		CMP		_var2
+;		BCC		_vertical_mode
 		LDX		_var2
 .res_send_hor_loop:
 		TXA
@@ -7797,107 +7815,106 @@ loc_638F7:
 		LDX		_tmp1
 		LDY		_tmp2
 		RTS
-; NOTE: there are no resources with vertical rectangles, so this
-; branch never used
-_vertical_mode:
-		LDA		_ptr08+1
-		ORA		#$80
-		STA		_ptr08+1
-		LDX		_var1
-.res_send_vert_loop:
-		TXA
-		PHA
-		LDA		_ptr0A
-		PHA
-		LDA		_ptr0A+1
-		PHA
-		LDA		_ppu_mask_shadow
-		BNE		.res_send_vert_queue
-; REGION, replaced in the EU version
-		LDA		#$01
-		STA		_ppu_forbid_flag
-;		LDA		_ppu_ctrl_shadow
+; NOTE: there are no resources with vertical rectangles, so this branch never used
+;_vertical_mode:
+;		LDA		_ptr08+1
+;		ORA		#$80
+;		STA		_ptr08+1
+;		LDX		_var1
+;.res_send_vert_loop:
+;		TXA
 ;		PHA
-;		JSR		_ppu_nmi_off
-; -
-		LDA		_ppu_ctrl_shadow
-		ORA		#$04
-		STA		_PPU_CTRL
-		LDA		_ptr08+1
-		AND		#$7F
-		STA		_PPU_ADDR
-		LDA		_ptr08
-		STA		_PPU_ADDR
-		LDX		_var2
-loc_63932:
-		LDA		(_ptr0A),Y
-		STA		_PPU_DATA
-		LDA		_var3
-		LSR
-		BCS		loc_63947
-		LDA		_ptr0A
-		CLC
-		ADC		_var1
-		STA		_ptr0A
-		BCC		loc_63947
-		INC		_ptr0A+1
-loc_63947:
-		DEX
-		BNE		loc_63932
-; REGION, replaced in the EU version
-		LDA		#$00
-		STA		_ppu_forbid_flag
+;		LDA		_ptr0A
+;		PHA
+;		LDA		_ptr0A+1
+;		PHA
+;		LDA		_ppu_mask_shadow
+;		BNE		.res_send_vert_queue
+;; REGION, replaced in the EU version
+;		LDA		#$01
+;		STA		_ppu_forbid_flag
+;;		LDA		_ppu_ctrl_shadow
+;;		PHA
+;;		JSR		_ppu_nmi_off
+;; -
+;		LDA		_ppu_ctrl_shadow
+;		ORA		#$04
+;		STA		_PPU_CTRL
+;		LDA		_ptr08+1
+;		AND		#$7F
+;		STA		_PPU_ADDR
+;		LDA		_ptr08
+;		STA		_PPU_ADDR
+;		LDX		_var2
+;loc_63932:
+;		LDA		(_ptr0A),Y
+;		STA		_PPU_DATA
+;		LDA		_var3
+;		LSR
+;		BCS		loc_63947
+;		LDA		_ptr0A
+;		CLC
+;		ADC		_var1
+;		STA		_ptr0A
+;		BCC		loc_63947
+;		INC		_ptr0A+1
+;loc_63947:
+;		DEX
+;		BNE		loc_63932
+;; REGION, replaced in the EU version
+;		LDA		#$00
+;		STA		_ppu_forbid_flag
+;;		PLA
+;;		JSR		_ppu_ctrl_write
+;; -
+;		JMP		loc_63975
+;.res_send_vert_queue:
+;		JSR		_ppu_queue_putw
+;		LDX		_var2
+;		TXA
+;		JSR		_ppu_queue_putc
+;loc_6395A:
+;		LDA		(_ptr0A),Y
+;		JSR		_ppu_queue_putc
+;		LDA		_var3
+;		LSR
+;		BCS		loc_6396F
+;		LDA		_ptr0A
+;		CLC
+;		ADC		_var1
+;		STA		_ptr0A
+;		BCC		loc_6396F
+;		INC		_ptr0A+1
+;loc_6396F:
+;		DEX
+;		BNE		loc_6395A
+;		JSR		_ppu_queue_head_update
+;loc_63975:
+;		INC		_ptr08
+;		BNE		loc_6397B
+;		INC		_ptr08+1
+;loc_6397B:
 ;		PLA
-;		JSR		_ppu_ctrl_write
-; -
-		JMP		loc_63975
-.res_send_vert_queue:
-		JSR		_ppu_queue_putw
-		LDX		_var2
-		TXA
-		JSR		_ppu_queue_putc
-loc_6395A:
-		LDA		(_ptr0A),Y
-		JSR		_ppu_queue_putc
-		LDA		_var3
-		LSR
-		BCS		loc_6396F
-		LDA		_ptr0A
-		CLC
-		ADC		_var1
-		STA		_ptr0A
-		BCC		loc_6396F
-		INC		_ptr0A+1
-loc_6396F:
-		DEX
-		BNE		loc_6395A
-		JSR		_ppu_queue_head_update
-loc_63975:
-		INC		_ptr08
-		BNE		loc_6397B
-		INC		_ptr08+1
-loc_6397B:
-		PLA
-		STA		_ptr0A+1
-		PLA
-		STA		_ptr0A
-		LDA		_var3
-		LSR
-		BCS		loc_6398C
-		INC		_ptr0A
-		BNE		loc_6398C
-		INC		_ptr0A+1
-loc_6398C:
-		PLA
-		TAX
-		DEX
-		BEQ		loc_63994
-		JMP		.res_send_vert_loop
-loc_63994:
-		LDA		_tmp0
-		LDX		_tmp1
-		LDY		_tmp2
-		RTS
+;		STA		_ptr0A+1
+;		PLA
+;		STA		_ptr0A
+;		LDA		_var3
+;		LSR
+;		BCS		loc_6398C
+;		INC		_ptr0A
+;		BNE		loc_6398C
+;		INC		_ptr0A+1
+;loc_6398C:
+;		PLA
+;		TAX
+;		DEX
+;		BEQ		loc_63994
+;		JMP		.res_send_vert_loop
+;loc_63994:
+;		LDA		_tmp0
+;		LDX		_tmp1
+;		LDY		_tmp2
+;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 ;_ppu_queue_reset_unref:

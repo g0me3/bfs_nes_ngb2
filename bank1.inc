@@ -96,14 +96,10 @@ _lvl1_room0_exits:
 		.BYTE	$82,$74,$01					; after entering the room, the third one is for relative
 		.BYTE	$4E,$5A,$00					; position of the catcher according to entry direction
 _lvl1_room0_doors:
-		.BYTE	$02,$80,$03,$D0,$00
-		.WORD	_room_door_always_closed
-		.BYTE	$02,$10,$03,$80,$01
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$80,$03,$20,$00
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$E0,$03,$B0,$01
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$80,$03,$D0,$00,DOOR_CLOSED
+		.BYTE	$02,$10,$03,$80,$01,DOOR_TEST
+		.BYTE	$02,$80,$03,$20,$00,DOOR_TEST
+		.BYTE	$03,$E0,$03,$B0,$01,DOOR_TEST
 		.BYTE	$FF
 _lvl1_room0_prize_seq:
 		.BYTE	$17,$13,$13,$00
@@ -127,10 +123,8 @@ _lvl1_room1_exits:
 		.BYTE	$00,$02,$88,$03				; so one exit point as well, and
 		.BYTE	$42,$6E,$01					; one destination room, return back to room0
 _lvl1_room1_doors:
-		.BYTE	$01,$E0,$03,$80,$01
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$F0,$03,$80,$01
-		.WORD	_room_door_always_open
+		.BYTE	$01,$E0,$03,$80,$01,DOOR_TEST
+		.BYTE	$00,$F0,$03,$80,$01,DOOR_OPEN
 		.BYTE	$FF
 _lvl1_room1_prize_seq:
 		.BYTE	$15,$16,$14,$14,$14,$16,$16,$00
@@ -164,14 +158,10 @@ _lvl1_room2_exits:
 		.BYTE	$7C,$74,$03
 		.BYTE	$7C,$46,$03
 _lvl1_room2_doors:
-		.BYTE	$04,$10,$03,$B0,$01
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$C0,$03,$90,$00
-		.WORD	_room_door_always_open
-		.BYTE	$04,$C0,$02,$60,$00
-		.WORD	_room_door_always_open
-		.BYTE	$04,$10,$02,$40,$01
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$10,$03,$B0,$01,DOOR_TEST
+		.BYTE	$04,$C0,$03,$90,$00,DOOR_OPEN
+		.BYTE	$04,$C0,$02,$60,$00,DOOR_OPEN
+		.BYTE	$04,$10,$02,$40,$01,DOOR_TEST
 _lvl1_room2_prize_seq:
 		.BYTE	$FF
 
@@ -183,14 +173,9 @@ _lvl1_room3_handler:
 			NARGW		_lvl1_room3_prize_seq			; prize sequences
 			NARGW		_lvl1_room3_exits				; exits data
 			NARGW		_lvl1_room3_doors				; doors data
-		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA	; when return from prev room restore coll data
-		NJSR			_nsub_mmc1_chr0_set				; if you return back from room6 you
-			NARGB		$04								; need to restore back CHR banks and palettes
-		NJSR			_nsub_mmc1_chr1_set				; TODO: already set in init routines,
-			NARGB		$02								; remove redundancy
-		NJSR			_nsub_full_pal_load
-			NARGW		_lvl1_full_palA
-		SJSR			_ssub_common_room_loop
+		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA	; when return from prev room restore collision data
+		SJSR			_lvl1_room_chrA_set				; if you return back from room6 you
+		SJSR			_ssub_common_room_loop			; need to restore back CHR banks and palettes
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$04
@@ -210,16 +195,11 @@ _lvl1_room3_exits:
 		.BYTE	$3C,$56,$03
 		.BYTE	$6E,$38,$00
 _lvl1_room3_doors:
-		.BYTE	$03,$E0,$02,$40,$01
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$70,$02,$B0,$00
-		.WORD	_room_door_always_open
-		.BYTE	$02,$10,$02,$C0,$01
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$80,$02,$E0,$00
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$80,$02,$20,$00
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$E0,$02,$40,$01,DOOR_TEST
+		.BYTE	$03,$70,$02,$B0,$00,DOOR_OPEN
+		.BYTE	$02,$10,$02,$C0,$01,DOOR_TEST
+		.BYTE	$02,$80,$02,$E0,$00,DOOR_TEST
+		.BYTE	$02,$80,$02,$20,$00,DOOR_TEST
 		.BYTE	$FF
 _lvl1_room3_prize_seq:
 ; REGION, changed in the EU version
@@ -243,10 +223,8 @@ _lvl1_room4_exits:
 		.BYTE	$00,$02,$C0,$02
 		.BYTE	$42,$56,$01
 _lvl1_room4_doors:
-		.BYTE	$01,$E0,$02,$C0,$01
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$70,$02,$90,$00
-		.WORD	_room_door_always_open
+		.BYTE	$01,$E0,$02,$C0,$01,DOOR_TEST
+		.BYTE	$01,$70,$02,$90,$00,DOOR_OPEN
 _lvl1_room4_prize_seq:
 		.BYTE	$FF
 
@@ -269,8 +247,7 @@ _lvl1_room5_exits:
 		.BYTE	$80,$02,$B8,$01
 		.BYTE	$6E,$22,$02
 _lvl1_room5_doors:
-		.BYTE	$02,$80,$01,$A0,$00
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$80,$01,$A0,$00,DOOR_TEST
 _lvl1_room5_prize_seq:
 		.BYTE	$FF
 
@@ -283,14 +260,9 @@ _lvl1_room6_handler:
 			NARGW		_lvl1_room6_exits				; exits data
 			NARGW		_lvl1_room6_doors				; doors data
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB	; coll data for this room is different
-		NJSR			_nsub_mmc1_chr0_set				; this is a corridor before the court
-			NARGB		$07								; room, here we need to change CHR and pal
-		NJSR			_nsub_mmc1_chr1_set				; also there is another bg collision table
-			NARGB		$03								; TODO: already coded in init routines,
-		NJSR			_nsub_full_pal_load				; merge code to remove redundancy
-			NARGW		_lvl1_full_palB
-		SJSR			_ssub_common_room_loop
-		NJSR			_nsub_read_mem
+		SJSR			_lvl1_room_chrB_set				; this is a corridor before the court
+		SJSR			_ssub_common_room_loop			; room, here we need to change CHR and pal
+		NJSR			_nsub_read_mem					; also there is another bg collision table
 			NARGW		_tmp_idx
 		SJMP_SW			$02
 		SCASE			_lvl1_room5_handler				; we can exith this corridor back or continue
@@ -303,34 +275,42 @@ _lvl1_room6_exits:
 		.BYTE	$4E,$32,$00
 		.BYTE	$4E,$42,$02
 _lvl1_room6_doors:
-		.BYTE	$03,$80,$01,$30,$00
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$80,$01,$D0,$00
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$80,$01,$30,$00,DOOR_TEST
+		.BYTE	$03,$80,$01,$D0,$00,DOOR_TEST
 _lvl1_room6_prize_seq:
 		.BYTE	$FF
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_lvl1_room_initA:
+_lvl1_room_chrA_set:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$04
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$02
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl1_full_palA
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_lvl1_room_initA:
+		SJSR			_lvl1_room_chrA_set
 ; WARNING! make sure, collisions data also reside in the same bank as the
 ; rest of the level data!
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA
 		SJMP			_lvl1_common_init
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
-_lvl1_room_initB:
+_lvl1_room_chrB_set:
 		NJSR			_nsub_mmc1_chr0_set
 			NARGB		$07
 		NJSR			_nsub_mmc1_chr1_set
 			NARGB		$03
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl1_full_palB
+		SRET
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_lvl1_room_initB:
+		SJSR			_lvl1_room_chrB_set
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB
 
 ; !FALLTHROUGH!
@@ -446,8 +426,7 @@ _lvl2_room0_exits:
 		.BYTE	$80,$00,$08,$06
 		.BYTE	$0E,$B9,$00
 _lvl2_room0_doors:
-		.BYTE	$00,$80,$06,$10,$02
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$80,$06,$10,$02,DOOR_TEST
 _lvl2_room0_prize_seq:
 		.BYTE	$FF
 
@@ -467,8 +446,7 @@ _lvl2_room1_exits:
 		.BYTE	$78,$00,$08,$04
 		.BYTE	$0E,$73,$00
 _lvl2_room1_doors:
-		.BYTE	$00,$80,$04,$20,$02
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$80,$04,$20,$02,DOOR_TEST
 _lvl2_room1_prize_seq:
 		.BYTE	$FF
 
@@ -488,10 +466,8 @@ _lvl2_room2_exits:
 		.BYTE	$78,$00,$08,$03
 		.BYTE	$2E,$D9,$00
 _lvl2_room2_doors:
-		.BYTE	$00,$80,$03,$10,$02
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$80,$03,$D0,$02
-		.WORD	_room_door_always_closed
+		.BYTE	$00,$80,$03,$10,$02,DOOR_TEST
+		.BYTE	$00,$80,$03,$D0,$02,DOOR_CLOSED
 _lvl2_room2_prize_seq:
 		.BYTE	$FF
 
@@ -511,8 +487,7 @@ _lvl2_room3_exits:
 		.BYTE	$80,$01,$08,$06
 		.BYTE	$2E,$B9,$00
 _lvl2_room3_doors:
-		.BYTE	$01,$80,$06,$20,$02
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$80,$06,$20,$02,DOOR_TEST
 _lvl2_room3_prize_seq:
 		.BYTE	$FF
 
@@ -538,10 +513,8 @@ _lvl2_room4_exits:
 		.BYTE	$2E,$79,$00
 		.BYTE	$2E,$B9,$00
 _lvl2_room4_doors:
-		.BYTE	$01,$B0,$04,$20,$02
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$50,$04,$20,$02
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$B0,$04,$20,$02,DOOR_TEST
+		.BYTE	$01,$50,$04,$20,$02,DOOR_TEST
 		.BYTE	$FF
 _lvl2_room4_prize_seq:
 		.BYTE	$1D,$1D,$20,$1D,$1D,$1E,$00
@@ -562,8 +535,7 @@ _lvl2_room5_exits:
 		.BYTE	$F8,$01,$40,$02
 		.BYTE	$45,$46,$01
 _lvl2_room5_doors:
-		.BYTE	$01,$E0,$02,$40,$03
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$E0,$02,$40,$03,DOOR_TEST
 		.BYTE	$FF
 _lvl2_room5_prize_seq:
 		.BYTE	$20,$1D,$1E,$20,$1D,$1E,$00
@@ -584,10 +556,8 @@ _lvl2_room6_exits:
 		.BYTE	$F8,$03,$40,$02
 		.BYTE	$83,$46,$01
 _lvl2_room6_doors:
-		.BYTE	$03,$E0,$02,$40,$03
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$20,$02,$40,$03
-		.WORD	_room_door_always_closed
+		.BYTE	$03,$E0,$02,$40,$03,DOOR_TEST
+		.BYTE	$02,$20,$02,$40,$03,DOOR_CLOSED
 		.BYTE	$FF
 _lvl2_room6_prize_seq:
 		.BYTE	$20,$20,$1F,$00
@@ -608,8 +578,7 @@ _lvl2_room7_exits:
 		.BYTE	$80,$04,$08,$02
 		.BYTE	$8E,$39,$00
 _lvl2_room7_doors:
-		.BYTE	$04,$80,$02,$20,$02
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$80,$02,$20,$02,DOOR_TEST
 		.BYTE	$FF
 _lvl2_room7_prize_seq:
 		.BYTE	$1E,$1F,$1E,$20,$00
@@ -630,8 +599,7 @@ _lvl2_room8_exits:
 		.BYTE	$00,$05,$48,$00
 		.BYTE	$A3,$06,$01
 _lvl2_room8_doors:
-		.BYTE	$04,$E0,$00,$40,$03
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$E0,$00,$40,$03,DOOR_TEST
 		.BYTE	$FF
 _lvl2_room8_prize_seq:
 		.BYTE	$1E,$1F,$1D,$20,$00
@@ -655,8 +623,7 @@ _lvl2_room9_exits:
 		.BYTE	$80,$05,$D8,$00
 		.BYTE	$AE,$26,$02
 _lvl2_room9_doors:
-		.BYTE	$05,$80,$00,$D0,$04
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$05,$80,$00,$D0,$04,DOOR_TEST
 _lvl2_room9_prize_seq:
 		.BYTE	$FF
 
@@ -680,10 +647,8 @@ _lvl2_roomA_exits:
 		.BYTE	$80,$05,$E8,$02
 		.BYTE	$AE,$66,$02
 _lvl2_roomA_doors:
-		.BYTE	$05,$80,$01,$20,$04
-		.WORD	_room_door_always_closed
-		.BYTE	$05,$80,$02,$D0,$04
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$05,$80,$01,$20,$04,DOOR_CLOSED
+		.BYTE	$05,$80,$02,$D0,$04,DOOR_TEST
 _lvl2_roomA_prize_seq:
 		.BYTE	$FF
 
@@ -703,10 +668,8 @@ _lvl2_roomB_exits:
 		.BYTE	$78,$05,$E8,$04
 		.BYTE	$AE,$A6,$02
 _lvl2_roomB_doors:
-		.BYTE	$05,$80,$03,$20,$04
-		.WORD	_room_door_always_closed
-		.BYTE	$05,$80,$04,$D0,$04
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$05,$80,$03,$20,$04,DOOR_CLOSED
+		.BYTE	$05,$80,$04,$D0,$04,DOOR_TEST
 _lvl2_roomB_prize_seq:
 		.BYTE	$FF
 
@@ -725,8 +688,7 @@ _lvl2_roomC_handler:
 		SUSPEND											; there is no doors to go further, script stop here
 
 _lvl2_roomC_doors:
-		.BYTE	$05,$80,$05,$20,$04
-		.WORD	_room_door_always_closed
+		.BYTE	$05,$80,$05,$20,$04,DOOR_CLOSED
 _lvl2_roomC_prize_seq:
 		.BYTE	$FF
 
@@ -866,10 +828,8 @@ _lvl3_room0_exits:
 		.BYTE	$80,$01,$08,$01
 		.BYTE	$2E,$18,$00
 _lvl3_room0_doors:
-		.BYTE	$01,$80,$01,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$90,$01,$D0,$06
-		.WORD	_room_door_always_closed
+		.BYTE	$01,$80,$01,$20,$05,DOOR_TEST
+		.BYTE	$00,$90,$01,$D0,$06,DOOR_CLOSED
 _lvl3_room0_prize_seq:
 		.BYTE	$FF
 
@@ -895,10 +855,8 @@ _lvl3_room1_exits:
 		.BYTE	$4E,$02,$02
 		.BYTE	$2E,$22,$02
 _lvl3_room1_doors:
-		.BYTE	$00,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$80,$00,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$80,$00,$20,$06,DOOR_TEST
+		.BYTE	$01,$80,$00,$D0,$05,DOOR_TEST
 _lvl3_room1_prize_seq:
 		.BYTE	$FF
 
@@ -924,18 +882,12 @@ _lvl3_room2_exits:
 		.BYTE	$44,$42,$02
 		.BYTE	$0E,$02,$02
 _lvl3_room2_doors:
-		.BYTE	$02,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$40,$00,$B0,$07
-		.WORD	_room_door_always_open
-		.BYTE	$02,$80,$00,$E0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$02,$B0,$01,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$02,$70,$01,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$02,$30,$01,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$80,$00,$20,$06,DOOR_TEST
+		.BYTE	$02,$40,$00,$B0,$07,DOOR_OPEN
+		.BYTE	$02,$80,$00,$E0,$05,DOOR_OPEN
+		.BYTE	$02,$B0,$01,$50,$05,DOOR_OPEN
+		.BYTE	$02,$70,$01,$80,$07,DOOR_OPEN
+		.BYTE	$02,$30,$01,$D0,$05,DOOR_TEST
 		.BYTE	$FF
 _lvl3_room2_prize_seq:
 		.BYTE	$25,$25,$25,$28,$28,$00
@@ -962,20 +914,31 @@ _lvl3_room3_exits:
 		.BYTE	$78,$38,$00
 		.BYTE	$44,$38,$00
 _lvl3_room3_doors:
-		.BYTE	$02,$30,$02,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$40,$02,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$02,$C0,$02,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$03,$50,$02,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$03,$C0,$02,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$03,$D0,$02,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$30,$02,$20,$05,DOOR_TEST
+		.BYTE	$02,$40,$02,$80,$07,DOOR_OPEN
+		.BYTE	$02,$C0,$02,$50,$05,DOOR_OPEN
+		.BYTE	$03,$50,$02,$50,$05,DOOR_OPEN
+		.BYTE	$03,$C0,$02,$80,$07,DOOR_OPEN
+		.BYTE	$03,$D0,$02,$20,$05,DOOR_TEST
 _lvl3_room3_prize_seq:
 		.BYTE	$FF
+
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_lvl3_room_modeA_init:
+		NJSR			_nsub_apu_mus_load
+			NARGB		_mus4_idx
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_lvl3_room_modeA_init_ex:
+		NJSR			_nsub_mmc1_chr0_set				; here is the special room with
+			NARGB		$0F								; mid-boss, as well as special
+		NJSR			_nsub_patch_pal_load			; music and palettes for it
+			NARGB		$07
+			NARGW		_lvl3_roomsAE_patch_pal
+		SRET
 
 ; =============== S C R I P T ==========================s====================
 _lvl3_room4_handler:
@@ -985,13 +948,7 @@ _lvl3_room4_handler:
 			NARGW		_lvl3_room4_prize_seq			; prize sequences
 			NARGW		_lvl3_room4_exits				; exits data
 			NARGW		_lvl3_room4_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
-		NJSR			_nsub_apu_mus_load				; here is the special room with
-			NARGB		_mus4_idx						; mid-boss, as well as special
-		NJSR			_nsub_patch_pal_load			; music and palettes for it
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
+		SJSR			_lvl3_room_modeA_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_apu_mus_load				; restore regular music here
 			NARGB		_mus7_idx
@@ -1008,17 +965,22 @@ _lvl3_room4_exits:
 		.BYTE	$AE,$02,$02
 		.BYTE	$78,$42,$02
 _lvl3_room4_doors:
-		.BYTE	$03,$80,$01,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$03,$40,$01,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$03,$D0,$01,$D0,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$80,$01,$50,$05,DOOR_OPEN
+		.BYTE	$03,$40,$01,$80,$07,DOOR_OPEN
+		.BYTE	$03,$D0,$01,$D0,$05,DOOR_TEST
+		.BYTE	$03,$80,$00,$20,$06,DOOR_TEST
 _lvl3_room4_prize_seq:
 		.BYTE	$FF
 
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_lvl3_room_modeB_init:
+		NJSR			_nsub_mmc1_chr0_set				; restore regular level CHR bank
+			NARGB		$0E
+		NJSR			_nsub_patch_pal_load
+			NARGB		$07
+			NARGW		_lvl3_full_pal+$1C				; restore also old palette portion
+		SRET
 
 ; =============== S C R I P T ==========================s====================
 _lvl3_room5_handler:
@@ -1028,11 +990,7 @@ _lvl3_room5_handler:
 			NARGW		_lvl3_room5_prize_seq			; prize sequences
 			NARGW		_lvl3_room5_exits				; exits data
 			NARGW		_lvl3_room5_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set				; restore regular level CHR bank
-			NARGB		$0E
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_full_pal+$1C				; restore also old palette portion
+		SJSR			_lvl3_room_modeB_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1047,18 +1005,12 @@ _lvl3_room5_exits:
 		.BYTE	$B8,$42,$02
 		.BYTE	$6E,$02,$02
 _lvl3_room5_doors:
-		.BYTE	$05,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$05,$70,$00,$B0,$07
-		.WORD	_room_door_always_open
-		.BYTE	$05,$B0,$00,$E0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$80,$01,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$40,$01,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$05,$D0,$01,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$05,$80,$00,$20,$06,DOOR_TEST
+		.BYTE	$05,$70,$00,$B0,$07,DOOR_OPEN
+		.BYTE	$05,$B0,$00,$E0,$05,DOOR_OPEN
+		.BYTE	$05,$80,$01,$50,$05,DOOR_OPEN
+		.BYTE	$05,$40,$01,$80,$07,DOOR_OPEN
+		.BYTE	$05,$D0,$01,$D0,$05,DOOR_TEST
 		.BYTE	$FF
 _lvl3_room5_prize_seq:
 ; REGION, changed in the EU version
@@ -1088,18 +1040,12 @@ _lvl3_room6_exits:
 		.BYTE	$84,$38,$00
 		.BYTE	$B8,$38,$00
 _lvl3_room6_doors:
-		.BYTE	$04,$30,$02,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$40,$02,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$04,$D0,$02,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$30,$02,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$C0,$02,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$05,$D0,$02,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$30,$02,$20,$05,DOOR_TEST
+		.BYTE	$04,$40,$02,$80,$07,DOOR_OPEN
+		.BYTE	$04,$D0,$02,$50,$05,DOOR_OPEN
+		.BYTE	$05,$30,$02,$50,$05,DOOR_OPEN
+		.BYTE	$05,$C0,$02,$80,$07,DOOR_OPEN
+		.BYTE	$05,$D0,$02,$20,$05,DOOR_TEST
 _lvl3_room6_prize_seq:
 		.BYTE	$FF
 
@@ -1111,13 +1057,7 @@ _lvl3_room7_handler:
 			NARGW		_lvl3_room7_prize_seq			; prize sequences
 			NARGW		_lvl3_room7_exits				; exits data
 			NARGW		_lvl3_room7_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set				; mini-boss room again
-			NARGB		$0F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
-		NJSR			_nsub_apu_mus_load
-			NARGB		_mus4_idx
+		SJSR			_lvl3_room_modeA_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_apu_mus_load
 			NARGB		_mus7_idx
@@ -1134,14 +1074,10 @@ _lvl3_room7_exits:
 		.BYTE	$CE,$02,$02
 		.BYTE	$84,$42,$02
 _lvl3_room7_doors:
-		.BYTE	$04,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$B0,$01,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$04,$70,$01,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$04,$30,$01,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$80,$00,$20,$06,DOOR_TEST
+		.BYTE	$04,$B0,$01,$50,$05,DOOR_OPEN
+		.BYTE	$04,$70,$01,$80,$07,DOOR_OPEN
+		.BYTE	$04,$30,$01,$D0,$05,DOOR_TEST
 _lvl3_room7_prize_seq:
 		.BYTE	$FF
 
@@ -1153,11 +1089,7 @@ _lvl3_room8_handler:
 			NARGW		_lvl3_room8_prize_seq			; prize sequences
 			NARGW		_lvl3_room8_exits				; exits data
 			NARGW		_lvl3_room8_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_full_pal+$1C
+		SJSR			_lvl3_room_modeB_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1172,18 +1104,12 @@ _lvl3_room8_exits:
 		.BYTE	$C4,$42,$02
 		.BYTE	$8E,$02,$02
 _lvl3_room8_doors:
-		.BYTE	$06,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$06,$40,$00,$B0,$07
-		.WORD	_room_door_always_open
-		.BYTE	$06,$80,$00,$E0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$06,$B0,$01,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$06,$70,$01,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$06,$30,$01,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$06,$80,$00,$20,$06,DOOR_TEST
+		.BYTE	$06,$40,$00,$B0,$07,DOOR_OPEN
+		.BYTE	$06,$80,$00,$E0,$05,DOOR_OPEN
+		.BYTE	$06,$B0,$01,$50,$05,DOOR_OPEN
+		.BYTE	$06,$70,$01,$80,$07,DOOR_OPEN
+		.BYTE	$06,$30,$01,$D0,$05,DOOR_TEST
 		.BYTE	$FF
 _lvl3_room8_prize_seq:
 		.BYTE	$27,$27,$28,$00
@@ -1210,18 +1136,12 @@ _lvl3_room9_exits:
 		.BYTE	$F8,$38,$00
 		.BYTE	$C4,$38,$00
 _lvl3_room9_doors:
-		.BYTE	$06,$30,$02,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$06,$40,$02,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$06,$C0,$02,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$07,$50,$02,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$07,$C0,$02,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$07,$D0,$02,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$06,$30,$02,$20,$05,DOOR_TEST
+		.BYTE	$06,$40,$02,$80,$07,DOOR_OPEN
+		.BYTE	$06,$C0,$02,$50,$05,DOOR_OPEN
+		.BYTE	$07,$50,$02,$50,$05,DOOR_OPEN
+		.BYTE	$07,$C0,$02,$80,$07,DOOR_OPEN
+		.BYTE	$07,$D0,$02,$20,$05,DOOR_TEST
 _lvl3_room9_prize_seq:
 		.BYTE	$FF
 
@@ -1239,13 +1159,7 @@ _lvl3_roomA_handler:
 			NARGW		_lvl3_roomA_prize_seq			; prize sequences
 			NARGW		_lvl3_roomA_exits				; exits data
 			NARGW		_lvl3_roomA_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
-		NJSR			_nsub_apu_mus_load
-			NARGB		_mus4_idx
+		SJSR			_lvl3_room_modeA_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_apu_mus_load
 			NARGB		_mus7_idx
@@ -1262,14 +1176,10 @@ _lvl3_roomA_exits:
 		.BYTE	$2E,$62,$02
 		.BYTE	$F8,$42,$02
 _lvl3_roomA_doors:
-		.BYTE	$07,$80,$00,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$07,$80,$01,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$07,$40,$01,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$07,$D0,$01,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$07,$80,$00,$20,$06,DOOR_TEST
+		.BYTE	$07,$80,$01,$50,$05,DOOR_OPEN
+		.BYTE	$07,$40,$01,$80,$07,DOOR_OPEN
+		.BYTE	$07,$D0,$01,$D0,$05,DOOR_TEST
 _lvl3_roomA_prize_seq:
 		.BYTE	$FF
 
@@ -1284,11 +1194,7 @@ _lvl3_roomB_handler:
 			NARGW		_lvl3_roomB_prize_seq			; prize sequences
 			NARGW		_lvl3_roomB_exits				; exits data
 			NARGW		_lvl3_roomB_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_full_pal+$1C
+		SJSR			_lvl3_room_modeB_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1303,18 +1209,12 @@ _lvl3_roomB_exits:
 		.BYTE	$38,$A2,$02
 		.BYTE	$EE,$02,$02
 _lvl3_roomB_doors:
-		.BYTE	$01,$80,$03,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$70,$03,$B0,$07
-		.WORD	_room_door_always_open
-		.BYTE	$01,$B0,$03,$E0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$01,$80,$04,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$01,$40,$04,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$01,$D0,$04,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$80,$03,$20,$06,DOOR_TEST
+		.BYTE	$01,$70,$03,$B0,$07,DOOR_OPEN
+		.BYTE	$01,$B0,$03,$E0,$05,DOOR_OPEN
+		.BYTE	$01,$80,$04,$50,$05,DOOR_OPEN
+		.BYTE	$01,$40,$04,$80,$07,DOOR_OPEN
+		.BYTE	$01,$D0,$04,$D0,$05,DOOR_TEST
 _lvl3_roomB_prize_seq:
 		.BYTE	$FF
 
@@ -1340,18 +1240,12 @@ _lvl3_roomC_exits:
 		.BYTE	$04,$98,$00
 		.BYTE	$38,$98,$00
 _lvl3_roomC_doors:
-		.BYTE	$00,$30,$05,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$40,$05,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$00,$C0,$05,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$01,$50,$05,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$01,$C0,$05,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$01,$D0,$05,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$30,$05,$20,$05,DOOR_TEST
+		.BYTE	$00,$40,$05,$80,$07,DOOR_OPEN
+		.BYTE	$00,$C0,$05,$50,$05,DOOR_OPEN
+		.BYTE	$01,$50,$05,$50,$05,DOOR_OPEN
+		.BYTE	$01,$C0,$05,$80,$07,DOOR_OPEN
+		.BYTE	$01,$D0,$05,$20,$05,DOOR_TEST
 		.BYTE	$FF
 _lvl3_roomC_prize_seq:
 		.BYTE	$28,$24,$24,$24,$28,$00
@@ -1364,13 +1258,7 @@ _lvl3_roomD_handler:
 			NARGW		_lvl3_roomD_prize_seq			; prize sequences
 			NARGW		_lvl3_roomD_exits				; exits data
 			NARGW		_lvl3_roomD_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
-		NJSR			_nsub_apu_mus_load
-			NARGB		_mus4_idx
+		SJSR			_lvl3_room_modeA_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_apu_mus_load
 			NARGB		_mus7_idx
@@ -1387,14 +1275,10 @@ _lvl3_roomD_exits:
 		.BYTE	$4E,$62,$02
 		.BYTE	$04,$A2,$02
 _lvl3_roomD_doors:
-		.BYTE	$00,$80,$03,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$B0,$04,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$00,$70,$04,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$00,$30,$04,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$80,$03,$20,$06,DOOR_TEST
+		.BYTE	$00,$B0,$04,$50,$05,DOOR_OPEN
+		.BYTE	$00,$70,$04,$80,$07,DOOR_OPEN
+		.BYTE	$00,$30,$04,$D0,$05,DOOR_TEST
 _lvl3_roomD_prize_seq:
 		.BYTE	$FF
 
@@ -1406,11 +1290,7 @@ _lvl3_roomE_handler:
 			NARGW		_lvl3_roomE_prize_seq			; prize sequences
 			NARGW		_lvl3_roomE_exits				; exits data
 			NARGW		_lvl3_roomE_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_full_pal+$1C
+		SJSR			_lvl3_room_modeB_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1425,18 +1305,12 @@ _lvl3_roomE_exits:
 		.BYTE	$44,$A2,$02
 		.BYTE	$0E,$62,$02
 _lvl3_roomE_doors:
-		.BYTE	$02,$80,$03,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$80,$03,$E0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$02,$40,$03,$B0,$07
-		.WORD	_room_door_always_open
-		.BYTE	$02,$B0,$04,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$02,$70,$04,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$02,$30,$04,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$80,$03,$20,$06,DOOR_TEST
+		.BYTE	$02,$80,$03,$E0,$05,DOOR_OPEN
+		.BYTE	$02,$40,$03,$B0,$07,DOOR_OPEN
+		.BYTE	$02,$B0,$04,$50,$05,DOOR_OPEN
+		.BYTE	$02,$70,$04,$80,$07,DOOR_OPEN
+		.BYTE	$02,$30,$04,$D0,$05,DOOR_TEST
 		.BYTE	$FF
 _lvl3_roomE_prize_seq:
 		.BYTE	$28,$24,$24,$24,$24,$24,$24,$25,$00
@@ -1463,18 +1337,12 @@ _lvl3_roomF_exits:
 		.BYTE	$78,$98,$00
 		.BYTE	$44,$98,$00
 _lvl3_roomF_doors:
-		.BYTE	$02,$30,$05,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$40,$05,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$02,$D0,$05,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$03,$30,$05,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$03,$C0,$05,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$03,$D0,$05,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$30,$05,$20,$05,DOOR_TEST
+		.BYTE	$02,$40,$05,$80,$07,DOOR_OPEN
+		.BYTE	$02,$D0,$05,$50,$05,DOOR_OPEN
+		.BYTE	$03,$30,$05,$50,$05,DOOR_OPEN
+		.BYTE	$03,$C0,$05,$80,$07,DOOR_OPEN
+		.BYTE	$03,$D0,$05,$20,$05,DOOR_TEST
 _lvl3_roomF_prize_seq:
 		.BYTE	$FF
 
@@ -1486,13 +1354,7 @@ _lvl3_room10_handler:
 			NARGW		_lvl3_room10_prize_seq			; prize sequences
 			NARGW		_lvl3_room10_exits				; exits data
 			NARGW		_lvl3_room10_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
-		NJSR			_nsub_apu_mus_load
-			NARGB		_mus4_idx
+		SJSR			_lvl3_room_modeA_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_apu_mus_load
 			NARGB		_mus7_idx
@@ -1509,14 +1371,10 @@ _lvl3_room10_exits:
 		.BYTE	$AE,$62,$02
 		.BYTE	$78,$A2,$02
 _lvl3_room10_doors:
-		.BYTE	$03,$80,$03,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$80,$04,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$03,$40,$04,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$03,$D0,$04,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$80,$03,$20,$06,DOOR_TEST
+		.BYTE	$03,$80,$04,$50,$05,DOOR_OPEN
+		.BYTE	$03,$40,$04,$80,$07,DOOR_OPEN
+		.BYTE	$03,$D0,$04,$D0,$05,DOOR_TEST
 _lvl3_room10_prize_seq:
 		.BYTE	$FF
 
@@ -1531,11 +1389,7 @@ _lvl3_room14_handler:
 			NARGW		_lvl3_room14_prize_seq			; prize sequences
 			NARGW		_lvl3_room14_exits				; exits data
 			NARGW		_lvl3_room14_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
+		SJSR			_lvl3_room_modeA_init_ex
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1550,18 +1404,12 @@ _lvl3_room14_exits:
 		.BYTE	$B8,$A2,$02
 		.BYTE	$6E,$62,$02
 _lvl3_room14_doors:
-		.BYTE	$05,$80,$03,$20,$06
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$05,$70,$03,$B0,$07
-		.WORD	_room_door_always_open
-		.BYTE	$05,$B0,$03,$E0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$80,$04,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$40,$04,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$05,$D0,$04,$D0,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$05,$80,$03,$20,$06,DOOR_TEST
+		.BYTE	$05,$70,$03,$B0,$07,DOOR_OPEN
+		.BYTE	$05,$B0,$03,$E0,$05,DOOR_OPEN
+		.BYTE	$05,$80,$04,$50,$05,DOOR_OPEN
+		.BYTE	$05,$40,$04,$80,$07,DOOR_OPEN
+		.BYTE	$05,$D0,$04,$D0,$05,DOOR_TEST
 _lvl3_room14_prize_seq:
 		.BYTE	$FF
 
@@ -1587,18 +1435,12 @@ _lvl3_room15_exits:
 		.BYTE	$84,$98,$00
 		.BYTE	$B8,$98,$00
 _lvl3_room15_doors:
-		.BYTE	$04,$30,$05,$20,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$40,$05,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$04,$C0,$05,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$50,$05,$50,$05
-		.WORD	_room_door_always_open
-		.BYTE	$05,$C0,$05,$80,$07
-		.WORD	_room_door_always_open
-		.BYTE	$05,$D0,$05,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$30,$05,$20,$05,DOOR_TEST
+		.BYTE	$04,$40,$05,$80,$07,DOOR_OPEN
+		.BYTE	$04,$C0,$05,$50,$05,DOOR_OPEN
+		.BYTE	$05,$50,$05,$50,$05,DOOR_OPEN
+		.BYTE	$05,$C0,$05,$80,$07,DOOR_OPEN
+		.BYTE	$05,$D0,$05,$20,$05,DOOR_TEST
 _lvl3_room15_prize_seq:
 		.BYTE	$FF
 
@@ -1626,14 +1468,10 @@ _lvl3_room16_exits:
 		.BYTE	$06,$56,$01
 		.BYTE	$84,$A2,$02
 _lvl3_room16_doors:
-		.BYTE	$04,$B0,$04,$70,$07
-		.WORD	_room_door_always_open
-		.BYTE	$04,$80,$04,$A0,$05
-		.WORD	_room_door_always_open
-		.BYTE	$04,$30,$04,$D0,$05
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$30,$03,$20,$05
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$B0,$04,$70,$07,DOOR_OPEN
+		.BYTE	$04,$80,$04,$A0,$05,DOOR_OPEN
+		.BYTE	$04,$30,$04,$D0,$05,DOOR_TEST
+		.BYTE	$04,$30,$03,$20,$05,DOOR_TEST
 _lvl3_room16_prize_seq:
 		.BYTE	$FF
 
@@ -1645,11 +1483,7 @@ _lvl3_room17_handler:
 			NARGW		_lvl3_room17_prize_seq			; prize sequences
 			NARGW		$0000							; also dummy here
 			NARGW		_lvl3_room17_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_full_pal+$1C
+		SJSR			_lvl3_room_modeB_init
 ; REDUNDANT, this is a final boss/cutscene room for LVL3, there is a door in it
 ; but it is always closed. you couldn't exit this door as well because
 ; there is an automated scripted cutscene with forced jump to the next
@@ -1669,8 +1503,7 @@ _lvl3_room17_handler:
 ;		.BYTE	$84,$63,$02
 
 _lvl3_room17_doors:
-;		.BYTE	$00,$30,$02,$E0,$05
-;		.WORD	_room_door_always_closed
+;		.BYTE	$00,$30,$02,$E0,$05,DOOR_CLOSED
 _lvl3_room17_prize_seq:
 		.BYTE	$FF
 
@@ -1748,8 +1581,7 @@ _lvl4_room0_exits:
 		.BYTE	$98,$01,$08,$05
 		.BYTE	$32,$97,$00
 _lvl4_room0_doors:
-		.BYTE	$01,$A0,$05,$20,$08
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$A0,$05,$20,$08,DOOR_TEST
 _lvl4_room0_prize_seq:
 		.BYTE	$FF
 
@@ -1775,12 +1607,9 @@ _lvl4_room1_exits:
 		.BYTE	$43,$92,$01
 		.BYTE	$34,$57,$00
 _lvl4_room1_doors:
-		.BYTE	$01,$90,$04,$D0,$08
-		.WORD	_room_door_always_closed
-		.BYTE	$01,$E0,$04,$A0,$09
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$B0,$03,$20,$08
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$90,$04,$D0,$08,DOOR_CLOSED
+		.BYTE	$01,$E0,$04,$A0,$09,DOOR_TEST
+		.BYTE	$01,$B0,$03,$20,$08,DOOR_TEST
 _lvl4_room1_prize_seq:
 		.BYTE	$FF
 
@@ -1800,8 +1629,7 @@ _lvl4_room2_exits:
 		.BYTE	$00,$02,$98,$04
 		.BYTE	$3C,$92,$03
 _lvl4_room2_doors:
-		.BYTE	$02,$10,$04,$A0,$0A
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$10,$04,$A0,$0A,DOOR_TEST
 _lvl4_room2_prize_seq:
 		.BYTE	$FF
 
@@ -1830,12 +1658,9 @@ _lvl4_room3_exits:
 		.BYTE	$08,$63,$02
 		.BYTE	$08,$37,$00
 _lvl4_room3_doors:
-		.BYTE	$01,$B0,$02,$D0,$08
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$50,$02,$D0,$08
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$50,$02,$20,$08
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$B0,$02,$D0,$08,DOOR_TEST
+		.BYTE	$00,$50,$02,$D0,$08,DOOR_TEST
+		.BYTE	$00,$50,$02,$20,$08,DOOR_TEST
 _lvl4_room3_prize_seq:
 		.BYTE	$FF
 
@@ -1855,8 +1680,7 @@ _lvl4_room4_exits:
 		.BYTE	$50,$00,$08,$03
 		.BYTE	$08,$57,$00
 _lvl4_room4_doors:
-		.BYTE	$00,$50,$03,$20,$08
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$50,$03,$20,$08,DOOR_TEST
 		.BYTE	$FF
 _lvl4_room4_prize_seq:
 		.BYTE	$2C,$2C,$2C,$29,$29,$2C,$00
@@ -1883,12 +1707,9 @@ _lvl4_room5_exits:
 		.BYTE	$08,$43,$02
 		.BYTE	$44,$24,$01
 _lvl4_room5_doors:
-		.BYTE	$00,$50,$01,$D0,$08
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$E0,$01,$30,$10
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$00,$01,$80,$0B
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$50,$01,$D0,$08,DOOR_TEST
+		.BYTE	$01,$E0,$01,$30,$10,DOOR_TEST
+		.BYTE	$01,$00,$01,$80,$0B,DOOR_TEST
 _lvl4_room5_prize_seq:
 		.BYTE	$FF
 
@@ -1914,10 +1735,8 @@ _lvl4_room6_exits:
 		.BYTE	$3C,$24,$03
 		.BYTE	$4A,$63,$02
 _lvl4_room6_doors:
-		.BYTE	$02,$10,$01,$30,$0C
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$60,$02,$D0,$08
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$10,$01,$30,$0C,DOOR_TEST
+		.BYTE	$02,$60,$02,$D0,$08,DOOR_TEST
 		.BYTE	$FF
 _lvl4_room6_prize_seq:
 ; REGION, changed in the EU version
@@ -1947,10 +1766,8 @@ _lvl4_room7_exits:
 		.BYTE	$4A,$57,$00
 		.BYTE	$76,$57,$00
 _lvl4_room7_doors:
-		.BYTE	$02,$60,$03,$20,$08
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$C0,$03,$20,$08
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$60,$03,$20,$08,DOOR_TEST
+		.BYTE	$03,$C0,$03,$20,$08,DOOR_TEST
 		.BYTE	$FF
 _lvl4_room7_prize_seq:
 ; REGION, changed in the EU version
@@ -1980,10 +1797,8 @@ _lvl4_room8_exits:
 		.BYTE	$76,$64,$02
 		.BYTE	$63,$17,$00
 _lvl4_room8_doors:
-		.BYTE	$03,$C0,$02,$D0,$08
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$20,$01,$20,$0D
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$C0,$02,$D0,$08,DOOR_TEST
+		.BYTE	$03,$20,$01,$20,$0D,DOOR_TEST
 		.BYTE	$FF
 _lvl4_room8_prize_seq:
 		.BYTE	$29,$2D,$2D,$2C,$29,$2D,$2C,$2D,$00
@@ -2004,8 +1819,7 @@ _lvl4_room9_exits:
 		.BYTE	$18,$03,$F0,$00
 		.BYTE	$63,$23,$02
 _lvl4_room9_doors:
-		.BYTE	$03,$20,$00,$D0,$0D
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$20,$00,$D0,$0D,DOOR_TEST
 _lvl4_room9_prize_seq:
 		.BYTE	$FF
 
@@ -2115,10 +1929,8 @@ _lvl5_room0_exits:
 		.BYTE	$40,$02,$08,$06
 		.BYTE	$46,$B9,$00
 _lvl5_room0_doors:
-		.BYTE	$02,$40,$06,$20,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$40,$06,$D0,$0E
-		.WORD	_room_door_always_closed
+		.BYTE	$02,$40,$06,$20,$0E,DOOR_TEST
+		.BYTE	$02,$40,$06,$D0,$0E,DOOR_CLOSED
 _lvl5_room0_prize_seq:
 		.BYTE	$FF
 
@@ -2146,10 +1958,8 @@ _lvl5_room1_exits:
 		.BYTE	$83,$A7,$01
 		.BYTE	$46,$C3,$02
 _lvl5_room1_doors:
-		.BYTE	$02,$40,$05,$D0,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$E0,$05,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$40,$05,$D0,$0E,DOOR_TEST
+		.BYTE	$03,$E0,$05,$50,$0F,DOOR_TEST
 _lvl5_room1_prize_seq:
 		.BYTE	$FF
 
@@ -2177,10 +1987,8 @@ _lvl5_room2_exits:
 		.BYTE	$94,$99,$00
 		.BYTE	$7C,$A7,$03
 _lvl5_room2_doors:
-		.BYTE	$04,$10,$05,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$B0,$05,$20,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$10,$05,$50,$0F,DOOR_TEST
+		.BYTE	$04,$B0,$05,$20,$0E,DOOR_TEST
 _lvl5_room2_prize_seq:
 		.BYTE	$FF
 
@@ -2214,12 +2022,9 @@ _lvl5_room3_exits:
 		.BYTE	$A3,$67,$01
 		.BYTE	$94,$A3,$02
 _lvl5_room3_doors:
-		.BYTE	$04,$B0,$04,$D0,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$E0,$03,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$10,$03,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$B0,$04,$D0,$0E,DOOR_TEST
+		.BYTE	$04,$E0,$03,$50,$0F,DOOR_TEST
+		.BYTE	$04,$10,$03,$50,$0F,DOOR_TEST
 _lvl5_room3_prize_seq:
 		.BYTE	$FF
 
@@ -2243,8 +2048,7 @@ _lvl5_room4_exits:
 		.BYTE	$00,$05,$50,$03
 		.BYTE	$9C,$67,$03
 _lvl5_room4_doors:
-		.BYTE	$05,$10,$03,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$05,$10,$03,$50,$0F,DOOR_TEST
 _lvl5_room4_prize_seq:
 		.BYTE	$FF
 
@@ -2272,10 +2076,8 @@ _lvl5_room5_exits:
 		.BYTE	$83,$67,$01
 		.BYTE	$74,$83,$02
 _lvl5_room5_doors:
-		.BYTE	$03,$E0,$03,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$B0,$03,$D0,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$E0,$03,$50,$0F,DOOR_TEST
+		.BYTE	$03,$B0,$03,$D0,$0E,DOOR_TEST
 _lvl5_room5_prize_seq:
 		.BYTE	$FF
 
@@ -2301,10 +2103,8 @@ _lvl5_room6_exits:
 		.BYTE	$74,$79,$00
 		.BYTE	$3C,$87,$03
 _lvl5_room6_doors:
-		.BYTE	$03,$B0,$04,$20,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$10,$04,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$B0,$04,$20,$0E,DOOR_TEST
+		.BYTE	$02,$10,$04,$50,$0F,DOOR_TEST
 _lvl5_room6_prize_seq:
 		.BYTE	$FF
 
@@ -2333,12 +2133,9 @@ _lvl5_room7_exits:
 		.BYTE	$34,$C3,$02
 		.BYTE	$1C,$B1,$03
 _lvl5_room7_doors:
-		.BYTE	$01,$E0,$04,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$B0,$05,$D0,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$10,$05,$A0,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$E0,$04,$50,$0F,DOOR_TEST
+		.BYTE	$01,$B0,$05,$D0,$0E,DOOR_TEST
+		.BYTE	$01,$10,$05,$A0,$0F,DOOR_TEST
 _lvl5_room7_prize_seq:
 		.BYTE	$FF
 
@@ -2362,8 +2159,7 @@ _lvl5_room8_exits:
 		.BYTE	$B0,$01,$08,$06
 		.BYTE	$34,$B9,$00
 _lvl5_room8_doors:
-		.BYTE	$01,$B0,$06,$20,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$B0,$06,$20,$0E,DOOR_TEST
 _lvl5_room8_prize_seq:
 		.BYTE	$FF
 
@@ -2391,10 +2187,8 @@ _lvl5_room9_exits:
 		.BYTE	$23,$B1,$01
 		.BYTE	$06,$99,$00
 _lvl5_room9_doors:
-		.BYTE	$00,$40,$05,$20,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$E0,$05,$A0,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$40,$05,$20,$0E,DOOR_TEST
+		.BYTE	$00,$E0,$05,$A0,$0F,DOOR_TEST
 _lvl5_room9_prize_seq:
 		.BYTE	$FF
 
@@ -2424,10 +2218,8 @@ _lvl5_roomA_exits:
 		.BYTE	$06,$A3,$02
 		.BYTE	$23,$67,$01
 _lvl5_roomA_doors:
-		.BYTE	$00,$40,$04,$D0,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$E0,$03,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$40,$04,$D0,$0E,DOOR_TEST
+		.BYTE	$00,$E0,$03,$50,$0F,DOOR_TEST
 _lvl5_roomA_prize_seq:
 		.BYTE	$FF
 
@@ -2453,10 +2245,8 @@ _lvl5_roomB_exits:
 		.BYTE	$43,$71,$01
 		.BYTE	$1C,$67,$03
 _lvl5_roomB_doors:
-		.BYTE	$01,$10,$03,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$E0,$03,$A0,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$10,$03,$50,$0F,DOOR_TEST
+		.BYTE	$01,$E0,$03,$A0,$0F,DOOR_TEST
 _lvl5_roomB_prize_seq:
 		.BYTE	$FF
 
@@ -2484,10 +2274,8 @@ _lvl5_roomC_exits:
 		.BYTE	$3C,$47,$03
 		.BYTE	$3C,$71,$03
 _lvl5_roomC_doors:
-		.BYTE	$02,$10,$03,$A0,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$10,$02,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$10,$03,$A0,$0F,DOOR_TEST
+		.BYTE	$02,$10,$02,$50,$0F,DOOR_TEST
 		.BYTE	$FF
 _lvl5_roomC_prize_seq:
 		.BYTE	$19,$18,$19,$19,$19,$18,$18,$00
@@ -2514,10 +2302,8 @@ _lvl5_roomD_exits:
 		.BYTE	$06,$39,$00
 		.BYTE	$42,$47,$01
 _lvl5_roomD_doors:
-		.BYTE	$01,$E0,$02,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$40,$02,$20,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$E0,$02,$50,$0F,DOOR_TEST
+		.BYTE	$00,$40,$02,$20,$0E,DOOR_TEST
 		.BYTE	$FF
 _lvl5_roomD_prize_seq:
 		.BYTE	$13,$13,$19,$19,$19,$19,$17,$17,$00
@@ -2530,11 +2316,7 @@ _lvl5_roomE_handler:
 			NARGW		_lvl5_roomE_prize_seq			; prize sequences
 			NARGW		_lvl5_roomE_exits				; exits data
 			NARGW		_lvl5_roomE_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
-		NJSR			_nsub_patch_pal_load
-			NARGB		$07
-			NARGW		_lvl3_roomsAE_patch_pal
+		SJSR			_lvl3_room_modeA_init_ex
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2549,10 +2331,8 @@ _lvl5_roomE_exits:
 		.BYTE	$23,$27,$01
 		.BYTE	$06,$43,$02
 _lvl5_roomE_doors:
-		.BYTE	$00,$E0,$01,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$00,$40,$01,$D0,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$00,$E0,$01,$50,$0F,DOOR_TEST
+		.BYTE	$00,$40,$01,$D0,$0E,DOOR_TEST
 _lvl5_roomE_prize_seq:
 		.BYTE	$FF
 
@@ -2586,12 +2366,9 @@ _lvl5_roomF_exits:
 		.BYTE	$1C,$27,$03
 		.BYTE	$2C,$19,$00
 _lvl5_roomF_doors:
-		.BYTE	$01,$70,$01,$20,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$01,$10,$01,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$02,$E0,$01,$50,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$70,$01,$20,$0E,DOOR_TEST
+		.BYTE	$01,$10,$01,$50,$0F,DOOR_TEST
+		.BYTE	$02,$E0,$01,$50,$0F,DOOR_TEST
 _lvl5_roomF_prize_seq:
 		.BYTE	$FF
 
@@ -2615,8 +2392,7 @@ _lvl5_room10_exits:
 		.BYTE	$70,$01,$F8,$00
 		.BYTE	$2C,$23,$02
 _lvl5_room10_doors:
-		.BYTE	$01,$70,$00,$D0,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$01,$70,$00,$D0,$0E,DOOR_TEST
 _lvl5_room10_prize_seq:
 		.BYTE	$FF
 
@@ -2644,10 +2420,8 @@ _lvl5_room11_exits:
 		.BYTE	$83,$51,$01
 		.BYTE	$5C,$27,$03
 _lvl5_room11_doors:
-		.BYTE	$03,$10,$01,$50,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$E0,$02,$A0,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$03,$10,$01,$50,$0F,DOOR_TEST
+		.BYTE	$03,$E0,$02,$A0,$0F,DOOR_TEST
 _lvl5_room11_prize_seq:
 		.BYTE	$FF
 
@@ -2675,10 +2449,8 @@ _lvl5_room12_exits:
 		.BYTE	$94,$39,$00
 		.BYTE	$7C,$51,$03
 _lvl5_room12_doors:
-		.BYTE	$04,$10,$02,$A0,$0F
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$B0,$02,$20,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$10,$02,$A0,$0F,DOOR_TEST
+		.BYTE	$04,$B0,$02,$20,$0E,DOOR_TEST
 _lvl5_room12_prize_seq:
 		.BYTE	$FF
 
@@ -2709,10 +2481,8 @@ _lvl5_room13_exits:
 		.BYTE	$94,$19,$00
 		.BYTE	$94,$43,$02
 _lvl5_room13_doors:
-		.BYTE	$04,$B0,$01,$20,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$04,$B0,$01,$D0,$0E
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$B0,$01,$20,$0E,DOOR_TEST
+		.BYTE	$04,$B0,$01,$D0,$0E,DOOR_TEST
 _lvl5_room13_prize_seq:
 		.BYTE	$FF
 
@@ -2743,10 +2513,8 @@ _lvl5_room14_exits:
 		.BYTE	$5C,$0C,$03
 		.BYTE	$94,$23,$02
 _lvl5_room14_doors:
-		.BYTE	$04,$B0,$00,$D0,$0E
-		.WORD	_room_door_gen_clear_open
-		.BYTE	$03,$10,$00,$70,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$04,$B0,$00,$D0,$0E,DOOR_TEST
+		.BYTE	$03,$10,$00,$70,$0F,DOOR_TEST
 _lvl5_room14_prize_seq:
 		.BYTE	$FF
 
@@ -2766,8 +2534,7 @@ _lvl5_room15_exits:
 		.BYTE	$F8,$02,$70,$00
 		.BYTE	$63,$0C,$01
 _lvl5_room15_doors:
-		.BYTE	$02,$E0,$00,$70,$0F
-		.WORD	_room_door_gen_clear_open
+		.BYTE	$02,$E0,$00,$70,$0F,DOOR_TEST
 _lvl5_room15_prize_seq:
 		.BYTE	$FF
 
@@ -3010,7 +2777,7 @@ loc_15EA2:
 		STA		_ptr06
 		LDA		off_15F18+1,Y
 		STA		_ptr06+1
-		JSR		_jump_ptr_ind
+		JSR		_jmp_ptr06
 loc_15ED8:
 		PLA
 		STA		_cur_room_y_pageB			; restore all vars and music, return to the game script
@@ -3226,8 +2993,8 @@ _stage_complete_patch_pal_list:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_scores_and_players_lives_draw:
-		LDA		#$05						; TODO: replace to STA _chr_bank1
-		JSR		_mmc1_chr1_set
+		LDA		#$05
+		STA		_chr_bank1
 		JSR		_ppu_spr_fill_F1
 		LDA		_players_lives				; convert binary lives to decimal
 		LDX		#$00
@@ -3558,7 +3325,7 @@ loc_16341:
 loc_1635B:
 		LDA		_active_door_data_pos		; skip if no doors nearby
 		CLC
-		ADC		#$07
+		ADC		#$06
 		STA		_active_door_data_pos
 		BNE		loc_16341
 loc_16366:
@@ -3574,14 +3341,17 @@ loc_1636B:
 		INY
 		INY
 		INY
-		LDA		(_room_doors_data_ptr),Y	; fetch the door native handler
-		STA		_ptr06
-		INY
 		LDA		(_room_doors_data_ptr),Y
+		INY
+		ASL
+		TAY
+		LDA		_doors_open_handlers,Y
+		STA		_ptr06
+		LDA		_doors_open_handlers+1,Y
 		STA		_ptr06+1
 		PLA
 		TAY
-		JSR		_jump_ptr_ind				; and run it, if door allowed to open
+		JSR		_jmp_ptr06					; and run it, if door allowed to open
 		BCC		loc_1635B					; CARRY=1 returned
 		LDX		_cur_trd_slot				; if so, load current door coordinates
 		LDY		_active_door_data_pos		; as current thread object sprite coordinates
@@ -3600,6 +3370,11 @@ loc_1636B:
 		LDA		(_room_doors_data_ptr),Y
 		SEC
 		RTS
+
+_doors_open_handlers:
+		.WORD	_room_door_always_closed
+		.WORD	_room_door_always_open
+		.WORD	_room_door_test_open
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_players_near_active_door:
@@ -3677,7 +3452,7 @@ _room_door_always_closed:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_room_door_gen_clear_open:
+_room_door_test_open:
 		STX		_tmp1						; this is the main routine to test
 		LDX		#$06						; if all enemy objects in the room are
 loc_16400:									; gone

@@ -1,7 +1,7 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		0
+DEBUG			EQU		1
 OPTIMIZATION	EQU		1
 BUGFIXES		EQU		0
 TWO_PLAYER_MODE	EQU		0
@@ -295,6 +295,14 @@ _NON	EQU	-1
 {1}			SET	.
 	ENDM
 
+ROOM_H	EQU	$00
+ROOM_V	EQU	$01
+ROOM_0	EQU	$02
+
+DOOR_CLOSED	EQU	$00
+DOOR_OPEN	EQU	$01
+DOOR_TEST	EQU	$02
+
 ;---------------S-C-R-I-P-T-S-------------------
 
 	MAC	SSTOP
@@ -328,10 +336,6 @@ _NON	EQU	-1
 		.BYTE	_scmd06_delay_idx
 		.BYTE	{1}
 	ENDM
-
-ROOM_H	EQU	$00
-ROOM_V	EQU	$01
-ROOM_0	EQU	$02
 
 	MAC	NJSR
 		.BYTE	_scmd07_njsr_idx
@@ -525,7 +529,7 @@ _ADC	EQU	$02
 ;	ENDM
 
 	MAC	SCRL_Y_MOVE_SET
-		.BYTE	[[_dcmd0C_scrl_move_y_set_idx<<3]+$20]|[{1}&7]
+		.BYTE	[[_dcmd0C_scrl_y_move_set_idx<<3]+$20]|[{1}&7]
 		.BYTE	{2},{3}
 	ENDM
 
@@ -553,12 +557,12 @@ _ADC	EQU	$02
 	ENDM
 
 ;	MAC	BYTE_D5_ADD
-;		.BYTE	[[_dcmd12_byte_D5_add_idx<<3]+$20]|[{1}&7]
+;		.BYTE	[[_dcmd12_scrl_x_page_add_idx<<3]+$20]|[{1}&7]
 ;		.BYTE	{2}
 ;	ENDM
 
 ;	MAC	BYTE_D6_ADD
-;		.BYTE	[[_dcmd13_byte_D6_add_idx<<3]+$20]|[{1}&7]
+;		.BYTE	[[_dcmd13_scrl_y_page_add_idx<<3]+$20]|[{1}&7]
 ;		.BYTE	{2}
 ;	ENDM
 
