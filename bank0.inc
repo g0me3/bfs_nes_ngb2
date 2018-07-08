@@ -5129,42 +5129,42 @@ loc_AFAF:
 		RTS
 
 _tlm0_title_screen:
-		INCBIN	"..\tlm\tlm0.pak"
+		INCBIN	"../tlm/tlm0.pak"
 _tlm1_score:
-		INCBIN	"..\tlm\tlm1.pak"
+		INCBIN	"../tlm/tlm1.pak"
 _tlm2_busterselect:
-		INCBIN	"..\tlm\tlm2.pak"
+		INCBIN	"../tlm/tlm2.pak"
 _tlm3_game_over:
-		INCBIN	"..\tlm\tlm3.pak"
+		INCBIN	"../tlm/tlm3.pak"
 ;_tlm4_score_unused:
-;		INCBIN	"..\tlm\tlm4.pak"
+;		INCBIN	"../tlm/tlm4.pak"
 ;_tlm5_kanji_unused:
-;		INCBIN	"..\tlm\tlm5.pak"
+;		INCBIN	"../tlm/tlm5.pak"
 _tlm6_copyrights:
 ; REGION, first typo fixed in the EU version, however, not the second one lol
-;		INCBIN	"..\tlm\tlm6_eu.pak"
+;		INCBIN	"../tlm/tlm6_eu.pak"
 ; REGION, same typos as in the JP version, HAL lab changed to HAL america
-;		INCBIN	"..\tlm\tlm6_us.pak"
+;		INCBIN	"../tlm/tlm6_us.pak"
 ; REGION, JP
-;		INCBIN	"..\tlm\tlm6_jp.pak"
+;		INCBIN	"../tlm/tlm6_jp.pak"
 ; NEW, fixed "ghostbust" type, added cah4e3 bfs gmbh
-		INCBIN	"..\tlm\tlm6_bfs.pak"
+		INCBIN	"../tlm/tlm6_bfs.pak"
 ; -
 _tlm7_staff:
-		INCBIN	"..\tlm\tlm7.pak"
+		INCBIN	"../tlm/tlm7.pak"
 _tlm8_HAL:
 ; REGION, different type of HAL logo for US region
-;		INCBIN	"..\tlm\tlm8_hal_us.pak"
-		INCBIN	"..\tlm\tlm8_hal_jp_eu.pak"
+;		INCBIN	"../tlm/tlm8_hal_us.pak"
+		INCBIN	"../tlm/tlm8_hal_jp_eu.pak"
 ; -
 _tlm9_secret_menu:
-;		INCBIN	"..\tlm\tlm9.pak"
+;		INCBIN	"../tlm/tlm9.pak"
 ; NEW, changed the layout of secret menu
-		INCBIN	"..\tlm\tlm9_bfs.pak"
+		INCBIN	"../tlm/tlm9_bfs.pak"
 
 #if DEBUG==1
 _tlmA_blank:
-		INCBIN	"..\tlm\tlmA_bfs.pak"
+		INCBIN	"../tlm/tlmA_bfs.pak"
 #endif
 
 		SECTION_END	"TLM UNPACKER AND DATA"

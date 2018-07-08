@@ -1667,13 +1667,13 @@ _music_lib:
 		MUS		_musD	; -unused-, see NOTE
 
 _mus0:
-		INCLUDE	"..\mus\mus0_ntsc.inc"
+		INCLUDE	"../mus/mus0_ntsc.inc"
 _mus1:
-		INCLUDE	"..\mus\mus1_ntsc.inc"
+		INCLUDE	"../mus/mus1_ntsc.inc"
 _mus2:
-		INCLUDE	"..\mus\mus2_ntsc.inc"
+		INCLUDE	"../mus/mus2_ntsc.inc"
 _mus3:
-		INCLUDE	"..\mus\mus3_ntsc.inc"
+		INCLUDE	"../mus/mus3_ntsc.inc"
 
 ; NOTE: this data is an exact copy of full library of _sampleXX codes.
 ; it has no pointer table associated, but all offsets are fixed to
@@ -1681,26 +1681,26 @@ _mus3:
 ; the sources as well. definitely this is not just rtash from uninitialized
 ; RAM...
 ;
-;		INCLUDE	"..\mus\unused_jp.inc"
+;		INCLUDE	"../mus/unused_jp.inc"
 
 _mus4:
-		INCLUDE	"..\mus\mus4_ntsc.inc"
+		INCLUDE	"../mus/mus4_ntsc.inc"
 _mus5:
-		INCLUDE	"..\mus\mus5_ntsc.inc"
+		INCLUDE	"../mus/mus5_ntsc.inc"
 _mus6:
-		INCLUDE	"..\mus\mus6_ntsc.inc"
+		INCLUDE	"../mus/mus6_ntsc.inc"
 _mus7:
-		INCLUDE	"..\mus\mus7_ntsc.inc"
+		INCLUDE	"../mus/mus7_ntsc.inc"
 _mus8:
-		INCLUDE	"..\mus\mus8_ntsc.inc"
+		INCLUDE	"../mus/mus8_ntsc.inc"
 _mus9:
-		INCLUDE	"..\mus\mus9_ntsc.inc"
+		INCLUDE	"../mus/mus9_ntsc.inc"
 _musA:
-		INCLUDE	"..\mus\musA_ntsc.inc"
+		INCLUDE	"../mus/musA_ntsc.inc"
 _musB:
-		INCLUDE	"..\mus\musB_ntsc.inc"
+		INCLUDE	"../mus/musB_ntsc.inc"
 _musC:
-		INCLUDE	"..\mus\musC_ntsc.inc"
+		INCLUDE	"../mus/musC_ntsc.inc"
 
 ; NOTE: unused data for missing music track from the EU version
 ; there are no either header nor music library entry, literally
@@ -1724,7 +1724,7 @@ _musC:
 ; short looped jingle of the Stage 3 ending but never actually used
 ;
 _musD:
-		INCLUDE	"..\mus\musD_ntsc.inc"
+		INCLUDE	"../mus/musD_ntsc.inc"
 
 		SECTION_END	"APU MUSIC DATA"
 
