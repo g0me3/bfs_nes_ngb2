@@ -208,14 +208,14 @@ loc_60123:
 		EOR		#$02
 		STA		_PPU_MASK
 #endif
-		LDA		#$00						; all mostly the same as simple loop above
-		STA		_cur_room_doors_cnt			; but with extra special inits
+;		LDA		#$00						; REDUNDANT, initialized inside
+;		STA		_cur_room_doors_cnt			
 #if DEBUG==1
 ;		STA		_spr_buf_shuffle
 ;		STA		_spr_buf_pos
 #endif
-		JSR		_spr_shuffle_update
-		JSR		_threads_manager			; all work run here
+		JSR		_spr_shuffle_update			; all mostly the same as simple loop above
+		JSR		_threads_manager			; but with extra special inits
 		JSR		_spr_finish					; finalize sprites when done
 		JSR		_obj_exit_arrow_position_adjust	; also extra object arrow test here
 		JSR		_obj_garbage_collector		; special garbage collector
@@ -2517,9 +2517,9 @@ loc_61809:
 ; to test if we in collide with the door area.
 ;
 _room_doors_ctest:
-		STY		_tmp2						; here is the current nearest door
-		LDY		_cur_room_doors_cnt			; object idx stored (literally, this is offs
-		BEQ		loc_61860					; to its data)
+		STY		_tmp2						; store Y pos of tested object for now
+		LDY		_cur_room_doors_cnt			; check if any room data in buffers
+		BEQ		loc_61860					; if any, go test the positions
 loc_61812:
 		TXA
 		SEC
@@ -6195,6 +6195,9 @@ _debug_spr_bank_list:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_spr_insert:
+; TODO: same as _screen_pos_calc_ex but with store calculated values to RAM
+; and with direct arguments fro obj_pos arrays instead of X/Y regs
+;
 		LDA		_obj_x_pos_lo,X				; calculate screen position for
 		SEC									; current object on the fly
 		SBC		_ppu_scroll_pos_x
@@ -6213,6 +6216,7 @@ loc_63032:
 		LDA		_obj_y_pos_hi,X
 		SBC		_ppu_scroll_pos_y+1
 		BNE		locret_6309C
+
 		LDY		_trds_obj_idx,X
 		LDA		_spr_libs_list,Y
 		TAY
@@ -6440,6 +6444,18 @@ loc_631BB:
 		LDA		_var1
 		ADC		_obj_y_pos_hi,X
 		STA		_obj_y_pos_hi,X				; that's all here
+; TODO: update also screen position here and keep it in array for other
+; scripts usage instead of multiple recalculate it every time for every
+; object.
+; WARNING: test this in case objects are disabled out of screen and
+; this code does not execute at all. probably if reduce the position
+; recalculations here, we may get rid of disabling out of the screen
+; objects at all...
+; IDEA: after all threads are executed, while sprites are drawn, they
+; recalculate the final screen position of object one more time.
+; if update the screen pos values there one more time this may solve
+; all possible problems.
+;
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================

@@ -162,7 +162,7 @@ SMPL_FORCE	EQU	$80
 ; {3} - opcode name
 ;
 	MAC	ASSERT_SHORT_OFS
-#if DEBUG=1
+#if DEBUG==2
 TMP_CMD_PC	SET	.
 TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	#if TMP_OFS<-128
@@ -175,7 +175,7 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	ENDM
 
 	MAC	ALERT_SHORT_OFS
-#if DEBUG=1
+#if DEBUG==2
 TMP_CMD_PC	SET	.
 TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	#if TMP_OFS>=-128&&TMP_OFS<=127
@@ -319,11 +319,17 @@ DOOR_TEST	EQU	$02
 	ENDM
 
 	MAC	SJMP
+#if OPTIMIZATION=1
+	ALERT_SHORT_OFS		{1},3,"SJMP"
+#endif
 		.BYTE	_scmd03_sjmp_idx
 		.WORD	{1}
 	ENDM
 
 	MAC	SJSR
+#if OPTIMIZATION=1
+	ALERT_SHORT_OFS		{1},3,"SJSR"
+#endif
 		.BYTE	_scmd04_sjsr_idx
 		.WORD	{1}
 	ENDM
@@ -345,15 +351,15 @@ DOOR_TEST	EQU	$02
 	; maybe this will be little bit confusing, but at least
 	; take less text lines...
 	;
-	MAC	NJSRB
-		.BYTE	_scmd07_njsr_idx
-		.WORD	{1}
-		.BYTE	{2}
-	ENDM
+;	MAC	NJSRB
+;		.BYTE	_scmd07_njsr_idx
+;		.WORD	{1}
+;		.BYTE	{2}
+;	ENDM
 
-	MAC	NARGI
-		.BYTE	{1}_idx
-	ENDM
+;	MAC	NARGI
+;		.BYTE	{1}_idx
+;	ENDM
 
 	MAC	NARGB
 		.BYTE	{0}
@@ -379,11 +385,17 @@ DOOR_TEST	EQU	$02
 	ENDM
 
 	MAC	SBCS
+#if OPTIMIZATION=1
+	ALERT_SHORT_OFS		{1},3,"SBCS"
+#endif
 		.BYTE	_scmd0B_bcs_idx
 		.WORD	{1}
 	ENDM
 
 	MAC	SBCC
+#if OPTIMIZATION=1
+	ALERT_SHORT_OFS		{1},3,"SBCC"
+#endif
 		.BYTE	_scmd0C_bcc_idx
 		.WORD	{1}
 	ENDM
@@ -455,6 +467,9 @@ _ADC	EQU	$02
 	ENDM
 
 	MAC	SBCS_BREAK
+#if OPTIMIZATION=1
+	ALERT_SHORT_OFS		{1},3,"SBCS_BREAK"
+#endif
 		.BYTE	_scmd17_sbcs_break_idx
 		.WORD	{1}
 	ENDM
@@ -464,9 +479,9 @@ _ADC	EQU	$02
 ;		.WORD	{1}
 ;	ENDM
 
-	MAC	NJSR_SW
-		.BYTE	_scmd19_njsr_sw_idx
-	ENDM
+;	MAC	NJSR_SW
+;		.BYTE	_scmd19_njsr_sw_idx
+;	ENDM
 
 	MAC	SPR_IDX_SET
 		.BYTE	[[_dcmd00_spr_idx_set_idx<<3]+$20]|[{1}&7]
