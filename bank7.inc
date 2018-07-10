@@ -209,7 +209,7 @@ loc_60123:
 		STA		_PPU_MASK
 #endif
 ;		LDA		#$00						; REDUNDANT, initialized inside
-;		STA		_cur_room_doors_cnt			
+;		STA		_cur_room_doors_cnt
 #if DEBUG==1
 ;		STA		_spr_buf_shuffle
 ;		STA		_spr_buf_pos
@@ -375,7 +375,7 @@ _sloc_601FA:
 			NARGB		SARG1
 		SDELAY			$07
 		SPR_IDX_SET		7,$FF
-		SJMP			_sloc_601FA
+		SJMPS			_sloc_601FA
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_exit_arrow_off_test:
@@ -401,7 +401,7 @@ _scr_beamer_reinit:
 		NJSR			_nsub_mcmp						; special test for additional handler.
 			NARGW		_trds_obj_idx					; after setting the control routines
 			NARGB		$04								; this thread is suspended
-		SBCC			_sloc_6029B						; but object still active and controlled
+		SBCCS			_sloc_6029B						; but object still active and controlled
 		NBG_HNDL_SET	_nbgsub_beamer_controlB			; purely by native subroutine
 		SUSPEND
 _sloc_6029B:
@@ -412,13 +412,13 @@ _sloc_6029B:
 ; =============== S C R I P T ==========================s====================
 _scr_beamer_hit_anim:
 		SJSR			_ssub_common_hit_anim
-		SBCC			_scr_beamer_reinit
+		SBCCS			_scr_beamer_reinit
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
 _scr_catcher_hit_anim:
 		SJSR			_ssub_common_hit_anim
-		SBCC			_scr_catcher_reinit
+		SBCCS			_scr_catcher_reinit
 		SSTOP
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -466,7 +466,7 @@ _scr_beamer_hit_anim:
 		SPR_IDX_SET		0,$FF
 		SDELAY			$3C
 		NJSR			_nsub_beamer_decrement_players_lives	; if lives is over, stop thread
-		SBCC			_scr_beamer_reinit				; or restore object
+		SBCCS			_scr_beamer_reinit				; or restore object
 		SSTOP
 #endif
 
@@ -494,7 +494,7 @@ _scr_lvl6_beamer_auto_scriptA:
 		SDELAY			$02
 		SLOOP_END
 		POS_MOVE_STOP	0								; stop when done, then return control
-		SJMP			_scr08_beamer_handler			; to the main beamer script
+		SJMPS			_scr08_beamer_handler			; to the main beamer script
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl6_beamer_auto_scriptB:
@@ -1625,7 +1625,7 @@ _scr_lvl6_catcher_auto_scriptA:
 		SDELAY			$02
 		SLOOP_END
 		POS_MOVE_STOP	0
-		SJMP			_scr0A_catcher_handler
+		SJMPS			_scr0A_catcher_handler
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl6_catcher_auto_scriptB:
@@ -1878,7 +1878,7 @@ _catcher_target_follow:
 		BCC		.catcher_search_path		; range
 		LDA		_catcher_target_slot_idx	; if in range, reset movements counter
 		CMP		#$02						; and direction variables,
-; TODO: remove it to change beamer direction even in the close range
+; TODO: remove it to update beamer direction even in the close range
 		BEQ		loc_61112
 ; -
 		JSR		_obj_to_obj_vector_calc		; also if we targeted to beamed object
@@ -2271,8 +2271,8 @@ _sloc_61357:
 		NJSR			_nsub_catch_deploy_anim			; animate catch deploy
 		SDELAY			$01
 		NJSR			_nsub_catch_deploy_stop_test	; wait for 8 frames
-		SBCC			_sloc_61357
-		SJMP			_scr_catch_remove				; remove catch
+		SBCCS			_sloc_61357
+		SJMPS			_scr_catch_remove				; remove catch
 
 ; =============== S C R I P T ==========================s====================
 _scr_catch_active:
@@ -2286,7 +2286,7 @@ _sloc_6136D:
 		NJSR			_nsub_catch_remove_anim
 		SDELAY			$01
 		NJSR			_nsub_catch_remove_stop_test
-		SBCC			_sloc_6136D
+		SBCCS			_sloc_6136D
 		SSTOP											; then stop
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2675,16 +2675,16 @@ _macro_collision_read:
 		LDA		_tmp0
 		AND		#$07
 		TAX
-		LDA		_prg_cur_bank
-		PHA
-		LDA		_lvl_data_prg_bank			; TODO: for some reason, this routine also
-		STA		_prg_cur_bank				; set the bank, already set in routine above.
-		JSR		_mmc1_prg_safe				; redundant setting may be removed
+;		LDA		_prg_cur_bank				; REDUNDANT: for some reason, this routine also
+;		PHA									; set the bank, already set in routine above.
+;		LDA		_lvl_data_prg_bank			; redundant setting may be removed
+;		STA		_prg_cur_bank
+;		JSR		_mmc1_prg_safe
 		LDA		(_lvl_collisions_ptr),Y
 		STA		_tmp0
-		PLA
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
+;		PLA
+;		STA		_prg_cur_bank
+;		JSR		_mmc1_prg_safe
 		LDA		_tmp0
 		AND		_bit_mask,X
 		BNE		loc_61913
@@ -5856,20 +5856,20 @@ _ssub_common_catch_anim_R_ex:
 		SPR_IDX_SET		1,$03
 		SLOOP_END
 		SPR_IDX_SET		2,$02
-		SJMP			_ssub_common_catch_finish
+		SJMPS			_ssub_common_catch_finish
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 
 _ssub_common_catch_anim_L_snd19:
 		NJSR			_nsub_apu_snd_load
 			NARGB		_snd19_idx
-		SJMP			_ssub_common_catch_anim_L_ex
+		SJMPS			_ssub_common_catch_anim_L_ex
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_common_catch_anim_R_snd19:
 		NJSR			_nsub_apu_snd_load
 			NARGB		_snd19_idx
-		SJMP			_ssub_common_catch_anim_R_ex
+		SJMPS			_ssub_common_catch_anim_R_ex
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_boss_music_fade_and_load:
@@ -6290,8 +6290,19 @@ _spr_mode_select_ex:
 		TYA
 		PHA
 ;		LDX		_cur_trd_slot				; REDUNDANT, some early code leftover
-		LDA		_tmp2						; WARNING, sprite insert routine adjusting
-		PHA									; Y pos by 1 in _tmp2 directly, need save it!
+; NOTE! there is an original game "bug" for typeB sprites
+; the draw routine decrement the Y position every time it is
+; called, in the original code, every single chunk of typeB
+; sprites shifts up with every single sprite chunk. since this
+; affects only typeB multiple chunk sprites, and only place
+; they use it is vega boss sprites, they fixed not code here,
+; they fixed Y positions of all secondary sprite chunks for
+; this boss.
+; most probably, other object not using the multiple chunks mode
+; because of the same case, but just merged all of them in single
+; chunk to avoid repositioning...
+		LDA		_tmp2
+		PHA
 		JSR		_spr_clip_insert
 		PLA
 		STA		_tmp2
@@ -6549,11 +6560,16 @@ _scmd_lib_lo:
 		CMD_IDX_LO	_scmd05_ret
 		CMD_IDX_LO	_scmd06_delay
 		CMD_IDX_LO	_scmd07_njsr
-		CMD_IDX_LO	_scmd08_script1_start
+		CMD_IDX_LO	_scmd08_script1_set
 		CMD_IDX_LO	_scmd09_nbg_hndl_set
 		CMD_IDX_LO	_scmd0A_suspend
+#if OPTIMIZATION==1
+		CMD_IDX_LO	_scmd1C_bcss
+		CMD_IDX_LO	_scmd1D_bccs
+#else
 		CMD_IDX_LO	_scmd0B_bcs
 		CMD_IDX_LO	_scmd0C_bcc
+#endif
 		CMD_IDX_LO	_scmd0A_script0_off
 		CMD_IDX_LO	_scmd0E_smem_alu
 		CMD_IDX_LO	_scmd0F_sarg_set
@@ -6567,6 +6583,10 @@ _scmd_lib_lo:
 		CMD_IDX_LO	_scmd17_sbcs_break
 ;		CMD_IDX_LO	_scmd18_sbcc_break		; unused
 ;		CMD_IDX_LO	_scmd19_njsr_sw			; unused
+#if OPTIMIZATION==1
+		CMD_IDX_LO	_scmd1A_sjmps
+		CMD_IDX_LO	_scmd1B_sjsrs
+#endif
 _scmd_lib_hi:
 		CMD_IDX_HI	_scmd01_loop_begin
 		CMD_IDX_HI	_scmd02_loop_end
@@ -6575,11 +6595,16 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd05_ret
 		CMD_IDX_HI	_scmd06_delay
 		CMD_IDX_HI	_scmd07_njsr
-		CMD_IDX_HI	_scmd08_script1_start
+		CMD_IDX_HI	_scmd08_script1_set
 		CMD_IDX_HI	_scmd09_nbg_hndl_set
 		CMD_IDX_HI	_scmd0A_suspend
+#if OPTIMIZATION==1
+		CMD_IDX_HI	_scmd1C_bcss
+		CMD_IDX_HI	_scmd1D_bccs
+#else
 		CMD_IDX_HI	_scmd0B_bcs
 		CMD_IDX_HI	_scmd0C_bcc
+#endif
 		CMD_IDX_HI	_scmd0A_script0_off
 		CMD_IDX_HI	_scmd0E_smem_alu
 		CMD_IDX_HI	_scmd0F_sarg_set
@@ -6593,6 +6618,10 @@ _scmd_lib_hi:
 		CMD_IDX_HI	_scmd17_sbcs_break
 ;		CMD_IDX_HI	_scmd18_sbcc_break
 ;		CMD_IDX_HI	_scmd19_njsr_sw
+#if OPTIMIZATION==1
+		CMD_IDX_HI	_scmd1A_sjmps
+		CMD_IDX_HI	_scmd1B_sjsrs
+#endif
 ; NOTE: every opcode in this block has additional parameter of delay
 ; command is executed then script delayed for a number of frames from
 ; 1 to 7. if delay 0 selected, then there is no delay there.
@@ -6996,44 +7025,6 @@ _scmd07_njsr:
 		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
-_scmd0C_bcc:
-		LDA		_nsub_return_flags
-		PHA
-		JSR		_scr_getc
-		STA		_tmp0
-		JSR		_scr_getc
-		TAX
-		PLA
-		LSR
-		BCS		_j_cur_scr_pc_incB
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-_cur_scr_pc_set:
-		STX		_cur_scr_pc+1
-		LDA		_tmp0
-		STA		_cur_scr_pc
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_j_cur_scr_pc_incB:
-		JMP		_cur_scr_pc_inc
-
-; =============== S U B R O U T I N E ======n================================
-_scmd0B_bcs:
-		LDA		_nsub_return_flags
-		PHA
-		JSR		_scr_getc
-		STA		_tmp0
-		JSR		_scr_getc
-		TAX
-		PLA
-		LSR
-		BCC		_j_cur_scr_pc_incB
-		BCS		_cur_scr_pc_set
-
-; =============== S U B R O U T I N E ======n================================
 _scmd11_sloc_sw:
 		JSR		_scr_getc
 		JSR		_cur_scr_pc_inc
@@ -7133,19 +7124,24 @@ _scmd0A_script0_off:
 ; slots with first parameter. never used for re-load the main script, only
 ; for loading an additional secondary sub-script.
 ;
-; TODO: remove redundant param (always 01!) to optimize opcode!
-;
-_scmd08_script1_start:
+_scmd08_script1_set:
+#if OPTIMIZATION==0
 		JSR		_scr_getc
 		STA		_var0
+#endif
 		JSR		_scr_getc
 		STA		_var1
 		JSR		_scr_getc
 		STA		_var2
 		LDA		_cur_trd_slot
 		ASL
+#if OPTIMIZATION==1
+		TAX
+		INX
+#else
 		ADC		_var0
 		TAX
+#endif
 		LDA		#$00
 		STA		_trds_scr_sp,X
 		STA		_trds_scr_delay,X
@@ -7163,14 +7159,18 @@ _scmd08_script1_start:
 ; main script for thread, only for secondary one... in any cases that need
 ; to disable main script, SSCRIPT0_OFF command used!
 ;
-; TODO: may be reduced in size by removing redundant argument (always 01!)
-;
 _scmd14_script1_off:
+#if OPTIMIZATION==0
 		JSR		_scr_getc
 		STA		_tmp0
+#endif
 		LDA		_cur_trd_slot
 		ASL
+#if OPTIMIZATION==1
+		ADC		#$01
+#else
 		ADC		_tmp0
+#endif
 		ASL
 		TAX
 		LDA		#$00
@@ -7339,45 +7339,28 @@ _scmd16_store16:
 		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
+; unused
 ;_scmd18_sbcc_break:
 ;		LDA		_nsub_return_flags
-;		PHA
-;		JSR		_scr_getc
-;		STA		_tmp0
-;		JSR		_scr_getc
-;		TAX
-;		PLA
 ;		LSR
-;		BCS		_j_cur_scr_pc_incA
+;		BCC		_scr_break
+;		JMP		_scr_long_ofs_skip
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_break:
-		STX		_cur_scr_pc+1
-		LDA		_tmp0
-		STA		_cur_scr_pc
 		LDX		_cur_trd_scr_slot
 		LDA		_trds_scr_sp,X
 		SEC
 		SBC		#$03
 		STA		_trds_scr_sp,X
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_j_cur_scr_pc_incA:
-		JMP		_cur_scr_pc_inc
+		JMP		_scmd03_sjmp
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd17_sbcs_break:
 		LDA		_nsub_return_flags
-		PHA
-		JSR		_scr_getc
-		STA		_tmp0
-		JSR		_scr_getc
-		TAX
-		PLA
 		LSR
-		BCC		_j_cur_scr_pc_incA
 		BCS		_scr_break
+		JMP		_scr_long_ofs_skip
 
 ; =============== S U B R O U T I N E ======n================================
 _scr_getc:
@@ -7395,6 +7378,99 @@ _cur_scr_pc_inc:
 		INC		_cur_scr_pc+1
 locret_636E6:
 		RTS
+
+#if OPTIMIZATION==1
+; =============== S U B R O U T I N E =======================================
+_scr_get_short_ofs:
+		LDA		#$00
+		STA		_tmp0
+		JSR		_scr_getc
+		BPL		.positive
+		DEC		_tmp0
+.positive:
+		RTS
+
+; =============== S U B R O U T I N E =======================================
+_scmd1A_sjmps:
+		JSR		_scr_get_short_ofs
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E =======================================
+_cur_scr_pc_add:
+		CLC
+		ADC		_cur_scr_pc
+		STA		_cur_scr_pc
+		LDA		_cur_scr_pc+1
+		ADC		_tmp0
+		STA		_cur_scr_pc+1
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_scmd1B_sjsrs:
+		JSR		_scr_get_short_ofs
+		PHA
+		JSR		_cur_scr_pc_inc
+		LDX		_cur_trd_scr_slot
+		LDY		_trds_scr_sp,X
+		LDA		_cur_scr_pc+1
+		STA		(_cur_scr_sp),Y
+		INY
+		LDA		_cur_scr_pc
+		STA		(_cur_scr_sp),Y
+		INY
+		TYA
+		STA		_trds_scr_sp,X
+		PLA
+		JMP		_cur_scr_pc_add
+
+; =============== S U B R O U T I N E ======n================================
+_scmd1C_bcss:
+		LDA		_nsub_return_flags
+		LSR
+		BCS		_scmd1A_sjmps
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_scr_short_ofs_skip:
+		LDA		#$00
+		STA		_tmp0
+		LDA		#$02
+		BNE		_cur_scr_pc_add
+
+; =============== S U B R O U T I N E ======n================================
+_scmd1D_bccs:
+		LDA		_nsub_return_flags
+		LSR
+		BCS		_scr_short_ofs_skip
+		BCC		_scmd1A_sjmps
+#endif
+
+#if OPTIMIZATION==0
+; =============== S U B R O U T I N E ======n================================
+; NEW: both functions here while OPTIMIZATION option is enabled, never used!
+;
+_scmd0C_bcc:
+		LDA		_nsub_return_flags
+		LSR
+		BCS		_scr_long_ofs_skip
+		JMP		_scmd03_sjmp
+
+; =============== S U B R O U T I N E ======n================================
+_scmd0B_bcs:
+		LDA		_nsub_return_flags
+		LSR
+		BCC		_scr_long_ofs_skip
+		JMP		_scmd03_sjmp
+#endif
+
+; =============== S U B R O U T I N E ======n================================
+_scr_long_ofs_skip:
+		LDA		#$00
+		STA		_tmp0
+		LDA		#$03
+		JMP		_cur_scr_pc_add
 
 ;_inv_bitmask_unref:
 ;		.BYTE	$7F,$BF,$DF,$EF,$F7,$FB,$FD,$FE

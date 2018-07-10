@@ -39,7 +39,7 @@
 		NJSR			_nsub_mcmp						; default case for script startup
 			NARGW		_license_screen_display_flag	; check for special flag, set at reset
 			NARGB		$01								; preventing from show license screens
-		SBCC			_sloc_title_start				; after game over, if clear, jump to title
+		SBCCS			_sloc_title_start				; after game over, if clear, jump to title
 		STORE8			_license_screen_display_flag,$00; if set, clear it, then load first
 		NJSR			_nsub_full_pal_fade_set			; do full palette fade
 			NARGB		$FC								; $FC = fade out at max peed (sub 40)
@@ -88,7 +88,7 @@ _sloc_title_start:
 			NARGB		$01
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack title screen frame window
 			NARGB		_tlm0_title_screen_idx
-		SJSR			_ssub_title_logo_init			; NEW, merged to common code routine
+		SJSRS			_ssub_title_logo_init			; NEW, merged to common code routine
 ; NOTE: there is another NARGI macro to automaticly add "_idx" to mnemonics, but
 ; here for different switch cases we need to add +1 sometimes, so this may now
 ; work here or need assign another one macro.. too much macroses bad too, so let's
@@ -132,7 +132,7 @@ _sloc_title_loop:
 			NARGB		$00,$00							; this object has limited lifetime and stopped
 			NARGB		_intro_sub0B_title_ghost_idx+1	; automatically after about 10 seconds
 			NARGB		$00
-		SJSR			_ssub_title_maskDB_fade_in		; fade in palette for the center of the screen
+		SJSRS			_ssub_title_maskDB_fade_in		; fade in palette for the center of the screen
 		SSCRIPT1_SET	_scr_title_push_start_anim		; run secondary script to animate palette for "push start button"
 		SDELAY			$F0								; just wait about 9 seconds
 		SDELAY			$F0
@@ -140,11 +140,11 @@ _sloc_title_loop:
 		SSCRIPT1_OFF									; then kill the "push start button" animation
 		NJSR			_nsub_full_pal_fade_set			; restore full palette
 			NARGB		$00
-		SJSR			_ssub_title_maskDB_fade_out		; and then fade it out
-		SJSR			_ssub_title_logo_init			; NEW, merged to common code routine
+		SJSRS			_ssub_title_maskDB_fade_out		; and then fade it out
+		SJSRS			_ssub_title_logo_init			; NEW, merged to common code routine
 		SPR_IDX_SET		1,$00							; restore "new" sprite
-		SJSR			_ssub_title_maskDB_fade_in		; fade in and do loop
-		SJMP			_sloc_title_loop
+		SJSRS			_ssub_title_maskDB_fade_in		; fade in and do loop
+		SJMPS			_sloc_title_loop
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_title_logo_init:
@@ -191,7 +191,7 @@ _scr_title_push_start_anim:
 			NARGB		$40
 		SDELAY			$04
 		SLOOP_END
-		SJMP			_scr_title_push_start_anim
+		SJMPS			_scr_title_push_start_anim
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_title_maskDB_fade_out:
@@ -322,7 +322,7 @@ _sub01_intro_slime:
 _scr_intro_slime_anim:
 		SPR_IDX_SET		6,$02							; secondary slime script for sprite
 		SPR_IDX_INC		6								; animation. when main script
-		SJMP			_scr_intro_slime_anim			; stops, this will disable as well
+		SJMPS			_scr_intro_slime_anim			; stops, this will disable as well
 
 ; =============== S C R I P T ==========================s====================
 _sub02_intro_busterA:
@@ -358,20 +358,20 @@ _sloc_intro_busters_no_delay:
 _sub03_intro_busterB:
 		SPR_IDX_SET		0,$10
 		POS_X_DELTA_SET 0,$40,$FF
-		SJMP			_sloc_intro_busters_delay
+		SJMPS			_sloc_intro_busters_delay
 
 ; =============== S C R I P T ==========================s====================
 _sub04_intro_busterC:
 		SPR_IDX_SET		0,$1C
 		POS_X_DELTA_SET 0,$C0,$00
-		SJMP			_sloc_intro_busters_delay
+		SJMPS			_sloc_intro_busters_delay
 
 ; =============== S C R I P T ==========================s====================
 _sub05_intro_busterD:
 		SPR_IDX_SET		0,$28
 		POS_Y_DELTA_SET 0,$00,$02
 		SDELAY			$0A
-		SJMP			_sloc_intro_busters_no_delay
+		SJMPS			_sloc_intro_busters_no_delay
 
 ; =============== S C R I P T ==========================s====================
 _intro_sub0B_title_ghost:
@@ -408,7 +408,7 @@ _sloc_8A65:
 		SARG_ALU		SARG0,_ADC,$01					; then blit it and increment idx
 		SDELAY			$01								; sync to fluch buffers, loop 6 times
 		SLOOP_END
-		SJMP			_sloc_8A65						; repeat infinitely
+		SJMPS			_sloc_8A65						; repeat infinitely
 
 _pal_new_blink:
 		.BYTE	$35,$25,$15,$05,$15,$25
@@ -428,7 +428,7 @@ _pal_new_blink:
 ;		SARG_ALU		SARG1,_ADC,$01
 ;		SDELAY			$01
 ;		SLOOP_END
-;		SJMP			_intro_sub0C_title_new_unref
+;		SJMPS			_intro_sub0C_title_new_unref
 ;
 ;_pal_new_blink_unused:
 ;		.BYTE	$0F,$10,$20,$30,$20,$10,$01
@@ -497,21 +497,21 @@ _sloc_8B3D:
 		SDELAY			$01
 		NJSR			_nsub_mtest_bit0				; animated objects are working now,
 			NARGW		_cur_room_x_pageA				; will wait for it's over and flag raized
-		SBCC			_sloc_8B3D						; if set, we'll start input handling
+		SBCCS			_sloc_8B3D						; if set, we'll start input handling
 		NJSR			_nsub_select_buster_input		; loop until selection is complete
-		SBCC			_sloc_8B3D
+		SBCCS			_sloc_8B3D
 _sloc_8B4D:
 		SDELAY			$01								; now the same for second player
 		NJSR			_nsub_mtest_bit0				; wait for animations in over again
 			NARGW		_cur_room_x_pageA				; and run input handler
-		SBCC			_sloc_8B4D
+		SBCCS			_sloc_8B4D
 		NJSR			_nsub_select_buster_input
-		SBCC			_sloc_8B4D
+		SBCCS			_sloc_8B4D
 _sloc_8B5D:
 		SDELAY			$01								; when both players selected, wait
 		NJSR			_nsub_mtest_bit0				; for animation is over again, this
 			NARGW		_cur_room_x_pageB				; and pole slide animation is started
-		SBCC			_sloc_8B5D						;(_cur_room_x_pageB = 1 is set then)
+		SBCCS			_sloc_8B5D						;(_cur_room_x_pageB = 1 is set then)
 		SDELAY			$5A								; main script just has to wait
 		SLOOP_BEGIN		$04								; and then fade out the screen
 		NJSR			_nsub_pal_fade_req_dec_by_mask	; asyncronously.
@@ -634,7 +634,7 @@ _sub06_select_peter:
 		SARG_SET		SARG0,$00
 		SARG_SET		SARG1,$08						; set default left-oriented sprite for this object
 		SPR_IDX_SET		0,$09							; set current anim walk start sprite
-		SJSR			_ssub_select_busters
+		SJSRS			_ssub_select_busters
 		SUSPEND
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -669,15 +669,15 @@ _ssub_select_busters:
 _sloc_8D0C:
 		SDELAY			$01								; common portion for any object
 		NJSR			_nsub_is_beamer_selected
-		SBCC			_sloc_8D0C						; wait if select is done
+		SBCCS			_sloc_8D0C						; wait if select is done
 		NJSR			_nsub_is_cur_buster_select_for_beam_player
-		SBCS			_sloc_beamer_selected			; then test if this object selected
+		SBCSS			_sloc_beamer_selected			; then test if this object selected
 _sloc_8D1A:
 		SDELAY			$01								; for both players one by one
 		NJSR			_nsub_is_catcher_selected
-		SBCC			_sloc_8D1A
+		SBCCS			_sloc_8D1A
 		NJSR			_nsub_is_cur_buster_select_for_catch_player
-		SBCS			_sloc_catcher_selected
+		SBCSS			_sloc_catcher_selected
 		SUSPEND
 _sloc_beamer_selected:									; here is common beginning for step out
 		SJSR			_ssub_buster_selected_step_out	; of selected regular busters
@@ -694,7 +694,7 @@ _sloc_8D35:
 		SDELAY			$01
 		NJSR			_nsub_cur_pos_x_lo_icmp			; move left to x=50
 			NARGB		$50
-		SBCC			_sloc_8D35
+		SBCCS			_sloc_8D35
 		SSCRIPT1_OFF									; stop animation
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		SARG1							; get sprite index for stand anim loaded
@@ -704,7 +704,7 @@ _sloc_8D49:
 		SDELAY			$01								; first selected player must wait until
 		NJSR			_nsub_mtest_bit0				; second player is step aside
 			NARGW		_cur_room_x_pageB				; when this occurs, the flag riased
-		SBCC			_sloc_8D49
+		SBCCS			_sloc_8D49
 		POS_X_DELTA_SET 0,$00,$FE						; finally start the pole jump up animation
 		POS_Y_DELTA_SET 0,$00,$FE						; move up left
 		SDELAY			$0C
@@ -738,11 +738,11 @@ _sloc_8D7B:
 		SDELAY			$08
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$FD
-		SJMP			_sloc_8D7B
+		SJMPS			_sloc_8D7B
 
 ; =============== S C R I P T ==========================s====================
 _sloc_catcher_selected:
-		SJSR			_ssub_buster_selected_step_out
+		SJSRS			_ssub_buster_selected_step_out
 		SPR_IDX_ADD_IMM 0,$03
 
 ; !FALLTHROUGH!
@@ -755,14 +755,14 @@ _sloc_8D94:
 		SDELAY			$01
 		NJSR			_nsub_cur_pos_x_lo_icmp			; he must stop earlier, at x=68
 			NARGB		$68								; REDUNDANT: same loop as for beamer
-		SBCC			_sloc_8D94
+		SBCCS			_sloc_8D94
 _sloc_8DA0:
 		STORE8			_cur_room_x_pageB,$01			; ok, second player is ready, start to slide down
 _sloc_8DA4:
 		SDELAY			$01
 		NJSR			_nsub_cur_pos_x_lo_icmp			; while first player is jumping up, he need
 			NARGB		$50								; to reach the same position x=50 first
-		SBCC			_sloc_8DA4
+		SBCCS			_sloc_8DA4
 		SSCRIPT1_OFF									; now walk is over, start to jump up
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		SARG1
@@ -772,7 +772,7 @@ _sloc_8DA4:
 		POS_Y_DELTA_SET 0,$00,$FE
 		SDELAY			$0C
 		POS_MOVE_STOP	0								; stop on the pole, then jump on common code
-		SJMP			_nsub_buster_slide_down
+		SJMPS			_nsub_buster_slide_down
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_buster_selected_step_out:
@@ -794,7 +794,7 @@ _scr_buster_walk_left_anim:
 		SPR_IDX_DEC		4
 		SPR_IDX_ADD_IMM 4,$02
 		SPR_IDX_ADD_IMM 0,$FE
-		SJMP			_scr_buster_walk_left_anim
+		SJMPS			_scr_buster_walk_left_anim
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_is_beamer_selected:
@@ -873,21 +873,21 @@ _sub0A_select_louis:
 _sloc_8E32:
 		SDELAY			$01								; wait for beam player selected in main thread
 		NJSR			_nsub_is_beamer_selected
-		SBCC			_sloc_8E32						; then there are two options
+		SBCCS			_sloc_8E32						; then there are two options
 		NJSR			_nsub_is_cur_buster_select_for_beam_player
-		SBCS			_sloc_8E4F
+		SBCSS			_sloc_8E4F
 _sloc_8E40:
 		SDELAY			$01								; here goes if buster not selected as beam player
 		NJSR			_nsub_is_catcher_selected
-		SBCC			_sloc_8E40						; then we just wait for chatch player selection
+		SBCCS			_sloc_8E40						; then we just wait for chatch player selection
 		NJSR			_nsub_is_cur_buster_select_for_catch_player
-		SBCS			_sloc_8E55						; again two options
+		SBCSS			_sloc_8E55						; again two options
 		SUSPEND											; suspend, if buster not selected for anything
 _sloc_8E4F:												; here goes if buster were selected for beam player
-		SJSR			_ssub_louis_selected_base_anim
+		SJSRS			_ssub_louis_selected_base_anim
 		SJMP			_scr_beamer_walk_common
 _sloc_8E55:												; here goest if buster were selected for catch player
-		SJSR			_ssub_louis_selected_base_anim
+		SJSRS			_ssub_louis_selected_base_anim
 		SJMP			_scr_catcher_walk_common
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -928,7 +928,7 @@ _scr_secret_menu:
 _sloc_8F5C:
 		SDELAY			$01								; go main menu loop
 		NJSR			_nsub_debug_input
-		SJMP			_sloc_8F5C
+		SJMPS			_sloc_8F5C
 
 _pal_bg_secret_menu:
 		.BYTE	$10,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
@@ -1147,7 +1147,7 @@ _sloc_8F5C:
 		NJSR			_nsub_secret_menu_UD_input		; input separated in three subs
 		NJSR			_nsub_secret_menu_LR_input		; for hor/vert/AB buttons
 		NJSR			_nsub_secret_menu_AB_input
-		SJMP			_sloc_8F5C
+		SJMPS			_sloc_8F5C
 
 _pal_bg_secret_menu:
 		.BYTE	$0F,$11,$11,$11,$0F,$30,$30,$30,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
@@ -1510,7 +1510,7 @@ _sloc_92E5:
 		SCASE			_ssub_scenario_player_sub1_delay
 		SCASE			_ssub_scenario_player_sub2_text_draw
 		SCASE			_ssub_scenario_player_sub3_scores_draw
-		SJMP			_sloc_92E5
+		SJMPS			_sloc_92E5
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; default option for all non-zero
@@ -1544,7 +1544,7 @@ _ssub_scenario_player_sub2_text_draw:
 _sloc_931B:
 		SDELAY			$01								; draw line by line the text until
 		NJSR			_nsub_scenario_txt_lib_line_draw; end of strings
-		SBCC			_sloc_931B
+		SBCCS			_sloc_931B
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_inc_by_mask	; fade in again to show it
 			NARGB		$D0
@@ -2102,7 +2102,7 @@ _scr_ending_sub06:
 ; =============== S C R I P T ==========================s====================
 _scr_ending_sub07:
 		SDELAY			$50
-		SJSR			_ssub_9B0B
+		SJSRS			_ssub_9B0B
 		POS_MOVE_STOP	0
 		SPR_IDX_SET		0,$FF
 		SDELAY			$58
@@ -2124,7 +2124,7 @@ _scr_ending_sub07:
 		SDELAY			$18
 		POS_X_SET		0,$00,$00
 		POS_Y_MOVE		0,$14
-		SJSR			_ssub_9B0B
+		SJSRS			_ssub_9B0B
 		SSTOP
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -2194,15 +2194,15 @@ _scr_ending_sub08:
 		SDELAY			$10
 		POS_Y_DELTA_SET 0,$C0,$00
 		SLOOP_BEGIN		$03
-		SJSR			_ssub_9C15
+		SJSRS			_ssub_9C15
 		SLOOP_END
 		POS_MOVE_STOP	0
 		SLOOP_BEGIN		$05
-		SJSR			_ssub_9C15
+		SJSRS			_ssub_9C15
 		SLOOP_END
 		POS_X_DELTA_SET 0,$C0,$00
 		SLOOP_BEGIN		$05
-		SJSR			_ssub_9C15
+		SJSRS			_ssub_9C15
 		SLOOP_END
 		SSTOP
 
@@ -2705,7 +2705,7 @@ _sloc_A784:
 		NJSR			_nsub_end_spr_pal_anim
 		SDELAY			$01
 		SLOOP_END
-		SJMP			_sloc_A784
+		SJMPS			_sloc_A784
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_end_spr_pal_anim:
@@ -4378,6 +4378,7 @@ _sprA07_BC:
 		.BYTE	$F0,$9C,$03,$E8
 		.BYTE	$F0,$AC,$03,$F8
 		.BYTE	$F0,$BC,$03,$00
+
 _sprB07_C0:
 		.BYTE	$83
 		.WORD	_sprB07_C0_A
@@ -4597,15 +4598,15 @@ _sprB07_CE_D:
 		.BYTE	$D7,$EC,$23,$F0
 		.BYTE	$D7,$EC,$63,$F8
 _sprB07_CF_D:
-		.BYTE	$06
-		.BYTE	$BB,$C8,$23,$F4
+		.BYTE	$05
+;		.BYTE	$BB,$C8,$23,$F4		; REDUNDANT, garbage, not aligned and being clipped
 		.BYTE	$D8,$C8,$23,$F3
 		.BYTE	$E3,$48,$23,$FC
 		.BYTE	$E4,$EC,$23,$EF
 		.BYTE	$E4,$EC,$63,$F7
 		.BYTE	$EF,$48,$23,$EB
 _sprB07_D0_A:
-		.BYTE	$11
+		.BYTE	$10
 		.BYTE	$03,$C8,$23,$F3
 		.BYTE	$13,$C8,$23,$F3
 		.BYTE	$23,$C8,$23,$F3
@@ -4613,7 +4614,7 @@ _sprB07_D0_A:
 		.BYTE	$43,$C8,$23,$F3
 		.BYTE	$53,$C8,$23,$F3
 		.BYTE	$63,$C8,$23,$F3
-		.BYTE	$C0,$C8,$23,$F4
+;		.BYTE	$C0,$C8,$23,$F4		; REDUNDANT, garbage, not aligned and being clipped
 		.BYTE	$CD,$C8,$23,$F3
 		.BYTE	$DD,$C8,$23,$F3
 		.BYTE	$E9,$EC,$23,$EF

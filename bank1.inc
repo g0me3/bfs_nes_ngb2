@@ -60,7 +60,7 @@ _ssub_common_room_loop:
 _sloc_14048:
 		SDELAY			$01								; the handler here did all its work, now he just
 		NJSR			_nsub_players_room_exit_test_from_ptr	; constantly test the players positions to check
-		SBCC			_sloc_14048						; if they got to the exit, the return door's idx
+		SBCCS			_sloc_14048						; if they got to the exit, the return door's idx
 ; NOTE: doors and exit points are separate entities. doors only blocks the exits which usually always
 ; active, but doors may be open only in particular conditions.
 		SJSR			_ssub_room_exit_pal_fade_out	; now we have a new door idx in _tmp_idx so we could
@@ -79,7 +79,7 @@ _lvl1_room0_handler:
 			NARGW		_lvl1_room0_prize_seq			; prize sequences
 			NARGW		_lvl1_room0_exits				; exits data
 			NARGW		_lvl1_room0_doors				; doors data
-		SJSR			_ssub_common_room_loop
+		SJSRS			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx						; and go to selected room handler, so as we seee
 		SJMP_SW			$03								; the warping logic between rooms handled purely
@@ -115,8 +115,8 @@ _lvl1_room1_handler:
 			NARGW		_lvl1_room1_prize_seq			; prize sequences
 			NARGW		_lvl1_room1_exits				; exits data
 			NARGW		_lvl1_room1_doors				; doors data
-		SJSR			_ssub_common_room_loop
-		SJMP			_lvl1_room0_handler
+		SJSRS			_ssub_common_room_loop
+		SJMPS			_lvl1_room0_handler
 
 _lvl1_room1_exits:
 		.BYTE	$01							; only one exit from this room here
@@ -216,7 +216,7 @@ _lvl1_room4_handler:
 			NARGW		_lvl1_room4_exits				; exits data
 			NARGW		_lvl1_room4_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl1_room3_handler
+		SJMPS			_lvl1_room3_handler
 
 _lvl1_room4_exits:
 		.BYTE	$01
@@ -240,7 +240,7 @@ _lvl1_room5_handler:
 			NARGW		_lvl1_room5_exits				; exits data
 			NARGW		_lvl1_room5_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl1_room6_handler
+		SJMPS			_lvl1_room6_handler
 
 _lvl1_room5_exits:
 		.BYTE	$01
@@ -260,7 +260,7 @@ _lvl1_room6_handler:
 			NARGW		_lvl1_room6_exits				; exits data
 			NARGW		_lvl1_room6_doors				; doors data
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB	; coll data for this room is different
-		SJSR			_lvl1_room_chrB_set				; this is a corridor before the court
+		SJSRS			_lvl1_room_chrB_set				; this is a corridor before the court
 		SJSR			_ssub_common_room_loop			; room, here we need to change CHR and pal
 		NJSR			_nsub_read_mem					; also there is another bg collision table
 			NARGW		_tmp_idx
@@ -292,11 +292,11 @@ _lvl1_room_chrA_set:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_initA:
-		SJSR			_lvl1_room_chrA_set
+		SJSRS			_lvl1_room_chrA_set
 ; WARNING! make sure, collisions data also reside in the same bank as the
 ; rest of the level data!
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsA
-		SJMP			_lvl1_common_init
+		SJMPS			_lvl1_common_init
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_chrB_set:
@@ -310,7 +310,7 @@ _lvl1_room_chrB_set:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_initB:
-		SJSR			_lvl1_room_chrB_set
+		SJSRS			_lvl1_room_chrB_set
 		STORE16			_lvl_collisions_ptr,_lvl1_collisionsB
 
 ; !FALLTHROUGH!
@@ -355,19 +355,19 @@ _scr_common_pause_handler:
 		SDELAY			$01								; common pause handler for all levels
 #if DEBUG==1
 		NJSR			_nsub_ingame_select_input_test	; presumably stage complete test were here
-		SBCC			_skip_stage_select
+		SBCCS			_skip_stage_select
 		SJSR			_ssub_room_exit_pal_fade_out_ex
 		SSTOP
 _skip_stage_select:
 #endif
 		NJSR			_nsub_ingame_start_input_test	; just wait for START is pressed
-		SBCC			_scr_common_pause_handler		; and then play pause sound
+		SBCCS			_scr_common_pause_handler		; and then play pause sound
 		NJSR			_nsub_apu_snd_load				; and run pause native handler
 			NARGB		_snd03_idx
 		SJSR			_ssub_room_exit_pal_fade_out_ex	; when exit, loop back to wait for input
 		NJSR			_nsub_ingame_pause_handler
 		SJSR			_ssub_room_entry_pal_fade_in_ex
-		SJMP			_scr_common_pause_handler
+		SJMPS			_scr_common_pause_handler
 
 _lvl1_full_palA:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$1A,$17,$0F,$37,$27,$17,$0F,$30,$05,$17
@@ -419,7 +419,7 @@ _lvl2_room0_handler:
 			NARGW		_lvl2_room0_exits				; exits data
 			NARGW		_lvl2_room0_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room1_handler
+		SJMPS			_lvl2_room1_handler
 
 _lvl2_room0_exits:
 		.BYTE	$01
@@ -439,7 +439,7 @@ _lvl2_room1_handler:
 			NARGW		_lvl2_room1_exits				; exits data
 			NARGW		_lvl2_room1_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room2_handler
+		SJMPS			_lvl2_room2_handler
 
 _lvl2_room1_exits:
 		.BYTE	$01
@@ -459,7 +459,7 @@ _lvl2_room2_handler:
 			NARGW		_lvl2_room2_exits				; exits data
 			NARGW		_lvl2_room2_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room3_handler
+		SJMPS			_lvl2_room3_handler
 
 _lvl2_room2_exits:
 		.BYTE	$01
@@ -480,7 +480,7 @@ _lvl2_room3_handler:
 			NARGW		_lvl2_room3_exits				; exits data
 			NARGW		_lvl2_room3_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room4_handler
+		SJMPS			_lvl2_room4_handler
 
 _lvl2_room3_exits:
 		.BYTE	$01
@@ -528,7 +528,7 @@ _lvl2_room5_handler:
 			NARGW		_lvl2_room5_exits				; exits data
 			NARGW		_lvl2_room5_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room6_handler
+		SJMPS			_lvl2_room6_handler
 
 _lvl2_room5_exits:
 		.BYTE	$01
@@ -549,7 +549,7 @@ _lvl2_room6_handler:
 			NARGW		_lvl2_room6_exits				; exits data
 			NARGW		_lvl2_room6_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room7_handler
+		SJMPS			_lvl2_room7_handler
 
 _lvl2_room6_exits:
 		.BYTE	$01
@@ -571,7 +571,7 @@ _lvl2_room7_handler:
 			NARGW		_lvl2_room7_exits				; exits data
 			NARGW		_lvl2_room7_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room8_handler
+		SJMPS			_lvl2_room8_handler
 
 _lvl2_room7_exits:
 		.BYTE	$01
@@ -592,7 +592,7 @@ _lvl2_room8_handler:
 			NARGW		_lvl2_room8_exits				; exits data
 			NARGW		_lvl2_room8_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_room9_handler
+		SJMPS			_lvl2_room9_handler
 
 _lvl2_room8_exits:
 		.BYTE	$01
@@ -616,7 +616,7 @@ _lvl2_room9_handler:
 		NJSR			_nsub_mmc1_chr1_set				; here we enter the train section
 			NARGB		$0B								; currently only part of the tiles are changed
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_roomA_handler
+		SJMPS			_lvl2_roomA_handler
 
 _lvl2_room9_exits:
 		.BYTE	$01
@@ -640,7 +640,7 @@ _lvl2_roomA_handler:
 		NBG_HNDL_SET	_nbgsub_lvl2_roomA				; also here we have custom bg native sub
 		SSCRIPT1_SET	_scr_lvl2_roomA_secondary		; and new secondary script handler
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_roomB_handler
+		SJMPS			_lvl2_roomB_handler
 
 _lvl2_roomA_exits:
 		.BYTE	$01
@@ -661,7 +661,7 @@ _lvl2_roomB_handler:
 			NARGW		_lvl2_roomB_exits				; exits data
 			NARGW		_lvl2_roomB_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl2_roomC_handler
+		SJMPS			_lvl2_roomC_handler
 
 _lvl2_roomB_exits:
 		.BYTE	$01
@@ -713,7 +713,7 @@ _lvl2_room_initA:
 		NJSR			_nsub_mmc1_chr1_set				; tunnel/train level also has two different
 			NARGB		$0A								; collision tables but since you couldn't
 		STORE16			_lvl_collisions_ptr,_lvl2_collisionsA	; return  back there is no need to
-		SJMP			_lvl2_common_init				; manually patch in transitions between rooms
+		SJMPS			_lvl2_common_init				; manually patch in transitions between rooms
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl2_room_initB:
@@ -820,7 +820,7 @@ _lvl3_room0_handler:
 			NARGW		_lvl3_room0_exits				; exits data
 			NARGW		_lvl3_room0_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl3_room1_handler
+		SJMPS			_lvl3_room1_handler
 
 _lvl3_room0_exits:
 		.BYTE	$01
@@ -947,7 +947,7 @@ _lvl3_room4_handler:
 			NARGW		_lvl3_room4_prize_seq			; prize sequences
 			NARGW		_lvl3_room4_exits				; exits data
 			NARGW		_lvl3_room4_doors				; doors data
-		SJSR			_lvl3_room_modeA_init
+		SJSRS			_lvl3_room_modeA_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_apu_mus_load				; restore regular music here
 			NARGB		_mus7_idx
@@ -989,7 +989,7 @@ _lvl3_room5_handler:
 			NARGW		_lvl3_room5_prize_seq			; prize sequences
 			NARGW		_lvl3_room5_exits				; exits data
 			NARGW		_lvl3_room5_doors				; doors data
-		SJSR			_lvl3_room_modeB_init
+		SJSRS			_lvl3_room_modeB_init
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1573,7 +1573,7 @@ _lvl4_room0_handler:
 			NARGW		_lvl4_room0_exits				; exits data
 			NARGW		_lvl4_room0_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl4_room1_handler
+		SJMPS			_lvl4_room1_handler
 
 _lvl4_room0_exits:
 		.BYTE	$01
@@ -1621,7 +1621,7 @@ _lvl4_room2_handler:
 			NARGW		_lvl4_room2_exits				; exits data
 			NARGW		_lvl4_room2_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl4_room1_handler
+		SJMPS			_lvl4_room1_handler
 
 _lvl4_room2_exits:
 		.BYTE	$01
@@ -1672,7 +1672,7 @@ _lvl4_room4_handler:
 			NARGW		_lvl4_room4_exits				; exits data
 			NARGW		_lvl4_room4_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl4_room3_handler
+		SJMPS			_lvl4_room3_handler
 
 _lvl4_room4_exits:
 		.BYTE	$01
@@ -1811,7 +1811,7 @@ _lvl4_room9_handler:
 			NARGW		_lvl4_room9_exits				; exits data
 			NARGW		_lvl4_room9_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl4_room8_handler
+		SJMPS			_lvl4_room8_handler
 
 _lvl4_room9_exits:
 		.BYTE	$01
@@ -1921,7 +1921,7 @@ _lvl5_room0_handler:
 			NARGW		_lvl5_room0_exits				; exits data
 			NARGW		_lvl5_room0_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl5_room1_handler
+		SJMPS			_lvl5_room1_handler
 
 _lvl5_room0_exits:
 		.BYTE	$01
@@ -2040,7 +2040,7 @@ _lvl5_room4_handler:
 			NARGB		$0E
 ; -
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl5_room3_handler
+		SJMPS			_lvl5_room3_handler
 
 _lvl5_room4_exits:
 		.BYTE	$01
@@ -2151,7 +2151,7 @@ _lvl5_room8_handler:
 			NARGB		$12
 ; -
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl5_room7_handler
+		SJMPS			_lvl5_room7_handler
 
 _lvl5_room8_exits:
 		.BYTE	$01
@@ -2384,7 +2384,7 @@ _lvl5_room10_handler:
 			NARGB		$0E
 ; -
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl5_roomF_handler
+		SJMPS			_lvl5_roomF_handler
 
 _lvl5_room10_exits:
 		.BYTE	$01
@@ -2526,7 +2526,7 @@ _lvl5_room15_handler:
 			NARGW		_lvl5_room15_exits				; exits data
 			NARGW		_lvl5_room15_doors				; doors data
 		SJSR			_ssub_common_room_loop
-		SJMP			_lvl5_room14_handler
+		SJMPS			_lvl5_room14_handler
 
 _lvl5_room15_exits:
 		.BYTE	$01
@@ -2573,10 +2573,10 @@ _lvl5_room13_patch_pal:
 		NJSR			_nsub_get_checkpoint_tmp_idx
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
-		SJSR			_lvl6_common_init
+		SJSRS			_lvl6_common_init
 		STORE16			_room_exits_ptr,_lvl6_room_starts
 		NJSR			_nsub_players_room_start_pos_init_from_ptr
-		SJMP			_lvl6_room0_handler
+		SJMPS			_lvl6_room0_handler
 
 _lvl6_room_starts:
 		.BYTE	$00
@@ -3061,7 +3061,7 @@ _scr_game_over:
 		NJSR			_nsub_mcmp						; now check if we have any continues
 			NARGW		_continues
 			NARGB		$00
-		SBCS			_sloc_16162						; if no, just skip to the dummy delay
+		SBCSS			_sloc_16162						; if no, just skip to the dummy delay
 		POS_X_SET		0,$58,$00						; or else setup a sprite anims
 		SSCRIPT1_SET	_scr_game_over_exit_test
 _sloc_16146:
@@ -3077,7 +3077,7 @@ _sloc_16146:
 		NJSR			_nsub_game_over_menu_item_input
 		SDELAY			$01
 		SLOOP_END
-		SJMP			_sloc_16146						; repeat until input done
+		SJMPS			_sloc_16146						; repeat until input done
 _sloc_16162:
 		SDELAY			$F0
 		SDELAY			$3C
@@ -3088,7 +3088,7 @@ _sloc_16162:
 _scr_game_over_exit_test:
 		SDELAY			$01								; accept test in secondary script for this thread
 		NJSR			_nsub_wait_for_start_press
-		SBCC			_scr_game_over_exit_test
+		SBCCS			_scr_game_over_exit_test
 		SJSR			_ssub_pal_fade_out
 		SSTOP
 
@@ -3166,7 +3166,7 @@ byte_16211:
 		FAR_OFS			_scr0C_room_doors_handler
 		NBG_HNDL_SET	_nbgsub_cur_door_data_load		; initialize the doors data on start
 		NJSR			_nsub_player_to_doors_ctest		; now test if player appears at the door
-		SBCC			_sloc_16284						; in this case draw it open manually
+		SBCCS			_sloc_16284						; in this case draw it open manually
 		SJSR_SW	$11										; without animation and sounds
 		SCASE			_ssub_door00_opened				; lvl1 face 2x2 regular
 		SCASE			_ssub_door01_opened				; lvl1 edge 1x2
@@ -3188,7 +3188,7 @@ byte_16211:
 _sloc_16284:
 		SDELAY			$01								; or else skip to the main door handler loop
 		NJSR			_nsub_player_to_doors_ctest		; test if players get near any door
-		SBCC			_sloc_16284						; then execute the door animation script
+		SBCCS			_sloc_16284						; then execute the door animation script
 		SJSR_SW	$11
 		SCASE			_ssub_door00_anim				; all dors has a separate scripts
 		SCASE			_ssub_door01_anim
@@ -3207,7 +3207,7 @@ _sloc_16284:
 		SCASE			_ssub_door0E_anim
 		SCASE			_ssub_door0F_anim
 		SCASE			_ssub_door10_anim
-		SJMP			_sloc_16284
+		SJMPS			_sloc_16284
 
 ; =============== S U B R O U T I N E ======n================================
 ; pre-load the doors data into additional doors objects parameters array
@@ -3472,7 +3472,7 @@ _room_door_closed:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_opened:
 		NJSR			_nsub_door00_open_draw			; skip sound and open animation
-		SJMP			_ssub_door00_wait
+		SJMPS			_ssub_door00_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_anim:
@@ -3486,7 +3486,7 @@ _ssub_door00_anim:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door00_wait:
-		SJSR			_ssub_wait_for_door_is_inactive	; now wait for players leave the door area
+		SJSRS			_ssub_wait_for_door_is_inactive	; now wait for players leave the door area
 		NJSR			_nsub_apu_snd_load				; in this case play shut down sound
 			NARGB		_snd06_idx
 		SPR_IDX_SET		6,$00							; and animate door close the same way it was
@@ -3498,7 +3498,7 @@ _ssub_door00_wait:
 _ssub_wait_for_door_is_inactive:
 		SDELAY			$01								; common routine for waiting the players to
 		NJSR			_nsub_is_players_near_active_door	; leave active door area
-		SBCC			_ssub_wait_for_door_is_inactive
+		SBCCS			_ssub_wait_for_door_is_inactive
 		SRET
 
 ; =============== S U B R O U T I N E ======n================================
@@ -3580,7 +3580,7 @@ _door_y_hi_deltasA:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_opened:
 		NJSR			_nsub_door01_open_draw
-		SJMP			_ssub_door01_wait
+		SJMPS			_ssub_door01_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door01_anim:
@@ -3621,7 +3621,7 @@ _mac_door01_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_opened:
 		NJSR			_nsub_door02_open_draw
-		SJMP			_ssub_door02_wait
+		SJMPS			_ssub_door02_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door02_anim:
@@ -3704,7 +3704,7 @@ loc_1655C:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_opened:
 		NJSR			_nsub_door03_open_draw
-		SJMP			_ssub_door03_wait
+		SJMPS			_ssub_door03_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door03_anim:
@@ -3747,7 +3747,7 @@ _mac_door03_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_opened:
 		NJSR			_nsub_door04_open_draw
-		SJMP			_ssub_door04_wait
+		SJMPS			_ssub_door04_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door04_anim:
@@ -3788,7 +3788,7 @@ _mac_door04_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_opened:
 		NJSR			_nsub_door05_open_draw
-		SJMP			_ssub_door05_wait
+		SJMPS			_ssub_door05_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door05_anim:
@@ -3829,7 +3829,7 @@ _mac_door05_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_opened:
 		NJSR			_nsub_door06_open_draw
-		SJMP			_ssub_door06_wait
+		SJMPS			_ssub_door06_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door06_anim:
@@ -3870,7 +3870,7 @@ _mac_door06_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_opened:
 		NJSR			_nsub_door07_open_draw
-		SJMP			_ssub_door07_wait
+		SJMPS			_ssub_door07_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door07_anim:
@@ -3903,7 +3903,7 @@ _mac_door07_open:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_opened:
 		NJSR			_nsub_door08_open_draw
-		SJMP			_ssub_door08_wait
+		SJMPS			_ssub_door08_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door08_anim:
@@ -3941,15 +3941,6 @@ _nsub_door08_close_draw:
 _mac_door08_close:
 		.BYTE	$8D,$8E,$8B,$8C
 
-; TODO: from this point for some reasons, the developers start to merge
-; and optimize door drawing routines also for data offset loading functions.
-; mostly because all other levels has no more than 3 different kind of doors
-; but this time we have 4 same kinds at the same time...
-; not sure if they get some bytes from this, but they definitely has to
-; add more wrapper functions to support these optimizations. check this
-; carefully and maybe switch all to such cases or in the other hand
-; convert all to previous methods of sending data.
-
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door09_opened:
 		SARG_SET		SARG0,$00
@@ -3959,7 +3950,7 @@ _ssub_door09_opened:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_lvl4_doos_openedB:
 		NJSR			_nsub_lvl4_doors_open_drawB
-		SJMP			_ssub_lvl4_doos_waitB
+		SJMPS			_ssub_lvl4_doos_waitB
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door09_anim:
@@ -4065,12 +4056,12 @@ _lvl4_mac_close_lib_hi:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0A_opened:
 		SARG_SET		SARG0,$01
-		SJMP			_ssub_lvl4_doos_openedB
+		SJMPS			_ssub_lvl4_doos_openedB
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0A_anim:
 		SARG_SET		SARG0,$01
-		SJMP			_ssub_lvl4_doos_animB
+		SJMPS			_ssub_lvl4_doos_animB
 
 _mac_door0A_open:
 		.BYTE	$4E,$98
@@ -4080,12 +4071,12 @@ _mac_door0A_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0B_opened:
 		SARG_SET		SARG0,$02
-		SJMP			_ssub_lvl4_doos_openedB
+		SJMPS			_ssub_lvl4_doos_openedB
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0B_anim:
 		SARG_SET		SARG0,$02
-		SJMP			_ssub_lvl4_doos_animB
+		SJMPS			_ssub_lvl4_doos_animB
 
 _mac_door0B_open:
 		.BYTE	$51,$9B
@@ -4100,7 +4091,7 @@ _ssub_door0C_opened:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0C_anim:
 		SARG_SET		SARG0,$03
-		SJMP			_ssub_lvl4_doos_animB
+		SJMPS			_ssub_lvl4_doos_animB
 
 _mac_door0C_open:
 		.BYTE	$22,$98
@@ -4110,7 +4101,7 @@ _mac_door0C_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0D_opened:
 		NJSR			_nsub_door0D_open_draw
-		SJMP			_ssub_door0D_wait
+		SJMPS			_ssub_door0D_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 ; the difference between previous doors and this one in
@@ -4155,7 +4146,7 @@ _mac_door0D_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_opened:
 		NJSR			_nsub_door10_open_draw
-		SJMP			_ssub_door10_wait
+		SJMPS			_ssub_door10_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door10_anim:
@@ -4196,7 +4187,7 @@ _mac_door10_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_opened:
 		NJSR			_nsub_door0E_open_draw
-		SJMP			_ssub_door0E_wait
+		SJMPS			_ssub_door0E_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0E_anim:
@@ -4241,7 +4232,7 @@ _mac_door0E_close:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_opened:
 		NJSR			_nsub_door0F_open_draw
-		SJMP			_ssub_door0F_wait
+		SJMPS			_ssub_door0F_wait
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_door0F_anim:
@@ -4311,20 +4302,17 @@ _sloc_16969:
 		SDELAY			$01
 		NJSR			_nsub_prize_sequence_completed_test	; wait for prize sequence completed
 #if DEBUG==0
-		SBCC			_sloc_16969
+		SBCCS			_sloc_16969
 #endif
 		SARG_SET		SARG2,$1E						; set the money amount for this bonus.
 		NBG_HNDL_SET	_nbgsub_money_bag_ctest			; now load collision test routine
 _sloc_16977:
 		SPR_IDX_SET		2,$19							; and just wait it it happens in infinite loop
 		SPR_IDX_INC		2
-		SJMP			_sloc_16977
+		SJMPS			_sloc_16977
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_money_bag_ctest:
-; TODO: this is the only place we use this routine, this has a redundancy because
-; routine mostly the same as regular one but with money add at the end.
-; may be optimized
 		LDX		#$0D						; fixed dimensions for collision test.
 		LDY		#$0E
 		JMP		_prize_to_player_ctest

@@ -162,7 +162,7 @@ SMPL_FORCE	EQU	$80
 ; {3} - opcode name
 ;
 	MAC	ASSERT_SHORT_OFS
-#if DEBUG==2
+#if DEBUG==1
 TMP_CMD_PC	SET	.
 TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	#if TMP_OFS<-128
@@ -175,7 +175,7 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	ENDM
 
 	MAC	ALERT_SHORT_OFS
-#if DEBUG==2
+#if DEBUG==1
 TMP_CMD_PC	SET	.
 TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 	#if TMP_OFS>=-128&&TMP_OFS<=127
@@ -318,18 +318,40 @@ DOOR_TEST	EQU	$02
 		.BYTE	_scmd02_loop_end_idx
 	ENDM
 
-	MAC	SJMP
-#if OPTIMIZATION=1
-	ALERT_SHORT_OFS		{1},3,"SJMP"
+	MAC	SJMPS
+#if OPTIMIZATION==1
+		ASSERT_SHORT_OFS	{1},2,"SJMPS"
+TMP_CMD_PC	SET	.
+TMP_OFS		SET	[{1}-TMP_CMD_PC-1]
+		.BYTE	_scmd1A_sjmps_idx
+		.BYTE	TMP_OFS&$FF
+#else
+		.BYTE	_scmd03_sjmp_idx
+		.WORD	{1}
 #endif
+	ENDM
+
+	MAC	SJMP
+		ALERT_SHORT_OFS		{1},3,"SJMP"
 		.BYTE	_scmd03_sjmp_idx
 		.WORD	{1}
 	ENDM
 
-	MAC	SJSR
-#if OPTIMIZATION=1
-	ALERT_SHORT_OFS		{1},3,"SJSR"
+	MAC	SJSRS
+#if OPTIMIZATION==1
+		ASSERT_SHORT_OFS	{1},2,"SJSRS"
+TMP_CMD_PC	SET	.
+TMP_OFS		SET	[{1}-TMP_CMD_PC-2]
+		.BYTE	_scmd1B_sjsrs_idx
+		.BYTE	TMP_OFS&$FF
+#else
+		.BYTE	_scmd03_sjmp_idx
+		.WORD	{1}
 #endif
+	ENDM
+
+	MAC	SJSR
+		ALERT_SHORT_OFS		{1},3,"SJSR"
 		.BYTE	_scmd04_sjsr_idx
 		.WORD	{1}
 	ENDM
@@ -370,8 +392,10 @@ DOOR_TEST	EQU	$02
 	ENDM
 
 	MAC	SSCRIPT1_SET
-		.BYTE	_scmd08_script1_start_idx
+		.BYTE	_scmd08_script1_set_idx
+#if OPTIMIZATION==0
 		.BYTE	$01
+#endif
 		.WORD	{1}
 	ENDM
 
@@ -384,21 +408,47 @@ DOOR_TEST	EQU	$02
 		.BYTE	_scmd0A_suspend_idx
 	ENDM
 
-	MAC	SBCS
-#if OPTIMIZATION=1
-	ALERT_SHORT_OFS		{1},3,"SBCS"
+	MAC	SBCSS
+#if OPTIMIZATION==1
+		ASSERT_SHORT_OFS	{1},2,"SBCSS"
+TMP_CMD_PC	SET	.
+TMP_OFS		SET	[{1}-TMP_CMD_PC-1]
+		.BYTE	_scmd1C_bcss_idx
+		.BYTE	TMP_OFS&$FF
+#else
+		.BYTE	_scmd0B_bcs_idx
+		.WORD	{1}
 #endif
+	ENDM
+
+#if OPTIMIZATION==0
+	MAC	SBCS
+		ALERT_SHORT_OFS		{1},3,"SBCS"
 		.BYTE	_scmd0B_bcs_idx
 		.WORD	{1}
 	ENDM
-
-	MAC	SBCC
-#if OPTIMIZATION=1
-	ALERT_SHORT_OFS		{1},3,"SBCC"
 #endif
+
+	MAC	SBCCS
+#if OPTIMIZATION==1
+		ASSERT_SHORT_OFS	{1},2,"SBCCS"
+TMP_CMD_PC	SET	.
+TMP_OFS		SET	[{1}-TMP_CMD_PC-1]
+		.BYTE	_scmd1D_bccs_idx
+		.BYTE	TMP_OFS&$FF
+#else
+		.BYTE	_scmd0C_bcc_idx
+		.WORD	{1}
+#endif
+	ENDM
+
+#if OPTIMIZATION==0
+	MAC	SBCC
+		ALERT_SHORT_OFS		{1},3,"SBCC"
 		.BYTE	_scmd0C_bcc_idx
 		.WORD	{1}
 	ENDM
+#endif
 
 	MAC	SSCRIPT0_OFF
 		.BYTE	_scmd0A_script0_off_idx
@@ -448,7 +498,9 @@ _SW_START	SET	.
 
 	MAC	SSCRIPT1_OFF
 		.BYTE	_scmd14_script1_off_idx
+#if OPTIMIZATION==0
 		.BYTE	$01
+#endif
 	ENDM
 
 _AND	EQU	$00
@@ -467,9 +519,7 @@ _ADC	EQU	$02
 	ENDM
 
 	MAC	SBCS_BREAK
-#if OPTIMIZATION=1
-	ALERT_SHORT_OFS		{1},3,"SBCS_BREAK"
-#endif
+;		ALERT_SHORT_OFS		{1},3,"SBCS_BREAK"
 		.BYTE	_scmd17_sbcs_break_idx
 		.WORD	{1}
 	ENDM
