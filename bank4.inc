@@ -9,7 +9,7 @@
 _scr13_slow_moving_slime:
 		NJSR			_nsub_sarg1_rand08_mul8_set		; choose random initial direction
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc; calculate sprite idx from base and divider
+		NJSR			_nsub_spr_dir_select			; calculate sprite idx from base and divider
 			NARGB		$04,$40							; base 04, divider 40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF							; blink next frame
@@ -33,7 +33,7 @@ _sloc_38012:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _slow_moving_slime_move:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; calculate linear move params
+		NJSR			_nsub_speed_dir_select			; calculate linear move params
 			NARGB		$80,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim				; load secondary animation script
 		SLOOP_BEGIN		$14
@@ -41,14 +41,14 @@ _slow_moving_slime_move:
 		NJSR			_nsub_obj_to_room_x_ctestA		; test for bounce if any obstacles in front
 		SBCCS			_sloc_38048
 		NJSR			_nsub_cur_obj_sarg1_hor_complement	; if test pass, bounce move direction
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; recalclulate move params
+		NJSR			_nsub_speed_dir_select			; recalclulate move params
 			NARGB		$80,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim				; also reinit animation
 _sloc_38048:
 		NJSR			_nsub_obj_to_room_y_ctestA		; continue the same for vertical movements
 		SBCCS			_sloc_3805A
 		NJSR			_nsub_cur_obj_sarg1_vert_complement	; bounce
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$80,$00							; reset sprites again
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_3805A:
@@ -57,7 +57,7 @@ _sloc_3805A:
 
 ; =============== S C R I P T ==========================s====================
 _scr_slime_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; calculate spr idx from movement direction
+		NJSR			_nsub_spr_dir_select			; calculate spr idx from movement direction
 			NARGB		$04,$40							; using base sprite idx
 _sloc_38061:
 		SPR_IDX_ADD_IMM 7,$04							; animate +4, -4
@@ -88,7 +88,7 @@ _sloc_3807C:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_slime_spr_stun_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$04,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$08
@@ -149,9 +149,9 @@ _nsub_sarg1_rand08_mul8_set:
 
 ; =============== S C R I P T ==========================s====================
 _scr14_fast_moving_slime:
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; fast slime always targeted on player
+		NJSR			_nsub_cur_obj_to_beamer_dir_set	; fast slime always targeted on player
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; also do initial blink
+		NJSR			_nsub_spr_dir_select			; also do initial blink
 			NARGB		$04,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -163,7 +163,7 @@ _scr14_fast_moving_slime:
 _scr_fast_moving_slime_active:
 		NBG_HNDL_SET	_nbgsub_fast_moving_slime_ctest	; ai mostly the same as slow slime
 _sloc_38249:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 		SLOOP_BEGIN		$0A								; shorter retarget periods
@@ -171,19 +171,19 @@ _sloc_38249:
 		NJSR			_nsub_obj_to_room_x_ctestA
 		SBCCS			_sloc_38268
 		NJSR			_nsub_cur_obj_sarg1_hor_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00							; faster speed than slow slime
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_38268:
 		NJSR			_nsub_obj_to_room_y_ctestA
 		SBCCS			_sloc_3827A
 		NJSR			_nsub_cur_obj_sarg1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_3827A:
 		SLOOP_END
-		NJSR			_nsub_obj_to_beamer_vector_adjust	; not sure now what this routine does
+		NJSR			_nsub_obj_to_beamer_slow_turn	; not sure now what this routine does
 			NARGB		$08									; but looks like some kind of readjust vectors
 		SJMPS			_sloc_38249
 
@@ -335,8 +335,8 @@ _scr_still_throw_forward_slime_active:
 			NARGB		_snd08_idx
 _sloc_38363:
 		SLOOP_BEGIN		$03
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; calcs to turn face to beamer
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; update directions
+		NJSR			_nsub_cur_obj_to_beamer_dir_set	; calcs to turn face to beamer
+		NJSR			_nsub_spr_dir_select			; update directions
 			NARGB		$04,$40
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 7,$04							; initial anim slowly
@@ -396,7 +396,7 @@ locret_383C1:
 _scr_still_throw_forward_slime_proj:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_still_throw_forward_slime_proj_ctest
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$80,$01
 		NJSR			_nsub_still_throw_forward_slime_proj_spr_set
 _sloc_383D0:
@@ -619,13 +619,13 @@ _scr1D_air_hammer_miner:
 _nbgsub_air_hammer_miner_active:
 		NBG_HNDL_SET	_nbgsub_air_hammer_miner_ctest
 _sloc_385BC:
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; object also tergeted on beamer
+		NJSR			_nsub_cur_obj_to_beamer_dir_set	; object also tergeted on beamer
 		POS_MOVE_STOP	0								; first we run animation while
 		SLOOP_BEGIN		$08								; standing still
 		SPR_IDX_SET		2,$2D
 		SPR_IDX_INC		2
 		SLOOP_END
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00							; then run in destination point
 		SLOOP_BEGIN		$1E
 		SPR_IDX_SET		2,$2D
@@ -722,11 +722,11 @@ _scr1E_pick_axe_miner:
 _scr_pick_axe_miner_active:
 		NBG_HNDL_SET	_nbgscr_pick_axe_miner_ctest
 _sloc_386EC:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$34,$40							; select current sprite idx
 		POS_MOVE_STOP	0
 		SDELAY			$14
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; object cannot move diagonally
+		NJSR			_nsub_obj_to_beamer_fast_right_turn	; object cannot move diagonally
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest	; adjust destination based
 		SBCCS			_sloc_3871B						; on surrounding obstacles
 		SARG_ALU		SARG1,_ADC,$40
@@ -739,14 +739,14 @@ _sloc_386EC:
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCSS			_sloc_386EC
 _sloc_3871B:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; now when destination finally decided
+		NJSR			_nsub_spr_dir_select			; now when destination finally decided
 			NARGB		$34,$40
 		SLOOP_BEGIN		$03
 		SPR_IDX_ADD_IMM 6,$04							; start to shake spear
 		SPR_IDX_ADD_IMM 6,$FC							; two beer or not two beer
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$08							; set high speed, to destination
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$01
 		SLOOP_BEGIN		$0A								; start moving while watching new obstacles
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
@@ -775,7 +775,7 @@ _sloc_38742:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_pick_axe_miner_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$34,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$0C
@@ -831,11 +831,11 @@ _scr1F_hammer_miner:
 _scr_hammer_miner_active:
 		NBG_HNDL_SET	_nbgsub_hammer_miner_ctest
 _sloc_38973:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$44,$40
 		POS_MOVE_STOP	0								; when run into the obstacle
 		SDELAY			$14								; run in circles left up right down, etc
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
+		NJSR			_nsub_obj_to_beamer_fast_right_turn
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCCS			_sloc_389A2
 		SARG_ALU		SARG1,_ADC,$40					; retarget until get free direction
@@ -848,14 +848,14 @@ _sloc_38973:
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCSS			_sloc_38973
 _sloc_389A2:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; if no collisions
+		NJSR			_nsub_spr_dir_select			; if no collisions
 			NARGB		$44,$40							; recalibrate destination
 		SLOOP_BEGIN		$03
 		SPR_IDX_ADD_IMM 6,$04							; shake with pick-axe
 		SPR_IDX_ADD_IMM 6,$FC
 		SLOOP_END
 		SPR_IDX_ADD_IMM 0,$08							; then slide to destination
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; retarget at the end
+		NJSR			_nsub_speed_dir_select			; retarget at the end
 			NARGB		$00,$01
 		SLOOP_BEGIN		$0A
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
@@ -884,7 +884,7 @@ _sloc_389C9:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_hammer_miner_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$44,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$0C
@@ -928,9 +928,9 @@ _scr0E_empty_mine_trolley:
 _sloc_38C30:
 		NJSR			_nsub_empty_miner_trolley_path_select	; also collide with any non-rails
 		SBCSS			_sloc_38C46						; obstacles
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; or else move on them
+		NJSR			_nsub_spr_dir_select			; or else move on them
 			NARGB		$54,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; very high speed
+		NJSR			_nsub_speed_dir_select			; very high speed
 			NARGB		$00,$02
 		SDELAY			$08								; every 8 cycles stop and retarget
 		POS_MOVE_STOP	0								; you can't see when it constantly
@@ -938,7 +938,7 @@ _sloc_38C30:
 _sloc_38C46:
 		NBG_HNDL_RESET									; when nothing to move, reset collisions
 		SLOOP_BEGIN		$10								; start to blink
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$54,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -1042,9 +1042,9 @@ _scr20_trolley_miner:
 _sloc_38D16:
 		NJSR			_nsub_empty_miner_trolley_path_select	; same as for empty trolley
 		SBCSS			_sloc_38D2C
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$58,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$02
 		SDELAY			$08
 		POS_MOVE_STOP	0
@@ -1053,7 +1053,7 @@ _sloc_38D2C:
 		NBG_HNDL_RESET									; disappear with miner if obstacle
 		SARG_SET		SARG0,$80
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$58,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -1064,7 +1064,7 @@ _sloc_38D2C:
 _scr_trolley_miner_disappear:
 		NBG_HNDL_RESET									; when let alone, disappears as well
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5C,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -1095,7 +1095,7 @@ _sloc_38D59:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_trolley_miner_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5C,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$04
@@ -1190,20 +1190,20 @@ _ssub_train_ghost_shoot:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_train_ghost_move_anim:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$80,$00							; slow speed
 		SLOOP_BEGIN		$14
 		SDELAY			$01
 		NJSR			_nsub_obj_to_room_x_ctestA		; obstacle collision tests here
 		SBCCS			_sloc_38F41
 		NJSR			_nsub_cur_obj_sarg1_hor_complement	; same as for slow slime
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$80,$00
 _sloc_38F41:
 		NJSR			_nsub_obj_to_room_y_ctestA
 		SBCCS			_sloc_38F4F
 		NJSR			_nsub_cur_obj_sarg1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$80,$00
 _sloc_38F4F:
 		SLOOP_END
@@ -1291,7 +1291,7 @@ _scr_train_ghost_proj:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_train_ghost_proj_ctest
 		NJSR			_nsub_train_ghost_proj_target_set
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$01							; target is random
 		SLOOP_BEGIN		$08								; first its move
 		SPR_IDX_SET		4,$7A
@@ -1345,8 +1345,8 @@ _scr_still_throw_ballistic_slime_active:
 			NARGB		_snd08_idx
 		NBG_HNDL_SET	_nbgsub_still_throw_ballistic_slime_ctest
 _sloc_39114:
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; target on beamer as well
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; calc sprite idx for slime
+		NJSR			_nsub_cur_obj_to_beamer_dir_set	; target on beamer as well
+		NJSR			_nsub_spr_dir_select			; calc sprite idx for slime
 			NARGB		$04,$40
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 7,$04							; throw animation
@@ -1409,7 +1409,7 @@ _scr_slime_ballistic_proj:
 		NBG_HNDL_SET	_nbgsub_slime_ballistic_proj_ctest
 		NJSR			_nsub_slime_ballistic_proj_spr_idx_select
 		SSCRIPT1_SET	_nsub_slime_ballistic_proj_spr_anim
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$40,$02							; sarg1 inherited from main object!
 		POS_Y_DELTA_ADD 0,$00,$FD						; ballistic trajectory delta Y init
 		SLOOP_BEGIN		$48								; then slowly increment, first go up
@@ -1456,9 +1456,9 @@ _scr2C_fast_throw_forward_slime:
 ; !FALLTHROUGH!
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
+		NJSR			_nsub_cur_obj_to_beamer_dir_set
 		SLOOP_BEGIN		$10								; target to beamer as usual
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc; calculate appearance sprite
+		NJSR			_nsub_spr_dir_select			; calculate appearance sprite
 			NARGB		$04,$40							; blink, but this time while
 		SDELAY			$01								; tracking beamer position!
 		SPR_IDX_SET		1,$FF
@@ -1470,7 +1470,7 @@ _scr2C_fast_throw_forward_slime:
 _scr_fast_throw_forward_slime_active:
 		NBG_HNDL_SET	_nbgsub_fast_throw_forward_slime_ctest
 _sloc_3927A:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00							; actually, this routine is more like SPEED calc
 		SSCRIPT1_SET	_scr_slime_spr_anim				; regular slime anim routine reused
 		SLOOP_BEGIN		$06								; two loops here
@@ -1479,19 +1479,19 @@ _sloc_3927A:
 		NJSR			_nsub_obj_to_room_x_ctestA		; first object moves as usual fast slime
 		SBCCS			_sloc_3929B
 		NJSR			_nsub_cur_obj_sarg1_hor_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_3929B:
 		NJSR			_nsub_obj_to_room_y_ctestA
 		SBCCS			_sloc_392AD
 		NJSR			_nsub_cur_obj_sarg1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_slime_spr_anim
 _sloc_392AD:
 		SLOOP_END
-		NJSR			_nsub_obj_to_beamer_vector_adjust	; this code mostly the same as for fast slime
+		NJSR			_nsub_obj_to_beamer_slow_turn	; this code mostly the same as for fast slime
 			NARGB		$08								; but with extra shoot cycles inside
 		SLOOP_END										; when move and readjust vectors, shoot
 		NJSR			_nsub_new_thread_start
@@ -1548,7 +1548,7 @@ _scr_fast_throw_forward_slime_proj:
 		SARG_SET		SARG0,$00						; uses the same init routines as ballistic projectile
 		NBG_HNDL_SET	_nbgsub_fast_throw_forward_slime_proj_ctest
 		NJSR			_nsub_slime_ballistic_proj_spr_idx_select
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$80,$01
 _sloc_3930D:
 		SPR_IDX_INC		4								; but moving in linear direction...
@@ -1567,7 +1567,7 @@ _nbgsub_fast_throw_forward_slime_proj_ctest:
 
 ; =============== S C R I P T ==========================s====================
 _scr23_halloween:
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set
+		NJSR			_nsub_cur_obj_to_beamer_dir_set
 		SLOOP_BEGIN		$10								; beamer targeting start
 		SPR_IDX_SET		1,$C2							; this is first objec t here using
 		SPR_IDX_SET		1,$FF							; extended sprires mode
@@ -1579,7 +1579,7 @@ _scr23_halloween:
 _scr_halloween_active:
 		NBG_HNDL_SET	_nbgsub_halloween_ctest
 _sloc_3945F:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_halloween_spr_anim
 		SLOOP_BEGIN		$14
@@ -1587,25 +1587,25 @@ _sloc_3945F:
 		NJSR			_nsub_obj_to_room_x_ctestA
 		SBCCS			_sloc_3947E						; with restarting the animanions
 		NJSR			_nsub_cur_obj_sarg1_hor_complement;	if obstacle occured
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_halloween_spr_anim
 _sloc_3947E:
 		NJSR			_nsub_obj_to_room_y_ctestA
 		SBCCS			_sloc_39490
 		NJSR			_nsub_cur_obj_sarg1_vert_complement
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$C0,$00
 		SSCRIPT1_SET	_scr_halloween_spr_anim
 _sloc_39490:
 		SLOOP_END
-		NJSR			_nsub_obj_to_beamer_vector_adjust	; retarget to beamer at the end
+		NJSR			_nsub_obj_to_beamer_slow_turn	; retarget to beamer at the end
 			NARGB		$10									; ...period
 		SJMPS			_sloc_3945F
 
 ; =============== S C R I P T ==========================s====================
 _scr_halloween_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; recalc sprite idx
+		NJSR			_nsub_spr_dir_select			; recalc sprite idx
 			NARGB		$C0,$40							; at restart of this script
 _sloc_3949D:
 		SPR_IDX_ADD_IMM 0,$04							; animate
@@ -1633,7 +1633,7 @@ _sloc_394AE:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_halloween_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$C0,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$08
@@ -1684,7 +1684,7 @@ locret_3950D:
 ; =============== S C R I P T ==========================s====================
 _scr24_flying_elephant:
 		SLOOP_BEGIN		$10								; another object with extended
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; sprites mode
+		NJSR			_nsub_spr_dir_select			; sprites mode
 			NARGB		$CC,$40							; starting directcion of each object
 		SDELAY			$01								; here is set in objects data extra agrs
 		SPR_IDX_SET		1,$FF
@@ -1777,7 +1777,7 @@ _sloc_39755:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _sub_flying_elephant_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$CC,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$18
@@ -1836,7 +1836,7 @@ _scr25_stinging_elephant:
 
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		SLOOP_BEGIN		$10								; start blinking here as usual
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$D8,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -1849,7 +1849,7 @@ _scr_stinging_elephant_active:
 		NBG_HNDL_SET	_nbgsub_stinging_elephant_ctest
 _sloc_399E9:
 		SLOOP_BEGIN		$06								; no special targeting
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$D8,$40
 		SDELAY			$04
 		SPR_IDX_ADD_IMM 4,$04							; idle anim
@@ -1882,7 +1882,7 @@ _sloc_39A0A:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_stinging_elephant_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$D8,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$0C
@@ -2011,7 +2011,7 @@ _scr26_sword_ninja:
 		SARG_SET		SARG1,$80						; appears always left-sided
 		SJSRS			_ssub_sword_ninja_spr_blink
 		NBG_HNDL_SET	_nbgsub_swird_ninja_ctest
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; target to beamer with diagonal forbid
+		NJSR			_nsub_obj_to_beamer_fast_right_turn	; target to beamer with diagonal forbid
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCCS			_sloc_39D06
 		SARG_ALU		SARG1,_ADC,$40					; test if there is an obstacle in selected direction
@@ -2024,7 +2024,7 @@ _scr26_sword_ninja:
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCSS			_sloc_39D1A						; no valid paths... then just shut down the object
 _sloc_39D06:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; if direction is valid, set speed
+		NJSR			_nsub_speed_dir_select			; if direction is valid, set speed
 			NARGB		$00,$02
 		SSCRIPT1_SET	_scr_sword_ninja_spr_anim		; set animation script
 		SLOOP_BEGIN		$0A
@@ -2047,7 +2047,7 @@ _scr_sword_ninja_hide:
 
 ; =============== S C R I P T ==========================s====================
 _scr_sword_ninja_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$1E,$40
 _sloc_39D2B:
 		SPR_IDX_ADD_IMM 7,$04
@@ -2059,7 +2059,7 @@ _sloc_39D2B:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_sword_ninja_spr_blink:
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$1E,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -2085,7 +2085,7 @@ _sloc_39D49:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_sword_ninja_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$2A,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$04
@@ -2179,10 +2179,10 @@ _scr_shuriken_ninja_active:
 		SDELAY			$01								; reused shuriken ninja script here
 		NJSR			_nsub_ninja_appear_pos_set
 		SBCSS			_scr_shuriken_ninja_active
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; beamer targeted without diagonals
+		NJSR			_nsub_obj_to_beamer_fast_right_turn	; beamer targeted without diagonals
 		SJSRS			_ssub_shuriken_ninja_spr_blink
 		NBG_HNDL_SET	_nbgsub_shuriken_ninja_ctest
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$36,$40
 		SDELAY			$10								; pause before shoot
 		SARG_ALU		SARG1,_ADC,$F0
@@ -2211,7 +2211,7 @@ _sloc_shuriken_ninja_hide:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_shuriken_ninja_spr_blink:
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$36,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -2253,7 +2253,7 @@ loc_3A01D:
 _scr_shuriken_ninja_proj:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_shuriken_ninja_proj_ctest
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$02							; calc direction from arg1
 		SLOOP_BEGIN		$04								; derived from main object
 		SPR_IDX_SET		2,$42							; simple short living projectile
@@ -2295,7 +2295,7 @@ _sloc_3A15F:
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		5
 		SPR_IDX_ADD_IMM 4,$02
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set	; target to beamer
+		NJSR			_nsub_obj_to_beamer_fast_right_turn	; target to beamer
 		NJSR			_nsub_pink_goo_bounds_test		; test for valid location to jump
 		SBCCS			_sloc_3A197
 		SARG_ALU		SARG1,_ADC,$40
@@ -2492,7 +2492,7 @@ _sloc_sewer_worm_active:
 		SDELAY			$01
 		NJSR			_nsub_sewer_worm_move_anim		; select direction and test
 		SBCSS			_sloc_sewer_worm_active			; untile it could swim there
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; set speed in given direction
+		NJSR			_nsub_speed_dir_select			; set speed in given direction
 			NARGB		$40,$00
 		SPR_IDX_SET		0,$4B							; move slowly
 		SDELAY			$22
@@ -2531,7 +2531,7 @@ _sloc_sewer_worm_active:
 ;
 _scr_sewer_worm_active_after_stun:
 		NBG_HNDL_SET	_nbgsub_sewer_worm_ctestA
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$40,$00
 		SPR_IDX_SET		0,$4B
 _sloc_3A335:
@@ -2730,7 +2730,7 @@ _scr_sewer_worm_proj:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_sewer_worm_proj_ctest
 		NJSR			_nsub_sewer_worm_proj_direction_select
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$01							; select random destination
 		POS_Y_DELTA_ADD 0,$00,$FE						; ballistic animate
 		SPR_IDX_SET		0,$5C
@@ -2784,7 +2784,7 @@ _sloc_3A55B:
 		SPR_IDX_INC		1
 		SLOOP_END
 		SLOOP_END
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
+		NJSR			_nsub_obj_to_beamer_fast_right_turn
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCCS			_sloc_3A597						; now retarget to beamer and test for obstacles
 		SARG_ALU		SARG1,_ADC,$40					; in that direction close to object
@@ -2797,7 +2797,7 @@ _sloc_3A55B:
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCSS			_sloc_3A5AB
 _sloc_3A597:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$01							; set speed
 		SLOOP_BEGIN		$0A
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
@@ -3082,10 +3082,10 @@ _sloc_3A97E:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_runner_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$04,$10
 		SDELAY			$01
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$14,$40
 		SDELAY			$01
 		SRET
@@ -3204,7 +3204,7 @@ _scr18_chain_saw:
 _sloc_3AC3B:
 		POS_MOVE_STOP	0
 		SDELAY			$14								; wait, then target on beamer
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
+		NJSR			_nsub_obj_to_beamer_fast_right_turn
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCCS			_sloc_3AC65						; check next position for obstacles
 		SARG_ALU		SARG1,_ADC,$40					; if obstacles detected in front of object
@@ -3217,17 +3217,17 @@ _sloc_3AC3B:
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest
 		SBCSS			_sloc_3AC3B
 _sloc_3AC65:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; set speed
+		NJSR			_nsub_speed_dir_select			; set speed
 			NARGB		$80,$00
 		SDELAY			$10
 		NJSR			_nsub_obj_to_obj_in_range_test	; additional trigger if beamer gets in
 			NARGB		$02,$40							; object's range ($02 - beamer slot idx, $40 - range)
 		SBCCS			_sloc_3AC3B						; stay invisible and move randomly if no beamer nearby
 		NBG_HNDL_SET	_nbgsub_chain_saw_ctest			; otherwize, show up, activate collision test
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
+		NJSR			_nsub_obj_to_beamer_fast_right_turn
 		SJSRS			_ssub_chain_saw_attack_spr_anim	; target on beamer and do attack animation
 		SSCRIPT1_SET	_ssub_chain_saw_slide_spr_anim	; then set movement speed and secondary
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; slide animation
+		NJSR			_nsub_speed_dir_select			; slide animation
 			NARGB		$00,$01
 		SLOOP_BEGIN		$06								; slide in selected direction until end of loop
 		NJSR			_nsub_obj_to_room_sarg1_square_ctest	; or until any obstacle
@@ -3247,7 +3247,7 @@ _scr_chain_saw_turn_invisible:
 
 ; =============== S C R I P T ==========================s====================
 _ssub_chain_saw_slide_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$28,$40
 _sloc_3AC9F:
 		SPR_IDX_ADD_IMM 4,$FC
@@ -3257,7 +3257,7 @@ _sloc_3AC9F:
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_chain_saw_attack_spr_anim:
 		POS_MOVE_STOP	0
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$20,$40
 		SLOOP_BEGIN		$04
 		SPR_IDX_ADD_IMM 4,$FC
@@ -3284,7 +3284,7 @@ _sloc_3ACBA:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_chain_saw_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$24,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$08
@@ -3680,17 +3680,17 @@ _scr_floaterA_active:
 		NBG_HNDL_SET	_nbgsub_floaterA_ctest			; both floaters has the same scripts...
 _sloc_3B634:
 		SLOOP_BEGIN		$02								; adjust spite idx according to
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; face direction
+		NJSR			_nsub_spr_dir_select			; face direction
 			NARGB		$4C,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$03							; set vector position with given radius
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$F8					; ...with one exception. they move in opposite
 		SLOOP_END										; directions
 		SLOOP_BEGIN		$02
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; repeat the same for secondary sprite idx
+		NJSR			_nsub_spr_dir_select			; repeat the same for secondary sprite idx
 			NARGB		$50,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$F8
@@ -3716,7 +3716,7 @@ _sloc_3B663:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_floaterA_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$50,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$04
@@ -3854,17 +3854,17 @@ _scr_floaterB_active:
 		NBG_HNDL_SET	_nbgsub_floaterB_ctest
 _sloc_3B72C:
 		SLOOP_BEGIN		$02
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$4C,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$08
 		SLOOP_END
 		SLOOP_BEGIN		$02
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$50,$40
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$03
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$08
@@ -3990,7 +3990,7 @@ _sloc_3BA99:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_jumpers_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$70,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$04

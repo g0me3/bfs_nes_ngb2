@@ -3,6 +3,7 @@
 
 DEBUG			EQU		1
 OPTIMIZATION	EQU		1
+OPT_SCREEN_POS	EQU		1
 BUGFIXES		EQU		0
 TWO_PLAYER_MODE	EQU		0
 
@@ -252,9 +253,8 @@ _NON	EQU	-1
 	ENDM
 
 	MAC	TLM_PAK
-{1}_idx	SET	[.-_tlm_pak_lib]>>2
+{1}_idx	SET	[.-_tlm_pak_lib]
 		.WORD	{1}
-		.WORD	{2}
 	ENDM
 
 	MAC	SCR_IDX_LO

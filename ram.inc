@@ -88,6 +88,8 @@ _debug_spr:
 		.BYTE	0
 _debug_pos_idx:
 		.BYTE	0
+_debug_cnt:
+		.BYTE	0,0
 #endif
 _random_seed:
 		.BYTE	0,0
@@ -249,6 +251,17 @@ _obj_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_y_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+_obj_x_screen_pos:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_y_screen_pos:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;_obj_out_of_screen:
+;		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+		ECHO "-------------"
+		ECHO "stack ram free:",[$200-.]
+		ECHO "-------------"
 
 		ORG		$200
 
@@ -560,6 +573,8 @@ _control_beam_button_code:
 		.BYTE	0
 _control_catch_button_code:
 		.BYTE	0
+_obj_out_of_screen:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 		ECHO "-------------"
 		ECHO "general ram free:",[$800-.]

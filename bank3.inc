@@ -72,13 +72,13 @@ _sct_judges_fat_restart:
 		NJSR			_nsub_patch_pal_load			; NOTE: to previous, this is actual palette for
 			NARGB		$06								; this enemy
 			NARGW		_pal_judges_active_patch
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; set sprite
+		NJSR			_nsub_spr_dir_select			; set sprite
 			NARGB		$09,$40
 		SLOOP_BEGIN		$06								; at the beginning stand still animation
 		SPR_IDX_ADD_IMM 6,$04
 		SPR_IDX_ADD_IMM 6,$FC
 		SLOOP_END
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; now targeting on beamer
+		NJSR			_nsub_cur_obj_to_beamer_dir_set	; now targeting on beamer
 
 ; FALLTHROUGH!
 
@@ -86,16 +86,16 @@ _sct_judges_fat_restart:
 _sct_judges_fat_active:
 		NBG_HNDL_SET	_nbgsub_fat_judge_ctest			; not sure why they set the same handler here twice
 _sloc_2C06F:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$01							; set destination
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$09,$40							; refresh sprite idx
 		SLOOP_BEGIN		$02
 		SDELAY			$06								; start to move animated
 		SPR_IDX_ADD_IMM 6,$04
 		SPR_IDX_ADD_IMM 0,$FC
 		SLOOP_END
-		NJSR			_nsub_obj_to_beamer_vector_adjust	; adjust targeting to beamer
+		NJSR			_nsub_obj_to_beamer_slow_turn	; adjust targeting to beamer
 			NARGB		$10
 		SJMPS			_sloc_2C06F						; repeat
 
@@ -104,9 +104,9 @@ _sct_judges_fat_stun:
 		NBG_HNDL_SET	_nbgsub_judges_fat_catch_test
 		SLOOP_BEGIN		$3C
 		SJSRS			_ssub_judges_fat_shake_anim
-		NJSR			_nsub_wait_for_beam_hold		; unles most of regular enemies
-		SBCS_BREAK		_sct_judges_fat_restart			; when beam released, boss continues
-		SLOOP_END										; to be active immediately
+		NJSR			_nsub_wait_for_beam_hold		; unless most of regular enemies
+		SBCS_BREAK		_sct_judges_fat_restart			; when beam released, this boss start
+		SLOOP_END										; to be active immediately.
 		SARG_SET		SARG0,$02						; after 1 sec boss turns red,
 		NJSR			_nsub_patch_pal_load			; also catch flag is raized, may
 			NARGB		$06								; be catched now as usual
@@ -123,7 +123,7 @@ _sloc_2C0A1:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_judges_fat_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$09,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$08
@@ -162,7 +162,7 @@ loc_2C0E5:
 loc_2C0EB:
 		STA		_obj_x_pos_lo,X				; when edges reached, bounce in opposite
 		INY									; direction on the same vector
-		LDA		#$00						; also set the flag that direction is changed
+		LDA		#$00
 		SEC
 		SBC		_trds_args1,X
 		STA		_trds_args1,X
@@ -178,7 +178,7 @@ loc_2C0FF:
 		LDA		#$DF
 loc_2C105:
 		STA		_obj_y_pos_lo,X
-		INY									; also sets the change signal
+		INY
 		LDA		#$80
 		SEC
 		SBC		_trds_args1,X
@@ -245,7 +245,7 @@ _scr_judges_tall_restart_posA:
 _scr_judges_tall_activeA:
 		SLOOP_BEGIN		$10								; do half large cirle right till the
 		SARG_ALU		SARG1,_ADC,$08					; left side of the screen
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$02
 		SDELAY			$07
 		SLOOP_END
@@ -264,7 +264,7 @@ _scr_judges_tall_restart_posB:						; second reappearance point
 _scr_judges_tall_activeB:
 		SLOOP_BEGIN		$10								; here start a small half circle to the
 		SARG_ALU		SARG1,_ADC,$08					; middle, the same start for second reappearance
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; point
+		NJSR			_nsub_speed_dir_select			; point
 			NARGB		$00,$02
 		SDELAY			$04
 		SLOOP_END
@@ -283,13 +283,13 @@ _scr_judges_tall_restart_posC:
 _scr_judges_tall_activeC:
 		SLOOP_BEGIN		$20								; here is the main loop, two full circles
 		SARG_ALU		SARG1,_ADC,$F8					; with start in the middle point, also
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; third reappearance point
+		NJSR			_nsub_speed_dir_select			; third reappearance point
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
 		SLOOP_BEGIN		$20
 		SARG_ALU		SARG1,_ADC,$08
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$02
 		SDELAY			$05
 		SLOOP_END
@@ -297,7 +297,7 @@ _scr_judges_tall_activeC:
 
 ; =============== S C R I P T ==========================s====================
 _scr_judges_tall_spr_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$19,$40
 		SDELAY			$06
 		SPR_IDX_ADD_IMM 6,$04
@@ -328,7 +328,7 @@ _sloc_2C1EF:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _scr_judges_tall_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$19,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$08
@@ -337,7 +337,7 @@ _scr_judges_tall_shake_anim:
 ; =============== S C R I P T ==========================s====================
 _scr_judges_tall_disappear:
 		SLOOP_BEGIN		$1E								; start to blinking
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; in current sprite state
+		NJSR			_nsub_spr_dir_select			; in current sprite state
 			NARGB		$19,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF
@@ -630,7 +630,7 @@ _scr_train_slime_projectileA:
 _scr_train_slime_projectile_common:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_train_slime_projectile_ctest
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$02							; small projectile in the beginning
 		SDELAY			$18								; then getting bigger and finally disappear
 		SLOOP_BEGIN		$03
@@ -727,17 +727,17 @@ _sloc_2C9BB:
 		NJSR			_nsub_dragons_obstacle_test
 		SBCSS			_sloc_2C9BB
 _sloc_2C9E4:
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$01							; now set speed
 		SDELAY			$10								; and move
 		POS_MOVE_STOP	0
 		NJSR			_nsub_obj_to_obj_in_range_test	; check for the beamer around
 			NARGB		$02,$40
 		SBCCS			_sloc_2C9BB						; if no one, continue swimming
-		NJSR			_nsub_sarg1_obj_to_beamer_sqare_vector_set
+		NJSR			_nsub_obj_to_beamer_fast_right_turn
 		NJSR			_nsub_apu_snd_load				; or else, target on it,
 			NARGB		_snd14_idx						; play popping up sound
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; show up the dragon itself
+		NJSR			_nsub_spr_dir_select			; show up the dragon itself
 			NARGB		$3C,$40
 		SDELAY			$07
 		SPR_IDX_ADD_IMM 7,$04							; now start active phase, also
@@ -786,7 +786,7 @@ _scr_dragons_stun:
 		NJSR			_nsub_apu_snd_load				; if no, play disappear sound
 			NARGB		_snd22_idx
 		SLOOP_BEGIN		$10
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; and do disappear animation
+		NJSR			_nsub_spr_dir_select			; and do disappear animation
 			NARGB		$44,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$FF							; remove object and stop thread then
@@ -820,7 +820,7 @@ _scr_dragons_retire:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_dragons_shake_anim:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$44,$40
 		SDELAY			$01
 		SPR_IDX_ADD_IMM 1,$08
@@ -1140,7 +1140,7 @@ _scr_keykeeper_appear_blink:
 ; =============== S C R I P T ==========================s====================
 _scr_boss_keykeeperA:
 		SARG_SET		SARG0,$00
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5A,$40
 		SDELAY			$28
 		NJSR			_nsub_new_thread_start
@@ -1154,7 +1154,7 @@ _scr_boss_keykeeperA:
 ; =============== S C R I P T ==========================s====================
 _scr_boss_keykeeperB:
 		SARG_SET		SARG0,$00
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5A,$40
 		SDELAY			$B4
 
@@ -1162,14 +1162,14 @@ _scr_boss_keykeeperB:
 
 ; =============== S C R I P T ==========================s====================
 _scr_keykeeper_moveA_blink:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5A,$40
 		SDELAY			$28
 		SJMPS			_scr_keykeeper_move_common
 
 ; =============== S C R I P T ==========================s====================
 _scr_keykeeper_move_solid:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5A,$40
 		SDELAY			$28
 		NBG_HNDL_SET	_nbgsub_keykeeper_ctest
@@ -1190,9 +1190,9 @@ _scr_keykeeper_move_common:
 
 ; =============== S C R I P T ==========================s====================
 _scr_keykeeper_fire:
-		NJSR			_nsub_sarg1_obj_to_beamer_vector_set	; keep firing state unless
+		NJSR			_nsub_cur_obj_to_beamer_dir_set	; keep firing state unless
 		SDELAY			$01								; beamed object lost or catched
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$5A,$40
 		NJSR			_nsub_keykeeper_spr_reverse
 		SDELAY			$01
@@ -1319,7 +1319,7 @@ _scr_keykeeper_move_D_anim:
 ; =============== S C R I P T ==========================s====================
 _scr_keykeeper_stun:
 		NBG_HNDL_SET	_nbgsub_keykeeper_catch_test	; also two-part handler
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; first part waiting for beaming time
+		NJSR			_nsub_spr_dir_select			; first part waiting for beaming time
 			NARGB		$5A,$40
 		SLOOP_BEGIN		$5A
 		SPR_IDX_ADD_IMM 1,$0C
@@ -1338,7 +1338,7 @@ _sloc_2D0F6:
 		SBCCS			_sloc_2D0F6
 		SJMPS			_sloc_2D112
 _sloc_2D103:
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; start to disappear and baby appear
+		NJSR			_nsub_spr_dir_select			; start to disappear and baby appear
 			NARGB		$5A,$40
 		SDELAY			$01
 		SPR_IDX_SET		1,$76
@@ -1702,9 +1702,9 @@ _scr_keykeeper_projectile:
 		NJSR			_nsub_apu_snd_load
 			NARGB		_snd0F_idx
 		NBG_HNDL_SET	_nbgsub_keykeeper_projectile_ctest	; deadly projectile collision test
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; reinit sprite
+		NJSR			_nsub_spr_dir_select			; reinit sprite
 			NARGB		$7C,$20
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set	; keep going, script is done here
+		NJSR			_nsub_speed_dir_select			; keep going, script is done here
 			NARGB		$00,$03
 		SUSPEND
 
@@ -2017,14 +2017,14 @@ _scr_vega_projectileA:
 		SARG_SET		SARG0,$00						; this projectile moves in circles
 		SSCRIPT1_SET	_scr_vega_projectileA_anim		; around vega
 		NBG_HNDL_SET	_nbgsub_vega_projectileA_ctest
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$04
 		SDELAY			$10
 		POS_MOVE_STOP	0
 		SDELAY			$4E
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_BEGIN		$80
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$06
 		SDELAY			$01
 		SARG_ALU		SARG1,_ADC,$04
@@ -2032,7 +2032,7 @@ _scr_vega_projectileA:
 		SARG_SET		SARG2,$04
 		SLOOP_BEGIN		$07
 		SLOOP_BEGIN		$04
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$06
 		SDELAY			$01
 		NJSR			_nsub_vega_projectileA_shrink
@@ -2083,7 +2083,7 @@ _scr_vega_fireball:
 _scr_vega_projectileB:
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_vega_projectileB_ctest
-		NJSR			_nsub_cur_obj_linear_dst_pos_from_sarg1_set
+		NJSR			_nsub_speed_dir_select
 			NARGB		$00,$03
 		SPR_IDX_SET		0,$8A
 		SLOOP_BEGIN		$03
@@ -2122,11 +2122,11 @@ _scr_vega_mother:
 		SECTION_START
 
 _spr_libA1A:
-		.WORD	_sprA1A_00
+		.WORD	_sprA1A_00	; catch, uses copies in CHR1 for every level
 		.WORD	_sprA1A_01
 		.WORD	_sprA1A_02
 		.WORD	_sprA1A_03
-		.WORD	_sprA1A_04
+		.WORD	_sprA1A_04	; lvl1 boss judges (CHR0 07, CHR1 none)
 		.WORD	_sprA1A_05
 		.WORD	_sprA1A_06
 		.WORD	_sprA1A_07
@@ -2163,7 +2163,7 @@ _spr_libA1A:
 		.WORD	_sprA1A_26
 		.WORD	_sprA1A_27
 		.WORD	_sprA1A_28
-		.WORD	_sprA1A_29
+		.WORD	_sprA1A_29	; lvl2 boss train slime (CHR0 0C, CHR1 0A)
 		.WORD	_sprA1A_2A
 		.WORD	_sprA1A_2B
 		.WORD	_sprA1A_2C
@@ -2181,7 +2181,7 @@ _spr_libA1A:
 		.WORD	_sprA1A_38
 		.WORD	_sprA1A_39
 		.WORD	_sprA1A_3A
-		.WORD	_sprA1A_3B
+		.WORD	_sprA1A_3B	; lvl3 boss sewer dragons (CHR0 13, CHR1 none)
 		.WORD	_sprA1A_3C
 		.WORD	_sprA1A_3D
 		.WORD	_sprA1A_3E
@@ -2204,15 +2204,15 @@ _spr_libA1A:
 		.WORD	_sprA1A_4F
 		.WORD	_sprA1A_50
 		.WORD	_sprA1A_51
-		.WORD	_sprA1A_52	; unused
-		.WORD	_sprA1A_53	; unused
+		.WORD	_sprA1A_52
+		.WORD	_sprA1A_53
 		.WORD	_sprA1A_54
 		.WORD	_sprA1A_55
 		.WORD	_sprA1A_56
 		.WORD	_sprA1A_57
 		.WORD	_sprA1A_58
 		.WORD	_sprA1A_59
-		.WORD	_sprA1A_5A
+		.WORD	_sprA1A_5A	; lvl5 boss keykeeper (CHR0 18, CHR1 none)
 		.WORD	_sprA1A_5B
 		.WORD	_sprA1A_5C
 		.WORD	_sprA1A_5D
@@ -2241,6 +2241,8 @@ _spr_libA1A:
 		.WORD	_sprA1A_74
 		.WORD	_sprA1A_75
 		.WORD	_sprA1A_76
+; NOTE: this is a floor phase for baby keykeeper after it fall down to the floor
+; but script use only two next frames rendered this one unused.
 		.WORD	_sprA1A_77	; unused
 		.WORD	_sprA1A_78
 		.WORD	_sprA1A_79
@@ -2254,7 +2256,7 @@ _spr_libA1A:
 		.WORD	_sprA1A_81
 		.WORD	_sprA1A_82
 		.WORD	_sprA1A_83
-		.WORD	_sprA1A_84
+		.WORD	_sprA1A_84	; lvl6 boss vega dead phase (CHR0 17, CHR1 none)
 		.WORD	_sprA1A_85
 		.WORD	_sprA1A_86
 		.WORD	_sprA1A_87
@@ -2267,12 +2269,12 @@ _spr_libA1A:
 		.WORD	_sprA1A_8E
 		.WORD	_sprA1A_8F
 		.WORD	_sprA1A_90
-		.WORD	_sprA1A_91
+		.WORD	_sprA1A_91	; ending cutscene sprites (CHR1 none, CHR1 16)
 		.WORD	_sprA1A_92
 		.WORD	_sprA1A_93
 		.WORD	_sprA1A_94
 _spr_libB1A:
-		.WORD	_sprB1A_C0
+		.WORD	_sprB1A_C0	; lvl6 boss vega main sprites (CHR0 17, CHR1 none)
 		.WORD	_sprB1A_C1
 		.WORD	_sprB1A_C2
 		.WORD	_sprB1A_C3
@@ -2304,9 +2306,15 @@ _sprA1A_08:
 		.BYTE	$FC,$48,$00,$FE
 		.BYTE	$FD,$48,$00,$FA
 _sprA1A_09:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_09_B
+_sprA1A_09_A:
+		.BYTE	$02
+		.BYTE	$10,$3E,$00,$00
+		.BYTE	$10,$3E,$40,$F8
+_sprA1A_09_B:
+		.BYTE	$06
 		.BYTE	$E8,$A4,$02,$FC
 		.BYTE	$E8,$B4,$02,$04
 		.BYTE	$E8,$B4,$42,$F4
@@ -2314,9 +2322,11 @@ _sprA1A_09:
 		.BYTE	$F8,$B6,$02,$04
 		.BYTE	$F8,$B6,$42,$F4
 _sprA1A_0A:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_0A_B
+_sprA1A_0A_B:
+		.BYTE	$06
 		.BYTE	$E8,$8C,$42,$04
 		.BYTE	$E8,$9C,$42,$FC
 		.BYTE	$E8,$AC,$42,$F4
@@ -2324,9 +2334,11 @@ _sprA1A_0A:
 		.BYTE	$F8,$9E,$42,$FC
 		.BYTE	$F8,$AE,$42,$F4
 _sprA1A_0B:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_0B_B
+_sprA1A_0B_B:
+		.BYTE	$06
 		.BYTE	$E8,$80,$02,$F4
 		.BYTE	$E8,$80,$42,$04
 		.BYTE	$E8,$90,$02,$FC
@@ -2334,9 +2346,11 @@ _sprA1A_0B:
 		.BYTE	$F8,$82,$42,$04
 		.BYTE	$F8,$92,$02,$FC
 _sprA1A_0C:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_0C_B
+_sprA1A_0C_B:
+		.BYTE	$06
 		.BYTE	$E8,$8C,$02,$F4
 		.BYTE	$E8,$9C,$02,$FC
 		.BYTE	$E8,$AC,$02,$04
@@ -2344,9 +2358,11 @@ _sprA1A_0C:
 		.BYTE	$F8,$9E,$02,$FC
 		.BYTE	$F8,$AE,$02,$04
 _sprA1A_0D:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_0D_B
+_sprA1A_0D_B:
+		.BYTE	$06
 		.BYTE	$E8,$84,$02,$F4
 		.BYTE	$E8,$84,$42,$04
 		.BYTE	$E8,$94,$02,$FC
@@ -2354,19 +2370,23 @@ _sprA1A_0D:
 		.BYTE	$F8,$86,$42,$04
 		.BYTE	$F8,$96,$02,$FC
 _sprA1A_0E:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
-		.BYTE	$E8,$88,$42,$04 ; 1A_002
-		.BYTE	$E8,$98,$42,$FC ; 1A_003
-		.BYTE	$E8,$A8,$42,$F4 ; 1A_004
-		.BYTE	$F8,$8A,$42,$04 ; 1A_005
-		.BYTE	$F8,$9A,$42,$FC ; 1A_006
-		.BYTE	$F8,$AA,$42,$F4 ; 1A_007
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_0E_B
+_sprA1A_0E_B:
+		.BYTE	$06
+		.BYTE	$E8,$88,$42,$04
+		.BYTE	$E8,$98,$42,$FC
+		.BYTE	$E8,$A8,$42,$F4
+		.BYTE	$F8,$8A,$42,$04
+		.BYTE	$F8,$9A,$42,$FC
+		.BYTE	$F8,$AA,$42,$F4
 _sprA1A_0F:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_0F_B
+_sprA1A_0F_B:
+		.BYTE	$06
 		.BYTE	$E8,$A0,$02,$FC
 		.BYTE	$E8,$B0,$02,$04
 		.BYTE	$E8,$B0,$42,$F4
@@ -2374,19 +2394,27 @@ _sprA1A_0F:
 		.BYTE	$F8,$B2,$02,$04
 		.BYTE	$F8,$B2,$42,$F4
 _sprA1A_10:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
-		.BYTE	$E8,$88,$02,$F4 ; 1A_008
-		.BYTE	$E8,$98,$02,$FC ; 1A_009
-		.BYTE	$E8,$A8,$02,$04 ; 1A_00A
-		.BYTE	$F8,$8A,$02,$F4 ; 1A_00B
-		.BYTE	$F8,$9A,$02,$FC ; 1A_00C
-		.BYTE	$F8,$AA,$02,$04 ; 1A_00D
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_10_B
+_sprA1A_10_B:
+		.BYTE	$06
+		.BYTE	$E8,$88,$02,$F4
+		.BYTE	$E8,$98,$02,$FC
+		.BYTE	$E8,$A8,$02,$04
+		.BYTE	$F8,$8A,$02,$F4
+		.BYTE	$F8,$9A,$02,$FC
+		.BYTE	$F8,$AA,$02,$04
 _sprA1A_11:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$82
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_11_B
+_sprA1A_11_A:
+		.BYTE	$02
+		.BYTE	$10,$3E,$00,$02
+		.BYTE	$10,$3E,$40,$FA
+_sprA1A_11_B:
+		.BYTE	$06
 		.BYTE	$E8,$A4,$02,$FE
 		.BYTE	$E8,$B4,$02,$06
 		.BYTE	$E8,$B4,$42,$F6
@@ -2394,9 +2422,11 @@ _sprA1A_11:
 		.BYTE	$F8,$B6,$02,$06
 		.BYTE	$F8,$B6,$42,$F6
 _sprA1A_12:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$82
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_12_B
+_sprA1A_12_B:
+		.BYTE	$06
 		.BYTE	$E8,$8C,$42,$06
 		.BYTE	$E8,$9C,$42,$FE
 		.BYTE	$E8,$AC,$42,$F6
@@ -2404,9 +2434,11 @@ _sprA1A_12:
 		.BYTE	$F8,$9E,$42,$FE
 		.BYTE	$F8,$AE,$42,$F6
 _sprA1A_13:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$82
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_13_B
+_sprA1A_13_B:
+		.BYTE	$06
 		.BYTE	$E8,$80,$02,$F6
 		.BYTE	$E8,$80,$42,$06
 		.BYTE	$E8,$90,$02,$FE
@@ -2414,9 +2446,11 @@ _sprA1A_13:
 		.BYTE	$F8,$82,$42,$06
 		.BYTE	$F8,$92,$02,$FE
 _sprA1A_14:
-		.BYTE	$08
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$82
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_14_B
+_sprA1A_14_B:
+		.BYTE	$06
 		.BYTE	$E8,$8C,$02,$F6
 		.BYTE	$E8,$9C,$02,$FE
 		.BYTE	$E8,$AC,$02,$06
@@ -2424,142 +2458,188 @@ _sprA1A_14:
 		.BYTE	$F8,$9E,$02,$FE
 		.BYTE	$F8,$AE,$02,$06
 _sprA1A_15:
-		.BYTE	$05
+		.BYTE	$82
+		.WORD	_sprA1A_15_A
+		.WORD	_sprA1A_15_B
+_sprA1A_15_A:
+		.BYTE	$02
+		.BYTE	$FF,$CE,$02,$F2
+		.BYTE	$FF,$DE,$02,$FA
+_sprA1A_15_B:
+		.BYTE	$03
 		.BYTE	$EF,$88,$02,$EE
 		.BYTE	$EF,$98,$02,$F6
 		.BYTE	$F0,$A8,$02,$FE
-		.BYTE	$FF,$CE,$02,$F2 ; 1A_010
-		.BYTE	$FF,$DE,$02,$FA ; 1A_011
 _sprA1A_16:
-		.BYTE	$05
+		.BYTE	$82
+		.WORD	_sprA1A_15_A
+		.WORD	_sprA1A_16_B
+_sprA1A_16_B
+		.BYTE	$03
 		.BYTE	$F6,$88,$02,$EE
 		.BYTE	$F7,$98,$02,$F6
 		.BYTE	$F8,$A8,$02,$FE
-		.BYTE	$FF,$CE,$02,$F2 ; 1A_010
-		.BYTE	$FF,$DE,$02,$FA ; 1A_011
 _sprA1A_17:
-		.BYTE	$05
+		.BYTE	$82
+		.WORD	_sprA1A_17_A
+		.WORD	_sprA1A_17_B
+_sprA1A_17_A:
+		.BYTE	$02
+		.BYTE	$FF,$CE,$42,$07
+		.BYTE	$FF,$DE,$42,$FF
+_sprA1A_17_B:
+		.BYTE	$03
 		.BYTE	$EF,$88,$42,$0B
 		.BYTE	$EF,$98,$42,$03
 		.BYTE	$F0,$A8,$42,$FB
-		.BYTE	$FF,$CE,$42,$07 ; 1A_012
-		.BYTE	$FF,$DE,$42,$FF ; 1A_013
 _sprA1A_18:
-		.BYTE	$05
+		.BYTE	$82
+		.WORD	_sprA1A_17_A
+		.WORD	_sprA1A_18_B
+_sprA1A_18_B:
+		.BYTE	$03
 		.BYTE	$F6,$88,$42,$0B
 		.BYTE	$F7,$98,$42,$03
 		.BYTE	$F8,$A8,$42,$FB
-		.BYTE	$FF,$CE,$42,$07 ; 1A_012
-		.BYTE	$FF,$DE,$42,$FF ; 1A_013
 _sprA1A_19:
-		.BYTE	$08
-		.BYTE	$08,$D4,$03,$F8 ; 1A_014
-		.BYTE	$08,$D4,$43,$00 ; 1A_015
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$83
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_19_B
+		.WORD	_sprA1A_19_C
+_sprA1A_19_B:
+		.BYTE	$02
+		.BYTE	$08,$D4,$03,$F8
+		.BYTE	$08,$D4,$43,$00
+_sprA1A_19_C:
+		.BYTE	$04
 		.BYTE	$E8,$BE,$03,$00
 		.BYTE	$E8,$D6,$03,$F8
 		.BYTE	$F8,$D8,$03,$F8
 		.BYTE	$F8,$D8,$43,$00
 _sprA1A_1A:
-		.BYTE	$07
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_1A_B
+_sprA1A_1A_B:
+		.BYTE	$05
 		.BYTE	$08,$F4,$43,$F8
 		.BYTE	$E8,$E0,$43,$00
 		.BYTE	$E8,$F0,$43,$F8
 		.BYTE	$F8,$E2,$43,$00
 		.BYTE	$F8,$F2,$43,$F8
 _sprA1A_1B:
-		.BYTE	$08
-		.BYTE	$08,$D4,$03,$F8 ; 1A_014
-		.BYTE	$08,$D4,$43,$00 ; 1A_015
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$83
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_19_B
+		.WORD	_sprA1A_1B_C
+_sprA1A_1B_C:
+		.BYTE	$04
 		.BYTE	$E8,$BA,$03,$00
 		.BYTE	$E8,$D0,$03,$F8
 		.BYTE	$F8,$D2,$03,$F8
 		.BYTE	$F8,$D2,$43,$00
 _sprA1A_1C:
-		.BYTE	$07
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_1C_B
+_sprA1A_1C_B:
+		.BYTE	$05
 		.BYTE	$08,$F4,$03,$00
 		.BYTE	$E8,$E0,$03,$F8
 		.BYTE	$E8,$F0,$03,$00
 		.BYTE	$F8,$E2,$03,$F8
 		.BYTE	$F8,$F2,$03,$00
 _sprA1A_1D:
-		.BYTE	$08
-		.BYTE	$08,$C4,$03,$F8 ; 1A_016
-		.BYTE	$08,$C4,$43,$00 ; 1A_017
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$83
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_1D_B
+		.WORD	_sprA1A_1D_C
+_sprA1A_1D_B:
+		.BYTE	$02
+		.BYTE	$08,$C4,$03,$F8
+		.BYTE	$08,$C4,$43,$00
+_sprA1A_1D_C:
+		.BYTE	$04
 		.BYTE	$E8,$BC,$03,$00
 		.BYTE	$E8,$C6,$03,$F8
 		.BYTE	$F8,$C8,$03,$F8
 		.BYTE	$F8,$C8,$43,$00
 _sprA1A_1E:
-		.BYTE	$07
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_1E_B
+_sprA1A_1E_B:
+		.BYTE	$05
 		.BYTE	$08,$E4,$43,$F8
 		.BYTE	$E8,$E6,$43,$00
 		.BYTE	$E8,$F6,$43,$F8
 		.BYTE	$F8,$E8,$43,$00
 		.BYTE	$F8,$F8,$43,$F8
 _sprA1A_1F:
-		.BYTE	$08
-		.BYTE	$08,$C4,$03,$F8 ; 1A_016
-		.BYTE	$08,$C4,$43,$00 ; 1A_017
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$83
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_1D_B
+		.WORD	_sprA1A_1F_C
+_sprA1A_1F_C:
+		.BYTE	$04
 		.BYTE	$E8,$B8,$03,$00
 		.BYTE	$E8,$C0,$03,$F8
 		.BYTE	$F8,$C2,$03,$F8
 		.BYTE	$F8,$C2,$43,$00
 _sprA1A_20:
-		.BYTE	$07
-		.BYTE	$10,$3E,$00,$00 ; 1A_000
-		.BYTE	$10,$3E,$40,$F8 ; 1A_001
+		.BYTE	$82
+		.WORD	_sprA1A_09_A
+		.WORD	_sprA1A_20_B
+_sprA1A_20_B:
+		.BYTE	$05
 		.BYTE	$08,$E4,$03,$00
 		.BYTE	$E8,$E6,$03,$F8
 		.BYTE	$E8,$F6,$03,$00
 		.BYTE	$F8,$E8,$03,$F8
 		.BYTE	$F8,$F8,$03,$00
 _sprA1A_21:
-		.BYTE	$08
-		.BYTE	$08,$D4,$03,$FA ; 1A_018
-		.BYTE	$08,$D4,$43,$02 ; 1A_019
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$83
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_21_B
+		.WORD	_sprA1A_21_C
+_sprA1A_21_B:
+		.BYTE	$02
+		.BYTE	$08,$D4,$03,$FA
+		.BYTE	$08,$D4,$43,$02
+_sprA1A_21_C
+		.BYTE	$04
 		.BYTE	$E8,$BE,$03,$02
 		.BYTE	$E8,$D6,$03,$FA
 		.BYTE	$F8,$D8,$03,$FA
 		.BYTE	$F8,$D8,$43,$02
 _sprA1A_22:
-		.BYTE	$07
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$82
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_22_B
+_sprA1A_22_B:
+		.BYTE	$05
 		.BYTE	$08,$F4,$43,$FA
 		.BYTE	$E8,$E0,$43,$02
 		.BYTE	$E8,$F0,$43,$FA
 		.BYTE	$F8,$E2,$43,$02
 		.BYTE	$F8,$F2,$43,$FA
 _sprA1A_23:
-		.BYTE	$08
-		.BYTE	$08,$D4,$03,$FA ; 1A_018
-		.BYTE	$08,$D4,$43,$02 ; 1A_019
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$83
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_21_B
+		.WORD	_sprA1A_23_C
+_sprA1A_23_C:
+		.BYTE	$04
 		.BYTE	$E8,$BA,$03,$02
 		.BYTE	$E8,$D0,$03,$FA
 		.BYTE	$F8,$D2,$03,$FA
 		.BYTE	$F8,$D2,$43,$02
 _sprA1A_24:
-		.BYTE	$07
-		.BYTE	$10,$3E,$00,$02 ; 1A_00E
-		.BYTE	$10,$3E,$40,$FA ; 1A_00F
+		.BYTE	$82
+		.WORD	_sprA1A_11_A
+		.WORD	_sprA1A_24_B
+_sprA1A_24_B:
+		.BYTE	$05
 		.BYTE	$08,$F4,$03,$02
 		.BYTE	$E8,$E0,$03,$FA
 		.BYTE	$E8,$F0,$03,$02
@@ -2590,95 +2670,119 @@ _sprA1A_28:
 		.BYTE	$F6,$E6,$43,$02
 		.BYTE	$FF,$FA,$43,$FF
 _sprA1A_29:
-		.BYTE	$0B
+		.BYTE	$82
+		.WORD	_sprA1A_29_A
+		.WORD	_sprA1A_29_B
+_sprA1A_29_A:
+		.BYTE	$04
+		.BYTE	$08,$3E,$03,$00
+		.BYTE	$08,$3E,$43,$F8
+		.BYTE	$E7,$E3,$00,$F8
+		.BYTE	$E7,$E3,$40,$00
+_sprA1A_29_B:
+		.BYTE	$07
 		.BYTE	$00,$E2,$02,$F8
 		.BYTE	$00,$E2,$42,$00
-		.BYTE	$08,$3E,$03,$00 ; 1A_01A
-		.BYTE	$08,$3E,$43,$F8 ; 1A_01B
-		.BYTE	$E7,$E3,$00,$F8 ; 1A_01C
-		.BYTE	$E7,$E3,$40,$00 ; 1A_01D
 		.BYTE	$F0,$E0,$02,$F8
 		.BYTE	$F0,$E0,$42,$00
 		.BYTE	$FD,$C7,$00,$FA
 		.BYTE	$FD,$D7,$00,$02
 		.BYTE	$FD,$E7,$00,$0A
 _sprA1A_2A:
-		.BYTE	$0B
-		.BYTE	$01,$E2,$02,$F8 ; 1A_01E
-		.BYTE	$01,$E2,$42,$00 ; 1A_01F
-		.BYTE	$08,$3E,$03,$00 ; 1A_01A
-		.BYTE	$08,$3E,$43,$F8 ; 1A_01B
-		.BYTE	$E7,$E3,$00,$F8 ; 1A_01C
-		.BYTE	$E7,$E3,$40,$00 ; 1A_01D
-		.BYTE	$F1,$F0,$02,$F8 ; 1A_020
-		.BYTE	$F1,$F0,$42,$00 ; 1A_021
+		.BYTE	$83
+		.WORD	_sprA1A_29_A
+		.WORD	_sprA1A_2B_A
+		.WORD	_sprA1A_2A_C
+_sprA1A_2A_C:
+		.BYTE	$03
 		.BYTE	$FF,$C7,$00,$FA
 		.BYTE	$FF,$D7,$00,$02
 		.BYTE	$FF,$E7,$00,$0A
 _sprA1A_2B:
-		.BYTE	$0B
-		.BYTE	$01,$E2,$02,$F8 ; 1A_01E
-		.BYTE	$01,$E2,$42,$00 ; 1A_01F
-		.BYTE	$08,$3E,$03,$00 ; 1A_01A
-		.BYTE	$08,$3E,$43,$F8 ; 1A_01B
+		.BYTE	$82
+		.WORD	_sprA1A_2B_A
+		.WORD	_sprA1A_2B_B
+_sprA1A_2B_A:
+		.BYTE	$04
+		.BYTE	$01,$E2,$02,$F8
+		.BYTE	$01,$E2,$42,$00
+		.BYTE	$F1,$F0,$02,$F8
+		.BYTE	$F1,$F0,$42,$00
+_sprA1A_2B_B:
+		.BYTE	$07
+		.BYTE	$08,$3E,$03,$00
+		.BYTE	$08,$3E,$43,$F8
 		.BYTE	$E8,$E3,$00,$F8
 		.BYTE	$E8,$E3,$40,$00
-		.BYTE	$F1,$F0,$02,$F8 ; 1A_020
-		.BYTE	$F1,$F0,$42,$00 ; 1A_021
 		.BYTE	$FE,$C7,$00,$FA
 		.BYTE	$FE,$D7,$00,$02
 		.BYTE	$FE,$E7,$00,$0A
 _sprA1A_2C:
-		.BYTE	$0A
-		.BYTE	$00,$C4,$42,$00 ; 1A_022
-		.BYTE	$00,$D4,$42,$F8 ; 1A_023
-		.BYTE	$06,$3E,$03,$00 ; 1A_024
-		.BYTE	$06,$3E,$43,$F8 ; 1A_025
-		.BYTE	$E8,$C5,$00,$F9 ; 1A_026
-		.BYTE	$E8,$D5,$00,$01 ; 1A_027
-		.BYTE	$F0,$C2,$42,$00 ; 1A_028
-		.BYTE	$F0,$D2,$42,$F8 ; 1A_029
+		.BYTE	$82
+		.WORD	_sprA1A_2C_A
+		.WORD	_sprA1A_2C_B
+_sprA1A_2C_A:
+		.BYTE	$07
+		.BYTE	$00,$C4,$42,$00
+		.BYTE	$00,$D4,$42,$F8
+		.BYTE	$06,$3E,$03,$00
+		.BYTE	$06,$3E,$43,$F8
+		.BYTE	$E8,$C5,$00,$F9
+		.BYTE	$E8,$D5,$00,$01
+		.BYTE	$F0,$C2,$42,$00
+_sprA1A_2C_B:
+		.BYTE	$03
+		.BYTE	$F0,$D2,$42,$F8
 		.BYTE	$FD,$E5,$00,$FA
 		.BYTE	$FD,$F5,$00,$02
 _sprA1A_2D:
-		.BYTE	$0B
-		.BYTE	$00,$C4,$42,$00 ; 1A_022
-		.BYTE	$00,$D4,$42,$F8 ; 1A_023
-		.BYTE	$06,$3E,$03,$00 ; 1A_024
-		.BYTE	$06,$3E,$43,$F8 ; 1A_025
-		.BYTE	$E8,$C5,$00,$F9 ; 1A_026
-		.BYTE	$E8,$D5,$00,$01 ; 1A_027
-		.BYTE	$F0,$C2,$42,$00 ; 1A_028
-		.BYTE	$F0,$D2,$42,$F8 ; 1A_029
+		.BYTE	$82
+		.WORD	_sprA1A_2C_A
+		.WORD	_sprA1A_2D_B
+_sprA1A_2D_B:
+		.BYTE	$04
+		.BYTE	$F0,$D2,$42,$F8
 		.BYTE	$F8,$C7,$00,$FA
 		.BYTE	$F8,$D7,$00,$02
 		.BYTE	$F8,$E7,$00,$0A
 _sprA1A_2E:
-		.BYTE	$09
-		.BYTE	$06,$3E,$03,$00 ; 1A_024
-		.BYTE	$06,$3E,$43,$F8 ; 1A_025
-		.BYTE	$EA,$F3,$00,$F8 ; *
+		.BYTE	$83
+		.WORD	_sprA1A_2E_A
+		.WORD	_sprA1A_2E_B
+		.WORD	_sprA1A_2E_C
+_sprA1A_2E_A:
+		.BYTE	$02
+		.BYTE	$06,$3E,$03,$00
+		.BYTE	$06,$3E,$43,$F8
+_sprA1A_2E_B:
+		.BYTE	$02
+		.BYTE	$EA,$F3,$00,$F8
 		.BYTE	$EA,$F3,$40,$00
+_sprA1A_2E_C:
+		.BYTE	$05
 		.BYTE	$EF,$F2,$02,$F8
 		.BYTE	$EF,$F2,$42,$00
 		.BYTE	$F1,$F5,$80,$05
 		.BYTE	$FF,$F4,$02,$F8
 		.BYTE	$FF,$F4,$42,$00
 _sprA1A_2F:
-		.BYTE	$09
-		.BYTE	$06,$3E,$03,$00 ; 1A_024
-		.BYTE	$06,$3E,$43,$F8 ; 1A_025
+		.BYTE	$83
+		.WORD	_sprA1A_2E_A
+		.WORD	_sprA1A_2E_B
+		.WORD	_sprA1A_2F_C
+_sprA1A_2F_C:
+		.BYTE	$05
 		.BYTE	$E6,$F7,$00,$FA
-		.BYTE	$EA,$F3,$00,$F8
-		.BYTE	$EA,$F3,$40,$00
 		.BYTE	$EE,$F2,$02,$F8
 		.BYTE	$EE,$F2,$42,$00
 		.BYTE	$FE,$F4,$02,$F8
 		.BYTE	$FE,$F4,$42,$00
 _sprA1A_30:
-		.BYTE	$09
-		.BYTE	$06,$3E,$03,$00 ; 1A_024
-		.BYTE	$06,$3E,$43,$F8 ; 1A_025
+		.BYTE	$82
+		.WORD	_sprA1A_2E_A
+		.WORD	_sprA1A_30_B
+_sprA1A_30_B:
+		.BYTE	$07
 		.BYTE	$E9,$F3,$00,$F8
 		.BYTE	$E9,$F3,$40,$00
 		.BYTE	$ED,$F2,$02,$F8
@@ -2733,14 +2837,22 @@ _sprA1A_3A:
 		.BYTE	$01
 		.BYTE	$F8,$C8,$41,$FC
 _sprA1A_3B:
-		.BYTE	$03
+		.BYTE	$82
+		.WORD	_sprA1A_3B_A
+		.WORD	_sprA1A_3B_B
+_sprA1A_3B_A:
+		.BYTE	$02
+		.BYTE	$08,$82,$00,$F4
+		.BYTE	$08,$90,$00,$04
+_sprA1A_3B_B:
+		.BYTE	$01
 		.BYTE	$08,$80,$00,$FC
-		.BYTE	$08,$82,$00,$F4
-		.BYTE	$08,$90,$00,$04
 _sprA1A_3C:
-		.BYTE	$03
-		.BYTE	$08,$82,$00,$F4
-		.BYTE	$08,$90,$00,$04
+		.BYTE	$82
+		.WORD	_sprA1A_3B_A
+		.WORD	_sprA1A_3C_B
+_sprA1A_3C_B:
+		.BYTE	$01
 		.BYTE	$08,$98,$03,$FC
 _sprA1A_3D:
 		.BYTE	$03
@@ -2748,20 +2860,24 @@ _sprA1A_3D:
 		.BYTE	$08,$90,$43,$F4
 		.BYTE	$08,$9A,$43,$FC
 _sprA1A_3E:
-		.BYTE	$03
-		.BYTE	$08,$82,$00,$F4
+		.BYTE	$82
+		.WORD	_sprA1A_3B_A
+		.WORD	_sprA1A_3E_B
+_sprA1A_3E_B:
+		.BYTE	$01
 		.BYTE	$08,$88,$03,$FC
-		.BYTE	$08,$90,$00,$04
 _sprA1A_3F:
 		.BYTE	$03
 		.BYTE	$08,$8A,$03,$F4
 		.BYTE	$08,$90,$00,$04
 		.BYTE	$08,$9A,$03,$FC
 _sprA1A_40:
-		.BYTE	$09
+		.BYTE	$82
+		.WORD	_sprA1A_3B_A
+		.WORD	_sprA1A_40_B
+_sprA1A_40_B:
+		.BYTE	$07
 		.BYTE	$08,$80,$00,$FC
-		.BYTE	$08,$82,$00,$F4
-		.BYTE	$08,$90,$00,$04
 		.BYTE	$EE,$A6,$03,$FC
 		.BYTE	$FE,$A4,$03,$EC
 		.BYTE	$FE,$A4,$43,$0C
@@ -3002,11 +3118,17 @@ _sprA1A_59:
 		.BYTE	$F5,$92,$01,$01
 		.BYTE	$F8,$92,$01,$18
 _sprA1A_5A:
-		.BYTE	$0A
-		.BYTE	$08,$8C,$43,$00
-		.BYTE	$08,$9C,$43,$F8
+		.BYTE	$82
+		.WORD	_sprA1A_5A_A
+		.WORD	_sprA1A_5A_B
+_sprA1A_5A_A:
+		.BYTE	$02
 		.BYTE	$08,$9E,$03,$08
 		.BYTE	$08,$9E,$43,$F0
+_sprA1A_5A_B:
+		.BYTE	$08
+		.BYTE	$08,$8C,$43,$00
+		.BYTE	$08,$9C,$43,$F8
 		.BYTE	$E8,$88,$43,$04
 		.BYTE	$E8,$98,$43,$FC
 		.BYTE	$E8,$A8,$43,$F4
@@ -3014,11 +3136,17 @@ _sprA1A_5A:
 		.BYTE	$F8,$9A,$43,$FC
 		.BYTE	$F8,$AA,$43,$F4
 _sprA1A_5B:
-		.BYTE	$0C
+		.BYTE	$82
+		.WORD	_sprA1A_5B_A
+		.WORD	_sprA1A_5B_B
+_sprA1A_5B_A:
+		.BYTE	$04
 		.BYTE	$08,$84,$03,$F0
 		.BYTE	$08,$84,$43,$08
 		.BYTE	$08,$94,$03,$F8
 		.BYTE	$08,$94,$43,$00
+_sprA1A_5B_B:
+		.BYTE	$08
 		.BYTE	$E8,$80,$03,$F0
 		.BYTE	$E8,$80,$43,$08
 		.BYTE	$E8,$90,$03,$F8
@@ -3028,11 +3156,13 @@ _sprA1A_5B:
 		.BYTE	$F8,$92,$03,$F8
 		.BYTE	$F8,$92,$43,$00
 _sprA1A_5C:
-		.BYTE	$0A
+		.BYTE	$82
+		.WORD	_sprA1A_5A_A
+		.WORD	_sprA1A_5C_B
+_sprA1A_5C_B:
+		.BYTE	$08
 		.BYTE	$08,$8C,$03,$F8
 		.BYTE	$08,$9C,$03,$00
-		.BYTE	$08,$9E,$03,$08
-		.BYTE	$08,$9E,$43,$F0
 		.BYTE	$E8,$88,$03,$F4
 		.BYTE	$E8,$98,$03,$FC
 		.BYTE	$E8,$A8,$03,$04
@@ -3040,11 +3170,11 @@ _sprA1A_5C:
 		.BYTE	$F8,$9A,$03,$FC
 		.BYTE	$F8,$AA,$03,$04
 _sprA1A_5D:
-		.BYTE	$0C
-		.BYTE	$08,$A4,$03,$00
-		.BYTE	$08,$A4,$43,$F8
-		.BYTE	$08,$B4,$03,$08
-		.BYTE	$08,$B4,$43,$F0
+		.BYTE	$82
+		.WORD	_sprA1A_5D_A
+		.WORD	_sprA1A_5D_B
+_sprA1A_5D_A:
+		.BYTE	$08
 		.BYTE	$E8,$A0,$03,$00
 		.BYTE	$E8,$A0,$43,$F8
 		.BYTE	$E8,$B0,$03,$08
@@ -3053,11 +3183,17 @@ _sprA1A_5D:
 		.BYTE	$F8,$A2,$43,$F8
 		.BYTE	$F8,$B2,$03,$08
 		.BYTE	$F8,$B2,$43,$F0
+_sprA1A_5D_B:
+		.BYTE	$04
+		.BYTE	$08,$A4,$03,$00
+		.BYTE	$08,$A4,$43,$F8
+		.BYTE	$08,$B4,$03,$08
+		.BYTE	$08,$B4,$43,$F0
 _sprA1A_5E:
 		.BYTE	$0A
-		.BYTE	$07,$8C,$43,$00
 		.BYTE	$07,$9E,$03,$08
 		.BYTE	$07,$9E,$43,$F0
+		.BYTE	$07,$8C,$43,$00
 		.BYTE	$07,$BC,$43,$F8
 		.BYTE	$E7,$88,$43,$04
 		.BYTE	$E7,$98,$43,$FC
@@ -3066,11 +3202,17 @@ _sprA1A_5E:
 		.BYTE	$F7,$9A,$43,$FC
 		.BYTE	$F7,$AA,$43,$F4
 _sprA1A_5F:
-		.BYTE	$0C
-		.BYTE	$07,$8E,$03,$00
-		.BYTE	$07,$8E,$43,$F8
+		.BYTE	$82
+		.WORD	_sprA1A_5F_A
+		.WORD	_sprA1A_5F_B
+_sprA1A_5F_A:
+		.BYTE	$04
 		.BYTE	$07,$9E,$03,$08
 		.BYTE	$07,$9E,$43,$F0
+		.BYTE	$07,$8E,$03,$00
+		.BYTE	$07,$8E,$43,$F8
+_sprA1A_5F_B
+		.BYTE	$08
 		.BYTE	$E7,$80,$03,$F0
 		.BYTE	$E7,$80,$43,$08
 		.BYTE	$E7,$90,$03,$F8
@@ -3081,9 +3223,9 @@ _sprA1A_5F:
 		.BYTE	$F7,$92,$43,$00
 _sprA1A_60:
 		.BYTE	$0A
-		.BYTE	$07,$8C,$03,$F8
 		.BYTE	$07,$9E,$03,$08
 		.BYTE	$07,$9E,$43,$F0
+		.BYTE	$07,$8C,$03,$F8
 		.BYTE	$07,$BC,$03,$00
 		.BYTE	$E7,$88,$03,$F4
 		.BYTE	$E7,$98,$03,$FC
@@ -3092,11 +3234,11 @@ _sprA1A_60:
 		.BYTE	$F7,$9A,$03,$FC
 		.BYTE	$F7,$AA,$03,$04
 _sprA1A_61:
-		.BYTE	$0C
-		.BYTE	$07,$8E,$03,$00
-		.BYTE	$07,$8E,$43,$F8
-		.BYTE	$07,$9E,$03,$08
-		.BYTE	$07,$9E,$43,$F0
+		.BYTE	$82
+		.WORD	_sprA1A_5F_A
+		.WORD	_sprA1A_61_B
+_sprA1A_61_B
+		.BYTE	$08
 		.BYTE	$E7,$A0,$03,$00
 		.BYTE	$E7,$A0,$43,$F8
 		.BYTE	$E7,$B0,$03,$08
@@ -3106,9 +3248,11 @@ _sprA1A_61:
 		.BYTE	$F7,$B2,$03,$08
 		.BYTE	$F7,$B2,$43,$F0
 _sprA1A_62:
-		.BYTE	$0A
-		.BYTE	$08,$9E,$03,$08
-		.BYTE	$08,$9E,$43,$F0
+		.BYTE	$82
+		.WORD	_sprA1A_5A_A
+		.WORD	_sprA1A_62_B
+_sprA1A_62_B:
+		.BYTE	$08
 		.BYTE	$08,$AC,$43,$00
 		.BYTE	$08,$BC,$43,$F8
 		.BYTE	$E8,$88,$43,$03
@@ -3118,23 +3262,20 @@ _sprA1A_62:
 		.BYTE	$F8,$9A,$43,$FB
 		.BYTE	$F8,$AA,$43,$F3
 _sprA1A_63:
-		.BYTE	$0C
-		.BYTE	$08,$9E,$03,$08
-		.BYTE	$08,$9E,$43,$F0
+		.BYTE	$83
+		.WORD	_sprA1A_5A_A
+		.WORD	_sprA1A_63_B
+		.WORD	_sprA1A_5B_B
+_sprA1A_63_B:
+		.BYTE	$02
 		.BYTE	$08,$AE,$03,$F8
 		.BYTE	$08,$BE,$03,$00
-		.BYTE	$E8,$80,$03,$F0
-		.BYTE	$E8,$80,$43,$08
-		.BYTE	$E8,$90,$03,$F8
-		.BYTE	$E8,$90,$43,$00
-		.BYTE	$F8,$82,$03,$F0
-		.BYTE	$F8,$82,$43,$08
-		.BYTE	$F8,$92,$03,$F8
-		.BYTE	$F8,$92,$43,$00
 _sprA1A_64:
-		.BYTE	$0A
-		.BYTE	$08,$9E,$03,$08
-		.BYTE	$08,$9E,$43,$F0
+		.BYTE	$82
+		.WORD	_sprA1A_5A_A
+		.WORD	_sprA1A_64_B
+_sprA1A_64_B:
+		.BYTE	$08
 		.BYTE	$08,$AC,$03,$F8
 		.BYTE	$08,$BC,$03,$00
 		.BYTE	$E8,$88,$03,$F5
@@ -3144,19 +3285,14 @@ _sprA1A_64:
 		.BYTE	$F8,$9A,$03,$FD
 		.BYTE	$F8,$AA,$03,$05
 _sprA1A_65:
-		.BYTE	$0C
-		.BYTE	$08,$9E,$03,$08
-		.BYTE	$08,$9E,$43,$F0
+		.BYTE	$83
+		.WORD	_sprA1A_5A_A
+		.WORD	_sprA1A_5D_A
+		.WORD	_sprA1A_65_C
+_sprA1A_65_C:
+		.BYTE	$02
 		.BYTE	$08,$B8,$03,$F8
 		.BYTE	$08,$BA,$03,$00
-		.BYTE	$E8,$A0,$03,$00
-		.BYTE	$E8,$A0,$43,$F8
-		.BYTE	$E8,$B0,$03,$08
-		.BYTE	$E8,$B0,$43,$F0
-		.BYTE	$F8,$A2,$03,$00
-		.BYTE	$F8,$A2,$43,$F8
-		.BYTE	$F8,$B2,$03,$08
-		.BYTE	$F8,$B2,$43,$F0
 _sprA1A_66:
 		.BYTE	$0A
 		.BYTE	$08,$8C,$43,$02
@@ -3210,17 +3346,15 @@ _sprA1A_69:
 		.BYTE	$F8,$B2,$03,$0A
 		.BYTE	$F8,$B2,$43,$F2
 _sprA1A_6A:
-		.BYTE	$0A
+		.BYTE	$82
+		.WORD	_sprA1A_6A_A
+		.WORD	_sprA1A_0E_B
+_sprA1A_6A_A:
+		.BYTE	$04
 		.BYTE	$08,$8C,$42,$00
 		.BYTE	$08,$9C,$42,$F8
 		.BYTE	$08,$9E,$02,$08
 		.BYTE	$08,$9E,$42,$F0
-		.BYTE	$E8,$88,$42,$04 ; 1A_002
-		.BYTE	$E8,$98,$42,$FC ; 1A_003
-		.BYTE	$E8,$A8,$42,$F4 ; 1A_004
-		.BYTE	$F8,$8A,$42,$04 ; 1A_005
-		.BYTE	$F8,$9A,$42,$FC ; 1A_006
-		.BYTE	$F8,$AA,$42,$F4 ; 1A_007
 _sprA1A_6B:
 		.BYTE	$0C
 		.BYTE	$08,$84,$02,$F0
@@ -3236,17 +3370,15 @@ _sprA1A_6B:
 		.BYTE	$F8,$92,$02,$F8
 		.BYTE	$F8,$92,$42,$00
 _sprA1A_6C:
-		.BYTE	$0A
+		.BYTE	$82
+		.WORD	_sprA1A_6C_A
+		.WORD	_sprA1A_10_B
+_sprA1A_6C_A:
+		.BYTE	$04
 		.BYTE	$08,$8C,$02,$F8
 		.BYTE	$08,$9C,$02,$00
 		.BYTE	$08,$9E,$02,$08
 		.BYTE	$08,$9E,$42,$F0
-		.BYTE	$E8,$88,$02,$F4 ; 1A_008
-		.BYTE	$E8,$98,$02,$FC ; 1A_009
-		.BYTE	$E8,$A8,$02,$04 ; 1A_00A
-		.BYTE	$F8,$8A,$02,$F4 ; 1A_00B
-		.BYTE	$F8,$9A,$02,$FC ; 1A_00C
-		.BYTE	$F8,$AA,$02,$04 ; 1A_00D
 _sprA1A_6D:
 		.BYTE	$0C
 		.BYTE	$08,$A4,$02,$00
@@ -3361,25 +3493,25 @@ _sprA1A_76:
 		.BYTE	$F0,$A6,$43,$00
 _sprA1A_77:
 		.BYTE	$04
-		.BYTE	$00,$4E,$03,$F8
-		.BYTE	$00,$4E,$43,$00
 		.BYTE	$F0,$A6,$03,$F8
 		.BYTE	$F0,$A6,$43,$00
+		.BYTE	$00,$4E,$03,$F8
+		.BYTE	$00,$4E,$43,$00
 _sprA1A_78:
-		.BYTE	$06
-		.BYTE	$00,$4E,$03,$F8
-		.BYTE	$00,$4E,$43,$00
+		.BYTE	$82
+		.WORD	_sprA1A_77
+		.WORD	_sprA1A_78_B
+_sprA1A_78_B
+		.BYTE	$02
 		.BYTE	$F0,$58,$03,$F0
-		.BYTE	$F0,$A6,$03,$F8
-		.BYTE	$F0,$A6,$43,$00
 		.BYTE	$F8,$58,$03,$08
 _sprA1A_79:
-		.BYTE	$06
-		.BYTE	$00,$4E,$03,$F8
-		.BYTE	$00,$4E,$43,$00
+		.BYTE	$82
+		.WORD	_sprA1A_77
+		.WORD	_sprA1A_79_B
+_sprA1A_79_B:
+		.BYTE	$02
 		.BYTE	$F0,$48,$03,$F0
-		.BYTE	$F0,$A6,$03,$F8
-		.BYTE	$F0,$A6,$43,$00
 		.BYTE	$F8,$48,$03,$08
 _sprA1A_7A:
 		.BYTE	$02
@@ -3405,7 +3537,11 @@ _sprA1A_83:
 		.BYTE	$F8,$F0,$41,$00
 		.BYTE	$F8,$F0,$81,$F8
 _sprA1A_84:
-		.BYTE	$1F
+		.BYTE	$82
+		.WORD	_sprA1A_84_A
+		.WORD	_sprA1A_84_B
+_sprA1A_84_A:
+		.BYTE	$1B
 		.BYTE	$05,$A8,$42,$07
 		.BYTE	$06,$A8,$02,$F0
 		.BYTE	$06,$B8,$02,$F8
@@ -3433,12 +3569,18 @@ _sprA1A_84:
 		.BYTE	$EA,$B4,$42,$00
 		.BYTE	$EA,$DA,$02,$0B
 		.BYTE	$EA,$DA,$42,$EE
+_sprA1A_84_B:
+		.BYTE	$04
 		.BYTE	$F8,$B6,$02,$F8
 		.BYTE	$F8,$B6,$42,$00
 		.BYTE	$F8,$BE,$02,$07
 		.BYTE	$F8,$BE,$42,$F1
 _sprA1A_85:
-		.BYTE	$1A
+		.BYTE	$82
+		.WORD	_sprA1A_85_A
+		.WORD	_sprA1A_84_B
+_sprA1A_85_A:
+		.BYTE	$16
 		.BYTE	$03,$A8,$42,$07
 		.BYTE	$04,$A8,$02,$F1
 		.BYTE	$04,$B8,$02,$F8
@@ -3461,10 +3603,6 @@ _sprA1A_85:
 		.BYTE	$EA,$DA,$42,$F0
 		.BYTE	$EC,$B4,$02,$F8
 		.BYTE	$EC,$B4,$42,$00
-		.BYTE	$F8,$B6,$02,$F8
-		.BYTE	$F8,$B6,$42,$00
-		.BYTE	$F8,$BE,$02,$07
-		.BYTE	$F8,$BE,$42,$F1
 _sprA1A_86:
 		.BYTE	$0E
 		.BYTE	$00,$C4,$02,$F0
@@ -3563,40 +3701,52 @@ _sprA1A_94:
 		.BYTE	$F1,$C5,$40,$F8
 
 _sprB1A_C0:
-		.BYTE	$82
+		.BYTE	$85
 		.WORD	_sprB1A_C0_A
 		.WORD	_sprB1A_C0_B
+		.WORD	_sprB1A_C0_C
+		.WORD	_sprB1A_C0_D
+		.WORD	_sprB1A_C0_E
 _sprB1A_C1:
-		.BYTE	$82
+		.BYTE	$84
 		.WORD	_sprB1A_C0_A
-		.WORD	_sprB1A_C1_B
+		.WORD	_sprB1A_C0_B
+		.WORD	_sprB1A_C1_C
+		.WORD	_sprB1A_C1_D
 _sprB1A_C2:
 		.BYTE	$82
 		.WORD	_sprB1A_C0_A
 		.WORD	_sprB1A_C2_B
 _sprB1A_C3:
-		.BYTE	$82
+		.BYTE	$83
 		.WORD	_sprB1A_C0_A
+		.WORD	_sprB1A_C0_B
 		.WORD	_sprB1A_C3_B
 _sprB1A_C4:
 		.BYTE	$82
 		.WORD	_sprB1A_C0_A
 		.WORD	_sprB1A_C4_B
 _sprB1A_C5:
-		.BYTE	$82
+		.BYTE	$84
 		.WORD	_sprB1A_C0_A
+		.WORD	_sprB1A_C0_B
+		.WORD	_sprB1A_C0_C
 		.WORD	_sprB1A_C5_B
 _sprB1A_C6:
-		.BYTE	$82
+		.BYTE	$84
 		.WORD	_sprB1A_C0_A
+		.WORD	_sprB1A_C0_B
+		.WORD	_sprB1A_C0_D
 		.WORD	_sprB1A_C6_B
 _sprB1A_C7:
-		.BYTE	$82
+		.BYTE	$83
 		.WORD	_sprB1A_C0_A
+		.WORD	_sprB1A_C1_C
 		.WORD	_sprB1A_C7_B
-; NOTE: this is the only multiple chunked sprite in this game
+; NOTE: this is the only multiple chunked sprite in original game
 ; and because of sprite manager bug, it need to have adjusted
-; Y position. when I dix the bug, I need to fix Y here as well
+; Y position. when i fix the Y pos bug in sprite routine, i fixed
+; Y here as well
 _sprB1A_C0_A:
 		.BYTE	$12
 		.BYTE	$08,$A8,$02,$F0
@@ -3618,7 +3768,7 @@ _sprB1A_C0_A:
 		.BYTE	$F8,$B6,$02,$F8
 		.BYTE	$F8,$B6,$42,$00
 _sprB1A_C0_B:
-		.BYTE	$14
+		.BYTE	$08
 		.BYTE	$C8,$B0,$02,$F8
 		.BYTE	$C8,$B0,$42,$00
 		.BYTE	$D8,$92,$02,$E8
@@ -3627,36 +3777,36 @@ _sprB1A_C0_B:
 		.BYTE	$D8,$A2,$42,$08
 		.BYTE	$D8,$B2,$02,$F8
 		.BYTE	$D8,$B2,$42,$00
+_sprB1A_C0_C:
+		.BYTE	$04
+		.BYTE	$E8,$A4,$02,$F0
+		.BYTE	$E8,$B4,$02,$F8
+		.BYTE	$F8,$96,$02,$E8
+		.BYTE	$F8,$A6,$02,$F0
+_sprB1A_C0_D:
+		.BYTE	$04
+		.BYTE	$E8,$A4,$42,$08
+		.BYTE	$E8,$B4,$42,$00
+		.BYTE	$F8,$96,$42,$10
+		.BYTE	$F8,$A6,$42,$08
+_sprB1A_C0_E:
+		.BYTE	$04
 		.BYTE	$E8,$84,$02,$E0
 		.BYTE	$E8,$84,$42,$18
 		.BYTE	$E8,$94,$02,$E8
 		.BYTE	$E8,$94,$42,$10
-		.BYTE	$E8,$A4,$02,$F0
-		.BYTE	$E8,$A4,$42,$08
-		.BYTE	$E8,$B4,$02,$F8
-		.BYTE	$E8,$B4,$42,$00
-		.BYTE	$F8,$96,$02,$E8
-		.BYTE	$F8,$96,$42,$10
-		.BYTE	$F8,$A6,$02,$F0
-		.BYTE	$F8,$A6,$42,$08
-_sprB1A_C1_B:
-		.BYTE	$10
-		.BYTE	$C8,$B0,$02,$F8
-		.BYTE	$C8,$B0,$42,$00
-		.BYTE	$D8,$92,$02,$E8
-		.BYTE	$D8,$92,$42,$10
-		.BYTE	$D8,$A2,$02,$F0
-		.BYTE	$D8,$A2,$42,$08
-		.BYTE	$D8,$B2,$02,$F8
-		.BYTE	$D8,$B2,$42,$00
-		.BYTE	$E8,$B4,$02,$F8
+_sprB1A_C1_C:
+		.BYTE	$07
 		.BYTE	$E8,$B4,$42,$00
 		.BYTE	$E8,$CA,$02,$08
-		.BYTE	$E8,$CA,$42,$F0
 		.BYTE	$E8,$DA,$02,$10
-		.BYTE	$E8,$DA,$42,$E8
 		.BYTE	$F8,$BE,$02,$08
+		.BYTE	$E8,$CA,$42,$F0
+		.BYTE	$E8,$DA,$42,$E8
 		.BYTE	$F8,$BE,$42,$F0
+_sprB1A_C1_D:
+		.BYTE	$01
+		.BYTE	$E8,$B4,$02,$F8
 _sprB1A_C2_B:
 		.BYTE	$11
 		.BYTE	$C8,$B0,$02,$F8
@@ -3677,15 +3827,7 @@ _sprB1A_C2_B:
 		.BYTE	$F8,$E8,$42,$F0
 		.BYTE	$F8,$F8,$42,$E8
 _sprB1A_C3_B:
-		.BYTE	$10
-		.BYTE	$C8,$B0,$02,$F8
-		.BYTE	$C8,$B0,$42,$00
-		.BYTE	$D8,$92,$02,$E8
-		.BYTE	$D8,$92,$42,$10
-		.BYTE	$D8,$A2,$02,$F0
-		.BYTE	$D8,$A2,$42,$08
-		.BYTE	$D8,$B2,$02,$F8
-		.BYTE	$D8,$B2,$42,$00
+		.BYTE	$08
 		.BYTE	$E8,$8E,$02,$00
 		.BYTE	$E8,$8E,$42,$F8
 		.BYTE	$E8,$9E,$02,$08
@@ -3714,47 +3856,23 @@ _sprB1A_C4_B:
 		.BYTE	$F8,$E8,$02,$08
 		.BYTE	$F8,$F8,$02,$10
 _sprB1A_C5_B:
-		.BYTE	$12
-		.BYTE	$C8,$B0,$02,$F8
-		.BYTE	$C8,$B0,$42,$00
-		.BYTE	$D8,$92,$02,$E8
-		.BYTE	$D8,$92,$42,$10
-		.BYTE	$D8,$A2,$02,$F0
-		.BYTE	$D8,$A2,$42,$08
-		.BYTE	$D8,$B2,$02,$F8
-		.BYTE	$D8,$B2,$42,$00
-		.BYTE	$E8,$84,$02,$E0
-		.BYTE	$E8,$94,$02,$E8
-		.BYTE	$E8,$A4,$02,$F0
-		.BYTE	$E8,$B4,$02,$F8
+		.BYTE	$06
 		.BYTE	$E8,$B4,$42,$00
 		.BYTE	$E8,$CA,$02,$08
 		.BYTE	$E8,$DA,$02,$10
-		.BYTE	$F8,$96,$02,$E8
-		.BYTE	$F8,$A6,$02,$F0
 		.BYTE	$F8,$BE,$02,$08
+		.BYTE	$E8,$84,$02,$E0
+		.BYTE	$E8,$94,$02,$E8
 _sprB1A_C6_B:
-		.BYTE	$12
-		.BYTE	$C8,$B0,$02,$F8
-		.BYTE	$C8,$B0,$42,$00
-		.BYTE	$D8,$92,$02,$E8
-		.BYTE	$D8,$92,$42,$10
-		.BYTE	$D8,$A2,$02,$F0
-		.BYTE	$D8,$A2,$42,$08
-		.BYTE	$D8,$B2,$02,$F8
-		.BYTE	$D8,$B2,$42,$00
-		.BYTE	$E8,$84,$42,$18
-		.BYTE	$E8,$94,$42,$10
-		.BYTE	$E8,$A4,$42,$08
-		.BYTE	$E8,$B4,$02,$F8
-		.BYTE	$E8,$B4,$42,$00
+		.BYTE	$06
 		.BYTE	$E8,$CA,$42,$F0
 		.BYTE	$E8,$DA,$42,$E8
-		.BYTE	$F8,$96,$42,$10
-		.BYTE	$F8,$A6,$42,$08
 		.BYTE	$F8,$BE,$42,$F0
+		.BYTE	$E8,$84,$42,$18
+		.BYTE	$E8,$94,$42,$10
+		.BYTE	$E8,$B4,$02,$F8
 _sprB1A_C7_B:
-		.BYTE	$10
+		.BYTE	$09
 		.BYTE	$C8,$80,$02,$F8
 		.BYTE	$C8,$80,$42,$00
 		.BYTE	$D8,$82,$02,$F8
@@ -3764,13 +3882,6 @@ _sprB1A_C7_B:
 		.BYTE	$D8,$A2,$02,$F0
 		.BYTE	$D8,$A2,$42,$08
 		.BYTE	$E8,$B4,$02,$F8
-		.BYTE	$E8,$B4,$42,$00
-		.BYTE	$E8,$CA,$02,$08
-		.BYTE	$E8,$CA,$42,$F0
-		.BYTE	$E8,$DA,$02,$10
-		.BYTE	$E8,$DA,$42,$E8
-		.BYTE	$F8,$BE,$02,$08
-		.BYTE	$F8,$BE,$42,$F0
 
 		SECTION_END	"PRG3 SPRITES"
 

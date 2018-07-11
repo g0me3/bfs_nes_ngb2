@@ -210,10 +210,6 @@ loc_60123:
 #endif
 ;		LDA		#$00						; REDUNDANT, initialized inside
 ;		STA		_cur_room_doors_cnt
-#if DEBUG==1
-;		STA		_spr_buf_shuffle
-;		STA		_spr_buf_pos
-#endif
 		JSR		_spr_shuffle_update			; all mostly the same as simple loop above
 		JSR		_threads_manager			; but with extra special inits
 		JSR		_spr_finish					; finalize sprites when done
@@ -230,12 +226,13 @@ loc_60123:
 		LDA		#$01
 		STA		_lvl_last_checkpoint_idx	; reinit checkpoint for next level
 		INC		_level						; increment level
-		LDA		_level
-		CMP		#$07						; there are levels at $00 to $05 and ending
-		BCC		loc_60112					; at $06 values, there is no extra values above $06
-		LDA		#$00						; so this is a debug leftover from dev stage
-		STA		_level						; most probably meant to be used by stage skip routine
-		BEQ		loc_60112
+;		LDA		_level						; REDUNDANT
+;		CMP		#$07						; there are levels at $00 to $05 and ending
+;		BCC		loc_60112					; at $06 values, there is no extra values above $06
+;		LDA		#$00						; so this is a debug leftover from dev stage
+;		STA		_level						; most probably meant to be used by stage skip routine
+;		BEQ		loc_60112
+		JMP		loc_60112
 loc_6015A:
 		BNE		_MAIN_GAME_LOOP				; this is the case to return after ending
 		JMP		_MAIN_ENTRY
@@ -430,7 +427,7 @@ _ssub_common_hit_anim:
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_END
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc
+		NJSR			_nsub_spr_dir_select
 			NARGB		$A0,$40
 		SDELAY			$02
 		SPR_IDX_ADD_IMM 2,$04
@@ -455,7 +452,7 @@ _scr_beamer_hit_anim:
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_END
-		NJSR			_nsub_cur_obj_spr_from_sarg1_calc	; draw dead body in opposite
+		NJSR			_nsub_spr_dir_select			; draw dead body in opposite
 			NARGB		$A0,$40							; direction you faced while being hit
 		SDELAY			$02
 		SPR_IDX_ADD_IMM 2,$04							; animate last breath, remove sprite.
@@ -1188,7 +1185,7 @@ _beamer_spr_selector:
 		BMI		loc_605D5					; adjust the beamer sprite and direction
 		LDA		_trds_args0+3
 		BMI		loc_605D5
-		JSR		_obj_to_obj_vector_calc
+		JSR		_obj_to_obj_dir_calc
 		STA		_trds_args1+2
 loc_605D5:
 		LDA		_pad0_held
@@ -1405,7 +1402,7 @@ loc_60D2F:
 		ADC		byte_60E6B,X
 		STA		_obj_y_pos_lo+3
 		STA		_var3
-		JSR		_point_to_point_vector_calc
+		JSR		_point_to_point_dir_calc
 		STA		_var7
 		LDA		#$00
 		STA		_obj_x_pos_hi+3
@@ -1876,12 +1873,12 @@ _catcher_target_follow:
 		INY
 		JSR		_catcher_is_target_nearby_test	; test if we reached our target to closest
 		BCC		.catcher_search_path		; range
+; TODO: remove it to update beamer direction even in the close range
 		LDA		_catcher_target_slot_idx	; if in range, reset movements counter
 		CMP		#$02						; and direction variables,
-; TODO: remove it to update beamer direction even in the close range
 		BEQ		loc_61112
 ; -
-		JSR		_obj_to_obj_vector_calc		; also if we targeted to beamed object
+		JSR		_obj_to_obj_dir_calc		; also if we targeted to beamed object
 		CLC									; position the face to the direction
 		ADC		#$20						; of the object. but actually I see it
 		AND		#$C0						; a lot more funnier when catcher always
@@ -2884,40 +2881,49 @@ _cur_obj_screen_pos_calc:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_screen_pos_calc:
+#if OPT_SCREEN_POS==1
+		LDA		_obj_out_of_screen,X
+		BNE		.oos_failed
+		LDA		_obj_y_screen_pos,X
+		TAY
+		LDA		_obj_x_screen_pos,X
+		TAX
+		CLC
+		RTS
+.oos_failed:
+		LDY		#$00
+		LDX		#$00
+		SEC
+		RTS
+#else
 		LDA		_obj_x_pos_hi,X
 		STA		_tmp_var0
 		LDA		_obj_y_pos_hi,X
 		STA		_tmp_var1
 		LDY		_obj_y_pos_lo,X
 		LDA		_obj_x_pos_lo,X
-		TAX
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-_screen_pos_calc_ex:
-		TXA
 		SEC
 		SBC		_ppu_scroll_pos_x
 		TAX
 		LDA		_tmp_var0
 		SBC		_ppu_scroll_pos_x+1
-		BNE		loc_61A3F
+		BNE		.oos_failed
 		TYA
 		SBC		_ppu_scroll_pos_y
-		BCS		loc_61A36
+		BCS		loc_61A36A
 		SBC		#$0F
 		CLC
-loc_61A36:
+loc_61A36A:
 		TAY
 		LDA		_tmp_var1
 		SBC		_ppu_scroll_pos_y+1
-		BNE		loc_61A3F
+		BNE		.oos_failed
 		CLC
 		RTS
-loc_61A3F:
+.oos_failed:
 		SEC
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_new_lvl_pos_set:
@@ -2999,7 +3005,16 @@ loc_61A71:
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_beamer_vector_calc:
+; NOTE, function uses raw object coordinates but not screen coordinates
+; so this calcs will be wrong when current screen contains two adjascent
+; portions of the room which has a different high nibble of position values
+;
+; probably this is the reason, fast slimes are too dumb sometimes... usually
+; they should pursuit player in any direction, but when player goes out of
+; current page that has fast slime, the latter turns in the opposite direction
+; leave the screen at all...
+;
+_obj_to_beamer_dir_calc:
 		LDX		_cur_trd_slot
 		LDA		_obj_x_pos_lo+2
 		STA		_var0
@@ -3011,10 +3026,14 @@ _obj_to_beamer_vector_calc:
 		STA		_var2
 		LDA		_obj_y_pos_lo,X
 		STA		_var3
-		JMP		_point_to_point_vector_calc
+		JMP		_point_to_point_dir_calc
 
 ; =============== S U B R O U T I N E ======n================================
-_obj_to_obj_vector_calc:
+; NOTE: in other hand, this routine calculates correct screen coordinates of
+; objects to compare them, but does not check if one of them goes out of
+; screen as well, so the comparison result will be semi-random in this case
+;
+_obj_to_obj_dir_calc:
 		TAX
 		JSR		_obj_screen_pos_calc
 		STX		_var0
@@ -3022,7 +3041,7 @@ _obj_to_obj_vector_calc:
 		JSR		_cur_obj_screen_pos_calc
 		STX		_var2
 		STY		_var3
-		JMP		_point_to_point_vector_calc
+		JMP		_point_to_point_dir_calc
 
 ; =============== S U B R O U T I N E ======n================================
 _linear_dst_pos_calc:
@@ -3139,7 +3158,7 @@ byte_61B82:
 		.BYTE	$EC,$EE,$F1,$F3,$F4,$F6,$F8,$F9,$FB,$FC,$FD,$FE,$FE,$FF,$FF,$FF
 
 ; =============== S U B R O U T I N E ======n================================
-_point_to_point_vector_calc:
+_point_to_point_dir_calc:
 		LDA		_var0
 		SEC
 		SBC		_var2
@@ -4696,7 +4715,7 @@ _nsub_obj_delay_set_from_sarg:
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_cur_obj_spr_from_sarg1_calc:
+_nsub_spr_dir_select:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
@@ -4705,8 +4724,8 @@ _nsub_cur_obj_spr_from_sarg1_calc:
 		LDX		_cur_trd_slot
 		CLC
 		ADC		_trds_args1,X
-		LDX		#$00
-		STX		_var0
+		LDX		#$00						; NEW, replaced slow _div16 with
+		STX		_var0						; fast shifter
 		ASL
 		ROL		_var0
 		ASL		_tmp0
@@ -4993,7 +5012,7 @@ _nsub_level_init:
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_cur_obj_linear_dst_pos_from_sarg1_set:
+_nsub_speed_dir_select:
 		JSR		_scr_getc
 		PHA
 		JSR		_scr_getc
@@ -5251,8 +5270,8 @@ _nsub_get_checkpoint_tmp_idx:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_sarg1_obj_to_beamer_vector_set:
-		JSR		_obj_to_beamer_vector_calc
+_nsub_cur_obj_to_beamer_dir_set:
+		JSR		_obj_to_beamer_dir_calc
 		STA		_trds_args1,X
 		RTS
 
@@ -5262,7 +5281,7 @@ _nsub_sarg1_obj_to_beamer_vector_set:
 ;		PHA
 ;		JSR		_scr_getc
 ;		PHA
-;		JSR		_obj_to_beamer_vector_calc
+;		JSR		_obj_to_beamer_dir_calc
 ;		PLA
 ;		TAX
 ;		PLA
@@ -5279,29 +5298,29 @@ _nsub_sarg1_obj_to_beamer_vector_set:
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_obj_to_beamer_vector_adjust:
+_nsub_obj_to_beamer_slow_turn:
 		JSR		_scr_getc
 		PHA
 		PHA
-		JSR		_obj_to_beamer_vector_calc
-		STA		_tmp0
+		JSR		_obj_to_beamer_dir_calc		; get direction to beamer
+		STA		_tmp0						; store it by now
 		PLA
-		STA		_var1
-		SEC
+		STA		_var1						; calculate complement of turn speed
+		SEC									; to use it as turn speed limit
 		SBC		#$01
 		EOR		#$FF
 		STA		_var0
 		PLA
 		LSR
 		CLC
-		ADC		_tmp0
-		AND		_var0
+		ADC		_tmp0						; also adding 1/2 of speed to smooth
+		AND		_var0						; results
 		SEC
-		SBC		_trds_args1,X
-		BEQ		locret_62B1D
+		SBC		_trds_args1,X				; test against current direction, if the same
+		BEQ		locret_62B1D				; do not update,
 		BMI		loc_62B16
-		LDA		_trds_args1,X
-		CLC
+		LDA		_trds_args1,X				; if different, add turn speed amount to current
+		CLC									; direction vector
 		ADC		_var1
 		JMP		loc_62B1B
 loc_62B16:
@@ -5653,9 +5672,9 @@ _nsub_cur_obj_sarg1_vert_complement:
 ; calculates the linear vector, but then mask out one of the
 ; direction...
 ;
-_nsub_sarg1_obj_to_beamer_sqare_vector_set:
+_nsub_obj_to_beamer_fast_right_turn:
 		LDA		#$02
-		JSR		_obj_to_obj_vector_calc
+		JSR		_obj_to_obj_dir_calc
 		CLC
 		ADC		#$20
 		AND		#$C0
@@ -6195,28 +6214,13 @@ _debug_spr_bank_list:
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_spr_insert:
-; TODO: same as _screen_pos_calc_ex but with store calculated values to RAM
-; and with direct arguments fro obj_pos arrays instead of X/Y regs
-;
-		LDA		_obj_x_pos_lo,X				; calculate screen position for
-		SEC									; current object on the fly
-		SBC		_ppu_scroll_pos_x
-		STA		_tmp1						; tmp1 = _screen_pos_x
-		LDA		_obj_x_pos_hi,X
-		SBC		_ppu_scroll_pos_x+1
+		JSR		_obj_screen_pos_update
+		LDA		_obj_out_of_screen,X
 		BNE		locret_6309C
-		LDA		_obj_y_pos_lo,X
-		SEC
-		SBC		_ppu_scroll_pos_y
-		BCS		loc_63032
-		SBC		#$0F
-		CLC
-loc_63032:
-		STA		_tmp2						; tmp2 = _screen_pos_y
-		LDA		_obj_y_pos_hi,X
-		SBC		_ppu_scroll_pos_y+1
-		BNE		locret_6309C
-
+		LDA		_obj_x_screen_pos,X
+		STA		_tmp1
+		LDA		_obj_y_screen_pos,X
+		STA		_tmp2
 		LDY		_trds_obj_idx,X
 		LDA		_spr_libs_list,Y
 		TAY
@@ -6455,18 +6459,36 @@ loc_631BB:
 		LDA		_var1
 		ADC		_obj_y_pos_hi,X
 		STA		_obj_y_pos_hi,X				; that's all here
-; TODO: update also screen position here and keep it in array for other
-; scripts usage instead of multiple recalculate it every time for every
-; object.
-; WARNING: test this in case objects are disabled out of screen and
-; this code does not execute at all. probably if reduce the position
-; recalculations here, we may get rid of disabling out of the screen
-; objects at all...
-; IDEA: after all threads are executed, while sprites are drawn, they
-; recalculate the final screen position of object one more time.
-; if update the screen pos values there one more time this may solve
-; all possible problems.
+
+#if OPT_SCREEN_POS==0
+		RTS
+#endif
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+; NEW: update also screen position here and keep it in array for other
+; scripts usage instead of multiple recalculating for every object.
 ;
+_obj_screen_pos_update:
+		LDA		_obj_x_pos_lo,X
+		SEC
+		SBC		_ppu_scroll_pos_x
+		STA		_obj_x_screen_pos,X
+		LDA		_obj_x_pos_hi,X
+		SBC		_ppu_scroll_pos_x+1
+		BNE		.out_of_screen_update
+		LDA		_obj_y_pos_lo,X
+		SBC		_ppu_scroll_pos_y
+		BCS		.skip_adjust
+		SBC		#$0F
+		CLC
+.skip_adjust:
+		STA		_obj_y_screen_pos,X
+		LDA		_obj_y_pos_hi,X
+		SBC		_ppu_scroll_pos_y+1
+.out_of_screen_update:
+		STA		_obj_out_of_screen,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -7393,6 +7415,7 @@ _scr_get_short_ofs:
 ; =============== S U B R O U T I N E =======================================
 _scmd1A_sjmps:
 		JSR		_scr_get_short_ofs
+#endif
 
 ; !FALLTHROUGH!
 
@@ -7406,6 +7429,7 @@ _cur_scr_pc_add:
 		STA		_cur_scr_pc+1
 		RTS
 
+#if OPTIMIZATION==1
 ; =============== S U B R O U T I N E ======n================================
 _scmd1B_sjsrs:
 		JSR		_scr_get_short_ofs
@@ -7678,7 +7702,18 @@ _wait_for_nmi:
 		PHA									; in case routine is called during
 		LDA		_ppu_ctrl_shadow			; render being off, wait nmi using
 		BPL		loc_637FF					; _PPU_STATUS flags instead. never
+#if DEBUG==1
+		LDA		#$00
+		STA		_debug_cnt
+		STA		_debug_cnt+1
+#endif
 loc_637F5:									; happens in this game
+#if DEBUG==1
+		INC		_debug_cnt
+		BNE		.deb1
+		INC		_debug_cnt+1
+.deb1:
+#endif
 		LDA		_nmi_flag
 		BEQ		loc_637F5
 		LDA		#$00
@@ -9776,7 +9811,9 @@ _sprA09_2F:
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$52,$00,$00
 		.BYTE	$F4,$42,$00,$F8
-
+; NOTE: this is a common sprites for animation of catch glow, shared
+; in all enemy sprite libraries and resided in system bank to be
+; accessible from any other bank.
 _sprA1A_00:
 		.BYTE	$03
 		.BYTE	$F0,$C1,$00,$F8

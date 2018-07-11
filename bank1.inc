@@ -3437,7 +3437,28 @@ _room_door_screen_pos_calc:
 		INY
 		LDA		(_room_doors_data_ptr),Y
 		TAY
-		JMP		_screen_pos_calc_ex
+		TXA
+		SEC
+		SBC		_ppu_scroll_pos_x
+		TAX
+		LDA		_tmp_var0
+		SBC		_ppu_scroll_pos_x+1
+		BNE		loc_61A3F
+		TYA
+		SBC		_ppu_scroll_pos_y
+		BCS		loc_61A36
+		SBC		#$0F
+		CLC
+loc_61A36:
+		TAY
+		LDA		_tmp_var1
+		SBC		_ppu_scroll_pos_y+1
+		BNE		loc_61A3F
+		CLC
+		RTS
+loc_61A3F:
+		SEC
+		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _room_door_test:

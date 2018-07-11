@@ -4645,11 +4645,7 @@ _sprB07_D2_A:
 ; custom helper for drawing raw strided tilemaps for the title and ending screens
 ; draw one line per call.
 ;
-; TODO: adding a special commands to regular packer with line stride and position
-; options may optimize these tilemaps as well in the common way. also they don't
-; need to be drawn line by line then...
-;
-; NEW: optimize these tilemaps by now using pointer tables to similar lines to
+; NEW: optimized these tilemaps by now using pointer tables to similar lines to
 ; avoid duplication. more than 600 bytes saved.
 ;
 _nsub_tlm_raw_arg2_idx_line_draw:
@@ -4812,43 +4808,36 @@ _tlm_title_text11:
 
 ; =============== S U B R O U T I N E ======n================================
 		FAR_OFS	_tlm_lib_unpack
-		PHA
+		TAX
 		JSR		_ppu_vblank_off
 		JSR		_ppu_nmi_off
 		LDA		#$0F
 		STA		_APU_STATUS
-		PLA
-		ASL
-		ASL
-		TAX
 		LDA		_tlm_pak_lib,X
 		STA		_ptr06
 		LDA		_tlm_pak_lib+1,X
 		STA		_ptr06+1
-		LDA		_tlm_pak_lib+2,X
+		LDA		#$00						; NEW, always fixed 2000 ppu offset
 		STA		_ptr0A
-		LDA		_tlm_pak_lib+3,X
+		LDA		#$20
 		STA		_ptr0A+1
 		JSR		_tlm_unpack
 		JSR		_ppu_nmi_on
 		JMP		_ppu_vblank_on
 
-; TODO: all tilemaps are starting from the same position... may be optimized here
-; and redundant bytes removed.
-;
 _tlm_pak_lib:
-		TLM_PAK	_tlm0_title_screen,$2000
-		TLM_PAK	_tlm1_score,$2000
-		TLM_PAK	_tlm2_busterselect,$2000
-		TLM_PAK	_tlm3_game_over,$2000
-;		TLM_PAK	_tlm4_score_unused,$2000
-;		TLM_PAK	_tlm5_kanji_unused,$2000
-		TLM_PAK	_tlm6_copyrights,$2000
-		TLM_PAK	_tlm7_staff,$2000
-		TLM_PAK	_tlm8_HAL,$2000
-		TLM_PAK	_tlm9_secret_menu,$2000
+		TLM_PAK	_tlm0_title_screen
+		TLM_PAK	_tlm1_score
+		TLM_PAK	_tlm2_busterselect
+		TLM_PAK	_tlm3_game_over
+;		TLM_PAK	_tlm4_score_unused
+;		TLM_PAK	_tlm5_kanji_unused
+		TLM_PAK	_tlm6_copyrights
+		TLM_PAK	_tlm7_staff
+		TLM_PAK	_tlm8_HAL
+		TLM_PAK	_tlm9_secret_menu
 #if DEBUG==1
-		TLM_PAK	_tlmA_blank,$2000
+		TLM_PAK	_tlmA_blank
 #endif
 
 ; =============== S U B R O U T I N E ======n================================
