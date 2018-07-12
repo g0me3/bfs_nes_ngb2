@@ -66,14 +66,9 @@ _tmp1C:
 		.BYTE	0
 _tmp1D:
 		.BYTE	0
-;_unused_12:
-;		.BYTE	0
-#else
+#endif
 _ptr1E:
 		.BYTE	0,0
-;_unused_12:
-;		.BYTE	0,0,0,0,0		; NOTE: compatibility issues, remove me if no any left
-#endif
 #if DEBUG==1
 _debug_vars_list:
 _debug_chr0:
@@ -176,9 +171,6 @@ _nsub_return_value:
 		.BYTE	0
 _pal_fade_req_list:
 		.BYTE	0,0,0,0,0,0,0,0
-_pal_buf:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _ppu_scroll_x_page:
 		.BYTE	0 	; обе переменные инициализируются нулем	и используются
 					; в вычислениях	как ноль. скриптовые команды, которые
@@ -223,6 +215,18 @@ _pause_mode_flag:
 		.BYTE	0
 _out_of_screen_test_flag:
 		.BYTE	0
+_obj_x_screen_pos:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_y_screen_pos:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_cur_room_x_pageA:
+		.BYTE	0
+_cur_room_y_pageA:
+		.BYTE	0
+_cur_room_x_pageB:
+		.BYTE	0
+_cur_room_y_pageB:
+		.BYTE	0
 
 		ECHO "-------------"
 		ECHO "zero ram free:",[$100-.]
@@ -234,8 +238,9 @@ _tmp_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0
-_trds_obj_idx:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_pal_buf:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_x_speed:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_y_speed:
@@ -243,21 +248,14 @@ _obj_y_speed:
 _trds_nbgsub_ptr:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_obj_x_center:
+_obj_x_clk:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_obj_y_center:
+_obj_y_clk:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_y_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-
-_obj_x_screen_pos:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_obj_y_screen_pos:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;_obj_out_of_screen:
-;		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 		ECHO "-------------"
 		ECHO "stack ram free:",[$200-.]
@@ -460,14 +458,6 @@ _attr_buf_pageB:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_cur_room_x_pageA:
-		.BYTE	0
-_cur_room_y_pageA:
-		.BYTE	0
-_cur_room_x_pageB:
-		.BYTE	0
-_cur_room_y_pageB:
-		.BYTE	0
 _active_door_data_pos:
 		.BYTE	0
 _beam_target_x_pos:
@@ -574,6 +564,8 @@ _control_beam_button_code:
 _control_catch_button_code:
 		.BYTE	0
 _obj_out_of_screen:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_trds_obj_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 		ECHO "-------------"

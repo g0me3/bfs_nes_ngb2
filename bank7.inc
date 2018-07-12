@@ -265,23 +265,8 @@ loc_60168:
 		BMI		loc_60193
 		LDA		_trds_args0,X
 		BPL		loc_60193
-		LDA		_obj_x_pos_lo,X
-		SEC
-		SBC		_ppu_scroll_pos_x
-		LDA		_obj_x_pos_hi,X
-		SBC		_ppu_scroll_pos_x+1
-		BNE		loc_6018E
-		LDA		_obj_y_pos_lo,X
-		SEC
-		SBC		_ppu_scroll_pos_y
-		BCS		loc_60187
-		SBC		#$0F
-		CLC
-loc_60187:
-		LDA		_obj_y_pos_hi,X
-		SBC		_ppu_scroll_pos_y+1
-		BEQ		loc_60193
-loc_6018E:
+		LDA		_obj_out_of_screen,X
+		BNE		loc_60193
 		LDA		#$FF
 		STA		_trds_obj_idx,X
 loc_60193:
@@ -408,14 +393,8 @@ _sloc_6029B:
 #if TWO_PLAYER_MODE==1
 ; =============== S C R I P T ==========================s====================
 _scr_beamer_hit_anim:
-		SJSR			_ssub_common_hit_anim
+		SJSRS			_ssub_common_hit_anim
 		SBCCS			_scr_beamer_reinit
-		SSTOP
-
-; =============== S C R I P T ==========================s====================
-_scr_catcher_hit_anim:
-		SJSR			_ssub_common_hit_anim
-		SBCCS			_scr_catcher_reinit
 		SSTOP
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
@@ -686,8 +665,8 @@ _beamer_control_move_test:
 		BCC		.beamer_step
 .beamer_speed_reset:
 		LDA		#$80
-		STA		_obj_x_center+2
-		STA		_obj_y_center+2
+		STA		_obj_x_clk+2
+		STA		_obj_y_clk+2
 		BNE		.beamer_exit
 .beamer_step:
 		LDA		_beamer_direction_idx		; beamer direction determined only by
@@ -702,13 +681,29 @@ _beamer_control_move_test:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; NOTE: it seems this routine kinda redundant, i can't see any level where
+; you may go out of the screen. even the tonnels level and vega boss levels
+; are used additional macro-obstacles to not to let the players to get near
+; the screen edges. also this test only used for beamer which can't go out
+; of the screen because of exits...
+;
+; only the visible purpose for this routine is in two player mode, where
+; restraint conditions for scroll does not work in the middle of the room
+;
+; also there is a problem with go out of screen between two rooms, the
+; player object may be locked there. but this is most probably because of
+; my later fixes to screen positions calculations... lol
+;
 _players_move_obstacles_test:
+#if TWO_PLAYER_MODE==1
 		PHA
 		TYA
 		PHA
-		JSR		_cur_obj_screen_pos_calc	; calculates the beamer position
-		STX		_tmp1						; preventing walking it out of the
-		STY		_tmp2						; screen
+		LDX		_cur_trd_slot
+		LDA		_obj_x_screen_pos,X			; read the beamer screen position
+		STA		_tmp1						; preventing walking it out of the
+		LDA		_obj_y_screen_pos,X			; screen
+		STA		_tmp2
 		PLA
 		TAY
 		PLA
@@ -716,32 +711,33 @@ _players_move_obstacles_test:
 		TAX
 		BNE		loc_60437
 		LDA		_tmp2
-		CMP		#$09
-		BCS		loc_60455
+		CMP		#$10						; FIX, players from infiltrating the
+		BCS		loc_60455					; edges of the screen sometimes
 		BCC		loc_60453
 loc_60437:
 		DEX
 		BNE		loc_60442
 		LDA		_tmp1
-		CMP		#$F8
+		CMP		#$F0						; FIX, the same
 		BCC		loc_60455
 		BCS		loc_60453
 loc_60442:
 		DEX
 		BNE		loc_6044D
 		LDA		_tmp2
-		CMP		#$E8
+		CMP		#$E0						; FIX, the same
 		BCC		loc_60455
 		BCS		loc_60453
 loc_6044D:
 		LDA		_tmp1
-		CMP		#$09
-		BCS		loc_60455					; walk area hardwritten as $09-$F8, $09-$E8
+		CMP		#$10						; FIX, the same
+		BCS		loc_60455					; walkable area hardwritten as $09-$F8, $09-$E8
 loc_60453:
 		SEC
 		RTS
 loc_60455:
 		LDA		_tmp0						; then test for obstacles in selected direction
+#endif
 		JMP		_players_bound_box_to_room_test
 
 #if TWO_PLAYER_MODE==1
@@ -752,11 +748,6 @@ loc_60455:
 ; when crossing the center of the screen but both need to be on the same
 ; screen at once. leaving the screen for one of them will cause wrong
 ; collision detection otherwise.
-;
-; TODO: too much similar value calculations all the time. a lot of
-; screen space conversions all around the original code. all this may
-; be optimized with precalculation of such values only once per
-; object as part of common thread work.
 ;
 ; =============== S U B R O U T I N E ======n================================
 _catcher_scroll_step:
@@ -780,17 +771,20 @@ _players_scroll_step:
 		STA		_tmp1C
 		LDY		#$70
 		JSR		_obj_to_obj_in_range_test
-		BCC		loc_604CA
-		JSR		_cur_obj_screen_pos_calc
+		BCC		.scroll_step_exit
+		LDX		_cur_trd_slot
+		LDY		_obj_y_screen_pos,X
+		LDA		_obj_x_screen_pos,X
+		TAX
 		DEC		_tmp1C
 		BPL		loc_6047D
 		CPY		#$78
-		BCS		loc_604CA
+		BCS		.scroll_step_exit
 		LDA		_ppu_scroll_pos_y			; 0 scroll up
 		BNE		loc_604A1
 		LDA		_ppu_scroll_pos_y+1
 		CMP		_cur_room_x_pageA
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 loc_604A1:
 		LDA		_ppu_scroll_pos_y
 		SEC
@@ -800,32 +794,32 @@ loc_604A1:
 		DEC		_ppu_scroll_pos_y+1
 loc_604AC:
 		STA		_ppu_scroll_pos_y
-		BCS		loc_604CA
+		BCS		.scroll_step_exit
 loc_6047D:
 		DEC		_tmp1C
 		BPL		loc_60490
 		CPX		#$80
-		BCC		loc_604CA
+		BCC		.scroll_step_exit
 		LDA		_ppu_scroll_pos_x			; 1 scroll right
 		BNE		loc_60488
 		LDA		_ppu_scroll_pos_x+1
 		CMP		_cur_room_y_pageA
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 loc_60488:
 		INC		_ppu_scroll_pos_x
-		BNE		loc_604CA
+		BNE		.scroll_step_exit
 		INC		_ppu_scroll_pos_x+1
-		BPL		loc_604CA
+		BPL		.scroll_step_exit
 loc_60490:
 		DEC		_tmp1C
 		BPL		loc_604B0
 		CPY		#$78
-		BCC		loc_604CA
+		BCC		.scroll_step_exit
 		LDA		_ppu_scroll_pos_y			; 2 scroll down
 		BNE		loc_604BB
 		LDA		_ppu_scroll_pos_y+1
 		CMP		_cur_room_x_pageB
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 loc_604BB:
 		LDA		_ppu_scroll_pos_y
 		CLC
@@ -836,23 +830,23 @@ loc_604BB:
 		INC		_ppu_scroll_pos_y+1
 loc_604C8:
 		STA		_ppu_scroll_pos_y
-		BPL		loc_604CA
+		BPL		.scroll_step_exit
 loc_604B0:
 		CPX		#$80
-		BCS		loc_604CA
+		BCS		.scroll_step_exit
 		LDA		_ppu_scroll_pos_x			; 3 scroll left
 		BNE		loc_60470
 		LDA		_ppu_scroll_pos_x+1
 		CMP		_cur_room_y_pageB
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 loc_60470:
 		LDA		_ppu_scroll_pos_x
 		SEC
 		SBC		#$01
 		STA		_ppu_scroll_pos_x
-		BCS		loc_604CA
+		BCS		.scroll_step_exit
 		DEC		_ppu_scroll_pos_x+1
-loc_604CA:
+.scroll_step_exit:
 		PLA
 		TAY
 		RTS
@@ -861,8 +855,11 @@ loc_604CA:
 _beamer_scroll_step:
 		TYA
 		PHA
-		JSR		_cur_obj_screen_pos_calc	; calculates beamer position and check
-		CPX		#$80						; if it scroll move needed
+		LDX		_cur_trd_slot				; get beamer screen position and check
+		LDY		_obj_y_screen_pos,X			; if it scroll move needed
+		LDA		_obj_x_screen_pos,X
+		TAX
+		CPX		#$80
 		BEQ		loc_60490
 		BCS		loc_6047D
 		LDA		_ppu_scroll_pos_x			; test for scroll limit
@@ -891,13 +888,13 @@ loc_60488:
 		BPL		loc_60490
 loc_60490:
 		CPY		#$78						; if already centered, do nothing
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 		BCS		loc_604B0
 		LDA		_ppu_scroll_pos_y
 		BNE		loc_604A1
 		LDA		_ppu_scroll_pos_y+1
 		CMP		_cur_room_x_pageA
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 loc_604A1:
 		LDA		_ppu_scroll_pos_y
 		SEC
@@ -907,13 +904,13 @@ loc_604A1:
 		DEC		_ppu_scroll_pos_y+1
 loc_604AC:
 		STA		_ppu_scroll_pos_y
-		BCS		loc_604CA
+		BCS		.scroll_step_exit
 loc_604B0:
 		LDA		_ppu_scroll_pos_y
 		BNE		loc_604BB
 		LDA		_ppu_scroll_pos_y+1
 		CMP		_cur_room_x_pageB
-		BEQ		loc_604CA
+		BEQ		.scroll_step_exit
 loc_604BB:
 		LDA		_ppu_scroll_pos_y
 		CLC
@@ -924,7 +921,7 @@ loc_604BB:
 		INC		_ppu_scroll_pos_y+1
 loc_604C8:
 		STA		_ppu_scroll_pos_y
-loc_604CA:
+.scroll_step_exit:
 		PLA
 		TAY
 		RTS
@@ -991,48 +988,41 @@ byte_60508:
 		.BYTE	$F0,$00
 
 ; =============== S U B R O U T I N E ======n================================
-; TODO: still don't really understand meaning of center variable used only
-; for players (they not using delta values at all), as against any other
-; objects that uses deltas but never used center values... it seems we have
-; some extra movement speed calculations above the main object methods,
-; which seem little bit odd and redundant, but maybe I just do not understant
-; its real meaning.
-;
 _players_speed_calc:
 		STX		_var0
 		STY		_var1
 		LDX		_cur_trd_slot
 		TAY
 		BNE		loc_60523
-		LDA		_obj_y_center,X
+		LDA		_obj_y_clk,X
 		SEC
 		SBC		_var0
-		STA		_obj_y_center,X
+		STA		_obj_y_clk,X
 		BCS		loc_60550
 		BCC		loc_6054E
 loc_60523:
 		DEY
 		BNE		loc_60533
-		LDA		_obj_x_center,X
+		LDA		_obj_x_clk,X
 		CLC
 		ADC		_var0
-		STA		_obj_x_center,X
+		STA		_obj_x_clk,X
 		BCC		loc_60550
 		BCS		loc_6054E
 loc_60533:
 		DEY
 		BNE		loc_60543
-		LDA		_obj_y_center,X
+		LDA		_obj_y_clk,X
 		CLC
 		ADC		_var0
-		STA		_obj_y_center,X
+		STA		_obj_y_clk,X
 		BCC		loc_60550
 		BCS		loc_6054E
 loc_60543:
-		LDA		_obj_x_center,X
+		LDA		_obj_x_clk,X
 		SEC
 		SBC		_var0
-		STA		_obj_x_center,X
+		STA		_obj_x_clk,X
 		BCS		loc_60550
 loc_6054E:
 		INC		_var1
@@ -1129,7 +1119,7 @@ locret_605C6:
 		RTS
 #else
 ; =============== S U B R O U T I N E ======n================================
-; TODO: there is a problem with suck method of D-Pad test, a priority.
+; TODO: there is a problem with such method of D-Pad test, a priority.
 ; if you hold one button and then press and hold another, you may not
 ; move in a new direction, because previous button has a priority
 ; and handled first.
@@ -1326,10 +1316,8 @@ loc_60CDD:
 		JMP		_scr_cur_trd_off
 
 ; =============== S U B R O U T I N E ======n================================
+; when you just fire the beam in air its sprite is plain and simple
 _nsub_beam_idle_draw:
-		LDX		#$02						; when you just fire the beam in air
-		JSR		_obj_screen_pos_calc		; its sprite is plain and simple
-		STY		_tmp2
 		LDA		_trds_args1+2				; fetch beamer position and direction
 		CLC
 		ADC		#$20
@@ -1339,12 +1327,12 @@ _nsub_beam_idle_draw:
 		ROL
 		ROL
 		TAY
-		TXA
+		LDA		_obj_x_screen_pos+2
 		CLC
 		ADC		byte_60D1F,Y
 		STA		_beam_target_x_pos			; update target position as well
 		TAX
-		LDA		_tmp2
+		LDA		_obj_y_screen_pos+2
 		CLC
 		ADC		byte_60D23,Y
 		STA		_beam_target_y_pos
@@ -1371,20 +1359,17 @@ byte_60D23:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beam_active_draw:
 		LDX		_trds_args0+3				; active beam much harder, it's flexible
-		JSR		_obj_screen_pos_calc		; get the beamed object pos
-		BCC		loc_60D2F
+		LDA		_obj_out_of_screen,X		; get the beamed object out of screen flag
+		BEQ		loc_60D2F
 locret_60D2E:
 		RTS
 loc_60D2F:
-		TXA									; continue if object on the screen
+		LDA		_obj_x_screen_pos,X			; continue if object on the screen
 		PHA
 		STA		_var0						; store beamed object position
-		TYA
+		LDA		_obj_y_screen_pos,X
 		PHA
 		STA		_var1
-		LDX		#$02
-		JSR		_obj_screen_pos_calc		; get the beamer position then
-		STX		_tmp1
 		LDA		_trds_args1+2
 		CLC
 		ADC		#$20
@@ -1393,11 +1378,11 @@ loc_60D2F:
 		ROL
 		ROL
 		TAX
-		LDA		_tmp1
+		LDA		_obj_x_screen_pos+2
 		ADC		byte_60E67,X
 		STA		_obj_x_pos_lo+3				; lots of vector/calcs follows
 		STA		_var2						; to calculate current beam sprite
-		TYA
+		LDA		_obj_y_screen_pos+2
 		CLC
 		ADC		byte_60E6B,X
 		STA		_obj_y_pos_lo+3
@@ -1480,8 +1465,8 @@ loc_60DE8:
 		ASL
 		TAX
 		LDA		#$80
-		STA		_obj_x_center+3
-		STA		_obj_y_center+3
+		STA		_obj_x_clk+3
+		STA		_obj_y_clk+3
 		LDA		#$05						; when calcs are done, draw 5 segments
 		STA		_var1						; of the beam manually, using raw spr
 		LDY		_spr_buf_pos				; buffer access
@@ -1513,17 +1498,17 @@ loc_60E12:
 		STA		_ppu_spr_buf,Y
 		INY
 loc_60E3D:
-		LDA		_obj_x_center+3
+		LDA		_obj_x_clk+3
 		CLC
 		ADC		_obj_x_speed+3
-		STA		_obj_x_center+3
+		STA		_obj_x_clk+3
 		LDA		_obj_x_pos_lo+3
 		ADC		_obj_x_delta+3
 		STA		_obj_x_pos_lo+3
-		LDA		_obj_y_center+3
+		LDA		_obj_y_clk+3
 		CLC
 		ADC		_obj_y_speed+3
-		STA		_obj_y_center+3
+		STA		_obj_y_clk+3
 		LDA		_obj_y_pos_lo+3
 		ADC		_obj_y_delta+3
 		STA		_obj_y_pos_lo+3
@@ -1603,6 +1588,14 @@ _scr0A_catcher_handler:
 _scr_catcher_reinit:
 		NBG_HNDL_SET	_nbgsub_catcher_control
 		SUSPEND
+
+#if TWO_PLAYER_MODE==1
+; =============== S C R I P T ==========================s====================
+_scr_catcher_hit_anim:
+		SJSR			_ssub_common_hit_anim
+		SBCCS			_scr_catcher_reinit
+		SSTOP
+#endif
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl3_catcher_auto_script:
@@ -1701,8 +1694,8 @@ _catcher_control_move_test:
 		BCC		.catcher_step
 .catcher_speed_reset:
 		LDA		#$80
-		STA		_obj_x_center+4
-		STA		_obj_y_center+4
+		STA		_obj_x_clk+4
+		STA		_obj_y_clk+4
 		BNE		.catcher_exit
 .catcher_step:
 		LDA		_catcher_direction_idx
@@ -1741,8 +1734,8 @@ _catcher_control_move_test:
 		BPL		.catcher_step
 .catcher_speed_reset:
 		LDA		#$80
-		STA		_obj_x_center+4
-		STA		_obj_y_center+4
+		STA		_obj_x_clk+4
+		STA		_obj_y_clk+4
 		BNE		.catcher_exit
 .catcher_step:
 		JSR		_nsub_sarg1_direction_extract
@@ -1762,10 +1755,13 @@ _catcher_control_catch_test:
 #endif
 		AND		_control_catch_button_code
 		BEQ		locret_610A9
-		JSR		_cur_obj_screen_pos_calc	; get the current catcher position
-		BCS		locret_610A9
-		STX		_tmp1						; store calculated position
-		STY		_tmp2
+		LDX		_cur_trd_slot
+		LDA		_obj_out_of_screen,X
+		BNE		locret_610A9
+		LDA		_obj_x_screen_pos,X			; get the current catcher position
+		STA		_tmp1						; and store
+		LDA		_obj_y_screen_pos,X
+		STA		_tmp2
 #if TWO_PLAYER_MODE==1
 		LDA		_catcher_direction_idx
 #else
@@ -1851,8 +1847,8 @@ _catcher_target_follow:
 		BMI		.catcher_beamed_lookup		; if already catched, restart lookup
 		LDA		_trds_args0,X				; for other beamed objects
 		BEQ		.catcher_beamed_lookup
-		JSR		_obj_screen_pos_calc		; when still beamed, recalc its position
-		BCC		.catcher_do_targeting		; again. it won't change, but previously
+		LDA		_obj_out_of_screen,X		; when still beamed, recalc its position
+		BEQ		.catcher_do_targeting		; again. it won't change, but previously
 .catcher_beamed_lookup:						; calculated values are lost in tmp vars
 		JSR		_beamed_enemy_lookup		; finally, if beamed object inactive and
 		BCS		.catcher_beamer_follow		; no new beamed objects, reset targeting
@@ -1955,17 +1951,14 @@ loc_6118F:
 		LDA		_trds_args0,X
 		CMP		#$02
 		BNE		loc_611A3
-		TXA
-		PHA
-		JSR		_obj_screen_pos_calc		; if found, calc its screen pos
-		PLA
-		TAX
-		BCC		locret_611A8				; return object slot idx in X and
+		LDA		_obj_out_of_screen,X		; if found, test if it not out of screen
+		BNE		loc_611A3
+		CLC									; return object slot idx in X
+		RTS
 loc_611A3:
 		INX
 		CPX		#$0E
 		BCC		loc_6118F					; C=1 if nothing found
-locret_611A8:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -2174,7 +2167,7 @@ loc_612CF:
 		BCS		.exit_false
 loc_612DF:
 		DEC		_var1
-		BPL		loc_612FC					; brantch for catcher walk DOWN
+		BPL		loc_612FC					; branch for catcher walk DOWN
 		JSR		_catcher_screen_y_pos_calc
 		BEQ		loc_612EC
 		BCS		.exit_true
@@ -2212,6 +2205,8 @@ loc_61305:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; TODO: use screen positions as well
+;
 _catcher_screen_x_pos_calc:
 		LDA		_obj_x_pos_lo+4
 		SEC
@@ -2415,9 +2410,11 @@ _catch_spr_idx_select:
 
 ; =============== S U B R O U T I N E ======n================================
 _catch_obj_beamed_search:
-		JSR		_cur_obj_screen_pos_calc	; get the current catch position
-		STX		_tmp1
-		STY		_tmp2
+		LDX		_cur_trd_slot
+		LDA		_obj_x_screen_pos,X			; get the current catch position
+		STA		_tmp1
+		LDA		_obj_y_screen_pos,X
+		STA		_tmp2
 		LDX		#$06
 loc_61452:
 		TXA									; now look for any object in beamed state
@@ -2428,9 +2425,9 @@ loc_61452:
 		BMI		loc_61480
 		CMP		#$02
 		BCC		loc_61480
-		JSR		_obj_screen_pos_calc		; then calc position of this object
-		BCS		loc_61480					; and calc the distance between
-		TXA									; catch and object
+		LDA		_obj_out_of_screen,X		; if object is on the screens
+		BNE		loc_61480					; then get position of it
+		LDA		_obj_x_screen_pos,X			; and calc distance between
 		SBC		_tmp1
 		BCS		loc_6146F
 		EOR		#$FF
@@ -2438,7 +2435,7 @@ loc_61452:
 loc_6146F:
 		CMP		#$11
 		BCS		loc_61480
-		TYA
+		LDA		_obj_y_screen_pos,X
 		SBC		_tmp2
 		BCS		loc_6147C
 		EOR		#$FF
@@ -2798,7 +2795,7 @@ _room_macro_block_read:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_ppu_macro_block_draw:
+_far_ppu_macro_block_draw:
 		STA		_tmp0
 		LDA		_prg_cur_bank				; get the macro idx
 		PHA
@@ -2838,7 +2835,7 @@ _ppu_macro_block_draw:
 		JSR		_ppu_macro_attr_transfer	; send attributes first
 		LDA		#$02
 		STA		_tmp_buf+2					; form macro tile chunk and sent
-		STA		_tmp_buf+3					;  it to ppu queue
+		STA		_tmp_buf+3					; it to ppu queue
 		JSR		_ppu_offset_calc
 		JSR		_ppu_res_send_param_no_ofs
 		.WORD	_tmp_buf+2
@@ -2858,10 +2855,10 @@ _ppu_room_screen_draw:
 loc_619F9:
 		LDX		#$00
 loc_619FB:
-		JSR		_far_room_macro_block_read	; TODO: also unoptimal, both routines
-		JSR		_ppu_macro_block_draw		; set the same PRG bank individually
-		TXA
-		CLC
+		JSR		_far_room_macro_block_read	; NOTE: looks unoptimal, but since we
+		JSR		_far_ppu_macro_block_draw	; have optimization in mmc1_prg routine
+		TXA									; here we will change bank once for
+		CLC									; all loops
 		ADC		#$10
 		TAX
 		BCC		loc_619FB
@@ -2872,58 +2869,6 @@ loc_619FB:
 		CPY		#$F0
 		BCC		loc_619F9
 		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_cur_obj_screen_pos_calc:
-		LDX		_cur_trd_slot
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-_obj_screen_pos_calc:
-#if OPT_SCREEN_POS==1
-		LDA		_obj_out_of_screen,X
-		BNE		.oos_failed
-		LDA		_obj_y_screen_pos,X
-		TAY
-		LDA		_obj_x_screen_pos,X
-		TAX
-		CLC
-		RTS
-.oos_failed:
-		LDY		#$00
-		LDX		#$00
-		SEC
-		RTS
-#else
-		LDA		_obj_x_pos_hi,X
-		STA		_tmp_var0
-		LDA		_obj_y_pos_hi,X
-		STA		_tmp_var1
-		LDY		_obj_y_pos_lo,X
-		LDA		_obj_x_pos_lo,X
-		SEC
-		SBC		_ppu_scroll_pos_x
-		TAX
-		LDA		_tmp_var0
-		SBC		_ppu_scroll_pos_x+1
-		BNE		.oos_failed
-		TYA
-		SBC		_ppu_scroll_pos_y
-		BCS		loc_61A36A
-		SBC		#$0F
-		CLC
-loc_61A36A:
-		TAY
-		LDA		_tmp_var1
-		SBC		_ppu_scroll_pos_y+1
-		BNE		.oos_failed
-		CLC
-		RTS
-.oos_failed:
-		SEC
-		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_new_lvl_pos_set:
@@ -3005,42 +2950,40 @@ loc_61A71:
 ;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-; NOTE, function uses raw object coordinates but not screen coordinates
-; so this calcs will be wrong when current screen contains two adjascent
-; portions of the room which has a different high nibble of position values
-;
-; probably this is the reason, fast slimes are too dumb sometimes... usually
+; NEW, previously this function used raw object coordinates but not screen
+; coordinates so calcs appears to be wrong when two objects are at the
+; different room pages at the same time (still on the same screen!)
+; this is the reason the fast slimes are too dumb sometimes... usually
 ; they should pursuit player in any direction, but when player goes out of
 ; current page that has fast slime, the latter turns in the opposite direction
 ; leave the screen at all...
 ;
 _obj_to_beamer_dir_calc:
 		LDX		_cur_trd_slot
-		LDA		_obj_x_pos_lo+2
+		LDA		_obj_x_screen_pos+2
 		STA		_var0
-		LDA		_obj_y_pos_lo+2
+		LDA		_obj_y_screen_pos+2
 		SEC
 		SBC		#$10
 		STA		_var1
-		LDA		_obj_x_pos_lo,X
+		LDA		_obj_x_screen_pos,X
 		STA		_var2
-		LDA		_obj_y_pos_lo,X
+		LDA		_obj_y_screen_pos,X
 		STA		_var3
 		JMP		_point_to_point_dir_calc
 
 ; =============== S U B R O U T I N E ======n================================
-; NOTE: in other hand, this routine calculates correct screen coordinates of
-; objects to compare them, but does not check if one of them goes out of
-; screen as well, so the comparison result will be semi-random in this case
-;
 _obj_to_obj_dir_calc:
 		TAX
-		JSR		_obj_screen_pos_calc
-		STX		_var0
-		STY		_var1
-		JSR		_cur_obj_screen_pos_calc
-		STX		_var2
-		STY		_var3
+		LDA		_obj_x_screen_pos,X
+		STA		_var0
+		LDA		_obj_y_screen_pos,X
+		STA		_var1
+		LDX		_cur_trd_slot
+		LDA		_obj_x_screen_pos,X
+		STA		_var2
+		LDA		_obj_y_screen_pos,X
+		STA		_var3
 		JMP		_point_to_point_dir_calc
 
 ; =============== S U B R O U T I N E ======n================================
@@ -3515,9 +3458,10 @@ _obj_to_beam_ctest:
 		CLC
 		ADC		byte_61E2E,X
 		STA		_var1
-		JSR		_cur_obj_screen_pos_calc	; calculate current object screen position
-		BCS		loc_61E28
-		TXA
+		LDX		_cur_trd_slot				; get current object screen position
+		LDA		_obj_out_of_screen,X
+		BNE		loc_61E28
+		LDA		_obj_x_screen_pos,X
 		SEC
 		SBC		_beam_target_x_pos			; calculate distance from beam target point
 		BCS		loc_61E04
@@ -3526,7 +3470,7 @@ _obj_to_beam_ctest:
 loc_61E04:
 		CMP		_var0						; test if get into the area
 		BCS		loc_61E28
-		TYA
+		LDA		_obj_y_screen_pos,X
 		SEC
 		SBC		_beam_target_y_pos
 		BCS		loc_61E13
@@ -3557,15 +3501,18 @@ byte_61E2E:
 _obj_to_player_ctest:
 		STX		_var0
 		STY		_var1
-		JSR		_cur_obj_screen_pos_calc
-		BCS		locret_61E6C				; this extra allows to have correct collision
-		STX		_tmp1C						; tests for object out of the screen (now allowed)
-		STY		_tmp1D
+		LDX		_cur_trd_slot				; this extra allows to have correct collision
+		LDA		_obj_out_of_screen,X		; tests for object out of the screen (now allowed)
+		BNE		locret_61E6C
+		LDA		_obj_x_screen_pos,X
+		STA		_tmp1C
+		LDA		_obj_y_screen_pos,X
+		STA		_tmp1D
 		LDA		_players_inv_timer
-		BNE		locret_61E6B
+		BNE		loc_61E6B
 		LDX		#$02
 		JSR		_obj_to_player_ctest_ex
-		BCS		locret_61E6B
+		BCS		loc_61E6B
 		LDA		_players_hit_flag
 #if DEBUG==1
 ;		ORA		#$00
@@ -3573,7 +3520,7 @@ _obj_to_player_ctest:
 		ORA		#$01
 #endif
 		STA		_players_hit_flag
-locret_61E6B:
+loc_61E6B:
 		LDA		_players_inv_timer+1
 		BNE		locret_61E6C
 		LDX		#$04
@@ -3590,13 +3537,41 @@ locret_61E6C:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+_prize_to_player_ctest:
+		STX		_var0
+		STY		_var1
+		LDX		_cur_trd_slot
+		LDA		_obj_out_of_screen,X		; NEW, this extra allows to have correct collision
+		BNE		locret_61E6C				; tests for object out of the screen (now allowed)
+		LDA		_obj_x_screen_pos,X
+		STA		_tmp1C
+		LDA		_obj_y_screen_pos,X
+		STA		_tmp1D
+		LDX		#$02
+		JSR		_obj_to_player_ctest_ex
+		BCC		.prize_scores_apply
+		LDX		#$04
+		JSR		_obj_to_player_ctest_ex
+		BCS		locret_61E6E
+.prize_scores_apply:
+		LDX		_cur_trd_slot				; when collide, shut down the money bag thread
+		LDA		#$FF						; and add a scores from its ARG2 parameter
+		STA		_trds_obj_idx,X
+		LDA		_trds_args2,X
+		JSR		_scores_add					; add scores from sarg2 var
+		LDA		#_snd0D_idx					; play a sound
+		JMP		_far_prg6_apu_snd_load
+locret_61E6E:
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
+; TODO: there are a couple of similar calculations here and in PRG1,
+; maybe we may merge them!
+;
 _obj_to_player_ctest_ex:
-		JSR		_obj_screen_pos_calc
-		STX		_var2
-		STY		_var3
 		LDA		_tmp1C
 		SEC
-		SBC		_var2
+		SBC		_obj_x_screen_pos,X
 		BCS		loc_61E51
 		EOR		#$FF
 		ADC		#$01
@@ -3605,7 +3580,7 @@ loc_61E51:
 		BCS		locret_61E6D
 		LDA		_tmp1D
 		SEC
-		SBC		_var3
+		SBC		_obj_y_screen_pos,X
 		BCS		loc_61E5F
 		EOR		#$FF
 		ADC		#$01
@@ -3616,32 +3591,9 @@ locret_61E6D:
 #else
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_player_ctest:
-		LDA		_players_inv_timer			; original game does enemy collision test
-		BNE		locret_61E6B				; only for beamer player,
-		STX		_var0
-		STY		_var1
-		LDX		#$02						; here we calc current screen pos of beamer
-		JSR		_obj_screen_pos_calc
-		STX		_var2
-		STY		_var3
-		JSR		_cur_obj_screen_pos_calc	; then read current object screen position
-		TXA									; NOTE: because we calculate objects collision
-		SEC									; always in screen coordinates, you couldn't
-		SBC		_var2						; let any object leave the screen and stay active
-		BCS		loc_61E51					; at the same time. however, this may be rewritten
-		EOR		#$FF						; to have all calculations in room coordinates.
-		ADC		#$01						; to avoid this... or just additionally test if
-loc_61E51:									; object out of screen here
-		CMP		_var0
-		BCS		locret_61E6B
-		TYA
-		SEC
-		SBC		_var3
-		BCS		loc_61E5F
-		EOR		#$FF
-		ADC		#$01
-loc_61E5F:
-		CMP		_var1
+		LDA		_players_inv_timer
+		BNE		locret_61E6B
+		JSR		_obj_to_player_ctest_ex
 		BCS		locret_61E6B
 		LDA		_players_hit_flag
 #if DEBUG==1
@@ -3652,41 +3604,15 @@ loc_61E5F:
 		STA		_players_hit_flag
 locret_61E6B:
 		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
-; TODO: optimize me, this collision test is the same as regular collision
-; test but not set the collision flag. may be merged with common routine
 ; NOTE: most probably this routine may be intended to be used more than
 ; for collecting one money bag, presumably for more bonuses during the game
 ; like boots and wests... this is the reason they uses scores to be
 ; passed to this routine from object itself...
 ;
 _prize_to_player_ctest:
-		STX		_var0
-		STY		_var1
-		LDX		#$02
-		JSR		_obj_screen_pos_calc
-		STX		_var2
-		STY		_var3
-		JSR		_cur_obj_screen_pos_calc
-		TXA
-		SEC
-		SBC		_var2
-		BCS		loc_61E86
-		EOR		#$FF
-		ADC		#$01
-loc_61E86:
-		CMP		_var0
-		BCS		locret_61EA9
-		TYA
-		SEC
-		SBC		_var3
-		BCS		loc_61E94
-		EOR		#$FF
-		ADC		#$01
-loc_61E94:
-		CMP		_var1
+		JSR		_obj_to_player_ctest_ex
 		BCS		locret_61EA9
 		LDX		_cur_trd_slot				; when collide, shut down the money bag thread
 		LDA		#$FF						; and add a scores from its ARG2 parameter
@@ -3697,6 +3623,37 @@ loc_61E94:
 		JSR		_far_prg6_apu_snd_load
 locret_61EA9:
 		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_obj_to_player_ctest_ex:
+		STX		_var0						; original game does enemy collision test
+		STY		_var1						; only for beamer player.
+		LDX		_cur_trd_slot				; then read current object screen position
+		LDA		_obj_out_of_screen,X		; NEW, this extra allows to have correct collision
+		BEQ		loc_61E86					; tests for object out of the screen
+		SEC
+		RTS
+loc_61E86:
+		LDA		_obj_x_screen_pos,X
+		SEC
+		SBC		_obj_x_screen_pos+2
+		BCS		loc_61E87
+		EOR		#$FF
+		ADC		#$01
+loc_61E87:
+		CMP		_var0
+		BCS		locret_61EAA
+		LDA		_obj_y_screen_pos,X
+		SEC
+		SBC		_obj_y_screen_pos+2
+		BCS		loc_61E98
+		EOR		#$FF
+		ADC		#$01
+loc_61E98:
+		CMP		_var1
+locret_61EAA:
+		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _bin2dec:
@@ -5069,74 +5026,108 @@ loc_62945:
 loc_62948:
 		JMP		_ppu_vblank_on
 
+#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
+; in two players mode lets the second player to exit the rooms
+;
 _nsub_players_room_exit_test_from_ptr:
+		LDX		#$02
+		JSR		_nsub_player_room_exit_test_from_ptr
+		BCS		.exit_found
+		LDX		#$04
+		JMP		_nsub_player_room_exit_test_from_ptr
+.exit_found:
+		RTS
+#endif
+
+; =============== S U B R O U T I N E ======n================================
+#if TWO_PLAYER_MODE==1
+_nsub_player_room_exit_test_from_ptr:
+		LDY		#$00
+#else
+_nsub_players_room_exit_test_from_ptr:
+#endif
+
 		LDA		(_room_exits_ptr),Y
 		INY									; fetches the exit locations of the level
 		STA		_var0						; and compares with current beamed position
 		LDA		#$00						; return flag if position reached
 		STA		_var3
-loc_62954A:
-		LDX		#$02						; have no use with doors code itself
+loc_62954:
 		LDA		(_room_exits_ptr),Y
 		INY
 		SEC									; but exits are always active
+#if TWO_PLAYER_MODE==1
+		SBC		_obj_x_pos_lo,X
+#else
 		SBC		_obj_x_pos_lo+2
+#endif
 		STA		_var1
 		LDA		(_room_exits_ptr),Y
 		INY
+#if TWO_PLAYER_MODE==1
+		SBC		_obj_x_pos_hi,X
+#else
 		SBC		_obj_x_pos_hi+2
+#endif
 		STA		_var2
-		BCS		loc_62976A
+		BCS		loc_62976
 		LDA		#$00
 		SEC
 		SBC		_var1
 		STA		_var1
 		LDA		#$00
 		SBC		_var2
-loc_62976A:
-		BNE		loc_629A8A
+loc_62976:
+		BNE		loc_629A8
 		LDA		_var1
 		CMP		#$11
-		BCS		loc_629A8A
-		DEX
-		DEX
+		BCS		loc_629A8
 		LDA		(_room_exits_ptr),Y
 		INY
 		SEC
+#if TWO_PLAYER_MODE==1
+		SBC		_obj_y_pos_lo,X
+#else
 		SBC		_obj_y_pos_lo+2
+#endif
 		STA		_var1
 		LDA		(_room_exits_ptr),Y
 		INY
+#if TWO_PLAYER_MODE==1
+		SBC		_obj_y_pos_hi,X
+#else
 		SBC		_obj_y_pos_hi+2
+#endif
 		STA		_var2
-		BCS		loc_629A0A
+		BCS		loc_629A0
 		LDA		#$00
 		SEC
 		SBC		_var1
 		STA		_var1
 		LDA		#$00
 		SBC		_var2
-loc_629A0A:
-		BNE		loc_629B2A
+loc_629A0:
+		BNE		loc_629B2
 		LDA		_var1
 		CMP		#$11
-		BCC		loc_629BAA
-		BCS		loc_629B2A
-loc_629A8A:
+		BCC		loc_629BA
+		BCS		loc_629B2
+loc_629A8:
 		INY
 		INY
-loc_629B2A:
+loc_629B2:
 		INC		_var3
 		DEC		_var0
-		BNE		loc_62954A
+		BNE		loc_62954
 		CLC									; exit with C=0 if no exit reached
 		RTS
-loc_629BAA:
+loc_629BA:
 		LDA		_var3						; exit with C=1 if exit reached
 		STA		_tmp_idx
 		SEC
 		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 ; common routine for init starting position of players at the lbeginning
@@ -5705,8 +5696,8 @@ off_62CE4:
 _nsub_cur_center_reset:
 		LDX		_cur_trd_slot
 		LDA		#$80
-		STA		_obj_x_center,X
-		STA		_obj_y_center,X
+		STA		_obj_x_clk,X
+		STA		_obj_y_clk,X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -5730,15 +5721,18 @@ _nsub_players_scr_suspend:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; routine to remove objects that have to disappear off screen
 _cur_obj_out_of_screen_test:
-		JSR		_cur_obj_screen_pos_calc	; routine to remove objects that
-		CPX		#$04						; have to disappear off screen
+		LDX		_cur_trd_slot
+		LDA		_obj_x_screen_pos,X
+		CMP		#$04
 		BCC		loc_62D76
-		CPX		#$F8
+		CMP		#$F8
 		BCS		loc_62D76
-		CPY		#$04
+		LDA		_obj_y_screen_pos,X
+		CMP		#$04
 		BCC		loc_62D76
-		CPY		#$E8
+		CMP		#$E8
 		BCS		loc_62D76
 		RTS
 loc_62D76:
@@ -5976,8 +5970,8 @@ loc_62EBD:
 		LDA		_var2
 		STA		_trds_args2,X
 		LDA		#$80
-		STA		_obj_x_center,X
-		STA		_obj_y_center,X
+		STA		_obj_x_clk,X
+		STA		_obj_y_clk,X
 		LDA		_tmp0
 		STA		_trds_obj_idx,X
 		BMI		_nbgsub_dummy
@@ -6063,18 +6057,14 @@ loc_62F45:
 		BEQ		.trds_do_exec				; if no, then just execute
 		LDA		_pause_mode_flag			; if not paused, performing out-of-screen test for
 		BEQ		loc_62F6A					; all level threads, skip system threads (<6)
-; NOTE: this TXA is redundant, comparison performed on X red directly!
-; and A never used after that...
-		TXA
-; -
 		CPX		#$02						; if paused, hold all other threads, excluding the
 		BCS		.trds_skip_exec				; system threads: 0 - level, 1 - level doors
 loc_62F6A:
-#if TWO_PLAYER_MODE==0
+#if OOS_ACTIVE==0
 		CPX		#$06
 		BCC		.trds_do_exec
-		JSR		_obj_screen_pos_calc		; when object out of screen, hold it, so any object
-		BCS		.trds_skip_exec				; halted, but will resume if visible again...
+		LDA		_obj_out_of_screen,X		; when object out of screen, hold it, so any object
+		BNE		.trds_skip_exec				; halted, but will resume if visible again...
 #endif
 .trds_do_exec:
 		LDX		_cur_trd_slot				; now, finally do execute. fetch current thread index
@@ -6425,10 +6415,10 @@ loc_63178:
 		BPL		loc_6317F
 		DEC		_var1
 loc_6317F:
-		LDA		_obj_x_center,X
+		LDA		_obj_x_clk,X
 		CLC
 		ADC		_obj_x_speed,X
-		STA		_obj_x_center,X
+		STA		_obj_x_clk,X
 		LDA		_obj_x_pos_lo,X
 		ADC		_obj_x_delta,X
 		STA		_obj_x_pos_lo,X
@@ -6437,8 +6427,8 @@ loc_6317F:
 		STA		_obj_x_pos_hi,X
 		LDA		_obj_y_speed,X
 		CLC
-		ADC		_obj_y_center,X
-		STA		_obj_y_center,X
+		ADC		_obj_y_clk,X
+		STA		_obj_y_clk,X
 		LDA		_obj_y_delta,X
 		BMI		loc_631B4
 		ADC		_obj_y_pos_lo,X
@@ -6459,10 +6449,6 @@ loc_631BB:
 		LDA		_var1
 		ADC		_obj_y_pos_hi,X
 		STA		_obj_y_pos_hi,X				; that's all here
-
-#if OPT_SCREEN_POS==0
-		RTS
-#endif
 
 ; !FALLTHROUGH!
 
@@ -6824,7 +6810,7 @@ _dcmd01_pos_x_set:
 		JSR		_scr_getc
 		STA		_obj_x_pos_hi,X
 		LDA		#$80
-		STA		_obj_x_center,X
+		STA		_obj_x_clk,X
 		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6835,7 +6821,7 @@ _dcmd02_pos_y_set:
 		JSR		_scr_getc
 		STA		_obj_y_pos_hi,X
 		LDA		#$80
-		STA		_obj_y_center,X
+		STA		_obj_y_clk,X
 		JMP		_cur_scr_pc_inc
 
 ; =============== S U B R O U T I N E ======n================================
@@ -8341,11 +8327,7 @@ _mmc1_prg_safe:
 		CMP		_prg_bank
 		BEQ		locret_63B6E
 		PHA									; very safe bank switching routine and
-		STA		_prg_bank					; very SLOOOOOW because of that sometimes
-;		LDA		_mmc1_busy					; backup busy flag, however thechnically
-;		PHA									; no one else set it, so we basicly just
-;		LDA		#$01						; save zero then restore it, thus clear it again
-;		STA		_mmc1_busy					; set our own busy flag, now when nmi
+		STA		_prg_bank					; may be very SLOOOOOW because of that
 		INC		_mmc1_busy
 		LDA		_prg_bank					; occurs, it will skip any mapper operations
 		STA		$FFF9						; this includes calling apu player routine
@@ -8357,8 +8339,6 @@ _mmc1_prg_safe:
 		STA		$FFF9
 		LSR
 		STA		$FFF9
-;		PLA
-;		STA		_mmc1_busy					; so after changing the bank here, we need to
 		DEC		_mmc1_busy
 		LDA		_apu_play_delayed_req		; test if nmi occurs in the middle of process
 		BEQ		loc_63B6E					; if yes, then we need to call apu player manually

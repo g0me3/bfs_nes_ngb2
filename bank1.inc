@@ -3386,36 +3386,40 @@ locret_163B3:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
+; special collision test for doors uses fixed activation area for it in
+; 32x32 pixels
+; input X/Y screen position of nearby door
+;       A - index of object to test against the door
+; procedure does not destroy X/Y values, so they can be used after
+;
 _obj_to_room_door_distance_test:
-		STA		_tmp0						; special collision test for doors
-		TXA									; uses fixed activation area for it
-		PHA									; 32x32 pixels
-		TYA
-		PHA
-		LDX		_tmp0
-		JSR		_obj_screen_pos_calc
-		STX		_tmp1
-		STY		_tmp2
-		PLA
-		TAY
-		PLA
-		TAX
-		BCS		locret_163E0
-		SBC		_tmp1
-		BCS		loc_163D1
+		STA		_tmp0						; keep idx safe
+		STX		_tmp1						; backup X, Y safe here
+		LDX		_tmp0						; restore index, do screen pos calcs
+		LDA		_obj_out_of_screen,X
+		BEQ		.room_on_screen
+		SEC									; WARNING, this routine need the out of screen
+		RTS
+.room_on_screen
+		LDA		_tmp1
+		SEC
+		SBC		_obj_x_screen_pos,X
+		BCS		loc_163D1					; A=X here already, so du calc immediately
 		EOR		#$FF
 		ADC		#$01
 loc_163D1:
 		CMP		#$20
 		BCS		locret_163E0
-		TYA
-		SBC		_tmp2
+		TYA									; retrieve y pos from Y, Y still safe!
+		SEC
+		SBC		_obj_y_screen_pos,X
 		BCS		loc_163DE
 		EOR		#$FF
 		ADC		#$01
 loc_163DE:
-		CMP		#$20
+		CMP		#$20						; exit also with CARRY as result!
 locret_163E0:
+		LDX		_tmp1						; restore X
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -3473,9 +3477,17 @@ loc_16409:
 		INX
 		CPX		#$0E
 		BCC		loc_16400
-		LDX		_tmp1						; here is the additional test to be sure
-		LDA		#$02						; this is the main player want to open it
+		LDX		_tmp1
+#if TWO_PLAYER_MODE==1
+		LDA		#$02
 		JSR		_obj_to_room_door_distance_test
+		BCC		_room_door_open
+		LDA		#$04
+		JSR		_obj_to_room_door_distance_test
+#else
+		LDA		#$02						; here is the additional test to be sure
+		JSR		_obj_to_room_door_distance_test	; this is the main player want to open it
+#endif
 		BCS		_room_door_closed
 
 ; !FALLTHROUGH!
@@ -3579,7 +3591,7 @@ loc_16460:
 		PLA
 		TAY
 		PLA
-		JSR		_ppu_macro_block_draw
+		JSR		_far_ppu_macro_block_draw
 		PLA
 		STA		_ptr06+1
 		PLA
@@ -3711,7 +3723,7 @@ loc_1655C:
 		LDA		_obj_y_pos_hi+1
 		STA		_tmp_var1
 		PLA									; both open macros are the same here
-		JSR		_ppu_macro_block_draw		; hardcoded as a constant
+		JSR		_far_ppu_macro_block_draw	; hardcoded as a constant
 		PLA
 		STA		_ptr06+1
 		PLA
