@@ -1,7 +1,7 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		0
+DEBUG			EQU		1
 OPTIMIZATION	EQU		1
 TWO_PLAYER_MODE	EQU		0
 OOS_ACTIVE		EQU		0
@@ -454,9 +454,15 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-1]
 	ENDM
 
 	MAC	SMEM_ALU
+#if OPTIMIZATION==1
+		.BYTE	_scmd0E_smem_alu_idx
+		.WORD	{1}
+		.BYTE	{3}
+#else
 		.BYTE	_scmd0E_smem_alu_idx
 		.WORD	{1}
 		.BYTE	{2},{3}
+#endif
 	ENDM
 
 SARG0	EQU	0
@@ -490,9 +496,23 @@ _SW_START	SET	.
 	ENDM
 
 	MAC	STORE8
+#if OPTIMIZATION==1
+	#if {1}<$100
+;		ECHO	"store8 short at",.
+		.BYTE	_scmd1C_store8s_idx
+		.BYTE	{1}
+		.BYTE	{2}
+	#else
+;		ECHO	"store8 long at",.
 		.BYTE	_scmd13_store8_idx
 		.WORD	{1}
 		.BYTE	{2}
+	#endif
+#else
+		.BYTE	_scmd13_store8_idx
+		.WORD	{1}
+		.BYTE	{2}
+#endif
 	ENDM
 
 	MAC	SSCRIPT1_OFF
@@ -507,14 +527,31 @@ _ORA	EQU	$01
 _ADC	EQU	$02
 
 	MAC	SARG_ALU
+#if OPTIMIZATION==1
+		.BYTE	_scmd15_sarg_alu_idx
+		.BYTE	{1},{3}
+#else
 		.BYTE	_scmd15_sarg_alu_idx
 		.BYTE	{1},{2},{3}
+#endif
 	ENDM
 
 	MAC	STORE16
+#if OPTIMIZATION==1
+	#if {1}<$100
+		.BYTE	_scmd1D_store16s_idx
+		.BYTE	{1}
+		.WORD	{2}
+	#else
 		.BYTE	_scmd16_store16_idx
 		.WORD	{1}
 		.WORD	{2}
+	#endif
+#else
+		.BYTE	_scmd16_store16_idx
+		.WORD	{1}
+		.WORD	{2}
+#endif
 	ENDM
 
 	MAC	SBCS_BREAK

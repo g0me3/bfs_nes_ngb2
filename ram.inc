@@ -432,8 +432,6 @@ _sound_test_mus_idx:
 		.BYTE	0
 _sound_test_snd_idx:
 		.BYTE	0
-;_unused_var_0:
-;		.BYTE	0,0,0
 _doors_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0
 _doors_y_pos_hi:
@@ -446,8 +444,6 @@ _doors_width:
 		.BYTE	0,0,0,0,0,0,0,0
 _doors_height:
 		.BYTE	0,0,0,0,0,0,0,0
-;_unused_14:
-;		.BYTE	0
 _attr_buf_pageA:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -537,8 +533,6 @@ _game_flags:
 		.BYTE	0
 _continues:
 		.BYTE	0
-;_unused_var:
-;		.BYTE	0
 _scores_1st_extend:
 		.BYTE	0,0
 _scores_2nd_extend:

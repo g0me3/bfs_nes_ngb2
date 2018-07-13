@@ -47,8 +47,7 @@
 			NARGB		$00
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack HAL logo tilemap
 			NARGB		_tlm8_HAL_idx
-		NJSR			_nsub_mmc1_chr1_set				; set corresponding CHR bank
-			NARGB		$1B
+		STORE8			_chr_bank1,$1B					; set corresponding CHR bank
 		NJSR			_nsub_bg_pal_load				; load actual palette into pal buf
 			NARGW		_pal0
 		SJSR			_ssub_pal_fade_in				; show the picture, wait for 90 frames (1.5 sec)
@@ -56,12 +55,7 @@
 		SJSR			_ssub_pal_fade_out				; shut down the picture
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; load new packed tilemap with license info
 			NARGB		_tlm6_copyrights_idx
-		NJSR			_nsub_mmc1_chr1_set				; CHR bank
-			NARGB		$09
-		NJSR			_nsub_bg_pal_load				; load another palette
-;			NARGW		_pal1							; REDUNDANT: both palettes are the same
-			NARGW		_pal0
-; -
+		STORE8			_chr_bank1,$09					; CHR bank
 		SJSR			_ssub_pal_fade_in				; and again show it for 1.5 seconds
 		SJSR			_ssub_skip_wait					; NEW, skip intro
 
@@ -77,15 +71,12 @@ _scr_title_restart:
 _sloc_title_start:
 		NJSR			_nsub_apu_mus_load				; start title music theme
 			NARGB		_mus5_idx
-; NOTE: for some reason, this native subroutines just does write
-; to the _chr_bank0/_chr_bank1 variables, why they need to set a separate
-; function for that, if STORE8 opcode can be used instead? however
-; this won't save us a byte, opcode sizes are the same... that would
-; be useful if there is an opcode with offset to zero ram existed...
-; or maybe an additional opcode may be assigned to set exactly chr banks
-; which may be shorter (one 3-byte opcode or two 2-byte)
-		NJSR			_nsub_mmc1_chr0_set				; set CHR for bg and sprites
-			NARGB		$01
+; NEW: for some reason they used a native routine to store CHR bank
+; index into corresponding variable, nistead of using simple STORE8
+; opcode same size. optimized store opcodes to be one byte shorter
+; if variable offset is in zero RAM, so may now replace all natives
+; to opcodes with convinience.
+		STORE8			_chr_bank0,$01					; set CHR for bg and sprites
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack title screen frame window
 			NARGB		_tlm0_title_screen_idx
 		SJSRS			_ssub_title_logo_init			; NEW, merged to common code routine
@@ -124,9 +115,8 @@ _sloc_title_loop:
 		NJSR			_nsub_hi_scores_display			; draw additional hi-scores
 			NARGB		$0F,$0A
 		NJSR			_nsub_full_pal_load				; load new palette for this portion
-			NARGW		_pal3
-		NJSR			_nsub_mmc1_chr1_set				; and change the CHR page, pages 00 and 09 shares
-			NARGB		$09								; title curtain graphics, so nothing is changes there
+			NARGW		_pal3							; and change the CHR page, pages 00 and 09 shares
+		STORE8			_chr_bank1,$09					; title curtain graphics, so nothing is changes there
 		NJSR			_nsub_new_thread_start			; start new thread to display an additional
 			NARGB		_scr00_intro_title_select_idx	; animated sprite object - small ghost in "stop" sign
 			NARGB		$00,$00							; this object has limited lifetime and stopped
@@ -148,8 +138,7 @@ _sloc_title_loop:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_title_logo_init:
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$00
+		STORE8			_chr_bank1,$00
 		NJSR			_nsub_full_pal_load				; load title palette
 			NARGW		_pal2
 		SARG_SET		SARG2,$00						; init one of internal tmp vars
@@ -218,16 +207,11 @@ _chain_title_anim_scripts_data:
 		.BYTE	_sub04_intro_busterC_idx+1,	$08,$10,$20
 		.BYTE	_sub05_intro_busterD_idx+1,	$00,$10,$00
 
-; NOTE: both palettes are the same for released versions, however, the prototype
-; version uses different palettes, so they just not changed scripts but changed
-; only palettes
+; NOTE: us proto uses two different palettes for logo and copyrights screens
+; in the rest releases they are the same, now removed. if you need another
+; palette, add it
 _pal0:
 		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00
-
-; REDUNDANT, same pal removed, may be restored if different HAL logo is used
-;_pal1:
-;		.BYTE	$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00,$0F,$30,$10,$00
-; -
 _pal2:
 		.BYTE	$0F,$30,$15,$29,$0F,$30,$01,$29,$0F,$21,$11,$01,$0F,$14,$10,$30
 		.BYTE	$0F,$36,$1C,$0F,$0F,$30,$35,$0F,$0F,$30,$15,$29,$0F,$36,$2B,$0F
@@ -403,15 +387,12 @@ _sloc_8A65:
 		SARG_SET		SARG0,$00						; init tmp counter var
 		SLOOP_BEGIN		$06
 		NJSR			_nsub_patch_pal_blink			; read pal byte from selected array
-			NARGW		_pal_new_blink					; with index SARG0, put it on
-			NARGB		$16,SARG0						; selected position of palette buffer (16),
+;			NARGW		_pal_new_blink					; REDUNDANT, with index SARG0, put it on
+;			NARGB		$16,SARG0						; selected position of palette buffer (16),
 		SARG_ALU		SARG0,_ADC,$01					; then blit it and increment idx
 		SDELAY			$01								; sync to fluch buffers, loop 6 times
 		SLOOP_END
 		SJMPS			_sloc_8A65						; repeat infinitely
-
-_pal_new_blink:
-		.BYTE	$35,$25,$15,$05,$15,$25
 
 ; =============== S C R I P T ==========================s====================
 ; REDUNDANT: same blinking routine intended to blink black letters of the same "NEW"
@@ -434,25 +415,38 @@ _pal_new_blink:
 ;		.BYTE	$0F,$10,$20,$30,$20,$10,$01
 
 ; =============== S U B R O U T I N E ======n================================
+; this is custom palette blink routine used only for this place...
+; in other cases they used common pal fade _nsub routine with mask arguments...
+; NOTE: if you need another blinker to be restored, make another custom
+; blinker..
+;
 _nsub_patch_pal_blink:
-		JSR		_scr_getc					; this is custom palette blink routine used
-		STA		_ptr06						; only for this place... in other cases they
-		JSR		_scr_getc					; used common pal fade _nsub routine with
-		STA		_ptr06+1					; mask arguments...
-		JSR		_scr_getc
-		TAX
-		JSR		_scr_getc
+;		JSR		_scr_getc					; REDUNDANT now
+;		STA		_ptr06
+;		JSR		_scr_getc
+;		STA		_ptr06+1
+;		JSR		_scr_getc
+;		TAX
+;		JSR		_scr_getc
+;		TAY
+;		LDA		_trds_args_ptrs_lo,Y
+;		STA		_ptr08
+;		LDA		_trds_args_ptrs_hi,Y
+;		STA		_ptr08+1
+;		LDY		_cur_trd_slot
+;		LDA		(_ptr08),Y
+;		TAY
+;		LDA		(_ptr06),Y
+;		STA		_pal_buf,X
+		LDY		_cur_trd_slot				; NEW, hardcoded values are better lol
+		LDA		_trds_args0,Y
 		TAY
-		LDA		_trds_args_ptrs_lo,Y
-		STA		_ptr08
-		LDA		_trds_args_ptrs_hi,Y
-		STA		_ptr08+1
-		LDY		_cur_trd_slot
-		LDA		(_ptr08),Y
-		TAY
-		LDA		(_ptr06),Y
-		STA		_pal_buf,X
+		LDA		_pal_new_blink,Y
+		STA		_pal_buf+$16
 		JMP		_full_pal_fade
+
+_pal_new_blink:
+		.BYTE	$35,$25,$15,$05,$15,$25
 
 ; =============== S C R I P T ==========================s====================
 ; this script replaces the main thread's 00 script at slot 00 when you press
@@ -467,8 +461,7 @@ _scr_select_busters:
 		NJSR			_nsub_mmc1_mirror_vertical
 		NJSR			_nsub_full_pal_load
 			NARGW		_pal_select_busters
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$06
+		STORE8			_chr_bank1,$06
 		STORE8			_beamer_spr_base_tmp,$FF		; no players selected yet, reset
 		STORE8			_catcher_spr_base_tmp,$FF
 		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
@@ -1136,8 +1129,7 @@ _scr_secret_menu:
 			NARGB		_tlm9_secret_menu_idx
 		NJSR			_nsub_menu_init_draw			; update dynamic info
 		NJSR			_nsum_menu_option_attr_highlight; set highlight to default option
-		NJSR			_nsub_mmc1_chr1_set				; CHR setup
-			NARGB		$05
+		STORE8			_chr_bank1,$05					; CHR setup
 		NJSR			_nsub_bg_pal_load				; also palette
 			NARGW		_pal_bg_secret_menu
 		SJSR			_ssub_pal_fade_in				; show screen
@@ -1487,8 +1479,7 @@ locret_91EC:
 ; =============== D E F A U L T  S C R I P T  C A S E ==s====================
 		STORE8			_out_of_screen_test_flag,$00; default
 		SDELAY			$5A								; delay before start
-		NJSR			_nsub_mmc1_chr1_set				; setup CHR for BG
-			NARGB		$09
+		STORE8			_chr_bank1,$09					; setup CHR for BG
 		NJSR			_nsub_scroll_page_set			; setup NT page
 			NARGB		$00
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; unpack starr screen
@@ -1572,8 +1563,7 @@ _ssub_scenario_player_sub3_scores_draw:
 		SLOOP_END
 		NJSR			_nsub_bg_pal_load				; screen setup
 			NARGW		_pal_ending_scores
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$1C
+		STORE8			_chr_bank1,$1C
 		NJSR			_nsub_ending_scores_draw		; sraw hi-scores
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_inc_by_mask	; show screen
@@ -1672,13 +1662,20 @@ _nsub_ending_scores_draw:
 		LDA		_players_lives				; if you finish the game with more
 		BEQ		loc_9436
 loc_942C:
-		LDA		#$64						; add 100x scores for every life
+		LDA		#$64						; add 10000 scores for every life
 		JSR		_scores_add
 		DEC		_players_lives
 		BNE		loc_942C
 loc_9436:
 #if TWO_PLAYER_MODE==1
-; TODO: second players lives add to scores?
+		LDA		_players_lives+1
+		BEQ		loc_9437
+loc_942D:
+		LDA		#$64
+		JSR		_scores_add
+		DEC		_players_lives+1
+		BNE		loc_942D
+loc_9437:
 #endif
 		JSR		_ppu_res_send_param			; draw text resources
 		.WORD	_res_top_score
@@ -1876,8 +1873,7 @@ _res_all_test_players:
 
 ; =============== S C R I P T ==========================s====================
 _scr_ending_sub01:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$19
+		STORE8			_chr_bank0,$19
 		POS_X_DELTA_SET 0,$00,$01
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		6,$00
@@ -1949,8 +1945,7 @@ _scr_ending_sub03:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		byte_9910
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$04
+		STORE8			_chr_bank0,$04
 		POS_X_DELTA_SET 0,$80,$00
 		SLOOP_BEGIN		$03
 		SPR_IDX_SET		0,$4D
@@ -2148,8 +2143,7 @@ _scr_ending_sub08:
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		byte_9C20
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
+		STORE8			_chr_bank0,$0F
 		POS_X_DELTA_SET 0,$C0,$00
 		SLOOP_BEGIN		$05
 		SPR_IDX_SET		4,$C0
@@ -2441,10 +2435,8 @@ _scr_ending_sub16:
 		SDELAY			$01
 		SLOOP_END
 		NJSR			_nsub_ending_logo_attr_load
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$14
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$00
+		STORE8			_chr_bank0,$14
+		STORE8			_chr_bank1,$00
 		NJSR			_nsub_patch_pal_load
 			NARGB		$03
 			NARGW		byte_A547
@@ -5120,8 +5112,13 @@ loc_AFAF:
 
 _tlm0_title_screen:
 		INCBIN	"../tlm/tlm0.pak"
+#if TWO_PLAYER_MODE==1
+_tlm1_score:
+		INCBIN	"../tlm/tlm1_2p.pak"
+#else
 _tlm1_score:
 		INCBIN	"../tlm/tlm1.pak"
+#endif
 _tlm2_busterselect:
 		INCBIN	"../tlm/tlm2.pak"
 _tlm3_game_over:

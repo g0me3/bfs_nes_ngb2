@@ -583,11 +583,11 @@ _scr_train_slime_dead:
 			NARGB		_snd13_idx
 		SDELAY			$3C
 		SLOOP_BEGIN		$3C
-		STORE8			_obj_y_pos_hi+2,$05		; now do the scroll trick, set
-		STORE8			_obj_y_pos_hi+4,$05		; level scroll to room 0 then 1,
+		STORE8			_obj_y_pos_hi+2,$05				; now do the scroll trick, set
+		STORE8			_obj_y_pos_hi+4,$05				; level scroll to room 0 then 1,
 		SCRL_Y_SET		0,$00,$05						; do not forget to adjust player's scrolls
 		POS_Y_SET		1,$00,$05						; as well... looks like train
-		STORE8			_obj_y_pos_hi+2,$06		; disappears.
+		STORE8			_obj_y_pos_hi+2,$06				; disappears.
 		STORE8			_obj_y_pos_hi+4,$06
 		SCRL_Y_SET		0,$00,$06
 		POS_Y_SET		1,$00,$06
@@ -600,13 +600,17 @@ _pal_train_slime_dead_patch:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_lvl_native_handler_disable:
-		LDA		#$00
-		ASL
-		TAX
+;		LDA		#$00						; REDUNDANT, never used by other code
+;		ASL									; with other arguments,
+;		TAX									; and $00 here is HARDCODED!
+;		LDA		#<[_nbgsub_dummy]
+;		STA		_trds_nbgsub_ptr,X
+;		LDA		#>[_nbgsub_dummy]
+;		STA		_trds_nbgsub_ptr+1,X
 		LDA		#<[_nbgsub_dummy]
-		STA		_trds_nbgsub_ptr,X
+		STA		_trds_nbgsub_ptr
 		LDA		#>[_nbgsub_dummy]
-		STA		_trds_nbgsub_ptr+1,X
+		STA		_trds_nbgsub_ptr+1
 		RTS
 
 ; =============== S C R I P T ==========================s====================
@@ -682,8 +686,7 @@ _scr_train_slime_projectileC:
 		NJSR			_nsub_patch_pal_load			; and CHR bank
 			NARGB		$07
 			NARGW		_pal_dragons_patchA
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$13
+		STORE8			_chr_bank0,$13
 		SLOOP_BEGIN		$08								; now will deploy 8 objects
 _sloc_2C99C:
 		SDELAY			$01
@@ -1036,8 +1039,7 @@ _nbgsub_dragon_flame_hor_ctest:
 		NJSR			_nsub_keykeeper_init			; init internal extra vars here
 		NJSR			_nsub_spr_pal_load				; the rest is usual
 			NARGW		_pal_spr_boss_keykeeper
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$18
+		STORE8			_chr_bank0,$18
 		SARG_SET		SARG1,$40
 		NJSR			_nsub_new_thread_start			; deploy another boss instance
 			NARGB		_scr2F_lvl5_boss_keykeeper_idx

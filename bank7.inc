@@ -4741,25 +4741,6 @@ _nsub_mmc1_mirror_vertical:
 		JMP		_mmc1_ctrl
 
 ; =============== S U B R O U T I N E ======n================================
-; TODO: they used native call to store value to zero RAM var, however,
-; they may do this also with SSTORE8 command the same size!
-_nsub_mmc1_chr0_set:
-		JSR		_scr_getc
-		STA		_chr_bank0
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_nsub_mmc1_chr1_set:
-		JSR		_scr_getc
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-_mmc1_chr1_set:
-		STA		_chr_bank1
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
 ;_nsub_mmc1_prg_set_unused:
 ;		JSR		_scr_getc					; prg set helper as well never used here
 ;		JMP		_mmc1_prg_safe
@@ -6594,6 +6575,8 @@ _scmd_lib_lo:
 #if OPTIMIZATION==1
 		CMD_IDX_LO	_scmd1A_sjmps
 		CMD_IDX_LO	_scmd1B_sjsrs
+		CMD_IDX_LO	_scmd1C_store8s
+		CMD_IDX_LO	_scmd1D_store16s
 #endif
 _scmd_lib_hi:
 		CMD_IDX_HI	_scmd01_loop_begin
@@ -6629,6 +6612,8 @@ _scmd_lib_hi:
 #if OPTIMIZATION==1
 		CMD_IDX_HI	_scmd1A_sjmps
 		CMD_IDX_HI	_scmd1B_sjsrs
+		CMD_IDX_HI	_scmd1C_store8s
+		CMD_IDX_HI	_scmd1D_store16s
 #endif
 ; NOTE: every opcode in this block has additional parameter of delay
 ; command is executed then script delayed for a number of frames from
@@ -7239,19 +7224,23 @@ _scmd15_sarg_alu:
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd0E_smem_alu:
-		JSR		_scr_getc
+		JSR		_scr_getc					; get RAM offset
 		STA		_ptr08
 		JSR		_scr_getc
 		STA		_ptr08+1
 
 ; =============== S U B R O U T I N E ======n================================
-; NOTE, two of three ALU operations in this game never used as well AND and ORA
+; REDUNDANT, two of three ALU operations in this game never used (AND and ORA)
+; since we don't need the rest, we may remove it for optimized build.
 _scr_alu_exec:
+#if OPTIMIZATION==0
 		JSR		_scr_getc
 		TAX
-		JSR		_scr_getc
+#endif
+		JSR		_scr_getc					; also get argument
 		STA		_tmp0
 		JSR		_cur_scr_pc_inc
+#if OPTIMIZATION==0
 		LDA		_scmd0E_sub_lib_lo,X
 		STA		_ptr06
 		LDA		_scmd0E_sub_lib_hi,X
@@ -7284,7 +7273,8 @@ _scmd0E_ora:
 
 ; =============== S U B R O U T I N E ======n================================
 _scmd0E_adc:
-		LDA		(_ptr08),Y
+#endif
+		LDA		(_ptr08),Y					; now just add
 		CLC
 		ADC		_tmp0
 		STA		(_ptr08),Y
@@ -7345,6 +7335,27 @@ _scmd16_store16:
 		INY
 		STA		(_ptr06),Y
 		JMP		_cur_scr_pc_inc
+
+#if OPTIMIZATION==1
+; =============== S U B R O U T I N E ======n================================
+_scmd1C_store8s:
+		JSR		_scr_getc
+		TAX
+		JSR		_scr_getc
+		STA		$00,X
+		JMP		_cur_scr_pc_inc
+
+; =============== S U B R O U T I N E ======n================================
+_scmd1D_store16s:
+		JSR		_scr_getc
+		TAX
+		JSR		_scr_getc
+		STA		$00,X
+		JSR		_scr_getc
+		INX
+		STA		$00,X
+		JMP		_cur_scr_pc_inc
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 ; unused

@@ -137,14 +137,12 @@ _lvl1_room2_handler:
 			NARGW		_lvl1_room2_prize_seq			; prize sequences
 			NARGW		_lvl1_room2_exits				; exits data
 			NARGW		_lvl1_room2_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0D
+		STORE8			_chr_bank0,$0D
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_patch_pal_load			; sometimes
 			NARGB		$06								; we need to fix sprites palette as
 			NARGW		_lvl1_full_palA+$18				; well as change sprites CHR bank
-		NJSR			_nsub_mmc1_chr0_set				; because there are other enemies may appear
-			NARGB		$04
+		STORE8			_chr_bank0,$04					; because there are other enemies may appear
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
 		SJMP_SW			$02
@@ -282,10 +280,8 @@ _lvl1_room6_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_chrA_set:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$04
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$02
+		STORE8			_chr_bank0,$04
+		STORE8			_chr_bank1,$02
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl1_full_palA
 		SRET
@@ -300,10 +296,8 @@ _lvl1_room_initA:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl1_room_chrB_set:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$07
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$03
+		STORE8			_chr_bank0,$07
+		STORE8			_chr_bank1,$03
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl1_full_palB
 		SRET
@@ -613,9 +607,8 @@ _lvl2_room9_handler:
 			NARGW		_lvl2_room9_exits				; exits data
 			NARGW		_lvl2_room9_doors				; doors data
 		STORE16			_lvl_collisions_ptr,_lvl2_collisionsB
-		NJSR			_nsub_mmc1_chr1_set				; here we enter the train section
-			NARGB		$0B								; currently only part of the tiles are changed
-		SJSR			_ssub_common_room_loop
+		STORE8			_chr_bank1,$0B					; here we enter the train section
+		SJSR			_ssub_common_room_loop			; currently only part of the tiles are changed
 		SJMPS			_lvl2_roomA_handler
 
 _lvl2_room9_exits:
@@ -709,24 +702,24 @@ _scr_lvl2_roomA_secondary:
 		SJMP			_scr_common_pause_handler		; and finally goes to the regular pause seq
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
+; tunnel/train level also has two different collision tables but since you couldn't
+; return back there is no need to manually patch in transitions between rooms
+;
 _lvl2_room_initA:
-		NJSR			_nsub_mmc1_chr1_set				; tunnel/train level also has two different
-			NARGB		$0A								; collision tables but since you couldn't
-		STORE16			_lvl_collisions_ptr,_lvl2_collisionsA	; return  back there is no need to
-		SJMPS			_lvl2_common_init				; manually patch in transitions between rooms
+		STORE8			_chr_bank1,$0A
+		STORE16			_lvl_collisions_ptr,_lvl2_collisionsA
+		SJMPS			_lvl2_common_init
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl2_room_initB:
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$0B
+		STORE8			_chr_bank1,$0B
 		STORE16			_lvl_collisions_ptr,_lvl2_collisionsB
 
 ; !FALLTHROUGH!
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl2_common_init:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0C
+		STORE8			_chr_bank0,$0C
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl2_full_pal
 		NJSR			_nsub_level_init
@@ -932,10 +925,9 @@ _lvl3_room_modeA_init:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl3_room_modeA_init_ex:
-		NJSR			_nsub_mmc1_chr0_set				; here is the special room with
-			NARGB		$0F								; mid-boss, as well as special
-		NJSR			_nsub_patch_pal_load			; music and palettes for it
-			NARGB		$07
+		STORE8			_chr_bank0,$0F					; here is the special room with
+		NJSR			_nsub_patch_pal_load			; mid-boss, as well as special
+			NARGB		$07								; music and palettes for it
 			NARGW		_lvl3_roomsAE_patch_pal
 		SRET
 
@@ -974,8 +966,7 @@ _lvl3_room4_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl3_room_modeB_init:
-		NJSR			_nsub_mmc1_chr0_set				; restore regular level CHR bank
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E					; restore regular level CHR bank
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		_lvl3_full_pal+$1C				; restore also old palette portion
@@ -1508,10 +1499,8 @@ _lvl3_room17_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl3_common_init:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$10
+		STORE8			_chr_bank0,$0E
+		STORE8			_chr_bank1,$10
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl3_full_pal
 		STORE16			_lvl_collisions_ptr,_lvl3_collisions
@@ -1824,10 +1813,8 @@ _lvl4_room9_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl4_common_init:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$12
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$11
+		STORE8			_chr_bank0,$12
+		STORE8			_chr_bank1,$11
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl4_full_pal
 		STORE16			_lvl_collisions_ptr,_lvl4_collisions
@@ -1941,8 +1928,7 @@ _lvl5_room1_handler:
 			NARGW		_lvl5_room1_prize_seq			; prize sequences
 			NARGW		_lvl5_room1_exits				; exits data
 			NARGW		_lvl5_room1_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1970,8 +1956,7 @@ _lvl5_room2_handler:
 			NARGW		_lvl5_room2_prize_seq			; prize sequences
 			NARGW		_lvl5_room2_exits				; exits data
 			NARGW		_lvl5_room2_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0D
+		STORE8			_chr_bank0,$0D
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -1999,8 +1984,7 @@ _lvl5_room3_handler:
 			NARGW		_lvl5_room3_prize_seq			; prize sequences
 			NARGW		_lvl5_room3_exits				; exits data
 			NARGW		_lvl5_room3_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$06
 			NARGW		_lvl5_full_pal+$18
@@ -2036,8 +2020,7 @@ _lvl5_room4_handler:
 			NARGW		_lvl5_room4_exits				; exits data
 			NARGW		_lvl5_room4_doors				; doors data
 ; REGION, missed in the EU version due to missing enemy
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E
 ; -
 		SJSR			_ssub_common_room_loop
 		SJMPS			_lvl5_room3_handler
@@ -2059,8 +2042,7 @@ _lvl5_room5_handler:
 			NARGW		_lvl5_room5_prize_seq			; prize sequences
 			NARGW		_lvl5_room5_exits				; exits data
 			NARGW		_lvl5_room5_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$12
+		STORE8			_chr_bank0,$12
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2147,8 +2129,7 @@ _lvl5_room8_handler:
 			NARGW		_lvl5_room8_exits				; exits data
 			NARGW		_lvl5_room8_doors				; doors data
 ; REGION, removed in the EU version
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$12
+		STORE8			_chr_bank0,$12
 ; -
 		SJSR			_ssub_common_room_loop
 		SJMPS			_lvl5_room7_handler
@@ -2170,8 +2151,7 @@ _lvl5_room9_handler:
 			NARGW		_lvl5_room9_prize_seq			; prize sequences
 			NARGW		_lvl5_room9_exits				; exits data
 			NARGW		_lvl5_room9_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$07
+		STORE8			_chr_bank0,$07
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2199,8 +2179,7 @@ _lvl5_roomA_handler:
 			NARGW		_lvl5_roomA_prize_seq			; prize sequences
 			NARGW		_lvl5_roomA_exits				; exits data
 			NARGW		_lvl5_roomA_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0F
+		STORE8			_chr_bank0,$0F
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl5_full_pal
 		SJSR			_ssub_common_room_loop
@@ -2257,8 +2236,7 @@ _lvl5_roomC_handler:
 			NARGW		_lvl5_roomC_prize_seq			; prize sequences
 			NARGW		_lvl5_roomC_exits				; exits data
 			NARGW		_lvl5_roomC_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$04
+		STORE8			_chr_bank0,$04
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2343,8 +2321,7 @@ _lvl5_roomF_handler:
 			NARGW		_lvl5_roomF_prize_seq			; prize sequences
 			NARGW		_lvl5_roomF_exits				; exits data
 			NARGW		_lvl5_roomF_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		_lvl5_full_pal+$1C
@@ -2380,8 +2357,7 @@ _lvl5_room10_handler:
 			NARGW		_lvl5_room10_exits				; exits data
 			NARGW		_lvl5_room10_doors				; doors data
 ; REGION, removed in the EU version
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E
 ; -
 		SJSR			_ssub_common_room_loop
 		SJMPS			_lvl5_roomF_handler
@@ -2403,8 +2379,7 @@ _lvl5_room11_handler:
 			NARGW		_lvl5_room11_prize_seq			; prize sequences
 			NARGW		_lvl5_room11_exits				; exits data
 			NARGW		_lvl5_room11_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$04
+		STORE8			_chr_bank0,$04
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2432,8 +2407,7 @@ _lvl5_room12_handler:
 			NARGW		_lvl5_room12_prize_seq			; prize sequences
 			NARGW		_lvl5_room12_exits				; exits data
 			NARGW		_lvl5_room12_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
+		STORE8			_chr_bank0,$0E
 		SJSR			_ssub_common_room_loop
 		NJSR			_nsub_read_mem
 			NARGW		_tmp_idx
@@ -2461,8 +2435,7 @@ _lvl5_room13_handler:
 			NARGW		_lvl5_room13_prize_seq			; prize sequences
 			NARGW		_lvl5_room13_exits				; exits data
 			NARGW		_lvl5_room13_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0C
+		STORE8			_chr_bank0,$0C
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		_lvl5_room13_patch_pal
@@ -2493,8 +2466,7 @@ _lvl5_room14_handler:
 			NARGW		_lvl5_room14_prize_seq			; prize sequences
 			NARGW		_lvl5_room14_exits				; exits data
 			NARGW		_lvl5_room14_doors				; doors data
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$18
+		STORE8			_chr_bank0,$18
 		NJSR			_nsub_patch_pal_load
 			NARGB		$07
 			NARGW		_lvl5_full_pal+$1C
@@ -2539,10 +2511,8 @@ _lvl5_room15_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl5_common_init:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$0E
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$15
+		STORE8			_chr_bank0,$0E
+		STORE8			_chr_bank1,$15
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl5_full_pal
 		STORE16			_lvl_collisions_ptr,_lvl5_collisions
@@ -2643,10 +2613,8 @@ _lvl6_room1_prize_seq:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _lvl6_common_init:
-		NJSR			_nsub_mmc1_chr0_set
-			NARGB		$17
-		NJSR			_nsub_mmc1_chr1_set
-			NARGB		$16
+		STORE8			_chr_bank0,$17
+		STORE8			_chr_bank1,$16
 		NJSR			_nsub_full_pal_load
 			NARGW		_lvl6_full_pal
 		STORE16			_lvl_collisions_ptr,_lvl6_collisions
@@ -2766,7 +2734,7 @@ loc_15EA2:
 		JSR		_full_pal_fade
 		JSR		_room_draw					; redraw current room, all vars already
 		PLA									; initialized
-		JSR		_mmc1_chr1_set				; restore room background CHR bank
+		STA		_chr_bank1					; restore room background CHR bank
 		LDY		_active_door_data_pos		; there is a special case to
 		BMI		loc_15ED8					; also update currently opened door
 		INY									; if you pause nearby
@@ -2806,10 +2774,13 @@ _pause_screen_anim:
 		LDX		#$90						; and put it to fixed location
 		LDY		#$B8
 		LDA		_beamer_spr_base_tmp		; using the beamer spr idx
+
+#if TWO_PLAYER_MODE==1
 		JSR		_player_spr_insert
-		LDX		#$80						; TEST
+		LDX		#$50
 		LDY		#$B8
 		LDA		_catcher_spr_base_tmp
+#endif
 
 ; !FALLTHROUGH!
 
@@ -2904,8 +2875,7 @@ _scr_stage_complete:
 		SDELAY			$2D
 		NJSR			_nsub_apu_mus_load				; start stage complete jingle
 			NARGB		_mus3_idx
-		NJSR			_nsub_mmc1_chr0_set				; also change sprites CHR bank
-			NARGB		$05
+		STORE8			_chr_bank0,$05					; also change sprites CHR bank
 		NJSR			_nsub_obj_screen_pos_set		; set object sprite screen position
 			NARGB		$80,$7C							; relative to current scroll
 		SPR_IDX_SET		0,$17							; set sprite for "STAGE COMPLETE"
@@ -2928,10 +2898,8 @@ _scr_stage_complete:
 		POS_Y_SET		0,$7C,$00						; without scroll adjusting this time
 		NBG_HNDL_SET	_ngsub_stage_complete_pal_anim_with_player	; set anim routine also with player icon
 		SPR_IDX_INC		0								; change sprite idx to 18 because now sprite
-		NJSR			_nsub_mmc1_chr0_set				; tiles changes and goes to second CHR page
-			NARGB		$04
-		NJSR			_nsub_mmc1_chr1_set				; because bg tiles of font are there as well
-			NARGB		$05
+		STORE8			_chr_bank0,$04					; tiles changes and goes to second CHR page
+		STORE8			_chr_bank1,$05					; because bg tiles of font are there as well
 		SLOOP_BEGIN		$04
 		NJSR			_nsub_pal_fade_req_inc_by_mask	; fade out complete screen prepared
 			NARGB		$FE
@@ -2999,7 +2967,32 @@ _nsub_scores_and_players_lives_draw:
 		LDA		#$05
 		STA		_chr_bank1
 		JSR		_ppu_spr_fill_F1
-		LDA		_players_lives				; convert binary lives to decimal
+		LDA		_hi_scores
+		LDX		_hi_scores+1
+		JSR		_bin2dec					; convert scores now
+		LDX		#$10
+		LDY		#$08
+		JSR		_print_num99999				; print using special subroutine now
+		LDA		_scores						; same as using "%5d" in format(...)
+		LDX		_scores+1
+		JSR		_bin2dec
+		LDX		#$10
+		LDY		#$0A
+		JSR		_print_num99999
+#if TWO_PLAYER_MODE==1
+		LDA		#$0D
+		LDX		#$01
+		JSR		_nsub_players_lives_draw
+#endif
+		LDA		#$15
+		LDX		#$00
+
+; FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_nsub_players_lives_draw:
+		PHA
+		LDA		_players_lives,X			; convert binary lives to decimal
 		LDX		#$00
 		JSR		_bin2dec
 		LDA		_var3						; check if high digit is zero
@@ -3013,30 +3006,17 @@ loc_16050:
 		LDA		_var4						; so just convert to number idx
 		ORA		#$30
 		STA		_tmp_buf+5
-		LDX		#$15
+		PLA
+		TAX
 		LDY		#$16
 		JSR		_ppu_offset_calc			; helper routine to calc ppu position
-#if TWO_PLAYER_MODE==1
-; TODO: second players lives display on pause and stage complete screens
-#endif
 		LDX		#$01
 		STX		_tmp_buf+3
 		INX
 		STX		_tmp_buf+2
 		JSR		_ppu_res_send_param_no_ofs	; send lives buffer data first
 		.WORD	_tmp_buf+2
-		LDA		_hi_scores
-		LDX		_hi_scores+1
-		JSR		_bin2dec					; convert scores now
-		LDX		#$10
-		LDY		#$08
-		JSR		_print_num99999				; print using special subroutine now
-		LDA		_scores						; same as using "%5d" in format(...)
-		LDX		_scores+1
-		JSR		_bin2dec
-		LDX		#$10
-		LDY		#$0A
-		JMP		_print_num99999
+		RTS
 
 ; NOTE: same as for stage complete script, must be in the same bank as
 ; the main stage scripts.
@@ -3047,8 +3027,7 @@ _scr_game_over:
 		NJSR			_nsub_all_threads_off_except_cur; disable threads,
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; draw picture
 			NARGB		_tlm3_game_over_idx
-		NJSR			_nsub_mmc1_chr1_set				; setup CHR banks
-			NARGB		$05
+		STORE8			_chr_bank1,$05					; setup CHR banks
 		NJSR			_nsub_full_pal_load				; and palettes
 			NARGW		_pal_game_over
 		NJSR			_nsub_scroll_page_set
@@ -4675,15 +4654,6 @@ _lvl1_objects_list:
 		OBJ_SET	_scr1B_court_chair,					$B8,$02,$58,$01,_NON, $01,_NON
 		OBJ_SET	_scr1B_court_chair,					$48,$02,$58,$01,_NON, $02,_NON
 		OBJ_SET	_scr1B_court_chair,					$68,$02,$38,$01,_NON, $03,_NON
-; ADDED, here may be 5th chair object with different pattern, but currently game
-; engine allows to add 4 enemies on the screen at once maximum. so this chair
-; does may not appear at all if'd used. try to uncomment this and just wait until
-; chair in the middle goes up and disappears out of the screen, then fifth chair
-; will appear.
-#if DEBUG==1
-		OBJ_SET	_scr1B_court_chair,					$38,$02,$18,$01,_NON, $04,_NON
-#endif
-; -
 		OBJ_SET	_scr1A_lvl1_boss_judges,			$80,$02,$40,$00,_NON,_NON, $00
 		OBJ_END
 
