@@ -266,7 +266,7 @@ loc_60168:
 		LDA		_trds_args0,X
 		BPL		loc_60193
 		LDA		_obj_out_of_screen,X
-		BNE		loc_60193
+		BEQ		loc_60193
 		LDA		#$FF
 		STA		_trds_obj_idx,X
 loc_60193:
@@ -1474,10 +1474,10 @@ loc_60E12:
 		LSR		_var0
 		BCC		loc_60E3D
 ; REGION, missing in the US proto version,
-; look like this manual sprite insertion causes some
-; special glitches on the screen so then manually reset
-; the sprite buf before writing it... need to investigate more
-;
+; NOTE, this is workaround for sprite glitches in heavy load. it disables current
+; sprite slot. when NMI occurs during the sprite generation here, the current
+; sprite won't appear. however, this not protecting from sprite buffer being not
+; finished yet at the time of NMI.
 		LDA		#$00
 		STA		_ppu_spr_buf+3,Y
 ; -
@@ -6204,7 +6204,7 @@ _obj_spr_insert:
 		ASL
 		ROL		_var0
 		CLC
-		ADC		_spr_libA_ofs_tbl_lo,Y		; library for simple sprites
+		ADC		_spr_libA_ofs_tbl_lo,Y		; library A offset
 		STA		_ptr06
 		LDA		_var0
 		ADC		_spr_libA_ofs_tbl_hi,Y
@@ -6217,7 +6217,7 @@ loc_6309D:
 		BEQ		locret_6309C				; "no sprite" index
 		SBC		#$BF						; adjust idx
 		ASL
-		ADC		_spr_libB_ofs_tbl_lo,Y		; load secondary library
+		ADC		_spr_libB_ofs_tbl_lo,Y		; library B offset
 		STA		_ptr06
 		LDA		#$00
 		ADC		_spr_libB_ofs_tbl_hi,Y		; calc library ptr offset
@@ -6245,7 +6245,6 @@ _spr_mode_select_ex:
 		LDY		#$00
 		LDA		(_ptr1E),Y
 		BMI		.spr_typeB_insert
-;		BMI		.spr_modeC_insert			; TODO, reimplement
 		LDA		_ptr1E						; sprite mode A, simple sprite
 		STA		_ptr08
 		LDA		_ptr1E+1
@@ -6264,7 +6263,6 @@ _spr_mode_select_ex:
 		INY
 		TYA
 		PHA
-;		LDX		_cur_trd_slot				; REDUNDANT, some early code leftover
 ; NOTE! there is an original game "bug" for typeB sprites
 ; the draw routine decrement the Y position every time it is
 ; called, in the original code, every single chunk of typeB
@@ -6286,64 +6284,6 @@ _spr_mode_select_ex:
 		DEC		_tmp_loop_cnt
 		BNE		.spr_typeB_loop
 		RTS
-; TODO: this is a special case for sprite data, never used
-; in this game, reimplement it to compress sprite data even more
-; this mode allows you not only to have splitted sprite chunks,
-; but also shift them by selected value. so all sprites with
-; the same time and attrs but different positions may be optimized
-; as well.
-;
-;.spr_modeC_insert:
-;		AND		#$7F
-;		STA		_tmp_loop_cnt
-;		INY
-;.spr_typeC_loop:
-;		LDA		_tmp1
-;		PHA
-;		LDA		_tmp2
-;		PHA
-;		LDA		#$00
-;		STA		_spr_x_clip_flag
-;		STA		_spr_y_clip_flag
-;		LDA		(_ptr1E),Y
-;		BPL		loc_630FC
-;		DEC		_spr_x_clip_flag
-;loc_630FC:
-;		ADC		_tmp1
-;		STA		_tmp1
-;		BCC		loc_63104
-;		INC		_spr_x_clip_flag
-;loc_63104:
-;		INY
-;		LDA		(_ptr1E),Y
-;		BPL		loc_6310B
-;		DEC		_spr_y_clip_flag
-;loc_6310B:
-;		CLC
-;		ADC		_tmp2
-;		STA		_tmp2
-;		BCC		loc_63114
-;		INC		_spr_y_clip_flag
-;loc_63114:
-;		INY
-;		LDA		(_ptr1E),Y
-;		STA		_ptr08
-;		INY
-;		LDA		(_ptr1E),Y
-;		STA		_ptr08+1
-;		INY
-;		TYA
-;		PHA
-;		JSR		_spr_clip_insert_ex
-;		PLA
-;		TAY
-;		PLA
-;		STA		_tmp2
-;		PLA
-;		STA		_tmp1
-;		DEC		_tmp_loop_cnt
-;		BNE		.spr_typeC_loop
-;		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 ; main thread execution routine
@@ -7530,7 +7470,6 @@ loc_6370F:
 ; =============== S U B R O U T I N E ======n================================
 _spr_clip_insert:
 		LDA		#$00
-		STA		_spr_x_clip_flag
 		STA		_spr_y_clip_flag
 
 ; !FALLTHROUGH!
@@ -7543,22 +7482,21 @@ _spr_clip_insert:
 _spr_clip_insert_ex:
 		LDA		_tmp2						; adjust vertical sprite pos to match
 		BNE		loc_6373A					; real PPU sprite line
-;		LDA		_spr_y_clip_flag
-;		EOR		#$01
-;		STA		_spr_y_clip_flag
 		DEC		_spr_y_clip_flag
 loc_6373A:
 		DEC		_tmp2
 		LDX		_spr_buf_pos
-; REGION, this also missing in the US proto version
-		LDA		#$00
-		STA		_ppu_spr_buf+3,X
-; -
-		TAY
+		LDY		#$00
 		LDA		(_ptr08),Y
 		STA		_var0
 		INY
 loc_63749:
+; FIX: for some reason, same workaround for glitched sprites here were used once
+; before the sprite insertion loop, and affects only first sprite, but not the
+; rest ones.
+		LDA		#$00
+		STA		_ppu_spr_buf+3,X
+; -
 		CLC
 		LDA		(_ptr08),Y
 		BPL		loc_6375D
@@ -7572,10 +7510,7 @@ loc_63749:
 loc_6375D:
 		ADC		_tmp2
 		STA		_ppu_spr_buf,X
-		LDA		_spr_y_clip_flag
-		ADC		#$00
-		AND		#$01
-		BNE		loc_6379F
+		BCS		loc_6379F
 loc_6376A:
 		INY
 		LDA		(_ptr08),Y
@@ -7588,20 +7523,19 @@ loc_6376A:
 		LDA		(_ptr08),Y
 		BPL		loc_6378B
 		ADC		_tmp1
-		STA		_ppu_spr_buf+3,X
-		LDA		_spr_x_clip_flag
-		SBC		#$00
-		AND		#$01
-		BEQ		loc_63798
-		BNE		loc_637A2
+; NEW: fixed when this sprite may be clipped out, but will write
+; the out of screen position for X anyway, if NMI occurs here,
+; glitch may happen
+; NEW: also get rid of unused _spr_x_clip_flags here, since even if
+; mode for these flags will be implemented, there are a lot of
+; sprites changes will need, also may be too slow.
+		BCS		loc_63798
+		BCC		loc_637A2
 loc_6378B:
 		ADC		_tmp1
-		STA		_ppu_spr_buf+3,X
-		LDA		_spr_x_clip_flag
-		ADC		#$00
-		AND		#$01
-		BNE		loc_637A2
+		BCS		loc_637A2
 loc_63798:
+		STA		_ppu_spr_buf+3,X
 		INX
 		INX
 		INX
@@ -8614,898 +8548,898 @@ _spr_libs_list:
 		.BYTE	$08
 
 _spr_libA_ofs_tbl_lo:
-		.BYTE	<[_spr_libA00]	; 00 bank
-		.BYTE	<[_spr_libA01]	; 01 bank
-		.BYTE	<[_spr_libA07]	; 00 bank
-		.BYTE	<[_spr_libA08]	; 01 bank
-		.BYTE	<[_spr_libA09]	; 01 bank
-		.BYTE	<[_spr_libA0E]	; 04 bank
-		.BYTE	<[_spr_libA0F]	; 04 bank
-		.BYTE	<[_spr_libA11]	; 04 bank
-		.BYTE	<[_spr_libA1A]	; 03 bank
+		.BYTE	<[_spr_libA00]	; 00 00 bank
+		.BYTE	<[_spr_libA01]	; 01 01 bank
+		.BYTE	<[_spr_libA02]	; 02 00 bank
+		.BYTE	<[_spr_libA03]	; 03 01 bank
+		.BYTE	<[_spr_libA04]	; 04 01 bank
+		.BYTE	<[_spr_libA05]	; 05 04 bank
+		.BYTE	<[_spr_libA06]	; 06 04 bank
+		.BYTE	<[_spr_libA07]	; 07 04 bank
+		.BYTE	<[_spr_libA08]	; 08 03 bank
 _spr_libA_ofs_tbl_hi:
 		.BYTE	>[_spr_libA00]
 		.BYTE	>[_spr_libA01]
+		.BYTE	>[_spr_libA02]
+		.BYTE	>[_spr_libA03]
+		.BYTE	>[_spr_libA04]
+		.BYTE	>[_spr_libA05]
+		.BYTE	>[_spr_libA06]
 		.BYTE	>[_spr_libA07]
 		.BYTE	>[_spr_libA08]
-		.BYTE	>[_spr_libA09]
-		.BYTE	>[_spr_libA0E]
-		.BYTE	>[_spr_libA0F]
-		.BYTE	>[_spr_libA11]
-		.BYTE	>[_spr_libA1A]
 _spr_libB_ofs_tbl_lo:
 		.BYTE	$00
 		.BYTE	$00
+		.BYTE	<[_spr_libB02]
+		.BYTE	$00
+		.BYTE	$00
+		.BYTE	$00
+		.BYTE	<[_spr_libB06]
 		.BYTE	<[_spr_libB07]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	<[_spr_libB0F]
-		.BYTE	<[_spr_libB11]
-		.BYTE	<[_spr_libB1A]
+		.BYTE	<[_spr_libB08]
 _spr_libB_ofs_tbl_hi:
 		.BYTE	$00
 		.BYTE	$00
+		.BYTE	>[_spr_libB02]
+		.BYTE	$00
+		.BYTE	$00
+		.BYTE	$00
+		.BYTE	>[_spr_libB06]
 		.BYTE	>[_spr_libB07]
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	>[_spr_libB0F]
-		.BYTE	>[_spr_libB11]
-		.BYTE	>[_spr_libB1A]
+		.BYTE	>[_spr_libB08]
 
 		SECTION_START
 
-		SPR_LIB_START	_spr_libA08
+		SPR_LIB_START	_spr_libA03
 
-		SPR_IDX	_sprA08_02	; peter	U	A
-		SPR_IDX	_sprA08_01	; 			B
-		SPR_IDX	_sprA08_02	;			C
-		SPR_IDX	_sprA08_03	;			D
-		SPR_IDX	_sprA08_06	;		R	A
-		SPR_IDX	_sprA08_05	;			B
-		SPR_IDX	_sprA08_06	;			C
-		SPR_IDX	_sprA08_07	;			D
-		SPR_IDX	_sprA08_0A
-		SPR_IDX	_sprA08_09
-		SPR_IDX	_sprA08_0A
-		SPR_IDX	_sprA08_0B
-		SPR_IDX	_sprA08_0E
-		SPR_IDX	_sprA08_0D
-		SPR_IDX	_sprA08_0E
-		SPR_IDX	_sprA08_0F
-		SPR_IDX	_sprA08_12
-		SPR_IDX	_sprA08_11
-		SPR_IDX	_sprA08_12
-		SPR_IDX	_sprA08_13
-		SPR_IDX	_sprA08_16
-		SPR_IDX	_sprA08_15
-		SPR_IDX	_sprA08_16
-		SPR_IDX	_sprA08_17
-		SPR_IDX	_sprA08_1A
-		SPR_IDX	_sprA08_19
-		SPR_IDX	_sprA08_1A
-		SPR_IDX	_sprA08_1B
-		SPR_IDX	_sprA08_1E
-		SPR_IDX	_sprA08_1D
-		SPR_IDX	_sprA08_1E
-		SPR_IDX	_sprA08_1F
-		SPR_IDX	_sprA08_22
-		SPR_IDX	_sprA08_21
-		SPR_IDX	_sprA08_22
-		SPR_IDX	_sprA08_23
-		SPR_IDX	_sprA08_26
-		SPR_IDX	_sprA08_25
-		SPR_IDX	_sprA08_26
-		SPR_IDX	_sprA08_27
-		SPR_IDX	_sprA08_2A
-		SPR_IDX	_sprA08_29
-		SPR_IDX	_sprA08_2A
-		SPR_IDX	_sprA08_2B
-		SPR_IDX	_sprA08_2E
-		SPR_IDX	_sprA08_2D
-		SPR_IDX	_sprA08_2E
-		SPR_IDX	_sprA08_2F
-		SPR_IDX	_sprA08_32
-		SPR_IDX	_sprA08_31
-		SPR_IDX	_sprA08_32
-		SPR_IDX	_sprA08_33
-		SPR_IDX	_sprA08_36
-		SPR_IDX	_sprA08_35
-		SPR_IDX	_sprA08_36
-		SPR_IDX	_sprA08_37
-		SPR_IDX	_sprA08_3A
-		SPR_IDX	_sprA08_39
-		SPR_IDX	_sprA08_3A
-		SPR_IDX	_sprA08_3B
-		SPR_IDX	_sprA08_3E
-		SPR_IDX	_sprA08_3D
-		SPR_IDX	_sprA08_3E
-		SPR_IDX	_sprA08_3F
-		SPR_IDX	_sprA08_42
-		SPR_IDX	_sprA08_41
-		SPR_IDX	_sprA08_42
-		SPR_IDX	_sprA08_43
-		SPR_IDX	_sprA08_46
-		SPR_IDX	_sprA08_45
-		SPR_IDX	_sprA08_46
-		SPR_IDX	_sprA08_47
-		SPR_IDX	_sprA08_4A
-		SPR_IDX	_sprA08_49
-		SPR_IDX	_sprA08_4A
-		SPR_IDX	_sprA08_4B
-		SPR_IDX	_sprA08_4E
-		SPR_IDX	_sprA08_4D
-		SPR_IDX	_sprA08_4E
-		SPR_IDX	_sprA08_4F
-		SPR_IDX	_sprA08_52
-		SPR_IDX	_sprA08_53
-		SPR_IDX	_sprA08_52
-		SPR_IDX	_sprA08_53
-		SPR_IDX	_sprA08_56
-		SPR_IDX	_sprA08_57
-		SPR_IDX	_sprA08_56
-		SPR_IDX	_sprA08_57
-		SPR_IDX	_sprA08_5A
-		SPR_IDX	_sprA08_5B
-		SPR_IDX	_sprA08_5A
-		SPR_IDX	_sprA08_5B
-		SPR_IDX	_sprA08_5E
-		SPR_IDX	_sprA08_5F
-		SPR_IDX	_sprA08_5E
-		SPR_IDX	_sprA08_5F
-		SPR_IDX	_sprA08_62
-		SPR_IDX	_sprA08_63
-		SPR_IDX	_sprA08_62
-		SPR_IDX	_sprA08_63
-		SPR_IDX	_sprA08_66
-		SPR_IDX	_sprA08_67
-		SPR_IDX	_sprA08_66
-		SPR_IDX	_sprA08_67
-		SPR_IDX	_sprA08_6A
-		SPR_IDX	_sprA08_6B
-		SPR_IDX	_sprA08_6A
-		SPR_IDX	_sprA08_6B
-		SPR_IDX	_sprA08_6E
-		SPR_IDX	_sprA08_6F
-		SPR_IDX	_sprA08_6E
-		SPR_IDX	_sprA08_6F
-		SPR_IDX	_sprA08_72
-		SPR_IDX	_sprA08_73
-		SPR_IDX	_sprA08_72
-		SPR_IDX	_sprA08_73
-		SPR_IDX	_sprA08_76
-		SPR_IDX	_sprA08_77
-		SPR_IDX	_sprA08_76
-		SPR_IDX	_sprA08_77
-		SPR_IDX	_sprA08_7A
-		SPR_IDX	_sprA08_7B
-		SPR_IDX	_sprA08_7A
-		SPR_IDX	_sprA08_7B
-		SPR_IDX	_sprA08_7E
-		SPR_IDX	_sprA08_7F
-		SPR_IDX	_sprA08_7E
-		SPR_IDX	_sprA08_7F
-		SPR_IDX	_sprA08_82
-		SPR_IDX	_sprA08_83
-		SPR_IDX	_sprA08_82
-		SPR_IDX	_sprA08_83
-		SPR_IDX	_sprA08_86
-		SPR_IDX	_sprA08_87
-		SPR_IDX	_sprA08_86
-		SPR_IDX	_sprA08_87
-		SPR_IDX	_sprA08_8A
-		SPR_IDX	_sprA08_8B
-		SPR_IDX	_sprA08_8A
-		SPR_IDX	_sprA08_8B
-		SPR_IDX	_sprA08_8E
-		SPR_IDX	_sprA08_8F
-		SPR_IDX	_sprA08_8E
-		SPR_IDX	_sprA08_8F
-		SPR_IDX	_sprA08_92
-		SPR_IDX	_sprA08_93
-		SPR_IDX	_sprA08_92
-		SPR_IDX	_sprA08_93
-		SPR_IDX	_sprA08_96
-		SPR_IDX	_sprA08_97
-		SPR_IDX	_sprA08_96
-		SPR_IDX	_sprA08_97
-		SPR_IDX	_sprA08_9A
-		SPR_IDX	_sprA08_9B
-		SPR_IDX	_sprA08_9A
-		SPR_IDX	_sprA08_9B
-		SPR_IDX	_sprA08_9E
-		SPR_IDX	_sprA08_9F
-		SPR_IDX	_sprA08_9E
-		SPR_IDX	_sprA08_9F
-		SPR_IDX	_sprA08_A0	; death	A	U
-		SPR_IDX	_sprA08_A1	; 			R
-		SPR_IDX	_sprA08_A2	;			D
-		SPR_IDX	_sprA08_A3	;			L
-		SPR_IDX	_sprA08_A4	; death B	U
-		SPR_IDX	_sprA08_A5	;			R
-		SPR_IDX	_sprA08_A6	;			D
-		SPR_IDX	_sprA08_A7	;			L
-		SPR_IDX	_sprA08_A8	; death C	U
-		SPR_IDX	_sprA08_A9	;			R
-		SPR_IDX	_sprA08_AA	;			D
-		SPR_IDX	_sprA08_AB	;			L
-		SPR_IDX	_sprA08_AC	; exit arrowU
-		SPR_IDX	_sprA08_AD	;			R
-		SPR_IDX	_sprA08_AE	; 			D
-		SPR_IDX	_sprA08_AF	;			L
+		SPR_IDX	_sprA03_02	; peter	U	A
+		SPR_IDX	_sprA03_01	; 			B
+		SPR_IDX	_sprA03_02	;			C
+		SPR_IDX	_sprA03_03	;			D
+		SPR_IDX	_sprA03_06	;		R	A
+		SPR_IDX	_sprA03_05	;			B
+		SPR_IDX	_sprA03_06	;			C
+		SPR_IDX	_sprA03_07	;			D
+		SPR_IDX	_sprA03_0A
+		SPR_IDX	_sprA03_09
+		SPR_IDX	_sprA03_0A
+		SPR_IDX	_sprA03_0B
+		SPR_IDX	_sprA03_0E
+		SPR_IDX	_sprA03_0D
+		SPR_IDX	_sprA03_0E
+		SPR_IDX	_sprA03_0F
+		SPR_IDX	_sprA03_12
+		SPR_IDX	_sprA03_11
+		SPR_IDX	_sprA03_12
+		SPR_IDX	_sprA03_13
+		SPR_IDX	_sprA03_16
+		SPR_IDX	_sprA03_15
+		SPR_IDX	_sprA03_16
+		SPR_IDX	_sprA03_17
+		SPR_IDX	_sprA03_1A
+		SPR_IDX	_sprA03_19
+		SPR_IDX	_sprA03_1A
+		SPR_IDX	_sprA03_1B
+		SPR_IDX	_sprA03_1E
+		SPR_IDX	_sprA03_1D
+		SPR_IDX	_sprA03_1E
+		SPR_IDX	_sprA03_1F
+		SPR_IDX	_sprA03_22
+		SPR_IDX	_sprA03_21
+		SPR_IDX	_sprA03_22
+		SPR_IDX	_sprA03_23
+		SPR_IDX	_sprA03_26
+		SPR_IDX	_sprA03_25
+		SPR_IDX	_sprA03_26
+		SPR_IDX	_sprA03_27
+		SPR_IDX	_sprA03_2A
+		SPR_IDX	_sprA03_29
+		SPR_IDX	_sprA03_2A
+		SPR_IDX	_sprA03_2B
+		SPR_IDX	_sprA03_2E
+		SPR_IDX	_sprA03_2D
+		SPR_IDX	_sprA03_2E
+		SPR_IDX	_sprA03_2F
+		SPR_IDX	_sprA03_32
+		SPR_IDX	_sprA03_31
+		SPR_IDX	_sprA03_32
+		SPR_IDX	_sprA03_33
+		SPR_IDX	_sprA03_36
+		SPR_IDX	_sprA03_35
+		SPR_IDX	_sprA03_36
+		SPR_IDX	_sprA03_37
+		SPR_IDX	_sprA03_3A
+		SPR_IDX	_sprA03_39
+		SPR_IDX	_sprA03_3A
+		SPR_IDX	_sprA03_3B
+		SPR_IDX	_sprA03_3E
+		SPR_IDX	_sprA03_3D
+		SPR_IDX	_sprA03_3E
+		SPR_IDX	_sprA03_3F
+		SPR_IDX	_sprA03_42
+		SPR_IDX	_sprA03_41
+		SPR_IDX	_sprA03_42
+		SPR_IDX	_sprA03_43
+		SPR_IDX	_sprA03_46
+		SPR_IDX	_sprA03_45
+		SPR_IDX	_sprA03_46
+		SPR_IDX	_sprA03_47
+		SPR_IDX	_sprA03_4A
+		SPR_IDX	_sprA03_49
+		SPR_IDX	_sprA03_4A
+		SPR_IDX	_sprA03_4B
+		SPR_IDX	_sprA03_4E
+		SPR_IDX	_sprA03_4D
+		SPR_IDX	_sprA03_4E
+		SPR_IDX	_sprA03_4F
+		SPR_IDX	_sprA03_52
+		SPR_IDX	_sprA03_53
+		SPR_IDX	_sprA03_52
+		SPR_IDX	_sprA03_53
+		SPR_IDX	_sprA03_56
+		SPR_IDX	_sprA03_57
+		SPR_IDX	_sprA03_56
+		SPR_IDX	_sprA03_57
+		SPR_IDX	_sprA03_5A
+		SPR_IDX	_sprA03_5B
+		SPR_IDX	_sprA03_5A
+		SPR_IDX	_sprA03_5B
+		SPR_IDX	_sprA03_5E
+		SPR_IDX	_sprA03_5F
+		SPR_IDX	_sprA03_5E
+		SPR_IDX	_sprA03_5F
+		SPR_IDX	_sprA03_62
+		SPR_IDX	_sprA03_63
+		SPR_IDX	_sprA03_62
+		SPR_IDX	_sprA03_63
+		SPR_IDX	_sprA03_66
+		SPR_IDX	_sprA03_67
+		SPR_IDX	_sprA03_66
+		SPR_IDX	_sprA03_67
+		SPR_IDX	_sprA03_6A
+		SPR_IDX	_sprA03_6B
+		SPR_IDX	_sprA03_6A
+		SPR_IDX	_sprA03_6B
+		SPR_IDX	_sprA03_6E
+		SPR_IDX	_sprA03_6F
+		SPR_IDX	_sprA03_6E
+		SPR_IDX	_sprA03_6F
+		SPR_IDX	_sprA03_72
+		SPR_IDX	_sprA03_73
+		SPR_IDX	_sprA03_72
+		SPR_IDX	_sprA03_73
+		SPR_IDX	_sprA03_76
+		SPR_IDX	_sprA03_77
+		SPR_IDX	_sprA03_76
+		SPR_IDX	_sprA03_77
+		SPR_IDX	_sprA03_7A
+		SPR_IDX	_sprA03_7B
+		SPR_IDX	_sprA03_7A
+		SPR_IDX	_sprA03_7B
+		SPR_IDX	_sprA03_7E
+		SPR_IDX	_sprA03_7F
+		SPR_IDX	_sprA03_7E
+		SPR_IDX	_sprA03_7F
+		SPR_IDX	_sprA03_82
+		SPR_IDX	_sprA03_83
+		SPR_IDX	_sprA03_82
+		SPR_IDX	_sprA03_83
+		SPR_IDX	_sprA03_86
+		SPR_IDX	_sprA03_87
+		SPR_IDX	_sprA03_86
+		SPR_IDX	_sprA03_87
+		SPR_IDX	_sprA03_8A
+		SPR_IDX	_sprA03_8B
+		SPR_IDX	_sprA03_8A
+		SPR_IDX	_sprA03_8B
+		SPR_IDX	_sprA03_8E
+		SPR_IDX	_sprA03_8F
+		SPR_IDX	_sprA03_8E
+		SPR_IDX	_sprA03_8F
+		SPR_IDX	_sprA03_92
+		SPR_IDX	_sprA03_93
+		SPR_IDX	_sprA03_92
+		SPR_IDX	_sprA03_93
+		SPR_IDX	_sprA03_96
+		SPR_IDX	_sprA03_97
+		SPR_IDX	_sprA03_96
+		SPR_IDX	_sprA03_97
+		SPR_IDX	_sprA03_9A
+		SPR_IDX	_sprA03_9B
+		SPR_IDX	_sprA03_9A
+		SPR_IDX	_sprA03_9B
+		SPR_IDX	_sprA03_9E
+		SPR_IDX	_sprA03_9F
+		SPR_IDX	_sprA03_9E
+		SPR_IDX	_sprA03_9F
+		SPR_IDX	_sprA03_A0	; death	A	U
+		SPR_IDX	_sprA03_A1	; 			R
+		SPR_IDX	_sprA03_A2	;			D
+		SPR_IDX	_sprA03_A3	;			L
+		SPR_IDX	_sprA03_A4	; death B	U
+		SPR_IDX	_sprA03_A5	;			R
+		SPR_IDX	_sprA03_A6	;			D
+		SPR_IDX	_sprA03_A7	;			L
+		SPR_IDX	_sprA03_A8	; death C	U
+		SPR_IDX	_sprA03_A9	;			R
+		SPR_IDX	_sprA03_AA	;			D
+		SPR_IDX	_sprA03_AB	;			L
+		SPR_IDX	_sprA03_AC	; exit arrowU
+		SPR_IDX	_sprA03_AD	;			R
+		SPR_IDX	_sprA03_AE	; 			D
+		SPR_IDX	_sprA03_AF	;			L
 
-_sprA08_01:
+_sprA03_01:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_01_B
-_sprA08_01_A:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_01_B
+_sprA03_01_A:
 		.BYTE	$02
 		.BYTE	$00,$24,$00,$F8
 		.BYTE	$00,$34,$00,$00
-_sprA08_01_B:
+_sprA03_01_B:
 		.BYTE	$02
 		.BYTE	$F1,$18,$00,$F8
 		.BYTE	$F1,$18,$40,$00
-_sprA08_02:
+_sprA03_02:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_02_B
-_sprA08_02_A:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_02_B
+_sprA03_02_A:
 		.BYTE	$02
 		.BYTE	$00,$26,$00,$F8
 		.BYTE	$00,$36,$00,$00
-_sprA08_02_B:
+_sprA03_02_B:
 		.BYTE	$02
 		.BYTE	$F0,$18,$00,$F8
 		.BYTE	$F0,$18,$40,$00
-_sprA08_03:
+_sprA03_03:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_01_B
-_sprA08_03_A:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_01_B
+_sprA03_03_A:
 		.BYTE	$02
 		.BYTE	$00,$24,$40,$00
 		.BYTE	$00,$34,$40,$F8
-_sprA08_05:
+_sprA03_05:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_05_B
-_sprA08_05_A:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_05_B
+_sprA03_05_A:
 		.BYTE	$02
 		.BYTE	$00,$2A,$40,$00
 		.BYTE	$00,$3A,$40,$F8
-_sprA08_05_B:
+_sprA03_05_B:
 		.BYTE	$02
 		.BYTE	$F1,$00,$40,$00
 		.BYTE	$F1,$10,$40,$F8
-_sprA08_06:
+_sprA03_06:
 		.BYTE	$82
-		.WORD	_sprA08_06_A
-		.WORD	_sprA08_06_B
-_sprA08_06_A:
+		.WORD	_sprA03_06_A
+		.WORD	_sprA03_06_B
+_sprA03_06_A:
 		.BYTE	$02
 		.BYTE	$00,$28,$40,$00
 		.BYTE	$00,$38,$40,$F8
-_sprA08_06_B:
+_sprA03_06_B:
 		.BYTE	$02
 		.BYTE	$F0,$00,$40,$00
 		.BYTE	$F0,$10,$40,$F8
-_sprA08_07:
+_sprA03_07:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_05_B
-_sprA08_07_A:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_05_B
+_sprA03_07_A:
 		.BYTE	$02
 		.BYTE	$00,$2A,$00,$F8
 		.BYTE	$00,$3A,$00,$00
-_sprA08_09:
+_sprA03_09:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_09_B
-_sprA08_09_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_09_B
+_sprA03_09_B:
 		.BYTE	$02
 		.BYTE	$F1,$08,$00,$F8
 		.BYTE	$F1,$08,$40,$00
-_sprA08_0A:
+_sprA03_0A:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_0A_B
-_sprA08_0A_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_0A_B
+_sprA03_0A_B:
 		.BYTE	$02
 		.BYTE	$F0,$08,$00,$F8
 		.BYTE	$F0,$08,$40,$00
-_sprA08_0B:
+_sprA03_0B:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_09_B
-_sprA08_0D:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_09_B
+_sprA03_0D:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_0D_B
-_sprA08_0D_B:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_0D_B
+_sprA03_0D_B:
 		.BYTE	$02
 		.BYTE	$F1,$00,$00,$F8
 		.BYTE	$F1,$10,$00,$00
-_sprA08_0E:
+_sprA03_0E:
 		.BYTE	$82
-		.WORD	_sprA08_0E_A
-		.WORD	_sprA08_0E_B
-_sprA08_0E_A:
+		.WORD	_sprA03_0E_A
+		.WORD	_sprA03_0E_B
+_sprA03_0E_A:
 		.BYTE	$02
 		.BYTE	$00,$28,$00,$F8
 		.BYTE	$00,$38,$00,$00
-_sprA08_0E_B:
+_sprA03_0E_B:
 		.BYTE	$02
 		.BYTE	$F0,$00,$00,$F8
 		.BYTE	$F0,$10,$00,$00
-_sprA08_0F:
+_sprA03_0F:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_0D_B
-_sprA08_11:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_0D_B
+_sprA03_11:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_11_B
-_sprA08_11_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_11_B
+_sprA03_11_B:
 		.BYTE	$02
 		.BYTE	$F1,$1A,$00,$F8
 		.BYTE	$F1,$1A,$40,$00
-_sprA08_12:
+_sprA03_12:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_12_B
-_sprA08_12_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_12_B
+_sprA03_12_B:
 		.BYTE	$02
 		.BYTE	$F0,$1A,$00,$F8
 		.BYTE	$F0,$1A,$40,$00
-_sprA08_13:
+_sprA03_13:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_11_B
-_sprA08_15:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_11_B
+_sprA03_15:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_15_B
-_sprA08_15_B:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_15_B
+_sprA03_15_B:
 		.BYTE	$02
 		.BYTE	$F1,$02,$40,$00
 		.BYTE	$F1,$12,$40,$F8
-_sprA08_16:
+_sprA03_16:
 		.BYTE	$82
-		.WORD	_sprA08_06_A
-		.WORD	_sprA08_16_B
-_sprA08_16_B:
+		.WORD	_sprA03_06_A
+		.WORD	_sprA03_16_B
+_sprA03_16_B:
 		.BYTE	$02
 		.BYTE	$F0,$02,$40,$00
 		.BYTE	$F0,$12,$40,$F8
-_sprA08_17:
+_sprA03_17:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_15_B
-_sprA08_19:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_15_B
+_sprA03_19:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_19_B
-_sprA08_19_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_19_B
+_sprA03_19_B:
 		.BYTE	$02
 		.BYTE	$F1,$0A,$00,$F8
 		.BYTE	$F1,$0A,$40,$00
-_sprA08_1A:
+_sprA03_1A:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_1A_B
-_sprA08_1A_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_1A_B
+_sprA03_1A_B:
 		.BYTE	$02
 		.BYTE	$F0,$0A,$00,$F8
 		.BYTE	$F0,$0A,$40,$00
-_sprA08_1B:
+_sprA03_1B:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_19_B
-_sprA08_1D:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_19_B
+_sprA03_1D:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_1D_B
-_sprA08_1D_B:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_1D_B
+_sprA03_1D_B:
 		.BYTE	$02
 		.BYTE	$F1,$02,$00,$F8
 		.BYTE	$F1,$12,$00,$00
-_sprA08_1E:
+_sprA03_1E:
 		.BYTE	$82
-		.WORD	_sprA08_0E_A
-		.WORD	_sprA08_1E_B
-_sprA08_1E_B:
+		.WORD	_sprA03_0E_A
+		.WORD	_sprA03_1E_B
+_sprA03_1E_B:
 		.BYTE	$02
 		.BYTE	$F0,$02,$00,$F8
 		.BYTE	$F0,$12,$00,$00
-_sprA08_1F:
+_sprA03_1F:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_1D_B
-_sprA08_21:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_1D_B
+_sprA03_21:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_21_B
-_sprA08_21_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_21_B
+_sprA03_21_B:
 		.BYTE	$02
 		.BYTE	$F1,$1C,$00,$F8
 		.BYTE	$F1,$1C,$40,$00
-_sprA08_22:
+_sprA03_22:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_22_B
-_sprA08_22_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_22_B
+_sprA03_22_B:
 		.BYTE	$02
 		.BYTE	$F0,$1C,$00,$F8
 		.BYTE	$F0,$1C,$40,$00
-_sprA08_23:
+_sprA03_23:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_21_B
-_sprA08_25:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_21_B
+_sprA03_25:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_25_B
-_sprA08_25_B:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_25_B
+_sprA03_25_B:
 		.BYTE	$02
 		.BYTE	$F1,$04,$40,$00
 		.BYTE	$F1,$14,$40,$F8
-_sprA08_26:
+_sprA03_26:
 		.BYTE	$82
-		.WORD	_sprA08_06_A
-		.WORD	_sprA08_26_B
-_sprA08_26_B:
+		.WORD	_sprA03_06_A
+		.WORD	_sprA03_26_B
+_sprA03_26_B:
 		.BYTE	$02
 		.BYTE	$F0,$04,$40,$00
 		.BYTE	$F0,$14,$40,$F8
-_sprA08_27:
+_sprA03_27:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_25_B
-_sprA08_29:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_25_B
+_sprA03_29:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_29_B
-_sprA08_29_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_29_B
+_sprA03_29_B:
 		.BYTE	$02
 		.BYTE	$F1,$0C,$00,$F8
 		.BYTE	$F1,$0C,$40,$00
-_sprA08_2A:
+_sprA03_2A:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_2A_B
-_sprA08_2A_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_2A_B
+_sprA03_2A_B:
 		.BYTE	$02
 		.BYTE	$F0,$0C,$00,$F8
 		.BYTE	$F0,$0C,$40,$00
-_sprA08_2B:
+_sprA03_2B:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_29_B
-_sprA08_2D:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_29_B
+_sprA03_2D:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_2D_B
-_sprA08_2D_B:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_2D_B
+_sprA03_2D_B:
 		.BYTE	$02
 		.BYTE	$F1,$04,$00,$F8
 		.BYTE	$F1,$14,$00,$00
-_sprA08_2E:
+_sprA03_2E:
 		.BYTE	$82
-		.WORD	_sprA08_0E_A
-		.WORD	_sprA08_2E_B
-_sprA08_2E_B:
+		.WORD	_sprA03_0E_A
+		.WORD	_sprA03_2E_B
+_sprA03_2E_B:
 		.BYTE	$02
 		.BYTE	$F0,$04,$00,$F8
 		.BYTE	$F0,$14,$00,$00
-_sprA08_2F:
+_sprA03_2F:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_2D_B
-_sprA08_31:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_2D_B
+_sprA03_31:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_31_B
-_sprA08_31_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_31_B
+_sprA03_31_B:
 		.BYTE	$02
 		.BYTE	$F1,$1E,$00,$F8
 		.BYTE	$F1,$1E,$40,$00
-_sprA08_32:
+_sprA03_32:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_32_B
-_sprA08_32_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_32_B
+_sprA03_32_B:
 		.BYTE	$02
 		.BYTE	$F0,$1E,$00,$F8
 		.BYTE	$F0,$1E,$40,$00
-_sprA08_33:
+_sprA03_33:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_31_B
-_sprA08_35:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_31_B
+_sprA03_35:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_35_B
-_sprA08_35_B:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_35_B
+_sprA03_35_B:
 		.BYTE	$02
 		.BYTE	$F1,$06,$40,$00
 		.BYTE	$F1,$16,$40,$F8
-_sprA08_36:
+_sprA03_36:
 		.BYTE	$82
-		.WORD	_sprA08_06_A
-		.WORD	_sprA08_36_B
-_sprA08_36_B:
+		.WORD	_sprA03_06_A
+		.WORD	_sprA03_36_B
+_sprA03_36_B:
 		.BYTE	$02
 		.BYTE	$F0,$06,$40,$00
 		.BYTE	$F0,$16,$40,$F8
-_sprA08_37:
+_sprA03_37:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_35_B
-_sprA08_39:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_35_B
+_sprA03_39:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_39_B
-_sprA08_39_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_39_B
+_sprA03_39_B:
 		.BYTE	$02
 		.BYTE	$F1,$0E,$00,$F8
 		.BYTE	$F1,$0E,$40,$00
-_sprA08_3A:
+_sprA03_3A:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_3A_B
-_sprA08_3A_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_3A_B
+_sprA03_3A_B:
 		.BYTE	$02
 		.BYTE	$F0,$0E,$00,$F8
 		.BYTE	$F0,$0E,$40,$00
-_sprA08_3B:
+_sprA03_3B:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_39_B
-_sprA08_3D:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_39_B
+_sprA03_3D:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_3D_B
-_sprA08_3D_B:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_3D_B
+_sprA03_3D_B:
 		.BYTE	$02
 		.BYTE	$F1,$06,$00,$F8
 		.BYTE	$F1,$16,$00,$00
-_sprA08_3E:
+_sprA03_3E:
 		.BYTE	$82
-		.WORD	_sprA08_0E_A
-		.WORD	_sprA08_3E_B
-_sprA08_3E_B:
+		.WORD	_sprA03_0E_A
+		.WORD	_sprA03_3E_B
+_sprA03_3E_B:
 		.BYTE	$02
 		.BYTE	$F0,$06,$00,$F8
 		.BYTE	$F0,$16,$00,$00
-_sprA08_3F:
+_sprA03_3F:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_3D_B
-_sprA08_41:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_3D_B
+_sprA03_41:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_41_B
-_sprA08_41_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_41_B
+_sprA03_41_B:
 		.BYTE	$02
 		.BYTE	$F1,$32,$00,$F8
 		.BYTE	$F1,$32,$40,$00
-_sprA08_42:
+_sprA03_42:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_42_B
-_sprA08_42_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_42_B
+_sprA03_42_B:
 		.BYTE	$02
 		.BYTE	$F0,$32,$00,$F8
 		.BYTE	$F0,$32,$40,$00
-_sprA08_43:
+_sprA03_43:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_41_B
-_sprA08_45:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_41_B
+_sprA03_45:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_45_B
-_sprA08_45_B:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_45_B
+_sprA03_45_B:
 		.BYTE	$02
 		.BYTE	$F1,$20,$40,$00
 		.BYTE	$F1,$30,$40,$F8
-_sprA08_46:
+_sprA03_46:
 		.BYTE	$82
-		.WORD	_sprA08_06_A
-		.WORD	_sprA08_46_B
-_sprA08_46_B:
+		.WORD	_sprA03_06_A
+		.WORD	_sprA03_46_B
+_sprA03_46_B:
 		.BYTE	$02
 		.BYTE	$F0,$20,$40,$00
 		.BYTE	$F0,$30,$40,$F8
-_sprA08_47:
+_sprA03_47:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_45_B
-_sprA08_49:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_45_B
+_sprA03_49:
 		.BYTE	$82
-		.WORD	_sprA08_01_A
-		.WORD	_sprA08_49_B
-_sprA08_49_B:
+		.WORD	_sprA03_01_A
+		.WORD	_sprA03_49_B
+_sprA03_49_B:
 		.BYTE	$02
 		.BYTE	$F1,$22,$00,$F8
 		.BYTE	$F1,$22,$40,$00
-_sprA08_4A:
+_sprA03_4A:
 		.BYTE	$82
-		.WORD	_sprA08_02_A
-		.WORD	_sprA08_4A_B
-_sprA08_4A_B:
+		.WORD	_sprA03_02_A
+		.WORD	_sprA03_4A_B
+_sprA03_4A_B:
 		.BYTE	$02
 		.BYTE	$F0,$22,$00,$F8
 		.BYTE	$F0,$22,$40,$00
-_sprA08_4B:
+_sprA03_4B:
 		.BYTE	$82
-		.WORD	_sprA08_03_A
-		.WORD	_sprA08_49_B
-_sprA08_4D:
+		.WORD	_sprA03_03_A
+		.WORD	_sprA03_49_B
+_sprA03_4D:
 		.BYTE	$82
-		.WORD	_sprA08_07_A
-		.WORD	_sprA08_4D_B
-_sprA08_4D_B:
+		.WORD	_sprA03_07_A
+		.WORD	_sprA03_4D_B
+_sprA03_4D_B:
 		.BYTE	$02
 		.BYTE	$F1,$20,$00,$F8
 		.BYTE	$F1,$30,$00,$00
-_sprA08_4E:
+_sprA03_4E:
 		.BYTE	$82
-		.WORD	_sprA08_0E_A
-		.WORD	_sprA08_4E_B
-_sprA08_4E_B:
+		.WORD	_sprA03_0E_A
+		.WORD	_sprA03_4E_B
+_sprA03_4E_B:
 		.BYTE	$02
 		.BYTE	$F0,$20,$00,$F8
 		.BYTE	$F0,$30,$00,$00
-_sprA08_4F:
+_sprA03_4F:
 		.BYTE	$82
-		.WORD	_sprA08_05_A
-		.WORD	_sprA08_4D_B
-_sprA08_52:
+		.WORD	_sprA03_05_A
+		.WORD	_sprA03_4D_B
+_sprA03_52:
 		.BYTE	$02
 		.BYTE	$F4,$18,$00,$F8
 		.BYTE	$F4,$18,$40,$00
-_sprA08_53:
+_sprA03_53:
 		.BYTE	$02
 		.BYTE	$F5,$18,$00,$F8
 		.BYTE	$F5,$18,$40,$00
-_sprA08_56:
+_sprA03_56:
 		.BYTE	$02
 		.BYTE	$F4,$00,$40,$00
 		.BYTE	$F4,$10,$40,$F8
-_sprA08_57:
+_sprA03_57:
 		.BYTE	$02
 		.BYTE	$F5,$00,$40,$00
 		.BYTE	$F5,$10,$40,$F8
-_sprA08_5A:
+_sprA03_5A:
 		.BYTE	$02
 		.BYTE	$F4,$08,$00,$F8
 		.BYTE	$F4,$08,$40,$00
-_sprA08_5B:
+_sprA03_5B:
 		.BYTE	$02
 		.BYTE	$F5,$08,$00,$F8
 		.BYTE	$F5,$08,$40,$00
-_sprA08_5E:
+_sprA03_5E:
 		.BYTE	$02
 		.BYTE	$F4,$00,$00,$F8
 		.BYTE	$F4,$10,$00,$00
-_sprA08_5F:
+_sprA03_5F:
 		.BYTE	$02
 		.BYTE	$F5,$00,$00,$F8
 		.BYTE	$F5,$10,$00,$00
-_sprA08_62:
+_sprA03_62:
 		.BYTE	$02
 		.BYTE	$F4,$1A,$00,$F8
 		.BYTE	$F4,$1A,$40,$00
-_sprA08_63:
+_sprA03_63:
 		.BYTE	$02
 		.BYTE	$F5,$1A,$00,$F8
 		.BYTE	$F5,$1A,$40,$00
-_sprA08_66:
+_sprA03_66:
 		.BYTE	$02
 		.BYTE	$F4,$02,$40,$00
 		.BYTE	$F4,$12,$40,$F8
-_sprA08_67:
+_sprA03_67:
 		.BYTE	$02
 		.BYTE	$F5,$02,$40,$00
 		.BYTE	$F5,$12,$40,$F8
-_sprA08_6A:
+_sprA03_6A:
 		.BYTE	$02
 		.BYTE	$F4,$0A,$00,$F8
 		.BYTE	$F4,$0A,$40,$00
-_sprA08_6B:
+_sprA03_6B:
 		.BYTE	$02
 		.BYTE	$F5,$0A,$00,$F8
 		.BYTE	$F5,$0A,$40,$00
-_sprA08_6E:
+_sprA03_6E:
 		.BYTE	$02
 		.BYTE	$F4,$02,$00,$F8
 		.BYTE	$F4,$12,$00,$00
-_sprA08_6F:
+_sprA03_6F:
 		.BYTE	$02
 		.BYTE	$F5,$02,$00,$F8
 		.BYTE	$F5,$12,$00,$00
-_sprA08_72:
+_sprA03_72:
 		.BYTE	$02
 		.BYTE	$F4,$1C,$00,$F8
 		.BYTE	$F4,$1C,$40,$00
-_sprA08_73:
+_sprA03_73:
 		.BYTE	$02
 		.BYTE	$F5,$1C,$00,$F8
 		.BYTE	$F5,$1C,$40,$00
-_sprA08_76:
+_sprA03_76:
 		.BYTE	$02
 		.BYTE	$F4,$04,$40,$00
 		.BYTE	$F4,$14,$40,$F8
-_sprA08_77:
+_sprA03_77:
 		.BYTE	$02
 		.BYTE	$F5,$04,$40,$00
 		.BYTE	$F5,$14,$40,$F8
-_sprA08_7A:
+_sprA03_7A:
 		.BYTE	$02
 		.BYTE	$F4,$0C,$00,$F8
 		.BYTE	$F4,$0C,$40,$00
-_sprA08_7B:
+_sprA03_7B:
 		.BYTE	$02
 		.BYTE	$F5,$0C,$00,$F8
 		.BYTE	$F5,$0C,$40,$00
-_sprA08_7E:
+_sprA03_7E:
 		.BYTE	$02
 		.BYTE	$F4,$04,$00,$F8
 		.BYTE	$F4,$14,$00,$00
-_sprA08_7F:
+_sprA03_7F:
 		.BYTE	$02
 		.BYTE	$F5,$04,$00,$F8
 		.BYTE	$F5,$14,$00,$00
-_sprA08_82:
+_sprA03_82:
 		.BYTE	$02
 		.BYTE	$F4,$1E,$00,$F8
 		.BYTE	$F4,$1E,$40,$00
-_sprA08_83:
+_sprA03_83:
 		.BYTE	$02
 		.BYTE	$F5,$1E,$00,$F8
 		.BYTE	$F5,$1E,$40,$00
-_sprA08_86:
+_sprA03_86:
 		.BYTE	$02
 		.BYTE	$F4,$06,$40,$00
 		.BYTE	$F4,$16,$40,$F8
-_sprA08_87:
+_sprA03_87:
 		.BYTE	$02
 		.BYTE	$F5,$06,$40,$00
 		.BYTE	$F5,$16,$40,$F8
-_sprA08_8A:
+_sprA03_8A:
 		.BYTE	$02
 		.BYTE	$F4,$0E,$00,$F8
 		.BYTE	$F4,$0E,$40,$00
-_sprA08_8B:
+_sprA03_8B:
 		.BYTE	$02
 		.BYTE	$F5,$0E,$00,$F8
 		.BYTE	$F5,$0E,$40,$00
-_sprA08_8E:
+_sprA03_8E:
 		.BYTE	$02
 		.BYTE	$F4,$06,$00,$F8
 		.BYTE	$F4,$16,$00,$00
-_sprA08_8F:
+_sprA03_8F:
 		.BYTE	$02
 		.BYTE	$F5,$06,$00,$F8
 		.BYTE	$F5,$16,$00,$00
-_sprA08_92:
+_sprA03_92:
 		.BYTE	$02
 		.BYTE	$F4,$32,$00,$F8
 		.BYTE	$F4,$32,$40,$00
-_sprA08_93:
+_sprA03_93:
 		.BYTE	$02
 		.BYTE	$F5,$32,$00,$F8
 		.BYTE	$F5,$32,$40,$00
-_sprA08_96:
+_sprA03_96:
 		.BYTE	$02
 		.BYTE	$F4,$20,$40,$00
 		.BYTE	$F4,$30,$40,$F8
-_sprA08_97:
+_sprA03_97:
 		.BYTE	$02
 		.BYTE	$F5,$20,$40,$00
 		.BYTE	$F5,$30,$40,$F8
-_sprA08_9A:
+_sprA03_9A:
 		.BYTE	$02
 		.BYTE	$F4,$22,$00,$F8
 		.BYTE	$F4,$22,$40,$00
-_sprA08_9B:
+_sprA03_9B:
 		.BYTE	$02
 		.BYTE	$F5,$22,$00,$F8
 		.BYTE	$F5,$22,$40,$00
-_sprA08_9E:
+_sprA03_9E:
 		.BYTE	$02
 		.BYTE	$F4,$20,$00,$F8
 		.BYTE	$F4,$30,$00,$00
-_sprA08_9F:
+_sprA03_9F:
 		.BYTE	$02
 		.BYTE	$F5,$20,$00,$F8
 		.BYTE	$F5,$30,$00,$00
-_sprA08_A0:
+_sprA03_A0:
 		.BYTE	$04
 		.BYTE	$00,$4E,$00,$F8
 		.BYTE	$00,$4E,$40,$00
 		.BYTE	$F0,$4C,$00,$F8
 		.BYTE	$F0,$4C,$40,$00
-_sprA08_A1:
+_sprA03_A1:
 		.BYTE	$03
 		.BYTE	$F8,$2C,$40,$04
 		.BYTE	$F8,$2E,$40,$F4
 		.BYTE	$F8,$3C,$40,$FC
-_sprA08_A2:
+_sprA03_A2:
 		.BYTE	$04
 		.BYTE	$00,$4C,$80,$F8
 		.BYTE	$00,$4C,$C0,$00
 		.BYTE	$F0,$4E,$80,$F8
 		.BYTE	$F0,$4E,$C0,$00
-_sprA08_A3:
+_sprA03_A3:
 		.BYTE	$03
 		.BYTE	$F8,$2C,$00,$F6
 		.BYTE	$F8,$2E,$00,$06
 		.BYTE	$F8,$3C,$00,$FE
-_sprA08_A4:
+_sprA03_A4:
 		.BYTE	$82
-		.WORD	_sprA08_A0
-		.WORD	_sprA08_A4_B
-_sprA08_A4_B:
+		.WORD	_sprA03_A0
+		.WORD	_sprA03_A4_B
+_sprA03_A4_B:
 		.BYTE	$02
 		.BYTE	$F3,$48,$00,$07
 		.BYTE	$FC,$48,$00,$F2
-_sprA08_A5:
+_sprA03_A5:
 		.BYTE	$82
-		.WORD	_sprA08_A5_A
-		.WORD	_sprA08_A1
-_sprA08_A5_A:
+		.WORD	_sprA03_A5_A
+		.WORD	_sprA03_A1
+_sprA03_A5_A:
 		.BYTE	$01
 		.BYTE	$01,$48,$40,$0A
-_sprA08_A6:
+_sprA03_A6:
 		.BYTE	$82
-		.WORD	_sprA08_A2
-		.WORD	_sprA08_A6_B
-_sprA08_A6_B
+		.WORD	_sprA03_A2
+		.WORD	_sprA03_A6_B
+_sprA03_A6_B
 		.BYTE	$02
 		.BYTE	$F3,$48,$80,$06
 		.BYTE	$FB,$48,$80,$F1
-_sprA08_A7:
+_sprA03_A7:
 		.BYTE	$82
-		.WORD	_sprA08_A7_A
-		.WORD	_sprA08_A3
-_sprA08_A7_A:
+		.WORD	_sprA03_A7_A
+		.WORD	_sprA03_A3
+_sprA03_A7_A:
 		.BYTE	$01
 		.BYTE	$01,$48,$00,$F0
-_sprA08_A8:
+_sprA03_A8:
 		.BYTE	$82
-		.WORD	_sprA08_A0
-		.WORD	_sprA08_A8_B
-_sprA08_A8_B:
+		.WORD	_sprA03_A0
+		.WORD	_sprA03_A8_B
+_sprA03_A8_B:
 		.BYTE	$02
 		.BYTE	$F0,$58,$00,$0B
 		.BYTE	$FE,$58,$00,$EF
-_sprA08_A9:
+_sprA03_A9:
 		.BYTE	$82
-		.WORD	_sprA08_A1
-		.WORD	_sprA08_A9_B
-_sprA08_A9_B:
+		.WORD	_sprA03_A1
+		.WORD	_sprA03_A9_B
+_sprA03_A9_B:
 		.BYTE	$01
 		.BYTE	$FC,$58,$40,$0D
-_sprA08_AA:
+_sprA03_AA:
 		.BYTE	$82
-		.WORD	_sprA08_A2
-		.WORD	_sprA08_AA_B
-_sprA08_AA_B:
+		.WORD	_sprA03_A2
+		.WORD	_sprA03_AA_B
+_sprA03_AA_B:
 		.BYTE	$02
 		.BYTE	$F0,$58,$80,$09
 		.BYTE	$FE,$58,$80,$ED
-_sprA08_AB:
+_sprA03_AB:
 		.BYTE	$82
-		.WORD	_sprA08_A3
-		.WORD	_sprA08_AB_B
-_sprA08_AB_B:
+		.WORD	_sprA03_A3
+		.WORD	_sprA03_AB_B
+_sprA03_AB_B:
 		.BYTE	$01
 		.BYTE	$FC,$58,$00,$ED
-_sprA08_AC:
+_sprA03_AC:
 		.BYTE	$06
 		.BYTE	$02,$8F,$00,$FC
 		.BYTE	$0A,$8F,$00,$FC
@@ -9513,7 +9447,7 @@ _sprA08_AC:
 		.BYTE	$F2,$9F,$00,$04
 		.BYTE	$F2,$9F,$40,$F4
 		.BYTE	$FA,$8F,$00,$FC
-_sprA08_AD:
+_sprA03_AD:
 		.BYTE	$07
 		.BYTE	$F4,$8F,$80,$FE
 		.BYTE	$F4,$9F,$00,$06
@@ -9522,7 +9456,7 @@ _sprA08_AD:
 		.BYTE	$FC,$8F,$00,$F6
 		.BYTE	$FC,$9D,$00,$0E
 		.BYTE	$FC,$9F,$80,$06
-_sprA08_AE:
+_sprA03_AE:
 		.BYTE	$06
 		.BYTE	$06,$8D,$80,$FC
 		.BYTE	$E6,$8F,$80,$FC
@@ -9530,7 +9464,7 @@ _sprA08_AE:
 		.BYTE	$F6,$8F,$80,$FC
 		.BYTE	$FE,$9F,$80,$04
 		.BYTE	$FE,$9F,$C0,$F4
-_sprA08_AF:
+_sprA03_AF:
 		.BYTE	$07
 		.BYTE	$F4,$8F,$80,$02
 		.BYTE	$F4,$8F,$80,$0A
@@ -9540,178 +9474,178 @@ _sprA08_AF:
 		.BYTE	$FC,$9D,$40,$EA
 		.BYTE	$FC,$9F,$C0,$F2
 
-_spr_libA09:
-		.WORD	_sprA09_00
-		.WORD	_sprA09_01
-		.WORD	_sprA09_02
-		.WORD	_sprA09_03
-		.WORD	_sprA09_04
-		.WORD	_sprA09_05
-		.WORD	_sprA09_06
-		.WORD	_sprA09_07
-		.WORD	_sprA09_08
-		.WORD	_sprA09_09
-		.WORD	_sprA09_0A
-		.WORD	_sprA09_0B
-		.WORD	_sprA09_0C
-		.WORD	_sprA09_0D
-		.WORD	_sprA09_0E
-		.WORD	_sprA09_0F
-		.WORD	_sprA09_14
-		.WORD	_sprA09_11
-		.WORD	_sprA09_16
-		.WORD	_sprA09_13
-		.WORD	_sprA09_14
-		.WORD	_sprA09_15
-		.WORD	_sprA09_16
-		.WORD	_sprA09_17
-		.WORD	_sprA09_1C
-		.WORD	_sprA09_19
-		.WORD	_sprA09_1E
-		.WORD	_sprA09_1B
-		.WORD	_sprA09_1C
-		.WORD	_sprA09_1D
-		.WORD	_sprA09_1E
-		.WORD	_sprA09_1F
-		.WORD	_sprA09_24
-		.WORD	_sprA09_21
-		.WORD	_sprA09_26
-		.WORD	_sprA09_23
-		.WORD	_sprA09_24
-		.WORD	_sprA09_25
-		.WORD	_sprA09_26
-		.WORD	_sprA09_27
-		.WORD	_sprA09_2C
-		.WORD	_sprA09_29
-		.WORD	_sprA09_2E
-		.WORD	_sprA09_2B
-		.WORD	_sprA09_2C
-		.WORD	_sprA09_2D
-		.WORD	_sprA09_2E
-		.WORD	_sprA09_2F
+_spr_libA04:
+		.WORD	_sprA04_00
+		.WORD	_sprA04_01
+		.WORD	_sprA04_02
+		.WORD	_sprA04_03
+		.WORD	_sprA04_04
+		.WORD	_sprA04_05
+		.WORD	_sprA04_06
+		.WORD	_sprA04_07
+		.WORD	_sprA04_08
+		.WORD	_sprA04_09
+		.WORD	_sprA04_0A
+		.WORD	_sprA04_0B
+		.WORD	_sprA04_0C
+		.WORD	_sprA04_0D
+		.WORD	_sprA04_0E
+		.WORD	_sprA04_0F
+		.WORD	_sprA04_14
+		.WORD	_sprA04_11
+		.WORD	_sprA04_16
+		.WORD	_sprA04_13
+		.WORD	_sprA04_14
+		.WORD	_sprA04_15
+		.WORD	_sprA04_16
+		.WORD	_sprA04_17
+		.WORD	_sprA04_1C
+		.WORD	_sprA04_19
+		.WORD	_sprA04_1E
+		.WORD	_sprA04_1B
+		.WORD	_sprA04_1C
+		.WORD	_sprA04_1D
+		.WORD	_sprA04_1E
+		.WORD	_sprA04_1F
+		.WORD	_sprA04_24
+		.WORD	_sprA04_21
+		.WORD	_sprA04_26
+		.WORD	_sprA04_23
+		.WORD	_sprA04_24
+		.WORD	_sprA04_25
+		.WORD	_sprA04_26
+		.WORD	_sprA04_27
+		.WORD	_sprA04_2C
+		.WORD	_sprA04_29
+		.WORD	_sprA04_2E
+		.WORD	_sprA04_2B
+		.WORD	_sprA04_2C
+		.WORD	_sprA04_2D
+		.WORD	_sprA04_2E
+		.WORD	_sprA04_2F
 
-_sprA09_00:
+_sprA04_00:
 		.BYTE	$03
 		.BYTE	$0C,$60,$01,$FC
 		.BYTE	$EC,$60,$01,$FC
 		.BYTE	$FC,$60,$01,$FC
-_sprA09_01:
+_sprA04_01:
 		.BYTE	$02
 		.BYTE	$F4,$60,$01,$FC
 		.BYTE	$04,$60,$01,$FC
-_sprA09_02:
+_sprA04_02:
 		.BYTE	$03
 		.BYTE	$EC,$60,$41,$FC
 		.BYTE	$0C,$60,$41,$FC
 		.BYTE	$FC,$60,$41,$FC
-_sprA09_03:
+_sprA04_03:
 		.BYTE	$02
 		.BYTE	$F4,$60,$41,$FC
 		.BYTE	$04,$60,$41,$FC
-_sprA09_04:
+_sprA04_04:
 		.BYTE	$03
 		.BYTE	$EC,$70,$01,$FC
 		.BYTE	$0C,$70,$01,$FC
 		.BYTE	$FC,$70,$01,$FC
-_sprA09_05:
+_sprA04_05:
 		.BYTE	$02
 		.BYTE	$F4,$70,$01,$FC
 		.BYTE	$04,$70,$01,$FC
-_sprA09_06:
+_sprA04_06:
 		.BYTE	$02
 		.BYTE	$F4,$70,$41,$FC
 		.BYTE	$04,$70,$41,$FC
-_sprA09_07:
+_sprA04_07:
 		.BYTE	$03
 		.BYTE	$0C,$70,$41,$FC
 		.BYTE	$EC,$70,$41,$FC
 		.BYTE	$FC,$70,$41,$FC
-_sprA09_08:
+_sprA04_08:
 		.BYTE	$03
 		.BYTE	$FC,$6C,$01,$0C
 		.BYTE	$FC,$6C,$01,$EC
 		.BYTE	$FC,$6C,$01,$FC
-_sprA09_09:
+_sprA04_09:
 		.BYTE	$02
 		.BYTE	$FC,$6C,$01,$F4
 		.BYTE	$FC,$6C,$01,$04
-_sprA09_0A:
+_sprA04_0A:
 		.BYTE	$03
 		.BYTE	$F4,$6C,$81,$EC
 		.BYTE	$F4,$6C,$81,$0C
 		.BYTE	$F4,$6C,$81,$FC
-_sprA09_0B:
+_sprA04_0B:
 		.BYTE	$02
 		.BYTE	$F4,$6C,$81,$F4
 		.BYTE	$F4,$6C,$81,$04
-_sprA09_0C:
+_sprA04_0C:
 		.BYTE	$03
 		.BYTE	$FC,$7C,$01,$EC
 		.BYTE	$FC,$7C,$01,$0C
 		.BYTE	$FC,$7C,$01,$FC
-_sprA09_0D:
+_sprA04_0D:
 		.BYTE	$02
 		.BYTE	$FC,$7C,$01,$F4
 		.BYTE	$FC,$7C,$01,$04
-_sprA09_0E:
+_sprA04_0E:
 		.BYTE	$03
 		.BYTE	$F4,$7C,$81,$0C
 		.BYTE	$F4,$7C,$81,$FC
 		.BYTE	$F4,$7C,$81,$EC
-_sprA09_0F:
+_sprA04_0F:
 		.BYTE	$02
 		.BYTE	$F4,$7C,$81,$04
 		.BYTE	$F4,$7C,$81,$F4
-_sprA09_11:
+_sprA04_11:
 		.BYTE	$03
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$50,$40,$F8
 		.BYTE	$F4,$40,$40,$00
-_sprA09_13:
+_sprA04_13:
 		.BYTE	$03
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$50,$00,$00
 		.BYTE	$F4,$40,$00,$F8
-_sprA09_14:
+_sprA04_14:
 		.BYTE	$02
 		.BYTE	$08,$56,$00,$FC
 		.BYTE	$F8,$54,$00,$FC
-_sprA09_15:
+_sprA04_15:
 		.BYTE	$04
 		.BYTE	$F4,$46,$40,$E8
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$50,$40,$F8
 		.BYTE	$F4,$40,$40,$00
-_sprA09_16:
+_sprA04_16:
 		.BYTE	$02
 		.BYTE	$E8,$56,$00,$FC
 		.BYTE	$F8,$54,$00,$FC
-_sprA09_17:
+_sprA04_17:
 		.BYTE	$04
 		.BYTE	$F4,$46,$00,$10
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$50,$00,$00
 		.BYTE	$F4,$40,$00,$F8
-_sprA09_19:
+_sprA04_19:
 		.BYTE	$05
 		.BYTE	$F4,$46,$40,$E0
 		.BYTE	$F4,$46,$40,$E8
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$50,$40,$F8
 		.BYTE	$F4,$40,$40,$00
-_sprA09_1B:
+_sprA04_1B:
 		.BYTE	$05
 		.BYTE	$F4,$46,$00,$18
 		.BYTE	$F4,$46,$00,$10
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$50,$00,$00
 		.BYTE	$F4,$40,$00,$F8
-_sprA09_1C:
+_sprA04_1C:
 		.BYTE	$03
 		.BYTE	$18,$56,$00,$FC
 		.BYTE	$08,$56,$00,$FC
 		.BYTE	$F8,$54,$00,$FC
-_sprA09_1D:
+_sprA04_1D:
 		.BYTE	$06
 		.BYTE	$F4,$46,$40,$D8
 		.BYTE	$F4,$46,$40,$E0
@@ -9719,12 +9653,12 @@ _sprA09_1D:
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$50,$40,$F8
 		.BYTE	$F4,$40,$40,$00
-_sprA09_1E:
+_sprA04_1E:
 		.BYTE	$03
 		.BYTE	$D8,$56,$00,$FC
 		.BYTE	$E8,$56,$00,$FC
 		.BYTE	$F8,$54,$00,$FC
-_sprA09_1F:
+_sprA04_1F:
 		.BYTE	$06
 		.BYTE	$F4,$46,$00,$20
 		.BYTE	$F4,$46,$00,$18
@@ -9732,56 +9666,56 @@ _sprA09_1F:
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$50,$00,$00
 		.BYTE	$F4,$40,$00,$F8
-_sprA09_21:
+_sprA04_21:
 		.BYTE	$03
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$42,$40,$00
 		.BYTE	$F4,$52,$40,$F8
-_sprA09_23:
+_sprA04_23:
 		.BYTE	$03
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$52,$00,$00
 		.BYTE	$F4,$42,$00,$F8
-_sprA09_24:
+_sprA04_24:
 		.BYTE	$02
 		.BYTE	$08,$56,$00,$FC
 		.BYTE	$F8,$44,$00,$FC
-_sprA09_25:
+_sprA04_25:
 		.BYTE	$04
 		.BYTE	$F4,$46,$40,$E8
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$42,$40,$00
 		.BYTE	$F4,$52,$40,$F8
-_sprA09_26:
+_sprA04_26:
 		.BYTE	$02
 		.BYTE	$E8,$56,$00,$FC
 		.BYTE	$F8,$44,$00,$FC
-_sprA09_27:
+_sprA04_27:
 		.BYTE	$04
 		.BYTE	$F4,$46,$00,$10
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$52,$00,$00
 		.BYTE	$F4,$42,$00,$F8
-_sprA09_29:
+_sprA04_29:
 		.BYTE	$05
 		.BYTE	$F4,$46,$40,$E0
 		.BYTE	$F4,$46,$40,$E8
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$42,$40,$00
 		.BYTE	$F4,$52,$40,$F8
-_sprA09_2B:
+_sprA04_2B:
 		.BYTE	$05
 		.BYTE	$F4,$46,$00,$18
 		.BYTE	$F4,$46,$00,$10
 		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$52,$00,$00
 		.BYTE	$F4,$42,$00,$F8
-_sprA09_2C:
+_sprA04_2C:
 		.BYTE	$03
 		.BYTE	$18,$56,$00,$FC
 		.BYTE	$08,$56,$00,$FC
 		.BYTE	$F8,$44,$00,$FC
-_sprA09_2D:
+_sprA04_2D:
 		.BYTE	$06
 		.BYTE	$F4,$46,$40,$D8
 		.BYTE	$F4,$46,$40,$E0
@@ -9789,12 +9723,12 @@ _sprA09_2D:
 		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$42,$40,$00
 		.BYTE	$F4,$52,$40,$F8
-_sprA09_2E:
+_sprA04_2E:
 		.BYTE	$03
 		.BYTE	$D8,$56,$00,$FC
 		.BYTE	$E8,$56,$00,$FC
 		.BYTE	$F8,$44,$00,$FC
-_sprA09_2F:
+_sprA04_2F:
 		.BYTE	$06
 		.BYTE	$F4,$46,$00,$20
 		.BYTE	$F4,$46,$00,$18
@@ -9805,20 +9739,20 @@ _sprA09_2F:
 ; NOTE: this is a common sprites for animation of catch glow, shared
 ; in all enemy sprite libraries and resided in system bank to be
 ; accessible from any other bank.
-_sprA1A_00:
+_sprA08_00:
 		.BYTE	$03
 		.BYTE	$F0,$C1,$00,$F8
 		.BYTE	$F8,$C1,$00,$F0
 		.BYTE	$00,$D1,$00,$F8
-_sprA1A_01:
+_sprA08_01:
 		.BYTE	$01
 		.BYTE	$00,$D1,$00,$F8
-_sprA1A_02:
+_sprA08_02:
 		.BYTE	$03
 		.BYTE	$F0,$C1,$40,$00
 		.BYTE	$F8,$C1,$40,$08
 		.BYTE	$00,$D1,$40,$00
-_sprA1A_03:
+_sprA08_03:
 		.BYTE	$01
 		.BYTE	$00,$D1,$40,$00
 

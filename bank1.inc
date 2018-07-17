@@ -527,7 +527,16 @@ _lvl2_room5_handler:
 _lvl2_room5_exits:
 		.BYTE	$01
 		.BYTE	$F8,$01,$40,$02
+; NOTE: fix exit position of the players to avoid possible getting stuck
+; of the catcher, which put at the start over the non-penetrable block
+; and if walk left, will stuck in it.
+; WARNING! in this new position, beamer put on the rails and may be killed
+; almost immediately lol
+#if TWO_PLAYER_MODE==1
+		.BYTE	$46,$46,$01
+#else
 		.BYTE	$45,$46,$01
+#endif
 _lvl2_room5_doors:
 		.BYTE	$01,$E0,$02,$40,$03,DOOR_TEST
 		.BYTE	$FF
@@ -2801,9 +2810,9 @@ _player_spr_insert:
 		LDA		_spr_pause_list,Y
 		ASL									; NEW, WARNING, may oveflow if idx are
 		TAY									; higher than 80!
-		LDA		_spr_libA08,Y
+		LDA		_spr_libA03,Y
 		STA		_ptr1E
-		LDA		_spr_libA08+1,Y
+		LDA		_spr_libA03+1,Y
 		STA		_ptr1E+1
 		JMP		_spr_mode_select_ex
 
@@ -2813,26 +2822,26 @@ _player_spr_insert:
 ; pointing to the same place anyway.
 ;
 _spr_pause_list:
-		.BYTE	$0A	; _sprA08_0A_idx
-		.BYTE	$09	; _sprA08_09_idx
-		.BYTE	$0A	; _sprA08_0A_idx
-		.BYTE	$0B	; _sprA08_0B_idx
-		.BYTE	$1A	; _sprA08_1A_idx
-		.BYTE	$19	; _sprA08_19_idx
-		.BYTE	$1A	; _sprA08_1A_idx
-		.BYTE	$1B	; _sprA08_1B_idx
-		.BYTE	$2A	; _sprA08_2A_idx
-		.BYTE	$29	; _sprA08_29_idx
-		.BYTE	$2A	; _sprA08_2A_idx
-		.BYTE	$2B	; _sprA08_2B_idx
-		.BYTE	$3A	; _sprA08_3A_idx
-		.BYTE	$39	; _sprA08_39_idx
-		.BYTE	$3A	; _sprA08_3A_idx
-		.BYTE	$3B	; _sprA08_3B_idx
-		.BYTE	$4A	; _sprA08_4A_idx
-		.BYTE	$49	; _sprA08_49_idx
-		.BYTE	$4A	; _sprA08_4A_idx
-		.BYTE	$4B	; _sprA08_4B_idx
+		.BYTE	$0A	; _sprA03_0A_idx
+		.BYTE	$09	; _sprA03_09_idx
+		.BYTE	$0A	; _sprA03_0A_idx
+		.BYTE	$0B	; _sprA03_0B_idx
+		.BYTE	$1A	; _sprA03_1A_idx
+		.BYTE	$19	; _sprA03_19_idx
+		.BYTE	$1A	; _sprA03_1A_idx
+		.BYTE	$1B	; _sprA03_1B_idx
+		.BYTE	$2A	; _sprA03_2A_idx
+		.BYTE	$29	; _sprA03_29_idx
+		.BYTE	$2A	; _sprA03_2A_idx
+		.BYTE	$2B	; _sprA03_2B_idx
+		.BYTE	$3A	; _sprA03_3A_idx
+		.BYTE	$39	; _sprA03_39_idx
+		.BYTE	$3A	; _sprA03_3A_idx
+		.BYTE	$3B	; _sprA03_3B_idx
+		.BYTE	$4A	; _sprA03_4A_idx
+		.BYTE	$49	; _sprA03_49_idx
+		.BYTE	$4A	; _sprA03_4A_idx
+		.BYTE	$4B	; _sprA03_4B_idx
 
 off_15F18:
 		.WORD	_nsub_door00_open_draw
