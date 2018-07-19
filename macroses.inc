@@ -5,6 +5,7 @@ DEBUG			EQU		1
 OPTIMIZATION	EQU		1
 TWO_PLAYER_MODE	EQU		0
 OOS_ACTIVE		EQU		0
+NEW_SPRITES		EQU		1
 
 REGION_JP		EQU		0
 REGION_EU		EQU		1
@@ -20,11 +21,11 @@ PAD_L			EQU		$02
 PAD_R			EQU		$01
 
 DEBUG_MAX_ENEMY	EQU		$0E
-; ($0A default, $0E - max)
+; $0A - default
+; $0E - max
 DEBUG_LEVEL		EQU		$00
 DEBUG_CHKPOINT	EQU		$01
-; levels table:
-; N - CP
+; L - C
 ; 0 - 1 2 3 4
 ; 1 - 1 2 3 4 5
 ; 2 - 1 2 3 4 5 6 7
@@ -720,7 +721,10 @@ _total_free	SET [_total_free+_bank{1}_free]
 		ECHO "} s =",[.-CUR_BANK_START],"FREE =",_bank{1}_free
 	#endif
 		ECHO "-------------";
-		ECHO "total free =",_total_free
+		ECHO "total ROM free =",_total_free
+		ECHO "zero RAM free =",ZERO_RAM_FREE
+		ECHO "stack RAM free =",STACK_RAM_FREE
+		ECHO "general RAM free =",GENERAL_RAM_FREE
 		ECHO ""
 	#if .<{2}-LAST_STUB_SIZE
 		ORG		{2}-LAST_STUB_SIZE-1

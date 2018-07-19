@@ -5,26 +5,14 @@
 
 		ORG $0000
 
-_ppu_ctrl_shadow:
-		.BYTE	0
-_ppu_mask_req:
-		.BYTE	0
-_ppu_mask_shadow:
-		.BYTE	0
-_nmi_flag:
-		.BYTE	0
 _pad0_held:
 		.BYTE	0
-#if TWO_PLAYER_MODE==1
 _pad1_held:
 		.BYTE	0
-#endif
 _pad0_pressed:
 		.BYTE	0
-#if TWO_PLAYER_MODE==1
 _pad1_pressed:
 		.BYTE	0
-#endif
 _ptr06:
 		.BYTE	0,0
 _ptr08:
@@ -61,31 +49,12 @@ _tmp1A:
 		.BYTE	0
 _tmp1B:
 		.BYTE	0
-#if TWO_PLAYER_MODE==1
 _tmp1C:
 		.BYTE	0
 _tmp1D:
 		.BYTE	0
-#endif
 _ptr1E:
 		.BYTE	0,0
-#if DEBUG==1
-_debug_vars_list:
-_debug_chr0:
-		.BYTE	0
-_debug_chr1:
-		.BYTE	0
-_debug_lib_idx:
-		.BYTE	0
-_debug_lib_type:
-		.BYTE	0
-_debug_spr:
-		.BYTE	0
-_debug_pos_idx:
-		.BYTE	0
-_debug_cnt:
-		.BYTE	0,0
-#endif
 _random_seed:
 		.BYTE	0,0
 _mmc1_ctrl_shadow:
@@ -119,8 +88,6 @@ _ppu_queue_tail_tmp:
 		.BYTE	0
 _nmi_counter:
 		.BYTE	0
-;_unused_13:
-;		.BYTE	0
 _apu_cur_pc:
 		.BYTE	0,0
 _apu_cur_sp:
@@ -133,13 +100,19 @@ _ppu_scroll_pos_y:
 		.BYTE	0,0
 _trds_manager_restart_flag:
 		.BYTE	0
-_trds_exec_req:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_x_pos_lo:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_x_pos_hi:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_y_pos_lo:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_y_pos_hi:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_spr_idx:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_x_screen_pos:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_y_screen_pos:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _trds_args0:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -161,16 +134,12 @@ _ppu_scroll_y_clk:
 		.BYTE	0
 _cur_trd_slot:
 		.BYTE	0
-_tmp_loop_cnt:
-		.BYTE	0
 _cur_trd_scr_slot:
 		.BYTE	0
 _nsub_return_flags:
 		.BYTE	0
 _nsub_return_value:
 		.BYTE	0
-_pal_fade_req_list:
-		.BYTE	0,0,0,0,0,0,0,0
 _ppu_scroll_x_page:
 		.BYTE	0 	; обе переменные инициализируются нулем	и используются
 					; в вычислениях	как ноль. скриптовые команды, которые
@@ -215,10 +184,6 @@ _pause_mode_flag:
 		.BYTE	0
 _out_of_screen_test_flag:
 		.BYTE	0
-_obj_x_screen_pos:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_obj_y_screen_pos:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _cur_room_x_pageA:
 		.BYTE	0
 _cur_room_y_pageA:
@@ -228,9 +193,7 @@ _cur_room_x_pageB:
 _cur_room_y_pageB:
 		.BYTE	0
 
-		ECHO "-------------"
-		ECHO "zero ram free:",[$100-.]
-		ECHO "-------------"
+ZERO_RAM_FREE	SET	[$100-.]
 
 		ORG		$100
 
@@ -241,25 +204,41 @@ _tmp_buf:
 _pal_buf:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_trds_exec_req:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_pal_fade_req_list:
+		.BYTE	0,0,0,0,0,0,0,0
+_trds_nbgsub_ptr:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_obj_out_of_screen:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_x_speed:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_y_speed:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_trds_nbgsub_ptr:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_x_clk:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _obj_y_clk:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_obj_x_pos_hi:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
-_obj_y_pos_hi:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_tmp_loop_cnt:
+		.BYTE	0
+_ppu_ctrl_shadow:
+		.BYTE	0
+_ppu_mask_req:
+		.BYTE	0
+_ppu_mask_shadow:
+		.BYTE	0
 
-		ECHO "-------------"
-		ECHO "stack ram free:",[$200-.]
-		ECHO "-------------"
+STACK_RAM_FREE	SET	[$1C0-.]
+
+		ORG		$1C0
+
+_stack:
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 		ORG		$200
 
@@ -557,14 +536,29 @@ _control_beam_button_code:
 		.BYTE	0
 _control_catch_button_code:
 		.BYTE	0
-_obj_out_of_screen:
-		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _trds_obj_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_nmi_flag:
+		.BYTE	0
+#if DEBUG==1
+_debug_vars_list:
+_debug_chr0:
+		.BYTE	0
+_debug_chr1:
+		.BYTE	0
+_debug_lib_idx:
+		.BYTE	0
+_debug_lib_type:
+		.BYTE	0
+_debug_spr:
+		.BYTE	0
+_debug_pos_idx:
+		.BYTE	0
+_debug_cnt:
+		.BYTE	0,0
+#endif
 
-		ECHO "-------------"
-		ECHO "general ram free:",[$800-.]
-		ECHO "-------------"
+GENERAL_RAM_FREE	SET	[$800-.]
 
 ;--------------------P-P-U----------------------
 

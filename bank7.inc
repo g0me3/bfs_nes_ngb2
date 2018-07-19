@@ -3302,12 +3302,12 @@ loc_61CF6:
 		BPL		_ld1_exit
 		BMI		loc_61D6A
 loc_61D0D:
-		CMP		#$02
-		BNE		_assert_error				; CMD FF 02, checkpoint increment, fetch another comand
-		INC		_lvl_cur_checkpoint_idx
+;		CMP		#$02						; REDUNDANT, since we have all data correct here
+;		BNE		_assert_error
+		INC		_lvl_cur_checkpoint_idx		; CMD FF 02, checkpoint increment, fetch another comand
 		BNE		loc_61D6A
-_assert_error:
-		JMP		_assert_error				; debug assert if any wrong commands occurs
+;_assert_error:
+;		JMP		_assert_error				; original debug assert if any wrong commands occurs
 loc_61D19:
 		STA		_tmp0						; store object idx
 		STY		_var0
@@ -6163,7 +6163,7 @@ _debug_spr_insert:
 		LDA		_var0
 		ADC		_spr_libA_ofs_tbl_hi,Y
 		STA		_ptr06+1
-		JSR		_spr_mode_select
+		JSR		_spr_block_fetch
 		JMP		.debug_end
 .debug_typeB:
 		LDA		_debug_spr
@@ -6173,7 +6173,7 @@ _debug_spr_insert:
 		LDA		#$00
 		ADC		_spr_libB_ofs_tbl_hi,Y
 		STA		_ptr06+1
-		JSR		_spr_mode_select
+		JSR		_spr_block_fetch
 .debug_end:
 		PLA
 		STA		_prg_cur_bank
@@ -6184,6 +6184,17 @@ _debug_spr_bank_list:
 #endif
 
 ; =============== S U B R O U T I N E ======n================================
+_spr_y_pos_adjust:
+		LDA		#$00
+		STA		_spr_y_clip_flag
+		LDA		_tmp2						; adjust vertical sprite pos to match
+		BNE		loc_6373A					; real PPU sprite line
+		DEC		_spr_y_clip_flag
+loc_6373A:
+		DEC		_tmp2
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
 _obj_spr_insert:
 		JSR		_obj_screen_pos_update
 		LDA		_obj_out_of_screen,X
@@ -6192,6 +6203,7 @@ _obj_spr_insert:
 		STA		_tmp1
 		LDA		_obj_y_screen_pos,X
 		STA		_tmp2
+		JSR		_spr_y_pos_adjust
 		LDY		_trds_obj_idx,X
 		LDA		_spr_libs_list,Y
 		TAY
@@ -6209,7 +6221,7 @@ _obj_spr_insert:
 		LDA		_var0
 		ADC		_spr_libA_ofs_tbl_hi,Y
 		STA		_ptr06+1
-		BNE		_spr_mode_select
+		BNE		_spr_block_fetch
 locret_6309C:
 		RTS
 loc_6309D:
@@ -6230,7 +6242,7 @@ loc_6309D:
 ; typeA or typeB, no matter what library type you using. first attempt
 ; to remove secondary sprites lib at all.
 ;
-_spr_mode_select:
+_spr_block_fetch:
 		LDY		#$00						; fetch library ptr
 		LDA		(_ptr06),Y
 		STA		_ptr1E
@@ -6240,8 +6252,145 @@ _spr_mode_select:
 
 ; !FALLTHROUGH!
 
+#if NEW_SPRITES==1
 ; =============== S U B R O U T I N E ======n================================
-_spr_mode_select_ex:
+_spr_block_fetch_ex:
+		LDA		#$FF
+		STA		_tmp1D						; reset attrs removes value
+		LDA		#$00
+		STA		_tmp1C						; reset attrs override value
+		TAY
+		LDA		(_ptr1E),Y					; fetch command/counter
+		BEQ		.spr_data_end				; $00 - end of data
+		STA		_var0						; store command, set data ptr
+		INC		_ptr1E						; to actual data for command
+		BNE		.spr_fetch
+		INC		_ptr1E+1
+.spr_fetch:
+		BIT		_var0						; test command bits
+		BPL		.spr_raw_insert
+		BVC		.spr_no_override
+		LDA		(_ptr1E),Y					; next byte here is an override bits
+		STA		_tmp1C
+		INY									; will be 3 bytes to skip for next cmd
+.spr_no_override:
+		AND		#$3F
+		STA		_var0						; remove extra flags, counter remains
+		LDA		(_ptr1E),Y					; offset flag set, next data for this
+		STA		_ptr08						; command is a link offset to already
+		INY									; existing data copy
+		LDA		(_ptr1E),Y					; use it as sprite data addres
+		STA		_ptr08+1
+		INY									; two more bytes to skip
+		TYA									; now retrieve actual value
+		CLC
+		BNE		.spr_common_skip
+.spr_raw_insert:
+		BVC		.spr_full_attrs
+		LDA		(_ptr1E),Y					; read and store attrs value for block
+		STA		_tmp1D						;
+		INC		_ptr1E						; adjust again actual data ptr
+		BNE		.spr_fetch1
+		INC		_ptr1E+1
+.spr_fetch1:
+		LDA		_ptr1E						; copy pointer one more time
+		STA		_ptr08
+		LDA		_ptr1E+1
+		STA		_ptr08+1
+		LDA		_var0						; calculate size of raw data, without
+		AND		#$3F						; attributes (3 bytes per sprite)
+		STA		_var0						; since we couldn't send more than 64 sprites
+		ASL									; at all, there will be no carry, safe
+		ADC		_var0
+		BCC		.spr_common_skip
+.spr_full_attrs:
+		LDA		_ptr1E						; no offset/override flags, raw data
+		STA		_ptr08						; use current data offset as sprite data
+		LDA		_ptr1E+1					; offset
+		STA		_ptr08+1
+		LDA		_var0						; calculate size of raw data, move
+		ASL									; current pointer to next command
+		ASL
+.spr_common_skip:
+		ADC		_ptr1E
+		STA		_ptr1E
+		BCC		.spr_common_ins
+		INC		_ptr1E+1
+.spr_common_ins:
+		JSR		_spr_clip_insert			; send raw sprites data
+		JMP		_spr_block_fetch_ex
+.spr_data_end:
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_spr_clip_insert:
+		LDX		_spr_buf_pos
+		LDY		#$00
+loc_63749:
+		LDA		#$00
+		STA		_ppu_spr_buf+3,X
+		CLC
+		LDA		(_ptr08),Y
+		BPL		loc_6375D
+		ADC		_tmp2
+		STA		_ppu_spr_buf,X
+		LDA		_spr_y_clip_flag
+		SBC		#$00
+		AND		#$01
+		BEQ		loc_6376A
+		BNE		loc_6379F
+loc_6375D:
+		ADC		_tmp2
+		STA		_ppu_spr_buf,X
+		BCS		loc_6379F
+loc_6376A:
+		INY
+		LDA		(_ptr08),Y
+		STA		_ppu_spr_buf+1,X
+		INY
+		LDA		_tmp1D
+		CMP		#$FF
+		BEQ		.no_attrs_skip
+		STA		_ppu_spr_buf+2,X
+		BNE		.no_attrs_done
+.no_attrs_skip:
+		LDA		(_ptr08),Y
+		ORA		_tmp1C						; apply override if any
+		STA		_ppu_spr_buf+2,X
+		INY
+.no_attrs_done:
+		CLC
+		LDA		(_ptr08),Y
+		BPL		loc_6378B
+		ADC		_tmp1
+		BCS		loc_63798
+		BCC		loc_637A2
+loc_6378B:
+		ADC		_tmp1
+		BCS		loc_637A2
+loc_63798:
+		STA		_ppu_spr_buf+3,X
+		INX
+		INX
+		INX
+		INX
+		JMP		loc_637A2
+loc_6379F:
+		INY
+		INY
+		LDA		_tmp1D
+		CMP		#$FF
+		BNE		loc_637A2
+		INY
+loc_637A2:
+		INY
+		DEC		_var0
+		BNE		loc_63749
+		STX		_spr_buf_pos
+		RTS
+#else
+; =============== S U B R O U T I N E ======n================================
+_spr_block_fetch_ex:
 		LDY		#$00
 		LDA		(_ptr1E),Y
 		BMI		.spr_typeB_insert
@@ -6263,27 +6412,95 @@ _spr_mode_select_ex:
 		INY
 		TYA
 		PHA
-; NOTE! there is an original game "bug" for typeB sprites
+; NOTE! there was an original game "bug" for typeB sprites
 ; the draw routine decrement the Y position every time it is
 ; called, in the original code, every single chunk of typeB
-; sprites shifts up with every single sprite chunk. since this
+; sprites shifted up with every single sprite chunk. since this
 ; affects only typeB multiple chunk sprites, and only place
-; they use it is vega boss sprites, they fixed not code here,
+; they use it is vega boss sprites, they fixed not the code,
 ; they fixed Y positions of all secondary sprite chunks for
-; this boss.
+; vega boss.
 ; most probably, other object not using the multiple chunks mode
 ; because of the same case, but just merged all of them in single
 ; chunk to avoid repositioning...
-		LDA		_tmp2
-		PHA
+; NEW, took the y position adjust out of the loop at all
+; so this is not a case anymore. vega y pos also adjusted.
 		JSR		_spr_clip_insert
-		PLA
-		STA		_tmp2
 		PLA
 		TAY
 		DEC		_tmp_loop_cnt
 		BNE		.spr_typeB_loop
 		RTS
+
+; =============== S U B R O U T I N E ======n================================
+_spr_clip_insert:
+		LDX		_spr_buf_pos
+		LDY		#$00
+		LDA		(_ptr08),Y
+		STA		_var0
+		INY
+loc_63749:
+; FIX: for some reason, same workaround for glitched sprites here were used once
+; before the sprite insertion loop, and affects only first sprite, but not the
+; rest ones.
+		LDA		#$00
+		STA		_ppu_spr_buf+3,X
+; -
+		CLC
+		LDA		(_ptr08),Y
+		BPL		loc_6375D
+		ADC		_tmp2
+		STA		_ppu_spr_buf,X
+		LDA		_spr_y_clip_flag
+		SBC		#$00
+		AND		#$01
+		BEQ		loc_6376A
+		BNE		loc_6379F
+loc_6375D:
+		ADC		_tmp2
+		STA		_ppu_spr_buf,X
+		BCS		loc_6379F
+loc_6376A:
+		INY
+		LDA		(_ptr08),Y
+		STA		_ppu_spr_buf+1,X
+		INY
+		LDA		(_ptr08),Y
+		STA		_ppu_spr_buf+2,X
+		INY
+		CLC
+		LDA		(_ptr08),Y
+		BPL		loc_6378B
+		ADC		_tmp1
+; NEW: fixed when this sprite may be clipped out, but will write
+; the out of screen position for X anyway, if NMI occurs here,
+; glitch may happen
+; NEW: also get rid of unused _spr_x_clip_flags here, since even if
+; mode for these flags will be implemented, there are a lot of
+; sprites changes will need, also may be too slow.
+		BCS		loc_63798
+		BCC		loc_637A2
+loc_6378B:
+		ADC		_tmp1
+		BCS		loc_637A2
+loc_63798:
+		STA		_ppu_spr_buf+3,X
+		INX
+		INX
+		INX
+		INX
+		JMP		loc_637A2
+loc_6379F:
+		INY
+		INY
+		INY
+loc_637A2:
+		INY
+		DEC		_var0
+		BNE		loc_63749
+		STX		_spr_buf_pos
+		RTS
+#endif
 
 ; =============== S U B R O U T I N E ======n================================
 ; main thread execution routine
@@ -7465,91 +7682,6 @@ loc_6370F:
 		INY
 		CPY		_spr_buf_shuffle
 		BNE		loc_6370F
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_spr_clip_insert:
-		LDA		#$00
-		STA		_spr_y_clip_flag
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-; most of the clipping code here is redundant and used for otherwize
-; unused sprite typeC. when used with other functions, all _clip_flag
-; calcularions not needed.
-;
-_spr_clip_insert_ex:
-		LDA		_tmp2						; adjust vertical sprite pos to match
-		BNE		loc_6373A					; real PPU sprite line
-		DEC		_spr_y_clip_flag
-loc_6373A:
-		DEC		_tmp2
-		LDX		_spr_buf_pos
-		LDY		#$00
-		LDA		(_ptr08),Y
-		STA		_var0
-		INY
-loc_63749:
-; FIX: for some reason, same workaround for glitched sprites here were used once
-; before the sprite insertion loop, and affects only first sprite, but not the
-; rest ones.
-		LDA		#$00
-		STA		_ppu_spr_buf+3,X
-; -
-		CLC
-		LDA		(_ptr08),Y
-		BPL		loc_6375D
-		ADC		_tmp2
-		STA		_ppu_spr_buf,X
-		LDA		_spr_y_clip_flag
-		SBC		#$00
-		AND		#$01
-		BEQ		loc_6376A
-		BNE		loc_6379F
-loc_6375D:
-		ADC		_tmp2
-		STA		_ppu_spr_buf,X
-		BCS		loc_6379F
-loc_6376A:
-		INY
-		LDA		(_ptr08),Y
-		STA		_ppu_spr_buf+1,X
-		INY
-		LDA		(_ptr08),Y
-		STA		_ppu_spr_buf+2,X
-		INY
-		CLC
-		LDA		(_ptr08),Y
-		BPL		loc_6378B
-		ADC		_tmp1
-; NEW: fixed when this sprite may be clipped out, but will write
-; the out of screen position for X anyway, if NMI occurs here,
-; glitch may happen
-; NEW: also get rid of unused _spr_x_clip_flags here, since even if
-; mode for these flags will be implemented, there are a lot of
-; sprites changes will need, also may be too slow.
-		BCS		loc_63798
-		BCC		loc_637A2
-loc_6378B:
-		ADC		_tmp1
-		BCS		loc_637A2
-loc_63798:
-		STA		_ppu_spr_buf+3,X
-		INX
-		INX
-		INX
-		INX
-		JMP		loc_637A2
-loc_6379F:
-		INY
-		INY
-		INY
-loc_637A2:
-		INY
-		DEC		_var0
-		BNE		loc_63749
-		STX		_spr_buf_pos
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -8769,992 +8901,62 @@ _spr_libB_ofs_tbl_hi:
 		SPR_IDX	_sprA03_AE	; 			D
 		SPR_IDX	_sprA03_AF	;			L
 
-_sprA03_01:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_01_B
-_sprA03_01_A:
-		.BYTE	$02
-		.BYTE	$00,$24,$00,$F8
-		.BYTE	$00,$34,$00,$00
-_sprA03_01_B:
-		.BYTE	$02
-		.BYTE	$F1,$18,$00,$F8
-		.BYTE	$F1,$18,$40,$00
-_sprA03_02:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_02_B
-_sprA03_02_A:
-		.BYTE	$02
-		.BYTE	$00,$26,$00,$F8
-		.BYTE	$00,$36,$00,$00
-_sprA03_02_B:
-		.BYTE	$02
-		.BYTE	$F0,$18,$00,$F8
-		.BYTE	$F0,$18,$40,$00
-_sprA03_03:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_01_B
-_sprA03_03_A:
-		.BYTE	$02
-		.BYTE	$00,$24,$40,$00
-		.BYTE	$00,$34,$40,$F8
-_sprA03_05:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_05_B
-_sprA03_05_A:
-		.BYTE	$02
-		.BYTE	$00,$2A,$40,$00
-		.BYTE	$00,$3A,$40,$F8
-_sprA03_05_B:
-		.BYTE	$02
-		.BYTE	$F1,$00,$40,$00
-		.BYTE	$F1,$10,$40,$F8
-_sprA03_06:
-		.BYTE	$82
-		.WORD	_sprA03_06_A
-		.WORD	_sprA03_06_B
-_sprA03_06_A:
-		.BYTE	$02
-		.BYTE	$00,$28,$40,$00
-		.BYTE	$00,$38,$40,$F8
-_sprA03_06_B:
-		.BYTE	$02
-		.BYTE	$F0,$00,$40,$00
-		.BYTE	$F0,$10,$40,$F8
-_sprA03_07:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_05_B
-_sprA03_07_A:
-		.BYTE	$02
-		.BYTE	$00,$2A,$00,$F8
-		.BYTE	$00,$3A,$00,$00
-_sprA03_09:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_09_B
-_sprA03_09_B:
-		.BYTE	$02
-		.BYTE	$F1,$08,$00,$F8
-		.BYTE	$F1,$08,$40,$00
-_sprA03_0A:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_0A_B
-_sprA03_0A_B:
-		.BYTE	$02
-		.BYTE	$F0,$08,$00,$F8
-		.BYTE	$F0,$08,$40,$00
-_sprA03_0B:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_09_B
-_sprA03_0D:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_0D_B
-_sprA03_0D_B:
-		.BYTE	$02
-		.BYTE	$F1,$00,$00,$F8
-		.BYTE	$F1,$10,$00,$00
-_sprA03_0E:
-		.BYTE	$82
-		.WORD	_sprA03_0E_A
-		.WORD	_sprA03_0E_B
-_sprA03_0E_A:
-		.BYTE	$02
-		.BYTE	$00,$28,$00,$F8
-		.BYTE	$00,$38,$00,$00
-_sprA03_0E_B:
-		.BYTE	$02
-		.BYTE	$F0,$00,$00,$F8
-		.BYTE	$F0,$10,$00,$00
-_sprA03_0F:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_0D_B
-_sprA03_11:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_11_B
-_sprA03_11_B:
-		.BYTE	$02
-		.BYTE	$F1,$1A,$00,$F8
-		.BYTE	$F1,$1A,$40,$00
-_sprA03_12:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_12_B
-_sprA03_12_B:
-		.BYTE	$02
-		.BYTE	$F0,$1A,$00,$F8
-		.BYTE	$F0,$1A,$40,$00
-_sprA03_13:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_11_B
-_sprA03_15:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_15_B
-_sprA03_15_B:
-		.BYTE	$02
-		.BYTE	$F1,$02,$40,$00
-		.BYTE	$F1,$12,$40,$F8
-_sprA03_16:
-		.BYTE	$82
-		.WORD	_sprA03_06_A
-		.WORD	_sprA03_16_B
-_sprA03_16_B:
-		.BYTE	$02
-		.BYTE	$F0,$02,$40,$00
-		.BYTE	$F0,$12,$40,$F8
-_sprA03_17:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_15_B
-_sprA03_19:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_19_B
-_sprA03_19_B:
-		.BYTE	$02
-		.BYTE	$F1,$0A,$00,$F8
-		.BYTE	$F1,$0A,$40,$00
-_sprA03_1A:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_1A_B
-_sprA03_1A_B:
-		.BYTE	$02
-		.BYTE	$F0,$0A,$00,$F8
-		.BYTE	$F0,$0A,$40,$00
-_sprA03_1B:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_19_B
-_sprA03_1D:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_1D_B
-_sprA03_1D_B:
-		.BYTE	$02
-		.BYTE	$F1,$02,$00,$F8
-		.BYTE	$F1,$12,$00,$00
-_sprA03_1E:
-		.BYTE	$82
-		.WORD	_sprA03_0E_A
-		.WORD	_sprA03_1E_B
-_sprA03_1E_B:
-		.BYTE	$02
-		.BYTE	$F0,$02,$00,$F8
-		.BYTE	$F0,$12,$00,$00
-_sprA03_1F:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_1D_B
-_sprA03_21:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_21_B
-_sprA03_21_B:
-		.BYTE	$02
-		.BYTE	$F1,$1C,$00,$F8
-		.BYTE	$F1,$1C,$40,$00
-_sprA03_22:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_22_B
-_sprA03_22_B:
-		.BYTE	$02
-		.BYTE	$F0,$1C,$00,$F8
-		.BYTE	$F0,$1C,$40,$00
-_sprA03_23:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_21_B
-_sprA03_25:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_25_B
-_sprA03_25_B:
-		.BYTE	$02
-		.BYTE	$F1,$04,$40,$00
-		.BYTE	$F1,$14,$40,$F8
-_sprA03_26:
-		.BYTE	$82
-		.WORD	_sprA03_06_A
-		.WORD	_sprA03_26_B
-_sprA03_26_B:
-		.BYTE	$02
-		.BYTE	$F0,$04,$40,$00
-		.BYTE	$F0,$14,$40,$F8
-_sprA03_27:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_25_B
-_sprA03_29:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_29_B
-_sprA03_29_B:
-		.BYTE	$02
-		.BYTE	$F1,$0C,$00,$F8
-		.BYTE	$F1,$0C,$40,$00
-_sprA03_2A:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_2A_B
-_sprA03_2A_B:
-		.BYTE	$02
-		.BYTE	$F0,$0C,$00,$F8
-		.BYTE	$F0,$0C,$40,$00
-_sprA03_2B:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_29_B
-_sprA03_2D:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_2D_B
-_sprA03_2D_B:
-		.BYTE	$02
-		.BYTE	$F1,$04,$00,$F8
-		.BYTE	$F1,$14,$00,$00
-_sprA03_2E:
-		.BYTE	$82
-		.WORD	_sprA03_0E_A
-		.WORD	_sprA03_2E_B
-_sprA03_2E_B:
-		.BYTE	$02
-		.BYTE	$F0,$04,$00,$F8
-		.BYTE	$F0,$14,$00,$00
-_sprA03_2F:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_2D_B
-_sprA03_31:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_31_B
-_sprA03_31_B:
-		.BYTE	$02
-		.BYTE	$F1,$1E,$00,$F8
-		.BYTE	$F1,$1E,$40,$00
-_sprA03_32:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_32_B
-_sprA03_32_B:
-		.BYTE	$02
-		.BYTE	$F0,$1E,$00,$F8
-		.BYTE	$F0,$1E,$40,$00
-_sprA03_33:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_31_B
-_sprA03_35:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_35_B
-_sprA03_35_B:
-		.BYTE	$02
-		.BYTE	$F1,$06,$40,$00
-		.BYTE	$F1,$16,$40,$F8
-_sprA03_36:
-		.BYTE	$82
-		.WORD	_sprA03_06_A
-		.WORD	_sprA03_36_B
-_sprA03_36_B:
-		.BYTE	$02
-		.BYTE	$F0,$06,$40,$00
-		.BYTE	$F0,$16,$40,$F8
-_sprA03_37:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_35_B
-_sprA03_39:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_39_B
-_sprA03_39_B:
-		.BYTE	$02
-		.BYTE	$F1,$0E,$00,$F8
-		.BYTE	$F1,$0E,$40,$00
-_sprA03_3A:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_3A_B
-_sprA03_3A_B:
-		.BYTE	$02
-		.BYTE	$F0,$0E,$00,$F8
-		.BYTE	$F0,$0E,$40,$00
-_sprA03_3B:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_39_B
-_sprA03_3D:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_3D_B
-_sprA03_3D_B:
-		.BYTE	$02
-		.BYTE	$F1,$06,$00,$F8
-		.BYTE	$F1,$16,$00,$00
-_sprA03_3E:
-		.BYTE	$82
-		.WORD	_sprA03_0E_A
-		.WORD	_sprA03_3E_B
-_sprA03_3E_B:
-		.BYTE	$02
-		.BYTE	$F0,$06,$00,$F8
-		.BYTE	$F0,$16,$00,$00
-_sprA03_3F:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_3D_B
-_sprA03_41:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_41_B
-_sprA03_41_B:
-		.BYTE	$02
-		.BYTE	$F1,$32,$00,$F8
-		.BYTE	$F1,$32,$40,$00
-_sprA03_42:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_42_B
-_sprA03_42_B:
-		.BYTE	$02
-		.BYTE	$F0,$32,$00,$F8
-		.BYTE	$F0,$32,$40,$00
-_sprA03_43:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_41_B
-_sprA03_45:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_45_B
-_sprA03_45_B:
-		.BYTE	$02
-		.BYTE	$F1,$20,$40,$00
-		.BYTE	$F1,$30,$40,$F8
-_sprA03_46:
-		.BYTE	$82
-		.WORD	_sprA03_06_A
-		.WORD	_sprA03_46_B
-_sprA03_46_B:
-		.BYTE	$02
-		.BYTE	$F0,$20,$40,$00
-		.BYTE	$F0,$30,$40,$F8
-_sprA03_47:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_45_B
-_sprA03_49:
-		.BYTE	$82
-		.WORD	_sprA03_01_A
-		.WORD	_sprA03_49_B
-_sprA03_49_B:
-		.BYTE	$02
-		.BYTE	$F1,$22,$00,$F8
-		.BYTE	$F1,$22,$40,$00
-_sprA03_4A:
-		.BYTE	$82
-		.WORD	_sprA03_02_A
-		.WORD	_sprA03_4A_B
-_sprA03_4A_B:
-		.BYTE	$02
-		.BYTE	$F0,$22,$00,$F8
-		.BYTE	$F0,$22,$40,$00
-_sprA03_4B:
-		.BYTE	$82
-		.WORD	_sprA03_03_A
-		.WORD	_sprA03_49_B
-_sprA03_4D:
-		.BYTE	$82
-		.WORD	_sprA03_07_A
-		.WORD	_sprA03_4D_B
-_sprA03_4D_B:
-		.BYTE	$02
-		.BYTE	$F1,$20,$00,$F8
-		.BYTE	$F1,$30,$00,$00
-_sprA03_4E:
-		.BYTE	$82
-		.WORD	_sprA03_0E_A
-		.WORD	_sprA03_4E_B
-_sprA03_4E_B:
-		.BYTE	$02
-		.BYTE	$F0,$20,$00,$F8
-		.BYTE	$F0,$30,$00,$00
-_sprA03_4F:
-		.BYTE	$82
-		.WORD	_sprA03_05_A
-		.WORD	_sprA03_4D_B
-_sprA03_52:
-		.BYTE	$02
-		.BYTE	$F4,$18,$00,$F8
-		.BYTE	$F4,$18,$40,$00
-_sprA03_53:
-		.BYTE	$02
-		.BYTE	$F5,$18,$00,$F8
-		.BYTE	$F5,$18,$40,$00
-_sprA03_56:
-		.BYTE	$02
-		.BYTE	$F4,$00,$40,$00
-		.BYTE	$F4,$10,$40,$F8
-_sprA03_57:
-		.BYTE	$02
-		.BYTE	$F5,$00,$40,$00
-		.BYTE	$F5,$10,$40,$F8
-_sprA03_5A:
-		.BYTE	$02
-		.BYTE	$F4,$08,$00,$F8
-		.BYTE	$F4,$08,$40,$00
-_sprA03_5B:
-		.BYTE	$02
-		.BYTE	$F5,$08,$00,$F8
-		.BYTE	$F5,$08,$40,$00
-_sprA03_5E:
-		.BYTE	$02
-		.BYTE	$F4,$00,$00,$F8
-		.BYTE	$F4,$10,$00,$00
-_sprA03_5F:
-		.BYTE	$02
-		.BYTE	$F5,$00,$00,$F8
-		.BYTE	$F5,$10,$00,$00
-_sprA03_62:
-		.BYTE	$02
-		.BYTE	$F4,$1A,$00,$F8
-		.BYTE	$F4,$1A,$40,$00
-_sprA03_63:
-		.BYTE	$02
-		.BYTE	$F5,$1A,$00,$F8
-		.BYTE	$F5,$1A,$40,$00
-_sprA03_66:
-		.BYTE	$02
-		.BYTE	$F4,$02,$40,$00
-		.BYTE	$F4,$12,$40,$F8
-_sprA03_67:
-		.BYTE	$02
-		.BYTE	$F5,$02,$40,$00
-		.BYTE	$F5,$12,$40,$F8
-_sprA03_6A:
-		.BYTE	$02
-		.BYTE	$F4,$0A,$00,$F8
-		.BYTE	$F4,$0A,$40,$00
-_sprA03_6B:
-		.BYTE	$02
-		.BYTE	$F5,$0A,$00,$F8
-		.BYTE	$F5,$0A,$40,$00
-_sprA03_6E:
-		.BYTE	$02
-		.BYTE	$F4,$02,$00,$F8
-		.BYTE	$F4,$12,$00,$00
-_sprA03_6F:
-		.BYTE	$02
-		.BYTE	$F5,$02,$00,$F8
-		.BYTE	$F5,$12,$00,$00
-_sprA03_72:
-		.BYTE	$02
-		.BYTE	$F4,$1C,$00,$F8
-		.BYTE	$F4,$1C,$40,$00
-_sprA03_73:
-		.BYTE	$02
-		.BYTE	$F5,$1C,$00,$F8
-		.BYTE	$F5,$1C,$40,$00
-_sprA03_76:
-		.BYTE	$02
-		.BYTE	$F4,$04,$40,$00
-		.BYTE	$F4,$14,$40,$F8
-_sprA03_77:
-		.BYTE	$02
-		.BYTE	$F5,$04,$40,$00
-		.BYTE	$F5,$14,$40,$F8
-_sprA03_7A:
-		.BYTE	$02
-		.BYTE	$F4,$0C,$00,$F8
-		.BYTE	$F4,$0C,$40,$00
-_sprA03_7B:
-		.BYTE	$02
-		.BYTE	$F5,$0C,$00,$F8
-		.BYTE	$F5,$0C,$40,$00
-_sprA03_7E:
-		.BYTE	$02
-		.BYTE	$F4,$04,$00,$F8
-		.BYTE	$F4,$14,$00,$00
-_sprA03_7F:
-		.BYTE	$02
-		.BYTE	$F5,$04,$00,$F8
-		.BYTE	$F5,$14,$00,$00
-_sprA03_82:
-		.BYTE	$02
-		.BYTE	$F4,$1E,$00,$F8
-		.BYTE	$F4,$1E,$40,$00
-_sprA03_83:
-		.BYTE	$02
-		.BYTE	$F5,$1E,$00,$F8
-		.BYTE	$F5,$1E,$40,$00
-_sprA03_86:
-		.BYTE	$02
-		.BYTE	$F4,$06,$40,$00
-		.BYTE	$F4,$16,$40,$F8
-_sprA03_87:
-		.BYTE	$02
-		.BYTE	$F5,$06,$40,$00
-		.BYTE	$F5,$16,$40,$F8
-_sprA03_8A:
-		.BYTE	$02
-		.BYTE	$F4,$0E,$00,$F8
-		.BYTE	$F4,$0E,$40,$00
-_sprA03_8B:
-		.BYTE	$02
-		.BYTE	$F5,$0E,$00,$F8
-		.BYTE	$F5,$0E,$40,$00
-_sprA03_8E:
-		.BYTE	$02
-		.BYTE	$F4,$06,$00,$F8
-		.BYTE	$F4,$16,$00,$00
-_sprA03_8F:
-		.BYTE	$02
-		.BYTE	$F5,$06,$00,$F8
-		.BYTE	$F5,$16,$00,$00
-_sprA03_92:
-		.BYTE	$02
-		.BYTE	$F4,$32,$00,$F8
-		.BYTE	$F4,$32,$40,$00
-_sprA03_93:
-		.BYTE	$02
-		.BYTE	$F5,$32,$00,$F8
-		.BYTE	$F5,$32,$40,$00
-_sprA03_96:
-		.BYTE	$02
-		.BYTE	$F4,$20,$40,$00
-		.BYTE	$F4,$30,$40,$F8
-_sprA03_97:
-		.BYTE	$02
-		.BYTE	$F5,$20,$40,$00
-		.BYTE	$F5,$30,$40,$F8
-_sprA03_9A:
-		.BYTE	$02
-		.BYTE	$F4,$22,$00,$F8
-		.BYTE	$F4,$22,$40,$00
-_sprA03_9B:
-		.BYTE	$02
-		.BYTE	$F5,$22,$00,$F8
-		.BYTE	$F5,$22,$40,$00
-_sprA03_9E:
-		.BYTE	$02
-		.BYTE	$F4,$20,$00,$F8
-		.BYTE	$F4,$30,$00,$00
-_sprA03_9F:
-		.BYTE	$02
-		.BYTE	$F5,$20,$00,$F8
-		.BYTE	$F5,$30,$00,$00
-_sprA03_A0:
-		.BYTE	$04
-		.BYTE	$00,$4E,$00,$F8
-		.BYTE	$00,$4E,$40,$00
-		.BYTE	$F0,$4C,$00,$F8
-		.BYTE	$F0,$4C,$40,$00
-_sprA03_A1:
-		.BYTE	$03
-		.BYTE	$F8,$2C,$40,$04
-		.BYTE	$F8,$2E,$40,$F4
-		.BYTE	$F8,$3C,$40,$FC
-_sprA03_A2:
-		.BYTE	$04
-		.BYTE	$00,$4C,$80,$F8
-		.BYTE	$00,$4C,$C0,$00
-		.BYTE	$F0,$4E,$80,$F8
-		.BYTE	$F0,$4E,$C0,$00
-_sprA03_A3:
-		.BYTE	$03
-		.BYTE	$F8,$2C,$00,$F6
-		.BYTE	$F8,$2E,$00,$06
-		.BYTE	$F8,$3C,$00,$FE
-_sprA03_A4:
-		.BYTE	$82
-		.WORD	_sprA03_A0
-		.WORD	_sprA03_A4_B
-_sprA03_A4_B:
-		.BYTE	$02
-		.BYTE	$F3,$48,$00,$07
-		.BYTE	$FC,$48,$00,$F2
-_sprA03_A5:
-		.BYTE	$82
-		.WORD	_sprA03_A5_A
-		.WORD	_sprA03_A1
-_sprA03_A5_A:
-		.BYTE	$01
-		.BYTE	$01,$48,$40,$0A
-_sprA03_A6:
-		.BYTE	$82
-		.WORD	_sprA03_A2
-		.WORD	_sprA03_A6_B
-_sprA03_A6_B
-		.BYTE	$02
-		.BYTE	$F3,$48,$80,$06
-		.BYTE	$FB,$48,$80,$F1
-_sprA03_A7:
-		.BYTE	$82
-		.WORD	_sprA03_A7_A
-		.WORD	_sprA03_A3
-_sprA03_A7_A:
-		.BYTE	$01
-		.BYTE	$01,$48,$00,$F0
-_sprA03_A8:
-		.BYTE	$82
-		.WORD	_sprA03_A0
-		.WORD	_sprA03_A8_B
-_sprA03_A8_B:
-		.BYTE	$02
-		.BYTE	$F0,$58,$00,$0B
-		.BYTE	$FE,$58,$00,$EF
-_sprA03_A9:
-		.BYTE	$82
-		.WORD	_sprA03_A1
-		.WORD	_sprA03_A9_B
-_sprA03_A9_B:
-		.BYTE	$01
-		.BYTE	$FC,$58,$40,$0D
-_sprA03_AA:
-		.BYTE	$82
-		.WORD	_sprA03_A2
-		.WORD	_sprA03_AA_B
-_sprA03_AA_B:
-		.BYTE	$02
-		.BYTE	$F0,$58,$80,$09
-		.BYTE	$FE,$58,$80,$ED
-_sprA03_AB:
-		.BYTE	$82
-		.WORD	_sprA03_A3
-		.WORD	_sprA03_AB_B
-_sprA03_AB_B:
-		.BYTE	$01
-		.BYTE	$FC,$58,$00,$ED
-_sprA03_AC:
-		.BYTE	$06
-		.BYTE	$02,$8F,$00,$FC
-		.BYTE	$0A,$8F,$00,$FC
-		.BYTE	$EA,$8D,$00,$FC
-		.BYTE	$F2,$9F,$00,$04
-		.BYTE	$F2,$9F,$40,$F4
-		.BYTE	$FA,$8F,$00,$FC
-_sprA03_AD:
-		.BYTE	$07
-		.BYTE	$F4,$8F,$80,$FE
-		.BYTE	$F4,$9F,$00,$06
-		.BYTE	$FC,$8F,$00,$06
-		.BYTE	$FC,$8F,$00,$EE
-		.BYTE	$FC,$8F,$00,$F6
-		.BYTE	$FC,$9D,$00,$0E
-		.BYTE	$FC,$9F,$80,$06
-_sprA03_AE:
-		.BYTE	$06
-		.BYTE	$06,$8D,$80,$FC
-		.BYTE	$E6,$8F,$80,$FC
-		.BYTE	$EE,$8F,$80,$FC
-		.BYTE	$F6,$8F,$80,$FC
-		.BYTE	$FE,$9F,$80,$04
-		.BYTE	$FE,$9F,$C0,$F4
-_sprA03_AF:
-		.BYTE	$07
-		.BYTE	$F4,$8F,$80,$02
-		.BYTE	$F4,$8F,$80,$0A
-		.BYTE	$F4,$8F,$80,$FA
-		.BYTE	$F4,$9F,$40,$F2
-		.BYTE	$FC,$8F,$00,$F2
-		.BYTE	$FC,$9D,$40,$EA
-		.BYTE	$FC,$9F,$C0,$F2
+		SPR_LIB_START	_spr_libA04
 
-_spr_libA04:
-		.WORD	_sprA04_00
-		.WORD	_sprA04_01
-		.WORD	_sprA04_02
-		.WORD	_sprA04_03
-		.WORD	_sprA04_04
-		.WORD	_sprA04_05
-		.WORD	_sprA04_06
-		.WORD	_sprA04_07
-		.WORD	_sprA04_08
-		.WORD	_sprA04_09
-		.WORD	_sprA04_0A
-		.WORD	_sprA04_0B
-		.WORD	_sprA04_0C
-		.WORD	_sprA04_0D
-		.WORD	_sprA04_0E
-		.WORD	_sprA04_0F
-		.WORD	_sprA04_14
-		.WORD	_sprA04_11
-		.WORD	_sprA04_16
-		.WORD	_sprA04_13
-		.WORD	_sprA04_14
-		.WORD	_sprA04_15
-		.WORD	_sprA04_16
-		.WORD	_sprA04_17
-		.WORD	_sprA04_1C
-		.WORD	_sprA04_19
-		.WORD	_sprA04_1E
-		.WORD	_sprA04_1B
-		.WORD	_sprA04_1C
-		.WORD	_sprA04_1D
-		.WORD	_sprA04_1E
-		.WORD	_sprA04_1F
-		.WORD	_sprA04_24
-		.WORD	_sprA04_21
-		.WORD	_sprA04_26
-		.WORD	_sprA04_23
-		.WORD	_sprA04_24
-		.WORD	_sprA04_25
-		.WORD	_sprA04_26
-		.WORD	_sprA04_27
-		.WORD	_sprA04_2C
-		.WORD	_sprA04_29
-		.WORD	_sprA04_2E
-		.WORD	_sprA04_2B
-		.WORD	_sprA04_2C
-		.WORD	_sprA04_2D
-		.WORD	_sprA04_2E
-		.WORD	_sprA04_2F
+		SPR_IDX	_sprA04_00
+		SPR_IDX	_sprA04_01
+		SPR_IDX	_sprA04_02
+		SPR_IDX	_sprA04_03
+		SPR_IDX	_sprA04_04
+		SPR_IDX	_sprA04_05
+		SPR_IDX	_sprA04_06
+		SPR_IDX	_sprA04_07
+		SPR_IDX	_sprA04_08
+		SPR_IDX	_sprA04_09
+		SPR_IDX	_sprA04_0A
+		SPR_IDX	_sprA04_0B
+		SPR_IDX	_sprA04_0C
+		SPR_IDX	_sprA04_0D
+		SPR_IDX	_sprA04_0E
+		SPR_IDX	_sprA04_0F
+		SPR_IDX	_sprA04_14
+		SPR_IDX	_sprA04_11
+		SPR_IDX	_sprA04_16
+		SPR_IDX	_sprA04_13
+		SPR_IDX	_sprA04_14
+		SPR_IDX	_sprA04_15
+		SPR_IDX	_sprA04_16
+		SPR_IDX	_sprA04_17
+		SPR_IDX	_sprA04_1C
+		SPR_IDX	_sprA04_19
+		SPR_IDX	_sprA04_1E
+		SPR_IDX	_sprA04_1B
+		SPR_IDX	_sprA04_1C
+		SPR_IDX	_sprA04_1D
+		SPR_IDX	_sprA04_1E
+		SPR_IDX	_sprA04_1F
+		SPR_IDX	_sprA04_24
+		SPR_IDX	_sprA04_21
+		SPR_IDX	_sprA04_26
+		SPR_IDX	_sprA04_23
+		SPR_IDX	_sprA04_24
+		SPR_IDX	_sprA04_25
+		SPR_IDX	_sprA04_26
+		SPR_IDX	_sprA04_27
+		SPR_IDX	_sprA04_2C
+		SPR_IDX	_sprA04_29
+		SPR_IDX	_sprA04_2E
+		SPR_IDX	_sprA04_2B
+		SPR_IDX	_sprA04_2C
+		SPR_IDX	_sprA04_2D
+		SPR_IDX	_sprA04_2E
+		SPR_IDX	_sprA04_2F
 
-_sprA04_00:
-		.BYTE	$03
-		.BYTE	$0C,$60,$01,$FC
-		.BYTE	$EC,$60,$01,$FC
-		.BYTE	$FC,$60,$01,$FC
-_sprA04_01:
-		.BYTE	$02
-		.BYTE	$F4,$60,$01,$FC
-		.BYTE	$04,$60,$01,$FC
-_sprA04_02:
-		.BYTE	$03
-		.BYTE	$EC,$60,$41,$FC
-		.BYTE	$0C,$60,$41,$FC
-		.BYTE	$FC,$60,$41,$FC
-_sprA04_03:
-		.BYTE	$02
-		.BYTE	$F4,$60,$41,$FC
-		.BYTE	$04,$60,$41,$FC
-_sprA04_04:
-		.BYTE	$03
-		.BYTE	$EC,$70,$01,$FC
-		.BYTE	$0C,$70,$01,$FC
-		.BYTE	$FC,$70,$01,$FC
-_sprA04_05:
-		.BYTE	$02
-		.BYTE	$F4,$70,$01,$FC
-		.BYTE	$04,$70,$01,$FC
-_sprA04_06:
-		.BYTE	$02
-		.BYTE	$F4,$70,$41,$FC
-		.BYTE	$04,$70,$41,$FC
-_sprA04_07:
-		.BYTE	$03
-		.BYTE	$0C,$70,$41,$FC
-		.BYTE	$EC,$70,$41,$FC
-		.BYTE	$FC,$70,$41,$FC
-_sprA04_08:
-		.BYTE	$03
-		.BYTE	$FC,$6C,$01,$0C
-		.BYTE	$FC,$6C,$01,$EC
-		.BYTE	$FC,$6C,$01,$FC
-_sprA04_09:
-		.BYTE	$02
-		.BYTE	$FC,$6C,$01,$F4
-		.BYTE	$FC,$6C,$01,$04
-_sprA04_0A:
-		.BYTE	$03
-		.BYTE	$F4,$6C,$81,$EC
-		.BYTE	$F4,$6C,$81,$0C
-		.BYTE	$F4,$6C,$81,$FC
-_sprA04_0B:
-		.BYTE	$02
-		.BYTE	$F4,$6C,$81,$F4
-		.BYTE	$F4,$6C,$81,$04
-_sprA04_0C:
-		.BYTE	$03
-		.BYTE	$FC,$7C,$01,$EC
-		.BYTE	$FC,$7C,$01,$0C
-		.BYTE	$FC,$7C,$01,$FC
-_sprA04_0D:
-		.BYTE	$02
-		.BYTE	$FC,$7C,$01,$F4
-		.BYTE	$FC,$7C,$01,$04
-_sprA04_0E:
-		.BYTE	$03
-		.BYTE	$F4,$7C,$81,$0C
-		.BYTE	$F4,$7C,$81,$FC
-		.BYTE	$F4,$7C,$81,$EC
-_sprA04_0F:
-		.BYTE	$02
-		.BYTE	$F4,$7C,$81,$04
-		.BYTE	$F4,$7C,$81,$F4
-_sprA04_11:
-		.BYTE	$03
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$50,$40,$F8
-		.BYTE	$F4,$40,$40,$00
-_sprA04_13:
-		.BYTE	$03
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$50,$00,$00
-		.BYTE	$F4,$40,$00,$F8
-_sprA04_14:
-		.BYTE	$02
-		.BYTE	$08,$56,$00,$FC
-		.BYTE	$F8,$54,$00,$FC
-_sprA04_15:
-		.BYTE	$04
-		.BYTE	$F4,$46,$40,$E8
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$50,$40,$F8
-		.BYTE	$F4,$40,$40,$00
-_sprA04_16:
-		.BYTE	$02
-		.BYTE	$E8,$56,$00,$FC
-		.BYTE	$F8,$54,$00,$FC
-_sprA04_17:
-		.BYTE	$04
-		.BYTE	$F4,$46,$00,$10
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$50,$00,$00
-		.BYTE	$F4,$40,$00,$F8
-_sprA04_19:
-		.BYTE	$05
-		.BYTE	$F4,$46,$40,$E0
-		.BYTE	$F4,$46,$40,$E8
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$50,$40,$F8
-		.BYTE	$F4,$40,$40,$00
-_sprA04_1B:
-		.BYTE	$05
-		.BYTE	$F4,$46,$00,$18
-		.BYTE	$F4,$46,$00,$10
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$50,$00,$00
-		.BYTE	$F4,$40,$00,$F8
-_sprA04_1C:
-		.BYTE	$03
-		.BYTE	$18,$56,$00,$FC
-		.BYTE	$08,$56,$00,$FC
-		.BYTE	$F8,$54,$00,$FC
-_sprA04_1D:
-		.BYTE	$06
-		.BYTE	$F4,$46,$40,$D8
-		.BYTE	$F4,$46,$40,$E0
-		.BYTE	$F4,$46,$40,$E8
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$50,$40,$F8
-		.BYTE	$F4,$40,$40,$00
-_sprA04_1E:
-		.BYTE	$03
-		.BYTE	$D8,$56,$00,$FC
-		.BYTE	$E8,$56,$00,$FC
-		.BYTE	$F8,$54,$00,$FC
-_sprA04_1F:
-		.BYTE	$06
-		.BYTE	$F4,$46,$00,$20
-		.BYTE	$F4,$46,$00,$18
-		.BYTE	$F4,$46,$00,$10
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$50,$00,$00
-		.BYTE	$F4,$40,$00,$F8
-_sprA04_21:
-		.BYTE	$03
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$42,$40,$00
-		.BYTE	$F4,$52,$40,$F8
-_sprA04_23:
-		.BYTE	$03
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$52,$00,$00
-		.BYTE	$F4,$42,$00,$F8
-_sprA04_24:
-		.BYTE	$02
-		.BYTE	$08,$56,$00,$FC
-		.BYTE	$F8,$44,$00,$FC
-_sprA04_25:
-		.BYTE	$04
-		.BYTE	$F4,$46,$40,$E8
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$42,$40,$00
-		.BYTE	$F4,$52,$40,$F8
-_sprA04_26:
-		.BYTE	$02
-		.BYTE	$E8,$56,$00,$FC
-		.BYTE	$F8,$44,$00,$FC
-_sprA04_27:
-		.BYTE	$04
-		.BYTE	$F4,$46,$00,$10
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$52,$00,$00
-		.BYTE	$F4,$42,$00,$F8
-_sprA04_29:
-		.BYTE	$05
-		.BYTE	$F4,$46,$40,$E0
-		.BYTE	$F4,$46,$40,$E8
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$42,$40,$00
-		.BYTE	$F4,$52,$40,$F8
-_sprA04_2B:
-		.BYTE	$05
-		.BYTE	$F4,$46,$00,$18
-		.BYTE	$F4,$46,$00,$10
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$52,$00,$00
-		.BYTE	$F4,$42,$00,$F8
-_sprA04_2C:
-		.BYTE	$03
-		.BYTE	$18,$56,$00,$FC
-		.BYTE	$08,$56,$00,$FC
-		.BYTE	$F8,$44,$00,$FC
-_sprA04_2D:
-		.BYTE	$06
-		.BYTE	$F4,$46,$40,$D8
-		.BYTE	$F4,$46,$40,$E0
-		.BYTE	$F4,$46,$40,$E8
-		.BYTE	$F4,$46,$40,$F0
-		.BYTE	$F4,$42,$40,$00
-		.BYTE	$F4,$52,$40,$F8
-_sprA04_2E:
-		.BYTE	$03
-		.BYTE	$D8,$56,$00,$FC
-		.BYTE	$E8,$56,$00,$FC
-		.BYTE	$F8,$44,$00,$FC
-_sprA04_2F:
-		.BYTE	$06
-		.BYTE	$F4,$46,$00,$20
-		.BYTE	$F4,$46,$00,$18
-		.BYTE	$F4,$46,$00,$10
-		.BYTE	$F4,$46,$00,$08
-		.BYTE	$F4,$52,$00,$00
-		.BYTE	$F4,$42,$00,$F8
-; NOTE: this is a common sprites for animation of catch glow, shared
-; in all enemy sprite libraries and resided in system bank to be
-; accessible from any other bank.
-_sprA08_00:
-		.BYTE	$03
-		.BYTE	$F0,$C1,$00,$F8
-		.BYTE	$F8,$C1,$00,$F0
-		.BYTE	$00,$D1,$00,$F8
-_sprA08_01:
-		.BYTE	$01
-		.BYTE	$00,$D1,$00,$F8
-_sprA08_02:
-		.BYTE	$03
-		.BYTE	$F0,$C1,$40,$00
-		.BYTE	$F8,$C1,$40,$08
-		.BYTE	$00,$D1,$40,$00
-_sprA08_03:
-		.BYTE	$01
-		.BYTE	$00,$D1,$40,$00
+#if NEW_SPRITES==1
+		INCLUDE		"../spr_data4_new.inc"
+#else
+		INCLUDE		"../spr_data4.inc"
+#endif
 
 		SECTION_END	"PRG7 SPRITES"
 
