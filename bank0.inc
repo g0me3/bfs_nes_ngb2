@@ -2821,6 +2821,8 @@ _pal_end_sprite_lib:
 		SPR_IDX	_sprA00_4B
 		SPR_IDX	_sprA00_4C
 
+		SPR_LIB_SIZE	_spr_libA00
+
 ; NOTE: here is the ending sprites, many of them copy the regular players
 ; sprites and may of them not used in the ending at all...
 ;
@@ -3022,6 +3024,8 @@ _pal_end_sprite_lib:
 		SPR_IDX	_sprA02_BB
 		SPR_IDX	_sprA02_BC
 
+		SPR_LIB_SIZE	_spr_libA02
+
 		SPR_LIB_START	_spr_libB02
 
 		SPR_IDX	_sprB02_C0
@@ -3044,10 +3048,14 @@ _pal_end_sprite_lib:
 		SPR_IDX	_sprB02_D1
 		SPR_IDX	_sprB02_D2
 
+		SPR_LIB_SIZE	_spr_libB02
+
+#if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
 		INCLUDE		"../spr_data0_new.inc"
 #else
 		INCLUDE		"../spr_data0.inc"
+#endif
 #endif
 
 		SECTION_END	"PRG0 SPRITES"

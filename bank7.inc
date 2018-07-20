@@ -6274,6 +6274,7 @@ _spr_block_fetch_ex:
 		STA		_tmp1C
 		INY									; will be 3 bytes to skip for next cmd
 .spr_no_override:
+		LDA		_var0						; clear command bits
 		AND		#$3F
 		STA		_var0						; remove extra flags, counter remains
 		LDA		(_ptr1E),Y					; offset flag set, next data for this
@@ -8901,6 +8902,8 @@ _spr_libB_ofs_tbl_hi:
 		SPR_IDX	_sprA03_AE	; 			D
 		SPR_IDX	_sprA03_AF	;			L
 
+		SPR_LIB_SIZE	_spr_libA03
+
 		SPR_LIB_START	_spr_libA04
 
 		SPR_IDX	_sprA04_00
@@ -8952,10 +8955,14 @@ _spr_libB_ofs_tbl_hi:
 		SPR_IDX	_sprA04_2E
 		SPR_IDX	_sprA04_2F
 
+		SPR_LIB_SIZE	_spr_libA04
+
+#if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
 		INCLUDE		"../spr_data4_new.inc"
 #else
 		INCLUDE		"../spr_data4.inc"
+#endif
 #endif
 
 		SECTION_END	"PRG7 SPRITES"

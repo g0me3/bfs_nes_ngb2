@@ -2277,6 +2277,8 @@ _scr_vega_mother:
 		SPR_IDX	_sprA08_93
 		SPR_IDX	_sprA08_94
 
+		SPR_LIB_SIZE	_spr_libA08
+
 		SPR_LIB_START	_spr_libB08
 
 ; NOTE: this is the only multiple chunked sprite in original game
@@ -2293,10 +2295,14 @@ _scr_vega_mother:
 		SPR_IDX	_sprB08_C6
 		SPR_IDX	_sprB08_C7
 
+		SPR_LIB_SIZE	_spr_libB08
+
+#if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
 		INCLUDE		"../spr_data2_new.inc"
 #else
 		INCLUDE		"../spr_data2.inc"
+#endif
 #endif
 
 		SECTION_END	"PRG3 SPRITES"

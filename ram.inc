@@ -633,3 +633,21 @@ _PAD0_REG:
 		.BYTE 0
 _PAD1_REG:
 		.BYTE 0
+
+#if SPR_SIZE_TEST==1
+SPR_DATA_START	SET	.
+#if NEW_SPRITES==1
+		INCLUDE		"../spr_data0_new.inc"
+		INCLUDE		"../spr_data1_new.inc"
+		INCLUDE		"../spr_data2_new.inc"
+		INCLUDE		"../spr_data3_new.inc"
+		INCLUDE		"../spr_data4_new.inc"
+#else
+		INCLUDE		"../spr_data0.inc"
+		INCLUDE		"../spr_data1.inc"
+		INCLUDE		"../spr_data2.inc"
+		INCLUDE		"../spr_data3.inc"
+		INCLUDE		"../spr_data4.inc"
+#endif
+SPR_DATA_SIZE	SET	[.-SPR_DATA_START]
+#endif

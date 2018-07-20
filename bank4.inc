@@ -4305,6 +4305,8 @@ _scr_ghost_nanny_itself:
 		SPR_IDX	_sprA05_97	; 96
 		SPR_IDX	_sprA05_97	; 97
 
+		SPR_LIB_SIZE	_spr_libA05
+
 		SPR_LIB_START	_spr_libA06
 
 		SPR_IDX	_sprA08_00
@@ -4437,6 +4439,8 @@ _scr_ghost_nanny_itself:
 ; single chunks works faster after all, and there is an issue with sprite
 ; glitches because of that in the released version.
 ;
+		SPR_LIB_SIZE	_spr_libA06
+
 		SPR_LIB_START	_spr_libB06
 
 		SPR_IDX	_sprB06_C0
@@ -4486,6 +4490,8 @@ _scr_ghost_nanny_itself:
 		SPR_IDX	_sprB06_E9
 		SPR_IDX	_sprB06_EA
 		SPR_IDX	_sprB06_EB
+
+		SPR_LIB_SIZE	_spr_libB06
 
 		SPR_LIB_START	_spr_libA07
 
@@ -4635,6 +4641,8 @@ _scr_ghost_nanny_itself:
 		SPR_IDX	_sprA07_8C
 		SPR_IDX	_sprA07_8D
 
+		SPR_LIB_SIZE	_spr_libA07
+
 		SPR_LIB_START	_spr_libB07
 
 		SPR_IDX	_sprB07_C0
@@ -4649,10 +4657,14 @@ _scr_ghost_nanny_itself:
 		SPR_IDX	_sprB07_C9
 		SPR_IDX	_sprB07_CA
 
+		SPR_LIB_SIZE	_spr_libB07
+
+#if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
 		INCLUDE		"../spr_data3_new.inc"
 #else
 		INCLUDE		"../spr_data3.inc"
+#endif
 #endif
 
 		SECTION_END	"PRG4 SPRITES"

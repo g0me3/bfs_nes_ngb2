@@ -4394,10 +4394,14 @@ loc_1698C:
 		SPR_IDX	_sprA01_1D
 		SPR_IDX	_sprA01_1E
 
+		SPR_LIB_SIZE	_spr_libA01
+
+#if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
 		INCLUDE		"../spr_data1_new.inc"
 #else
 		INCLUDE		"../spr_data1.inc"
+#endif
 #endif
 
 		SECTION_END	"PRG1 SPRITES DATA"
