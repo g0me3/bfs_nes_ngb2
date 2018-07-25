@@ -4,16 +4,16 @@
 
 cd nas
 
+echo generate listing...
+dasmA bank0.nas -f3 -l!ngb2.lst -obank0.bin >> !err.log
+
 echo assemble...
-
-rem dasm bank0.nas -f3 -l!ngb2.lst -obank0.bin >> !err.log
-
 for %%f in (*.nas) do call :dodasm %%f > NUL
 
 goto :build
 
 :dodasm
-dasm %1 -f3 -o%~n1.bin
+dasmA %1 -f3 -o%~n1.bin
 goto :eof
 
 :build

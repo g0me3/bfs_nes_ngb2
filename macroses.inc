@@ -33,6 +33,9 @@ DEBUG_CHKPOINT	EQU		$01
 ; 3 - 1 2 3 4 5 6
 ; 4 - 1 2 3 4 5
 ; 5 - 1
+DEBUG_CHR0		EQU		$18
+DEBUG_LIBA		EQU		$08
+DEBUG_IDX		EQU		$5E
 
 ;--------------------A-P-U----------------------
 

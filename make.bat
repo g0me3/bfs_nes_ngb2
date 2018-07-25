@@ -11,10 +11,10 @@ rename !ngb2.nes !ngb2prev.nes
 
 cd nas
 
-dasm bank0.nas -f3 -obank0.bin
+dasmA bank0.nas -f3 -obank0.bin
 
-echo log/lst generate...
-dasm bank0.nas -f3 -l!ngb2.lst -obank0.bin > !err.log
+rem echo log/lst generate...
+rem dasm bank0.nas -f3 -l!ngb2.lst -obank0.bin > !err.log
 
 echo assemble...
 for %%f in (*.nas) do call :dodasm %%f > NUL
@@ -22,7 +22,7 @@ for %%f in (*.nas) do call :dodasm %%f > NUL
 goto :build
 
 :dodasm
-dasm %1 -f3 -o%~n1.bin
+dasmA %1 -f3 -o%~n1.bin
 goto :eof
 
 :build

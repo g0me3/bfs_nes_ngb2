@@ -943,12 +943,16 @@ locret_8FAA:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_debug_menu_init:
-		LDA		#$00
+		LDA		#DEBUG_CHR0
 		STA		_debug_chr0
 		STA		_chr_bank0
+		LDA		#DEBUG_LIBA
 		STA		_debug_lib_idx
+		LDA		#$00
 		STA		_debug_lib_type
+		LDA		#DEBUG_IDX
 		STA		_debug_spr
+		LDA		#$00
 		STA		_debug_pos_idx
 		LDA		#$05
 		STA		_debug_chr1
