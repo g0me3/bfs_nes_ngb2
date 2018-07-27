@@ -894,39 +894,39 @@ _sprA04_1B:
 		.BYTE	$00
 _sprA04_1C:
 		.BYTE	$03
-		.BYTE	$18,$56,$00,$FC ; *
+		.BYTE	$18,$56,$00,$FC
 _sprA04_1C_B:
-		.BYTE	$08,$56,$00,$FC ; *
-		.BYTE	$F8,$54,$00,$FC ; *
+		.BYTE	$08,$56,$00,$FC
+		.BYTE	$F8,$54,$00,$FC
 		.BYTE	$00
 _sprA04_1D:
 		.BYTE	$06
-		.BYTE	$F4,$46,$40,$D8 ; *
+		.BYTE	$F4,$46,$40,$D8
 _sprA04_1D_A:
-		.BYTE	$F4,$46,$40,$E0 ; *
+		.BYTE	$F4,$46,$40,$E0
 _sprA04_1D_B:
-		.BYTE	$F4,$46,$40,$E8 ; *
+		.BYTE	$F4,$46,$40,$E8
 _sprA04_1D_C:
-		.BYTE	$F4,$46,$40,$F0 ; *
+		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$50,$40,$F8
 		.BYTE	$F4,$40,$40,$00
 		.BYTE	$00
 _sprA04_1E:
 		.BYTE	$03
-		.BYTE	$D8,$56,$00,$FC ; *
+		.BYTE	$D8,$56,$00,$FC
 _sprA04_1E_B:
-		.BYTE	$E8,$56,$00,$FC ; *
-		.BYTE	$F8,$54,$00,$FC ; *
+		.BYTE	$E8,$56,$00,$FC
+		.BYTE	$F8,$54,$00,$FC
 		.BYTE	$00
 _sprA04_1F:
 		.BYTE	$06
-		.BYTE	$F4,$46,$00,$20 ; *
+		.BYTE	$F4,$46,$00,$20
 _sprA04_1F_A:
-		.BYTE	$F4,$46,$00,$18 ; *
+		.BYTE	$F4,$46,$00,$18
 _sprA04_1F_B:
-		.BYTE	$F4,$46,$00,$10 ; *
+		.BYTE	$F4,$46,$00,$10
 _sprA04_1F_C:
-		.BYTE	$F4,$46,$00,$08 ; *
+		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$50,$00,$00
 		.BYTE	$F4,$40,$00,$F8
 		.BYTE	$00
@@ -964,39 +964,39 @@ _sprA04_2B:
 		.BYTE	$00
 _sprA04_2C:
 		.BYTE	$03
-		.BYTE	$18,$56,$00,$FC ; *
+		.BYTE	$18,$56,$00,$FC
 _sprA04_2C_B:
-		.BYTE	$08,$56,$00,$FC ; *
-		.BYTE	$F8,$44,$00,$FC ; *
+		.BYTE	$08,$56,$00,$FC
+		.BYTE	$F8,$44,$00,$FC
 		.BYTE	$00
 _sprA04_2D:
 		.BYTE	$06
-		.BYTE	$F4,$46,$40,$D8 ; *
+		.BYTE	$F4,$46,$40,$D8
 _sprA04_2D_A:
-		.BYTE	$F4,$46,$40,$E0 ; *
+		.BYTE	$F4,$46,$40,$E0
 _sprA04_2D_B:
-		.BYTE	$F4,$46,$40,$E8 ; *
+		.BYTE	$F4,$46,$40,$E8
 _sprA04_2D_C:
-		.BYTE	$F4,$46,$40,$F0 ; *
+		.BYTE	$F4,$46,$40,$F0
 		.BYTE	$F4,$42,$40,$00
 		.BYTE	$F4,$52,$40,$F8
 		.BYTE	$00
 _sprA04_2E:
 		.BYTE	$03
-		.BYTE	$D8,$56,$00,$FC ; *
+		.BYTE	$D8,$56,$00,$FC
 _sprA04_2E_B:
-		.BYTE	$E8,$56,$00,$FC ; *
-		.BYTE	$F8,$44,$00,$FC ; *
+		.BYTE	$E8,$56,$00,$FC
+		.BYTE	$F8,$44,$00,$FC
 		.BYTE	$00
 _sprA04_2F:
 		.BYTE	$06
-		.BYTE	$F4,$46,$00,$20 ; *
+		.BYTE	$F4,$46,$00,$20
 _sprA04_2F_A:
-		.BYTE	$F4,$46,$00,$18 ; *
+		.BYTE	$F4,$46,$00,$18
 _sprA04_2F_B:
-		.BYTE	$F4,$46,$00,$10 ; *
+		.BYTE	$F4,$46,$00,$10
 _sprA04_2F_C:
-		.BYTE	$F4,$46,$00,$08 ; *
+		.BYTE	$F4,$46,$00,$08
 		.BYTE	$F4,$52,$00,$00
 		.BYTE	$F4,$42,$00,$F8
 		.BYTE	$00

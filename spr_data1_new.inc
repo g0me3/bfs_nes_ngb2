@@ -15,7 +15,7 @@ _sprA01_02:
 		.BYTE	$06
 		.BYTE	$0B,$F9,$43,$00
 		.BYTE	$0B,$F9,$43,$F8
-		.BYTE	$0B,$F9,$03,$F0 ; *
+		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F8,$FB,$03,$00
 		.BYTE	$F8,$EB,$03,$F8
 		.BYTE	$F8,$DB,$03,$F0
@@ -29,7 +29,7 @@ _sprA01_03:
 		.BYTE	$00
 _sprA01_04:
 		.BYTE	$02
-		.BYTE	$0B,$F9,$03,$F0 ; *
+		.BYTE	$0B,$F9,$03,$F0
 		.BYTE	$F4,$CB,$03,$F1
 		.BYTE	$00
 _sprA01_05:
@@ -114,12 +114,12 @@ _sprA01_11:
 _sprA01_12:
 		.BYTE	$02
 		.BYTE	$F8,$5D,$03,$00
-		.BYTE	$00,$5D,$03,$00 ; *
+		.BYTE	$00,$5D,$03,$00
 		.BYTE	$00
 _sprA01_13:
 		.BYTE	$02
 		.BYTE	$FC,$5D,$03,$00
-		.BYTE	$00,$5D,$03,$00 ; *
+		.BYTE	$00,$5D,$03,$00
 		.BYTE	$00
 _sprA01_14:
 		.BYTE	$01

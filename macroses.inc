@@ -1,11 +1,11 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		0
+DEBUG			EQU		1
 OPTIMIZATION	EQU		1
 TWO_PLAYER_MODE	EQU		0
 OOS_ACTIVE		EQU		0
-NEW_SPRITES		EQU		0
+NEW_SPRITES		EQU		1
 SPR_SIZE_TEST	EQU		0
 
 REGION_JP		EQU		0
@@ -33,9 +33,10 @@ DEBUG_CHKPOINT	EQU		$01
 ; 3 - 1 2 3 4 5 6
 ; 4 - 1 2 3 4 5
 ; 5 - 1
-DEBUG_CHR0		EQU		$18
-DEBUG_LIBA		EQU		$08
-DEBUG_IDX		EQU		$5E
+DEBUG_CHR0		EQU		$12
+DEBUG_LIBA		EQU		$06
+DEBUG_LIBB		EQU		$00
+DEBUG_IDX		EQU		$61
 
 ;--------------------A-P-U----------------------
 

@@ -4410,7 +4410,7 @@ _scr_ghost_nanny_itself:
 		SPR_IDX	_sprA06_5E
 		SPR_IDX	_sprA06_5F
 		SPR_IDX	_sprA06_60
-		SPR_IDX	_sprA06_61	; NOTE: objects tile a little bit odd, test
+		SPR_IDX	_sprA06_61	; FIX, sprite $D2 shifted 4 pixels left
 		SPR_IDX	_sprA06_62
 		SPR_IDX	_sprA06_63
 		SPR_IDX	_sprA06_64

@@ -914,6 +914,9 @@ _scr_secret_menu:
 		NJSR			_nsub_far_prg0_tlm_lib_unpack
 			NARGB		_tlmA_blank_idx
 		NJSR			_nsub_debug_menu_init
+		NJSR			_nsub_patch_pal_load
+			NARGB		$06
+			NARGW		_pal_spr_secret_menu_patch
 		NJSR			_nsub_bg_pal_load				; also palette
 			NARGW		_pal_bg_secret_menu
 		SJSR			_ssub_pal_fade_in				; show screen
@@ -925,6 +928,8 @@ _sloc_8F5C:
 
 _pal_bg_secret_menu:
 		.BYTE	$10,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
+_pal_spr_secret_menu_patch:
+		.BYTE	$0F,$36,$17,$0F
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_secret_menu_exit_wait:
@@ -948,11 +953,11 @@ _nsub_debug_menu_init:
 		STA		_chr_bank0
 		LDA		#DEBUG_LIBA
 		STA		_debug_lib_idx
-		LDA		#$00
+		LDA		#DEBUG_LIBB
 		STA		_debug_lib_type
 		LDA		#DEBUG_IDX
 		STA		_debug_spr
-		LDA		#$00
+		LDA		#$04
 		STA		_debug_pos_idx
 		LDA		#$05
 		STA		_debug_chr1
