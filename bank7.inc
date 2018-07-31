@@ -641,7 +641,7 @@ _beamer_control_move_test:
 		BEQ		.beamer_speed_reset
 		JSR		_beamer_direction_calc		; get pressed button and calc new movement
 		LDA		_beamer_direction_idx		; direction
-		JSR		_players_move_obstacles_test	; then test if any obstacles there
+		JSR		_players_move_obstacles_test; then test if any obstacles there
 		BCS		.beamer_speed_reset
 .beamer_speed_calc:
 		LDA		_beamer_direction_idx		; according to speed and face direction
@@ -5953,6 +5953,7 @@ loc_62EBD:
 		LDA		#$80
 		STA		_obj_x_clk,X
 		STA		_obj_y_clk,X
+		JSR		_obj_screen_pos_update
 		LDA		_tmp0
 		STA		_trds_obj_idx,X
 		BMI		_nbgsub_dummy
@@ -6127,10 +6128,15 @@ loc_62FFE:
 loc_63000:
 		LDY		_trds_obj_idx,X				; after all scroll and shifts are recalculated
 		BMI		loc_63014					; we may draw sprite finally. one sprite for one thread
-		LDA		_scr_bank_lib,Y				; every object has its own sprite library in a
-		STA		_prg_cur_bank				; corresponding bank, so select bank again
-		JSR		_mmc1_prg_safe				; and perform sprite insertion procedure according
-		TXA									; to sprite index assigned in thread arrays
+		LDA		_spr_libs_list,Y			; every object has its own sprite library in a
+		TAY									; corresponding bank, so select bank again
+		LDA		_spr_libs_bank_list,Y		; and perform sprite insertion procedure according
+		CMP		#$07						; to sprite index assigned in thread arrays
+		BEQ		.no_need_prg7				; NOTE, little quirk to not to set prg7 here
+		STA		_prg_cur_bank
+		JSR		_mmc1_prg_safe
+.no_need_prg7:
+		TXA
 		PHA
 		JSR		_obj_spr_insert
 		PLA
@@ -6147,7 +6153,7 @@ _debug_spr_insert:
 		LDY		_debug_lib_idx
 		LDA		_prg_cur_bank
 		PHA
-		LDA		_debug_spr_bank_list,Y
+		LDA		_spr_libs_bank_list,Y
 		STA		_prg_cur_bank
 		JSR		_mmc1_prg_safe
 		LDA		_debug_lib_type
@@ -6163,7 +6169,7 @@ _debug_spr_insert:
 		LDA		_var0
 		ADC		_spr_libA_ofs_tbl_hi,Y
 		STA		_ptr06+1
-		JSR		_spr_block_fetch
+		JSR		_spr_lib_fetch
 		JMP		.debug_end
 .debug_typeB:
 		LDA		_debug_spr
@@ -6173,14 +6179,11 @@ _debug_spr_insert:
 		LDA		#$00
 		ADC		_spr_libB_ofs_tbl_hi,Y
 		STA		_ptr06+1
-		JSR		_spr_block_fetch
+		JSR		_spr_lib_fetch
 .debug_end:
 		PLA
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
-
-_debug_spr_bank_list:
-		.BYTE	$00,$01,$00,$01,$01,$04,$04,$04,$03
 #endif
 
 ; =============== S U B R O U T I N E ======n================================
@@ -6221,7 +6224,7 @@ _obj_spr_insert:
 		LDA		_var0
 		ADC		_spr_libA_ofs_tbl_hi,Y
 		STA		_ptr06+1
-		BNE		_spr_block_fetch
+		BNE		_spr_lib_fetch
 locret_6309C:
 		RTS
 loc_6309D:
@@ -6242,7 +6245,7 @@ loc_6309D:
 ; typeA or typeB, no matter what library type you using. first attempt
 ; to remove secondary sprites lib at all.
 ;
-_spr_block_fetch:
+_spr_lib_fetch:
 		LDY		#$00						; fetch library ptr
 		LDA		(_ptr06),Y
 		STA		_ptr1E
@@ -6254,15 +6257,21 @@ _spr_block_fetch:
 
 #if NEW_SPRITES==1
 ; =============== S U B R O U T I N E ======n================================
-_spr_block_fetch_ex:
+_spr_lib_fetch_ex:
 		LDA		#$FF
 		STA		_tmp1D						; reset attrs removes value
 		LDA		#$00
 		STA		_tmp1C						; reset attrs override value
 		TAY
 		LDA		(_ptr1E),Y					; fetch command/counter
-		BEQ		.spr_data_end				; $00 - end of data
 		STA		_var0						; store command, set data ptr
+		AND		#$20
+		BNE		_spr_clip_insert			; last sprite block flag, do not loop then
+		JSR		_spr_clip_insert
+		JMP		_spr_lib_fetch_ex
+
+; =============== S U B R O U T I N E ======n================================
+_spr_clip_insert:
 		INC		_ptr1E						; to actual data for command
 		BNE		.spr_fetch
 		INC		_ptr1E+1
@@ -6275,7 +6284,7 @@ _spr_block_fetch_ex:
 		INY									; will be 3 bytes to skip for next cmd
 .spr_no_override:
 		LDA		_var0						; clear command bits
-		AND		#$3F
+		AND		#$1F
 		STA		_var0						; remove extra flags, counter remains
 		LDA		(_ptr1E),Y					; offset flag set, next data for this
 		STA		_ptr08						; command is a link offset to already
@@ -6299,7 +6308,7 @@ _spr_block_fetch_ex:
 		LDA		_ptr1E+1
 		STA		_ptr08+1
 		LDA		_var0						; calculate size of raw data, without
-		AND		#$3F						; attributes (3 bytes per sprite)
+		AND		#$1F						; attributes (3 bytes per sprite)
 		STA		_var0						; since we couldn't send more than 64 sprites
 		ASL									; at all, there will be no carry, safe
 		ADC		_var0
@@ -6310,6 +6319,8 @@ _spr_block_fetch_ex:
 		LDA		_ptr1E+1					; offset
 		STA		_ptr08+1
 		LDA		_var0						; calculate size of raw data, move
+		AND		#$1F
+		STA		_var0
 		ASL									; current pointer to next command
 		ASL
 .spr_common_skip:
@@ -6318,16 +6329,9 @@ _spr_block_fetch_ex:
 		BCC		.spr_common_ins
 		INC		_ptr1E+1
 .spr_common_ins:
-		JSR		_spr_clip_insert			; send raw sprites data
-		JMP		_spr_block_fetch_ex
-.spr_data_end:
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_spr_clip_insert:
 		LDX		_spr_buf_pos
 		LDY		#$00
-loc_63749:
+.spr_ins_loop:
 		LDA		#$00
 		STA		_ppu_spr_buf+3,X
 		CLC
@@ -6386,12 +6390,12 @@ loc_6379F:
 loc_637A2:
 		INY
 		DEC		_var0
-		BNE		loc_63749
+		BNE		.spr_ins_loop
 		STX		_spr_buf_pos
 		RTS
 #else
 ; =============== S U B R O U T I N E ======n================================
-_spr_block_fetch_ex:
+_spr_lib_fetch_ex:
 		LDY		#$00
 		LDA		(_ptr1E),Y
 		BMI		.spr_typeB_insert
@@ -6440,7 +6444,7 @@ _spr_clip_insert:
 		LDA		(_ptr08),Y
 		STA		_var0
 		INY
-loc_63749:
+.spr_ins_loop:
 ; FIX: for some reason, same workaround for glitched sprites here were used once
 ; before the sprite insertion loop, and affects only first sprite, but not the
 ; rest ones.
@@ -6498,7 +6502,7 @@ loc_6379F:
 loc_637A2:
 		INY
 		DEC		_var0
-		BNE		loc_63749
+		BNE		.spr_ins_loop
 		STX		_spr_buf_pos
 		RTS
 #endif
@@ -8680,16 +8684,26 @@ _spr_libs_list:
 		.BYTE	$05,$05,$08,$06,$06,$06,$06,$06,$06,$06,$07,$05,$05,$06,$08,$08
 		.BYTE	$08
 
+_spr_libs_bank_list:
+		.BYTE	<[_spr_libA00_bank]	; 00 bank
+		.BYTE	<[_spr_libA01_bank]	; 01 bank
+		.BYTE	<[_spr_libA02_bank]	; 00 bank
+		.BYTE	<[_spr_libA03_bank]	; 01 bank
+		.BYTE	<[_spr_libA04_bank]	; 01 bank
+		.BYTE	<[_spr_libA05_bank]	; 04 bank
+		.BYTE	<[_spr_libA06_bank]	; 04 bank
+		.BYTE	<[_spr_libA07_bank]	; 04 bank
+		.BYTE	<[_spr_libA08_bank]	; 03 bank
 _spr_libA_ofs_tbl_lo:
-		.BYTE	<[_spr_libA00]	; 00 00 bank
-		.BYTE	<[_spr_libA01]	; 01 01 bank
-		.BYTE	<[_spr_libA02]	; 02 00 bank
-		.BYTE	<[_spr_libA03]	; 03 01 bank
-		.BYTE	<[_spr_libA04]	; 04 01 bank
-		.BYTE	<[_spr_libA05]	; 05 04 bank
-		.BYTE	<[_spr_libA06]	; 06 04 bank
-		.BYTE	<[_spr_libA07]	; 07 04 bank
-		.BYTE	<[_spr_libA08]	; 08 03 bank
+		.BYTE	<[_spr_libA00]	; 00 bank
+		.BYTE	<[_spr_libA01]	; 01 bank
+		.BYTE	<[_spr_libA02]	; 00 bank
+		.BYTE	<[_spr_libA03]	; 01 bank
+		.BYTE	<[_spr_libA04]	; 01 bank
+		.BYTE	<[_spr_libA05]	; 04 bank
+		.BYTE	<[_spr_libA06]	; 04 bank
+		.BYTE	<[_spr_libA07]	; 04 bank
+		.BYTE	<[_spr_libA08]	; 03 bank
 _spr_libA_ofs_tbl_hi:
 		.BYTE	>[_spr_libA00]
 		.BYTE	>[_spr_libA01]
@@ -8959,9 +8973,9 @@ _spr_libB_ofs_tbl_hi:
 
 #if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
-		INCLUDE		"../spr_data4_new.inc"
+		INCLUDE		"../spr/spr_data4_new.inc"
 #else
-		INCLUDE		"../spr_data4.inc"
+		INCLUDE		"../spr/spr_data4.inc"
 #endif
 #endif
 

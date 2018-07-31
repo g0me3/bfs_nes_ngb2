@@ -2299,9 +2299,9 @@ _scr_vega_mother:
 
 #if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
-		INCLUDE		"../spr_data2_new.inc"
+		INCLUDE		"../spr/spr_data2_new.inc"
 #else
-		INCLUDE		"../spr_data2.inc"
+		INCLUDE		"../spr/spr_data2.inc"
 #endif
 #endif
 

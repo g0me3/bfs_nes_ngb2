@@ -1,7 +1,7 @@
 
 ;-------------C-O-N-S-T-A-N-T-S-----------------
 
-DEBUG			EQU		1
+DEBUG			EQU		0
 OPTIMIZATION	EQU		1
 TWO_PLAYER_MODE	EQU		0
 OOS_ACTIVE		EQU		0
@@ -21,7 +21,7 @@ PAD_D			EQU		$04
 PAD_L			EQU		$02
 PAD_R			EQU		$01
 
-DEBUG_MAX_ENEMY	EQU		$0E
+DEBUG_MAX_ENEMY	EQU		$0A
 ; $0A - default
 ; $0E - max
 DEBUG_LEVEL		EQU		$00
@@ -33,10 +33,10 @@ DEBUG_CHKPOINT	EQU		$01
 ; 3 - 1 2 3 4 5 6
 ; 4 - 1 2 3 4 5
 ; 5 - 1
-DEBUG_CHR0		EQU		$12
-DEBUG_LIBA		EQU		$06
+DEBUG_CHR0		EQU		$01
+DEBUG_LIBA		EQU		$00
 DEBUG_LIBB		EQU		$00
-DEBUG_IDX		EQU		$61
+DEBUG_IDX		EQU		$02
 
 ;--------------------A-P-U----------------------
 
@@ -202,6 +202,7 @@ TMP_OFS		SET	[{1}-TMP_CMD_PC-{2}]
 ;---------G-A-M-E--S-P-E-C-I-F-I-C--------------
 
 	MAC		SPR_LIB_START
+{1}_bank	SET	CUR_PRG_BANK
 {1}		SET		.
 SPR_LIB	SET		.
 	ENDM

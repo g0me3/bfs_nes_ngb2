@@ -4661,9 +4661,9 @@ _scr_ghost_nanny_itself:
 
 #if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
-		INCLUDE		"../spr_data3_new.inc"
+		INCLUDE		"../spr/spr_data3_new.inc"
 #else
-		INCLUDE		"../spr_data3.inc"
+		INCLUDE		"../spr/spr_data3.inc"
 #endif
 #endif
 

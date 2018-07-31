@@ -3061,9 +3061,9 @@ _pal_end_sprite_lib:
 
 #if SPR_SIZE_TEST==0
 #if NEW_SPRITES==1
-		INCLUDE		"../spr_data0_new.inc"
+		INCLUDE		"../spr/spr_data0_new.inc"
 #else
-		INCLUDE		"../spr_data0.inc"
+		INCLUDE		"../spr/spr_data0.inc"
 #endif
 #endif
 
@@ -3593,5 +3593,7 @@ _tlmA_blank:
 #endif
 
 		SECTION_END	"TLM UNPACKER AND DATA"
+
+		INCLUDE	"../lvl/lvl2.inc"
 
 		BANK_END 0,$C000
