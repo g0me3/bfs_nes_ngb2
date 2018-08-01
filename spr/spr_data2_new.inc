@@ -318,6 +318,9 @@ _sprA08_28:
 		.BYTE	$FF,$FA,$43,$FF
 _sprA08_29:
 		.BYTE	$2B
+		.BYTE	$FD,$C7,$00,$FA
+		.BYTE	$FD,$D7,$00,$02
+		.BYTE	$FD,$E7,$00,$0A
 _sprA08_29_A:
 		.BYTE	$08,$3E,$03,$00
 		.BYTE	$08,$3E,$43,$F8
@@ -327,54 +330,52 @@ _sprA08_29_A:
 		.BYTE	$00,$E2,$42,$00
 		.BYTE	$F0,$E0,$02,$F8
 		.BYTE	$F0,$E0,$42,$00
-		.BYTE	$FD,$C7,$00,$FA
-		.BYTE	$FD,$D7,$00,$02
-		.BYTE	$FD,$E7,$00,$0A
 _sprA08_2A:
+		.BYTE	$03
+		.BYTE	$FF,$C7,$00,$FA
+		.BYTE	$FF,$D7,$00,$02
+		.BYTE	$FF,$E7,$00,$0A
 		.BYTE	$84
 		.WORD	_sprA08_29_A
-		.BYTE	$27
+		.BYTE	$24
 _sprA08_2A_B:
 		.BYTE	$01,$E2,$02,$F8
 		.BYTE	$01,$E2,$42,$00
 		.BYTE	$F1,$F0,$02,$F8
 		.BYTE	$F1,$F0,$42,$00
-		.BYTE	$FF,$C7,$00,$FA
-		.BYTE	$FF,$D7,$00,$02
-		.BYTE	$FF,$E7,$00,$0A
 _sprA08_2B:
+		.BYTE	$03
+		.BYTE	$FE,$C7,$00,$FA
+		.BYTE	$FE,$D7,$00,$02
+		.BYTE	$FE,$E7,$00,$0A
 		.BYTE	$84
 		.WORD	_sprA08_2A_B
 		.BYTE	$82
 		.WORD	_sprA08_29_A
-		.BYTE	$25
+		.BYTE	$22
 		.BYTE	$E8,$E3,$00,$F8
 		.BYTE	$E8,$E3,$40,$00
-		.BYTE	$FE,$C7,$00,$FA
-		.BYTE	$FE,$D7,$00,$02
-		.BYTE	$FE,$E7,$00,$0A
 _sprA08_2C:
 		.BYTE	$2A
+		.BYTE	$FD,$F5,$00,$02
+		.BYTE	$FD,$E5,$00,$FA
 _sprA08_2C_A:
+		.BYTE	$E8,$D5,$00,$01
+		.BYTE	$E8,$C5,$00,$F9
 		.BYTE	$00,$C4,$42,$00
 		.BYTE	$00,$D4,$42,$F8
 _sprA08_2C_B:
 		.BYTE	$06,$3E,$03,$00
 		.BYTE	$06,$3E,$43,$F8
-		.BYTE	$E8,$C5,$00,$F9
-		.BYTE	$E8,$D5,$00,$01
 		.BYTE	$F0,$C2,$42,$00
 		.BYTE	$F0,$D2,$42,$F8
-		.BYTE	$FD,$E5,$00,$FA
-		.BYTE	$FD,$F5,$00,$02
 _sprA08_2D:
-		.BYTE	$87
-		.WORD	_sprA08_2C_A
-		.BYTE	$24
-		.BYTE	$F0,$D2,$42,$F8
+		.BYTE	$03
 		.BYTE	$F8,$C7,$00,$FA
 		.BYTE	$F8,$D7,$00,$02
 		.BYTE	$F8,$E7,$00,$0A
+		.BYTE	$A8
+		.WORD	_sprA08_2C_A
 _sprA08_2E:
 		.BYTE	$82
 		.WORD	_sprA08_2C_B
@@ -411,6 +412,9 @@ _sprA08_30:
 		.BYTE	$FD,$F4,$42,$00
 _sprA08_31:
 		.BYTE	$2B
+		.BYTE	$FD,$C7,$00,$FC
+		.BYTE	$FD,$D7,$00,$04
+		.BYTE	$FD,$E7,$00,$0C
 		.BYTE	$00,$E2,$02,$FA
 		.BYTE	$00,$E2,$42,$02
 		.BYTE	$08,$3E,$03,$02
@@ -419,9 +423,6 @@ _sprA08_31:
 		.BYTE	$E7,$E3,$40,$02
 		.BYTE	$F0,$E0,$02,$FA
 		.BYTE	$F0,$E0,$42,$02
-		.BYTE	$FD,$C7,$00,$FC
-		.BYTE	$FD,$D7,$00,$04
-		.BYTE	$FD,$E7,$00,$0C
 _sprA08_32:
 		.BYTE	$23
 		.BYTE	$00,$C6,$02,$F8

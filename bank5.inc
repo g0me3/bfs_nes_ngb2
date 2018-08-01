@@ -3,7 +3,6 @@
 
 		BANK_START $05
 
-		INCLUDE	"../lvl/lvl5.inc"
-		INCLUDE	"../lvl/lvl4.inc"
+		.BYTE	$FF
 
 		BANK_END 5,$C000

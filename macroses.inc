@@ -21,11 +21,9 @@ PAD_D			EQU		$04
 PAD_L			EQU		$02
 PAD_R			EQU		$01
 
-DEBUG_MAX_ENEMY	EQU		$0A
 ; $0A - default
 ; $0E - max
-DEBUG_LEVEL		EQU		$00
-DEBUG_CHKPOINT	EQU		$01
+DEBUG_MAX_ENEMY	EQU		$0A
 ; L - C
 ; 0 - 1 2 3 4
 ; 1 - 1 2 3 4 5
@@ -33,10 +31,16 @@ DEBUG_CHKPOINT	EQU		$01
 ; 3 - 1 2 3 4 5 6
 ; 4 - 1 2 3 4 5
 ; 5 - 1
+DEBUG_LEVEL		EQU		$00
+DEBUG_CHKPOINT	EQU		$01
+; CHR0 - 00-1F
+; LIBA - 00-08
+; LIBB - 00-01 (for 02, 06-08 LIBA only!)
+; IDX  - 00-lib max value
 DEBUG_CHR0		EQU		$01
 DEBUG_LIBA		EQU		$00
 DEBUG_LIBB		EQU		$00
-DEBUG_IDX		EQU		$02
+DEBUG_IDX		EQU		$00
 
 ;--------------------A-P-U----------------------
 

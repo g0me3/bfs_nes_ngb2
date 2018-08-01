@@ -540,7 +540,6 @@ _trds_obj_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _nmi_flag:
 		.BYTE	0
-#if DEBUG==1
 _debug_vars_list:
 _debug_chr0:
 		.BYTE	0
@@ -556,7 +555,6 @@ _debug_pos_idx:
 		.BYTE	0
 _debug_cnt:
 		.BYTE	0,0
-#endif
 
 GENERAL_RAM_FREE	SET	[$800-.]
 

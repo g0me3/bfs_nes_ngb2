@@ -350,7 +350,7 @@ locret_601F6:
 ; since it inserted to the room with zero cooridnates, it is always
 ; clipped by sprite engine
 ;
-_scr12_exit_arrow:
+		FAR_OFS	_scr12_exit_arrow
 		NBG_HNDL_SET	_nbgsub_exit_arrow_off_test
 _sloc_601FA:
 		NJSR			_nsub_obj_spr_idx_set_from_sarg	; blink sprite constantly
@@ -370,7 +370,7 @@ loc_6020F:
 		JMP		_scr_cur_trd_off
 
 ; =============== S C R I P T ==========================s====================
-_scr08_beamer_handler:
+		FAR_OFS	_scr08_beamer_handler
 		STORE8			_players_hit_flag,$00			; set when hit by ghost
 		STORE8			_players_inv_timer,$00			; set when restores after hit
 		STORE16			_beamer_speed,$180				; initial value for speed
@@ -1259,7 +1259,7 @@ _nsub_beamer_hit_spr_select:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_scr09_player_beam:
+		FAR_OFS	_scr09_player_beam
 		NBG_HNDL_SET	_nbgsub_beam_input_control		; keep beamer input working
 		SARG_SET		SARG0,$FF						; there is no beamed obkects yet
 		SLOOP_BEGIN		$14								; when started, lasts for 20 frames (1/3 sec)
@@ -1573,7 +1573,7 @@ locret_60F02:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_scr0A_catcher_handler:
+		FAR_OFS	_scr0A_catcher_handler
 #if TWO_PLAYER_MODE==1
 		STORE8			_players_hit_flag+1,$00
 		STORE8			_players_inv_timer+1,$00
@@ -2255,7 +2255,7 @@ _nsub_catcher_spr_base_reset:
 		RTS
 
 ; =============== S C R I P T ==========================s====================
-_scr0B_player_catch:
+		FAR_OFS	_scr0B_player_catch
 		SARG_SET		SARG0,$00
 		NBG_HNDL_SET	_nbgsub_catch_ctest				; init catch collision test
 		NJSR			_nsub_catch_deploy_init			; set speed and direction of catch
@@ -6051,9 +6051,12 @@ loc_62F6A:
 .trds_do_exec:
 		LDX		_cur_trd_slot				; now, finally do execute. fetch current thread index
 		LDY		_trds_obj_idx,X				; and set corresponding PRG bank before executing
-		LDA		_scr_bank_lib,Y				; scripts may be executed independently, but must
-		STA		_prg_cur_bank				; inherit one of existing library indexes to be able
-		JSR		_mmc1_prg_safe				; to use proper programm bank and sprite library
+		LDA		_scr_bank_lib,Y				; scripts may be executed independently,
+		CMP		#$07						; NEW, now they aren't tied with scripts data together
+		BEQ		.trds_no_need_to_switch		; NEW, also not to switch if script in system bank
+		STA		_prg_cur_bank
+		JSR		_mmc1_prg_safe
+.trds_no_need_to_switch:
 		JSR		_thread_exec
 .trds_skip_exec:
 		INC		_cur_trd_slot				; repeat for all 14 threds
@@ -6124,17 +6127,13 @@ loc_62FDA:
 loc_62FFC:
 		STA		_ppu_scroll_pos_y
 loc_62FFE:
-		LDX		#$00
+		LDA		#_spr_libA00_bank			; after all scroll and shifts are recalculated
+		STA		_prg_cur_bank				; we may draw sprite finally. one sprite for one thread
+		JSR		_mmc1_prg_safe				; every object has its own sprite library
+		LDX		#$00						; NEW, all sprites in one bank now
 loc_63000:
-		LDY		_trds_obj_idx,X				; after all scroll and shifts are recalculated
-		BMI		loc_63014					; we may draw sprite finally. one sprite for one thread
-		LDA		_spr_libs_list,Y			; every object has its own sprite library in a
-		TAY									; corresponding bank, so select bank again
-		LDA		_spr_libs_bank_list,Y		; and perform sprite insertion procedure according
-		CMP		#$07						; to sprite index assigned in thread arrays
-		BEQ		.no_need_prg7				; NOTE, little quirk to not to set prg7 here
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
+		LDY		_trds_obj_idx,X
+		BMI		loc_63014
 .no_need_prg7:
 		TXA
 		PHA
@@ -6147,15 +6146,14 @@ loc_63014:
 		BCC		loc_63000					; repeat for all threads...
 		RTS
 
-#if DEBUG==1
 ; =============== S U B R O U T I N E ======n================================
 _debug_spr_insert:
 		LDY		_debug_lib_idx
 		LDA		_prg_cur_bank
 		PHA
-		LDA		_spr_libs_bank_list,Y
-		STA		_prg_cur_bank
-		JSR		_mmc1_prg_safe
+		LDA		#_spr_libA00_bank			; NEW: get the main sprites bank by
+		STA		_prg_cur_bank				; first lib in list, now they are in the same
+		JSR		_mmc1_prg_safe				; bank
 		LDA		_debug_lib_type
 		BNE		.debug_typeB
 		LDA		#$00
@@ -6184,7 +6182,6 @@ _debug_spr_insert:
 		PLA
 		STA		_prg_cur_bank
 		JMP		_mmc1_prg_safe
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _spr_y_pos_adjust:
@@ -8465,109 +8462,115 @@ _mmc1_prg:
 IRQ:
 		RTI
 
+_FLAGS_NONE	EQU	$00
+_FLAG0		EQU	$80
+_FLAG1		EQU	$40
+_FLAG2		EQU	$20
+
 ; NOTE: flags used to additionally load external arguments for selected script
 ; index. bits 80, 40 and 20 are corresponds to ARG0, ARG1, ARG2 additionally
 ; loaded values.
+;
 _scr_flags:
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$80
-		.BYTE	$40
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$60
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$20
-		.BYTE	$40
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$40
-		.BYTE	$80
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$40
-		.BYTE	$40
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
-		.BYTE	$00
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAG0
+		.BYTE	_FLAG1
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAG1|_FLAG2
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAG2
+		.BYTE	_FLAG1
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAG1
+		.BYTE	_FLAG0
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAG1
+		.BYTE	_FLAG1
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
+		.BYTE	_FLAGS_NONE
 _scr_bank_lib:
-		.BYTE	$00
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$00
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$01
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$01
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$03
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$03
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$04
-		.BYTE	$03
-		.BYTE	$03
-		.BYTE	$03
+		.BYTE	_scr00_intro_title_select_bank
+		.BYTE	_scr01_lvl1_handler_bank
+		.BYTE	_scr02_lvl2_handler_bank
+		.BYTE	_scr03_lvl3_handler_bank
+		.BYTE	_scr04_lvl4_handler_bank
+		.BYTE	_scr05_lvl5_handler_bank
+		.BYTE	_scr06_lvl6_handler_bank
+		.BYTE	_scr07_ending_bank
+		.BYTE	_scr08_beamer_handler_bank
+		.BYTE	_scr09_player_beam_bank
+		.BYTE	_scr0A_catcher_handler_bank
+		.BYTE	_scr0B_player_catch_bank
+		.BYTE	_scr0C_room_doors_handler_bank
+		.BYTE	_scr0D_money_bag_bank
+		.BYTE	_scr0E_empty_mine_trolley_bank
+		.BYTE	_scr0F_candle_bank
+		.BYTE	_scr10_train_semaphores_bank
+		.BYTE	_scr11_lvl2_ghost_nanny_bank
+		.BYTE	_scr12_exit_arrow_bank
+		.BYTE	_scr13_slow_moving_slime_bank
+		.BYTE	_scr14_fast_moving_slime_bank
+		.BYTE	_scr15_trolley_kick_slime_bank
+		.BYTE	_scr16_still_throw_forward_slime_bank
+		.BYTE	_scr17_runner_bank
+		.BYTE	_scr18_chain_saw_bank
+		.BYTE	_scr19_toilet_snake_bank
+		.BYTE	_scr1A_lvl1_boss_judges_bank
+		.BYTE	_scr1B_court_chair_bank
+		.BYTE	_scr1C_girl_and_floaters_bank
+		.BYTE	_scr1D_air_hammer_miner_bank
+		.BYTE	_scr1E_pick_axe_miner_bank
+		.BYTE	_scr1F_hammer_miner_bank
+		.BYTE	_scr20_trolley_miner_bank
+		.BYTE	_scr21_train_ghost_bank
+		.BYTE	_scr22_lvl2_boss_train_slime_bank
+		.BYTE	_scr23_halloween_bank
+		.BYTE	_scr24_flying_elephant_bank
+		.BYTE	_scr25_stinging_elephant_bank
+		.BYTE	_scr26_sword_ninja_bank
+		.BYTE	_scr27_shuriken_ninja_bank
+		.BYTE	_scr28_pink_goo_bank
+		.BYTE	_scr29_sewer_worm_bank
+		.BYTE	_scr2A_morning_star_troll_bank
+		.BYTE	_scr2B_still_throw_ballistic_slime_bank
+		.BYTE	_scr2C_fast_throw_forward_slime_bank
+		.BYTE	_scr2D_rotator_bank
+		.BYTE	_scr2E_lvl4_boss_dragons_bank
+		.BYTE	_scr2F_lvl5_boss_keykeeper_bank
+		.BYTE	_scr30_lvl6_boss_vega_bank
 _scr_lib_lo:
 ;	SYSTEM scripts, never used in level objects lists, ran manually
 ; 	by the system or by the other scripts
@@ -8684,16 +8687,6 @@ _spr_libs_list:
 		.BYTE	$05,$05,$08,$06,$06,$06,$06,$06,$06,$06,$07,$05,$05,$06,$08,$08
 		.BYTE	$08
 
-_spr_libs_bank_list:
-		.BYTE	<[_spr_libA00_bank]	; 00 bank
-		.BYTE	<[_spr_libA01_bank]	; 01 bank
-		.BYTE	<[_spr_libA02_bank]	; 00 bank
-		.BYTE	<[_spr_libA03_bank]	; 01 bank
-		.BYTE	<[_spr_libA04_bank]	; 01 bank
-		.BYTE	<[_spr_libA05_bank]	; 04 bank
-		.BYTE	<[_spr_libA06_bank]	; 04 bank
-		.BYTE	<[_spr_libA07_bank]	; 04 bank
-		.BYTE	<[_spr_libA08_bank]	; 03 bank
 _spr_libA_ofs_tbl_lo:
 		.BYTE	<[_spr_libA00]	; 00 bank
 		.BYTE	<[_spr_libA01]	; 01 bank
