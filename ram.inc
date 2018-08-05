@@ -445,20 +445,14 @@ _catcher_turns_count:
 		.BYTE	0
 _beamer_direction_idx:
 		.BYTE	0
-#if TWO_PLAYER_MODE==1
 _catcher_direction_idx:
 		.BYTE	0
-#endif
 _beamer_speed:
 		.BYTE	0,0
 _catcher_speed:
 		.BYTE	0,0
 _tmp_idx:
 		.BYTE	0
-#if TWO_PLAYER_MODE==0
-_catcher_direction_idx:
-		.BYTE	0
-#endif
 _beamer_spr_base_tmp:
 		.BYTE	0
 _catcher_spr_base_tmp:
@@ -472,10 +466,7 @@ _catcher_target_slot_idx:
 _catcher_target_distance:
 		.BYTE	0
 _players_hit_flag:
-		.BYTE	0
-#if TWO_PLAYER_MODE==1
-		.BYTE	0
-#endif
+		.BYTE	0,0
 _cur_room_orientation_idx:
 		.BYTE	0
 _cur_room_data_col:
@@ -499,15 +490,9 @@ _scores:
 _hi_scores:
 		.BYTE	0,0
 _players_lives:
-		.BYTE	0
-#if TWO_PLAYER_MODE==1
-		.BYTE	0
-#endif
+		.BYTE	0,0
 _players_inv_timer:
-		.BYTE	0
-#if TWO_PLAYER_MODE==1
-		.BYTE	0
-#endif
+		.BYTE	0,0
 _game_flags:
 		.BYTE	0
 _continues:
@@ -539,6 +524,8 @@ _control_catch_button_code:
 _trds_obj_idx:
 		.BYTE	0,0,0,0,0,0,0,0,0,0,0,0,0,0
 _nmi_flag:
+		.BYTE	0
+_two_player_mode_flag:
 		.BYTE	0
 _debug_vars_list:
 _debug_chr0:

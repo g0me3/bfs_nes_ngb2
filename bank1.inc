@@ -527,16 +527,14 @@ _lvl2_room5_handler:
 _lvl2_room5_exits:
 		.BYTE	$01
 		.BYTE	$F8,$01,$40,$02
-; NOTE: fix exit position of the players to avoid possible getting stuck
-; of the catcher, which put at the start over the non-penetrable block
-; and if walk left, will stuck in it.
+; NEW: fix exit position of the players to avoid possible getting stuck
+; of the catcher in 2p mode, which put at the start over the non-penetrable
+; block and if walk left, will stuck in it.
 ; WARNING! in this new position, beamer put on the rails and may be killed
 ; almost immediately lol
-#if TWO_PLAYER_MODE==1
+;		.BYTE	$45,$46,$01
 		.BYTE	$46,$46,$01
-#else
-		.BYTE	$45,$46,$01
-#endif
+
 _lvl2_room5_doors:
 		.BYTE	$01,$E0,$02,$40,$03,DOOR_TEST
 		.BYTE	$FF
@@ -2727,7 +2725,12 @@ _nsub_ingame_pause_handler:
 		STA		_ppu_scroll_pos_y+1
 		LDA		_chr_bank1
 		PHA
-		LDA		#_tlm1_score_idx			; draw pause static info tile-map
+		LDA		_two_player_mode_flag
+		BEQ		.pause_1p_mode
+		LDA		#_tlm1_2p_score_idx			; draw 2p pause static info tile-map
+		.BYTE	$2C							; skip hack
+.pause_1p_mode:
+		LDA		#_tlm1_1p_score_idx			; draw 1p pause static info tile-map
 		JSR		_far_prg0_tlm_lib_unpack
 		JSR		_nsub_scores_and_players_lives_draw	; draw pause dynamic info (scores, lives)
 		JSR		_ppu_res_send_param			; send palette
@@ -2783,13 +2786,12 @@ _pause_screen_anim:
 		LDX		#$90						; and put it to fixed location
 		LDY		#$B8
 		LDA		_beamer_spr_base_tmp		; using the beamer spr idx
-
-#if TWO_PLAYER_MODE==1
+		LDA		_two_player_mode_flag
+		BEQ		_player_spr_insert
 		JSR		_player_spr_insert
 		LDX		#$50
 		LDY		#$B8
 		LDA		_catcher_spr_base_tmp
-#endif
 
 ; !FALLTHROUGH!
 
@@ -2897,8 +2899,17 @@ _scr_stage_complete:
 			NARGB		$FE
 		SDELAY			$06
 		SLOOP_END
+		NJSR			_nsub_mcmp						; special test for additional handler.
+			NARGW		_two_player_mode_flag			; after setting the control routines
+			NARGB		$01								; this thread is suspended
+		SBCSS			loc_15FE2
 		NJSR			_nsub_far_prg0_tlm_lib_unpack	; now unpack tlm for scores info
-			NARGB		_tlm1_score_idx
+			NARGB		_tlm1_1p_score_idx
+		SJMPS			loc_15FE1
+loc_15FE2:
+		NJSR			_nsub_far_prg0_tlm_lib_unpack	; now unpack tlm for scores info
+			NARGB		_tlm1_2p_score_idx
+loc_15FE1:
 		NJSR			_nsub_scores_and_players_lives_draw	; draw the same info as for pause screen
 		NJSR			_nsub_bg_pal_load
 			NARGW		_stage_complete_bg_pal
@@ -2983,11 +2994,12 @@ _nsub_scores_and_players_lives_draw:
 		LDX		#$10
 		LDY		#$0A
 		JSR		_printf_scores
-#if TWO_PLAYER_MODE==1
+		LDA		_two_player_mode_flag
+		BEQ		.skip_2p_sores
 		LDA		#$0D
 		LDX		#$01
 		JSR		_nsub_players_lives_draw
-#endif
+.skip_2p_sores:
 		LDA		#$15
 		LDX		#$00
 
@@ -3455,16 +3467,13 @@ loc_16409:
 		CPX		#$0E
 		BCC		loc_16400
 		LDX		_tmp1
-#if TWO_PLAYER_MODE==1
-		LDA		#$02
-		JSR		_obj_to_room_door_distance_test
-		BCC		_room_door_open
-		LDA		#$04
-		JSR		_obj_to_room_door_distance_test
-#else
 		LDA		#$02						; here is the additional test to be sure
 		JSR		_obj_to_room_door_distance_test	; this is the main player want to open it
-#endif
+		BCC		_room_door_open
+		LDA		_two_player_mode_flag
+		BEQ		_room_door_closed
+		LDA		#$04
+		JSR		_obj_to_room_door_distance_test
 		BCS		_room_door_closed
 
 ; !FALLTHROUGH!

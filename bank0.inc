@@ -1684,7 +1684,8 @@ loc_942C:
 		DEC		_players_lives
 		BNE		loc_942C
 loc_9436:
-#if TWO_PLAYER_MODE==1
+		LDA		_two_player_mode_flag
+		BEQ		loc_9437
 		LDA		_players_lives+1
 		BEQ		loc_9437
 loc_942D:
@@ -1693,7 +1694,6 @@ loc_942D:
 		DEC		_players_lives+1
 		BNE		loc_942D
 loc_9437:
-#endif
 		JSR		_ppu_res_send_param			; draw text resources
 		.WORD	_res_top_score
 		JSR		_ppu_res_send_param
@@ -7073,7 +7073,8 @@ _tlm_title_text11:
 
 _tlm_pak_lib:
 		TLM_PAK	_tlm0_title_screen
-		TLM_PAK	_tlm1_score
+		TLM_PAK	_tlm1_1p_score
+		TLM_PAK	_tlm1_2p_score
 		TLM_PAK	_tlm2_busterselect
 		TLM_PAK	_tlm3_game_over
 ;		TLM_PAK	_tlm4_score_unused
@@ -7364,13 +7365,10 @@ loc_AFAF:
 
 _tlm0_title_screen:
 		INCBIN	"../tlm/tlm0.pak"
-#if TWO_PLAYER_MODE==1
-_tlm1_score:
-		INCBIN	"../tlm/tlm1_2p.pak"
-#else
-_tlm1_score:
+_tlm1_1p_score:
 		INCBIN	"../tlm/tlm1.pak"
-#endif
+_tlm1_2p_score:
+		INCBIN	"../tlm/tlm1_2p.pak"
 _tlm2_busterselect:
 		INCBIN	"../tlm/tlm2.pak"
 _tlm3_game_over:

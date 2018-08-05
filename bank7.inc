@@ -115,6 +115,8 @@ loc_60020:
 		STA		_control_beam_button_code	; default controls
 		LDA		#PAD_B
 		STA		_control_catch_button_code
+		LDA		#TWO_PLAYER_MODE
+		STA		_two_player_mode_flag
 		LDA		_ram_signature				; ram signature to keep scores
 		CMP		#"H"						; "HS" - HUDSON SOFT?
 		BNE		loc_6007C
@@ -180,7 +182,6 @@ _MAIN_GAME_LOOP:
 		STA		_apu_play_delayed_req
 		STA		_scores
 		STA		_scores+1
-;		STA		_unused_var					; REDUNDANT, removed
 		LDA		_scores_1st_extend			; load first extend value
 		STA		_scores_to_next_life
 		LDA		_scores_1st_extend+1
@@ -191,9 +192,7 @@ _MAIN_GAME_LOOP:
 		SEC
 		SBC		_difficulty
 		STA		_players_lives				; init lives
-#if TWO_PLAYER_MODE==1
 		STA		_players_lives+1
-#endif
 loc_60112:
 		LDA		#$00
 		STA		_lvl_cur_checkpoint_idx
@@ -390,19 +389,23 @@ _sloc_6029B:
 		NBG_HNDL_SET	_nbgsub_beamer_controlA
 		SUSPEND
 
-#if TWO_PLAYER_MODE==1
 ; =============== S C R I P T ==========================s====================
+; hit dead anim for beamer
+;
 _scr_beamer_hit_anim:
 		SJSRS			_ssub_common_hit_anim
 		SBCCS			_scr_beamer_reinit
 		SSTOP
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
+; called from native routine, replaces previously suspended thread
+; above, will return the control to it if has lives.
+;
 _ssub_common_hit_anim:
 		NJSR			_nsub_apu_snd_load
 			NARGB		_snd04_idx
 		SLOOP_BEGIN		$1E
-		NJSR			_nsub_beamer_hit_spr_select
+		NJSR			_nsub_players_hit_spr_select
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$40
 		SLOOP_END
@@ -416,35 +419,8 @@ _ssub_common_hit_anim:
 		SDELAY			$28
 		SPR_IDX_SET		0,$FF
 		SDELAY			$3C
-		NJSR			_nsub_beamer_decrement_players_lives
+		NJSR			_nsub_players_decrement_life
 		SRET
-#else
-; =============== S C R I P T ==========================s====================
-; called from native routine, replaces previously suspended thread
-; above, will return the control to it if has lives.
-;
-_scr_beamer_hit_anim:
-		NJSR			_nsub_apu_snd_load				; start hit sound and do rotating
-			NARGB		_snd04_idx						; animation
-		SLOOP_BEGIN		$1E
-		NJSR			_nsub_beamer_hit_spr_select
-		SDELAY			$03
-		SARG_ALU		SARG1,_ADC,$40
-		SLOOP_END
-		NJSR			_nsub_spr_dir_select			; draw dead body in opposite
-			NARGB		$A0,$40							; direction you faced while being hit
-		SDELAY			$02
-		SPR_IDX_ADD_IMM 2,$04							; animate last breath, remove sprite.
-		SPR_IDX_ADD_IMM 4,$04							; beacause of that weird behaviour
-		SPR_IDX_ADD_IMM 2,$FC							; player will turn in opposite directions
-		SPR_IDX_ADD_IMM 0,$FC							; after every hit.
-		SDELAY			$28
-		SPR_IDX_SET		0,$FF
-		SDELAY			$3C
-		NJSR			_nsub_beamer_decrement_players_lives	; if lives is over, stop thread
-		SBCCS			_scr_beamer_reinit				; or restore object
-		SSTOP
-#endif
 
 ; =============== S C R I P T ==========================s====================
 ; TODO: last room before lvl3 "boss" is empty. you may walk it fast or slow.
@@ -597,15 +573,11 @@ _nsub_beamer_spr_base_reset:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_beamer_decrement_players_lives:
-#if TWO_PLAYER_MODE==1
-		LDX		_cur_trd_slot
+_nsub_players_decrement_life:
+		LDX		_cur_trd_slot				; if lives is over, return C=1
 		LDA		_trds_args2,X
 		TAX
 		DEC		_players_lives,X
-#else
-		DEC		_players_lives				; if lives is over, return C=1
-#endif
 		BNE		loc_603B7					; to stop beamer thread also start
 		LDX		#$00						; game over script instatnly
 		JSR		_thread_reload_param_ex
@@ -613,7 +585,6 @@ _nsub_beamer_decrement_players_lives:
 		SEC
 		RTS
 loc_603B7:
-#if TWO_PLAYER_MODE==1
 		LDX		_cur_trd_slot
 		LDA		_trds_args2,X
 		TAX
@@ -621,12 +592,6 @@ loc_603B7:
 		STA		_players_hit_flag,X
 		LDA		#$78						; init temporary invulnerability
 		STA		_players_inv_timer,X
-#else
-		LDA		#$00						; otherwise, clear hit flag
-		STA		_players_hit_flag
-		LDA		#$78						; init temporary invulnerability
-		STA		_players_inv_timer
-#endif
 		CLC
 		RTS
 
@@ -671,9 +636,7 @@ _beamer_control_move_test:
 .beamer_step:
 		LDA		_beamer_direction_idx		; beamer direction determined only by
 		JSR		_players_move_step			; player's input, do one step in given
-#if TWO_PLAYER_MODE==1
 		LDX		_beamer_direction_idx		; beamer direction determined only by
-#endif
 		JSR		_beamer_scroll_step			; direction, additionally set scroll if
 		DEY									; available. Y here is number of steps
 		BNE		.beamer_next_step			; for starting move
@@ -695,7 +658,6 @@ _beamer_control_move_test:
 ; my later fixes to screen positions calculations... lol
 ;
 _players_move_obstacles_test:
-#if TWO_PLAYER_MODE==1
 		PHA
 		TYA
 		PHA
@@ -737,13 +699,11 @@ loc_60453:
 		RTS
 loc_60455:
 		LDA		_tmp0						; then test for obstacles in selected direction
-#endif
 		JMP		_players_bound_box_to_room_test
 
-#if TWO_PLAYER_MODE==1
 ; NOTE: here is an updated version of scroll adjust test for 2P mode
-; by new logic both players could affect scroll. new scroll test routine
-; uses additionally current movement direction for player to determine
+; by new logic both players could affect the scrolls. new scroll test routine
+; uses additionally current movement directions for player to determine
 ; what scroll need adjustement. so now both players can move scroll
 ; when crossing the center of the screen but both need to be on the same
 ; screen at once. leaving the screen for one of them will cause wrong
@@ -850,82 +810,6 @@ loc_60470:
 		PLA
 		TAY
 		RTS
-#else
-; =============== S U B R O U T I N E ======n================================
-_beamer_scroll_step:
-		TYA
-		PHA
-		LDX		_cur_trd_slot				; get beamer screen position and check
-		LDY		_obj_y_screen_pos,X			; if it scroll move needed
-		LDA		_obj_x_screen_pos,X
-		TAX
-		CPX		#$80
-		BEQ		loc_60490
-		BCS		loc_6047D
-		LDA		_ppu_scroll_pos_x			; test for scroll limit
-		BNE		loc_60470
-		LDA		_ppu_scroll_pos_x+1
-		CMP		_cur_room_y_pageB
-		BEQ		loc_60490
-loc_60470:
-		LDA		_ppu_scroll_pos_x			; if there is a scroll available, move it
-		SEC
-		SBC		#$01
-		STA		_ppu_scroll_pos_x
-		BCS		loc_60490
-		DEC		_ppu_scroll_pos_x+1
-		BPL		loc_60490
-loc_6047D:
-		LDA		_ppu_scroll_pos_x
-		BNE		loc_60488
-		LDA		_ppu_scroll_pos_x+1
-		CMP		_cur_room_y_pageA
-		BEQ		loc_60490
-loc_60488:
-		INC		_ppu_scroll_pos_x
-		BNE		loc_60490
-		INC		_ppu_scroll_pos_x+1
-		BPL		loc_60490
-loc_60490:
-		CPY		#$78						; if already centered, do nothing
-		BEQ		.scroll_step_exit
-		BCS		loc_604B0
-		LDA		_ppu_scroll_pos_y
-		BNE		loc_604A1
-		LDA		_ppu_scroll_pos_y+1
-		CMP		_cur_room_x_pageA
-		BEQ		.scroll_step_exit
-loc_604A1:
-		LDA		_ppu_scroll_pos_y
-		SEC
-		SBC		#$01
-		BCS		loc_604AC
-		SBC		#$0F
-		DEC		_ppu_scroll_pos_y+1
-loc_604AC:
-		STA		_ppu_scroll_pos_y
-		BCS		.scroll_step_exit
-loc_604B0:
-		LDA		_ppu_scroll_pos_y
-		BNE		loc_604BB
-		LDA		_ppu_scroll_pos_y+1
-		CMP		_cur_room_x_pageB
-		BEQ		.scroll_step_exit
-loc_604BB:
-		LDA		_ppu_scroll_pos_y
-		CLC
-		ADC		#$01
-		CMP		#$F0
-		BCC		loc_604C8
-		ADC		#$0F
-		INC		_ppu_scroll_pos_y+1
-loc_604C8:
-		STA		_ppu_scroll_pos_y
-.scroll_step_exit:
-		PLA
-		TAY
-		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_sarg1_direction_extract:
@@ -1080,8 +964,26 @@ loc_60595:
 		STA		_obj_x_pos_lo,X
 		RTS
 
-#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
+; TODO: there is a problem with such method of D-Pad test, a priority.
+; if you hold one button and then press and hold another, you may not
+; move in a new direction, because previous button has a priority
+; and handled first.
+; here is a table for original game routine:
+;
+; LEFT+UP	=UP
+; LEFT+DOWN	=DOWN
+; RIGHT+UP	=UP
+; RIGHT+DOWN=RIGHT
+; UP+RIGHT	=UP
+; UP+LEFT	=UP
+; DOWN+LEFT =DOWN
+; DOWN+RIGHT=RIGHT
+;
+; the table for new routine is little bit different but works the same way
+;
+; the main problem here is to deterine what button is held last
+;
 _beamer_direction_calc:
 _catcher_direction_calc:
 		TYA
@@ -1117,57 +1019,6 @@ locret_605C6:
 		PLA
 		TAY
 		RTS
-#else
-; =============== S U B R O U T I N E ======n================================
-; TODO: there is a problem with such method of D-Pad test, a priority.
-; if you hold one button and then press and hold another, you may not
-; move in a new direction, because previous button has a priority
-; and handled first.
-; here is a table for this routine:
-;
-; LEFT+UP	=UP
-; LEFT+DOWN	=DOWN
-; RIGHT+UP	=UP
-; RIGHT+DOWN=RIGHT
-; UP+RIGHT	=UP
-; UP+LEFT	=UP
-; DOWN+LEFT =DOWN
-; DOWN+RIGHT=RIGHT
-;
-; the main problem here is to deterine what button is held last
-;
-_beamer_direction_calc:
-		LDA		_pad0_held					; set base sprite direction as well
-		AND		#$08						; as update beaber direction tmp idx
-		BEQ		loc_605A2
-		LDA		#$00
-		BEQ		loc_605BE
-loc_605A2:
-		LDA		_pad0_held
-		AND		#$01
-		BEQ		loc_605AC
-		LDA		#$40
-		BNE		loc_605BE
-loc_605AC:
-		LDA		_pad0_held
-		AND		#$04
-		BEQ		loc_605B6
-		LDA		#$80
-		BNE		loc_605BE
-loc_605B6:
-		LDA		_pad0_held
-		AND		#$02
-		BEQ		locret_605C6
-		LDA		#$C0
-loc_605BE:
-		STA		_trds_args1+2
-		ASL
-		ROL
-		ROL
-		STA		_beamer_direction_idx
-locret_605C6:
-		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _beamer_spr_selector:
@@ -1235,15 +1086,11 @@ locret_60622:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-_nsub_beamer_hit_spr_select:
-#if TWO_PLAYER_MODE==1
+_nsub_players_hit_spr_select:
 		LDX		_cur_trd_slot
 		LDA		_trds_args2,X
 		TAX
 		LDA		_beamer_spr_base,X
-#else
-		LDA		_beamer_spr_base
-#endif
 		STA		_tmp0
 		LDX		_cur_trd_slot
 		LDA		_trds_args1,X
@@ -1574,10 +1421,8 @@ locret_60F02:
 
 ; =============== S C R I P T ==========================s====================
 		FAR_OFS	_scr0A_catcher_handler
-#if TWO_PLAYER_MODE==1
 		STORE8			_players_hit_flag+1,$00
 		STORE8			_players_inv_timer+1,$00
-#endif
 		STORE8			_catcher_turns_count,$00		; mostly the same as for
 		STORE8			_catcher_target_slot_idx,$02	; beamer, but additional
 		STORE8			_catcher_target_distance,$18	; speed modifier called from other
@@ -1589,13 +1434,11 @@ _scr_catcher_reinit:
 		NBG_HNDL_SET	_nbgsub_catcher_control
 		SUSPEND
 
-#if TWO_PLAYER_MODE==1
 ; =============== S C R I P T ==========================s====================
 _scr_catcher_hit_anim:
 		SJSR			_ssub_common_hit_anim
 		SBCCS			_scr_catcher_reinit
 		SSTOP
-#endif
 
 ; =============== S C R I P T ==========================s====================
 _scr_lvl3_catcher_auto_script:
@@ -1632,7 +1475,8 @@ _scr_lvl6_catcher_auto_scriptB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_catcher_control:
-#if TWO_PLAYER_MODE==1
+		LDA		_two_player_mode_flag
+		BEQ		loc_6031F
 		LDA		_players_hit_flag+1
 		LSR
 		BCC		loc_60317
@@ -1644,7 +1488,6 @@ loc_60317:
 		BEQ		loc_6031F
 		DEC		_players_inv_timer+1
 loc_6031F:
-#endif
 		LDA		_trds_obj_idx+5				; do nothing, while catch is deployed
 		BPL		locret_6101E
 		LDA		_trds_obj_idx				; also additionally test if current level is 4
@@ -1658,57 +1501,56 @@ loc_61015:
 locret_6101E:
 		RTS
 
-#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_move_test:
+		LDA		_two_player_mode_flag
+		BEQ		.catcher_1p_control_move_test
 		LDA		_obj_x_pos_lo+4
 		ORA		_obj_y_pos_lo+4
 		AND		#$07
-		BNE		.catcher_speed_calc
+		BNE		.catcher_speed_calcA
 		LDA		_pad1_held
 		AND		#$0F
-		BEQ		.catcher_speed_reset
+		BEQ		.catcher_speed_resetA
 		JSR		_catcher_direction_calc
 		LDA		_catcher_direction_idx
 		JSR		_players_move_obstacles_test
-		BCS		.catcher_speed_reset
-.catcher_speed_calc:
+		BCS		.catcher_speed_resetA
+.catcher_speed_calcA:
 		LDA		_catcher_direction_idx
 		LDX		_catcher_speed
 		LDY		_catcher_speed+1
 		JSR		_players_speed_calc
 		TAY
-		BEQ		.catcher_exit
-		BNE		.catcher_step
-.catcher_next_step:
+		BEQ		.catcher_exitA
+		BNE		.catcher_stepA
+.catcher_next_stepA:
 		LDA		_obj_x_pos_lo+4
 		ORA		_obj_y_pos_lo+4
 		AND		#$07
-		BNE		.catcher_step
+		BNE		.catcher_stepA
 		LDA		_pad1_held
 		AND		#$0F
-		BEQ		.catcher_speed_reset
+		BEQ		.catcher_speed_resetA
 		JSR		_catcher_direction_calc
 		LDA		_catcher_direction_idx
 		JSR		_players_move_obstacles_test
-		BCC		.catcher_step
-.catcher_speed_reset:
+		BCC		.catcher_stepA
+.catcher_speed_resetA:
 		LDA		#$80
 		STA		_obj_x_clk+4
 		STA		_obj_y_clk+4
-		BNE		.catcher_exit
-.catcher_step:
+		BNE		.catcher_exitA
+.catcher_stepA:
 		LDA		_catcher_direction_idx
 		JSR		_players_move_step
 		LDX		_catcher_direction_idx
 		JSR		_catcher_scroll_step
 		DEY
-		BNE		.catcher_next_step
-.catcher_exit:
+		BNE		.catcher_next_stepA
+.catcher_exitA:
 		RTS
-#else
-; =============== S U B R O U T I N E ======n================================
-_catcher_control_move_test:
+.catcher_1p_control_move_test
 		LDA		_obj_x_pos_lo+4				; move control for catcher mostly the same
 		ORA		_obj_y_pos_lo+4				; as for beemer, but with some difference
 		AND		#$07
@@ -1744,15 +1586,15 @@ _catcher_control_move_test:
 		BNE		.catcher_next_step
 .catcher_exit:
 		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_catch_test:
-#if TWO_PLAYER_MODE==1
+		LDA		_two_player_mode_flag
+		BEQ		.catcher_control_test
 		LDA		_pad1_pressed
-#else
+		.BYTE	$2C							; skip hack
+.catcher_control_test:
 		LDA		_pad0_pressed				; only controllable by the player action here
-#endif
 		AND		_control_catch_button_code
 		BEQ		locret_610A9
 		LDX		_cur_trd_slot
@@ -1762,11 +1604,7 @@ _catcher_control_catch_test:
 		STA		_tmp1						; and store
 		LDA		_obj_y_screen_pos,X
 		STA		_tmp2
-#if TWO_PLAYER_MODE==1
-		LDA		_catcher_direction_idx
-#else
 		JSR		_nsub_sarg1_direction_extract; calculate its direction
-#endif
 		PHA
 		TAX
 		LDA		_tmp2
@@ -1803,7 +1641,8 @@ byte_610AE:
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_spr_selector:
-#if TWO_PLAYER_MODE==1
+		LDA		_two_player_mode_flag
+		BEQ		.skip_catcher_spr_select
 		LDA		_pad1_held
 		AND		#$0F
 		BEQ		loc_605DE
@@ -1815,7 +1654,7 @@ loc_605DE:
 		LDA		#$FF
 		STA		_obj_spr_idx+4
 		RTS
-#else
+.skip_catcher_spr_select:
 		LDA		_catcher_direction_idx		; when catcher stand still its direction idx
 		BMI		_nsub_catcher_spr_idx_calc	; =$FF.
 		INC		_trds_args0+4				; run player's animation counter
@@ -1828,7 +1667,6 @@ _nsub_catcher_spr_idx_calc:
 		LDA		_catcher_spr_base
 		JMP		_players_spr_idx_calc
 
-#if TWO_PLAYER_MODE==0
 ; =============== S U B R O U T I N E ======n================================
 ; now, here is the main AI routine of the game. path search and target
 ; selection for catcher. fully CPU controlled here
@@ -2246,7 +2084,6 @@ _obj_screen_y_pos_calc:
 		SBC		#$0F
 locret_61346:
 		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catcher_spr_base_reset:
@@ -3496,7 +3333,6 @@ byte_61E2A:
 byte_61E2E:
 		.BYTE	$14,$01,$14,$01
 
-#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _obj_to_player_ctest:
 		STX		_var0
@@ -3521,6 +3357,8 @@ _obj_to_player_ctest:
 #endif
 		STA		_players_hit_flag
 loc_61E6B:
+		LDA		_two_player_mode_flag
+		BEQ		locret_61E6C
 		LDA		_players_inv_timer+1
 		BNE		locret_61E6C
 		LDX		#$04
@@ -3550,6 +3388,8 @@ _prize_to_player_ctest:
 		LDX		#$02
 		JSR		_obj_to_player_ctest_ex
 		BCC		.prize_scores_apply
+		LDA		_two_player_mode_flag
+		BEQ		locret_61E6E
 		LDX		#$04
 		JSR		_obj_to_player_ctest_ex
 		BCS		locret_61E6E
@@ -3588,72 +3428,6 @@ loc_61E5F:
 		CMP		_var1
 locret_61E6D:
 		RTS
-#else
-; =============== S U B R O U T I N E ======n================================
-_obj_to_player_ctest:
-		LDA		_players_inv_timer
-		BNE		locret_61E6B
-		JSR		_obj_to_player_ctest_ex
-		BCS		locret_61E6B
-		LDA		_players_hit_flag
-#if DEBUG==1
-;		ORA		#$00
-#else
-		ORA		#$01
-#endif
-		STA		_players_hit_flag
-locret_61E6B:
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-; NOTE: most probably this routine may be intended to be used more than
-; for collecting one money bag, presumably for more bonuses during the game
-; like boots and wests... this is the reason they uses scores to be
-; passed to this routine from object itself...
-;
-_prize_to_player_ctest:
-		JSR		_obj_to_player_ctest_ex
-		BCS		locret_61EA9
-		LDX		_cur_trd_slot				; when collide, shut down the money bag thread
-		LDA		#$FF						; and add a scores from its ARG2 parameter
-		STA		_trds_obj_idx,X
-		LDA		_trds_args2,X
-		JSR		_scores_add					; add scores from sarg2 var
-		LDA		#_snd0D_idx					; play a sound
-		JSR		_far_prg6_apu_snd_load
-locret_61EA9:
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_obj_to_player_ctest_ex:
-		STX		_var0						; original game does enemy collision test
-		STY		_var1						; only for beamer player.
-		LDX		_cur_trd_slot				; then read current object screen position
-		LDA		_obj_out_of_screen,X		; NEW, this extra allows to have correct collision
-		BEQ		loc_61E86					; tests for object out of the screen
-		SEC
-		RTS
-loc_61E86:
-		LDA		_obj_x_screen_pos,X
-		SEC
-		SBC		_obj_x_screen_pos+2
-		BCS		loc_61E87
-		EOR		#$FF
-		ADC		#$01
-loc_61E87:
-		CMP		_var0
-		BCS		locret_61EAA
-		LDA		_obj_y_screen_pos,X
-		SEC
-		SBC		_obj_y_screen_pos+2
-		BCS		loc_61E98
-		EOR		#$FF
-		ADC		#$01
-loc_61E98:
-		CMP		_var1
-locret_61EAA:
-		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _bin2dec:
@@ -4408,9 +4182,7 @@ loc_625D1:
 		STY		_scores_to_next_life
 		STA		_scores_to_next_life+1
 		INC		_players_lives
-#if TWO_PLAYER_MODE==1
 		INC		_players_lives+1
-#endif
 		LDA		#_snd1E_idx
 		JSR		_far_prg6_apu_snd_load
 loc_625DF:
@@ -5010,7 +4782,6 @@ loc_62945:
 loc_62948:
 		JMP		_ppu_vblank_on
 
-#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 ; in two players mode lets the second player to exit the rooms
 ;
@@ -5018,20 +4789,16 @@ _nsub_players_room_exit_test_from_ptr:
 		LDX		#$02
 		JSR		_nsub_player_room_exit_test_from_ptr
 		BCS		.exit_found
+		LDA		_two_player_mode_flag
+		BEQ		.exit_found
 		LDX		#$04
 		JMP		_nsub_player_room_exit_test_from_ptr
 .exit_found:
 		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
-#if TWO_PLAYER_MODE==1
 _nsub_player_room_exit_test_from_ptr:
 		LDY		#$00
-#else
-_nsub_players_room_exit_test_from_ptr:
-#endif
-
 		LDA		(_room_exits_ptr),Y
 		INY									; fetches the exit locations of the level
 		STA		_var0						; and compares with current beamed position
@@ -5041,19 +4808,11 @@ loc_62954:
 		LDA		(_room_exits_ptr),Y
 		INY
 		SEC									; but exits are always active
-#if TWO_PLAYER_MODE==1
 		SBC		_obj_x_pos_lo,X
-#else
-		SBC		_obj_x_pos_lo+2
-#endif
 		STA		_var1
 		LDA		(_room_exits_ptr),Y
 		INY
-#if TWO_PLAYER_MODE==1
 		SBC		_obj_x_pos_hi,X
-#else
-		SBC		_obj_x_pos_hi+2
-#endif
 		STA		_var2
 		BCS		loc_62976
 		LDA		#$00
@@ -5070,19 +4829,11 @@ loc_62976:
 		LDA		(_room_exits_ptr),Y
 		INY
 		SEC
-#if TWO_PLAYER_MODE==1
 		SBC		_obj_y_pos_lo,X
-#else
-		SBC		_obj_y_pos_lo+2
-#endif
 		STA		_var1
 		LDA		(_room_exits_ptr),Y
 		INY
-#if TWO_PLAYER_MODE==1
 		SBC		_obj_y_pos_hi,X
-#else
-		SBC		_obj_y_pos_hi+2
-#endif
 		STA		_var2
 		BCS		loc_629A0
 		LDA		#$00
@@ -5508,10 +5259,8 @@ loc_62C18:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_beamer_handler_start:
 		JSR		_players_thread_vars_init
-#if TWO_PLAYER_MODE==1
 		LDA		#$00						; 2p hack player idx
 		STA		_var2
-#endif
 		LDA		#$02
 		STA		_var4
 		LDA		#$03
@@ -5532,10 +5281,8 @@ _players_thread_vars_init:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_catcher_handler_start:
 		JSR		_players_thread_vars_init
-#if TWO_PLAYER_MODE==1
 		LDA		#$01						; 2p hack player idx
 		STA		_var2
-#endif
 		LDA		#$04
 		STA		_var4
 		LDA		#$05
@@ -8206,7 +7953,6 @@ loc_63A2A:
 locret_63A30:
 		RTS
 
-#if TWO_PLAYER_MODE==1
 ; =============== S U B R O U T I N E ======n================================
 _get_input:
 		LDY		#$00
@@ -8245,48 +7991,6 @@ loc_63A63:
 		DEX
 		BNE		loc_63A63
 		RTS
-#else
-; =============== S U B R O U T I N E ======n================================
-_get_input:
-		JSR		_read_pads					; too paranoid to pad reading on NES
-		STA		_tmp1A						; but seems important for real HW
-		JSR		_read_pads
-		AND		_tmp1A
-		STA		_tmp1B
-		JSR		_read_pads
-		STA		_tmp1A
-		JSR		_read_pads
-		AND		_tmp1A
-		ORA		_tmp1B
-		STA		_tmp1A
-		LDA		_pad0_held
-		EOR		#$FF
-		AND		_tmp1A
-		STA		_pad0_pressed
-		LDA		_tmp1A
-		STA		_pad0_held
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_read_pads:
-		LDX		#$01
-		STX		_PAD0_REG
-		DEX
-		STX		_PAD0_REG
-		LDY		#$08
-loc_63A63:
-		PHA
-		LDA		_PAD0_REG
-		STA		_tmp19
-		LSR
-		ORA		_tmp19
-		LSR
-		PLA
-		ROL
-		DEY
-		BNE		loc_63A63
-		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 _ppu_spr_fill_F1:
