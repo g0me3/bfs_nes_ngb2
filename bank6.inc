@@ -1650,121 +1650,41 @@ _sample_2DA:
 
 		SECTION_START
 
-_music_lib:
-		MUS		_mus0	; lvl1 theme
-		MUS		_mus1	; busters select
-		MUS		_mus2	; game over
-		MUS		_mus3	; stage complete
-		MUS		_mus4	; mid-boss theme
-		MUS		_mus5	; title theme
-		MUS		_mus6	; lvl2 theme
-		MUS		_mus7	; lvl3 theme
-		MUS		_mus8	; lvl4 theme
-		MUS		_mus9	; lvl5 theme
-		MUS		_musA	; final boss prellude
-		MUS		_musB	; final boss theme
-		MUS		_musC	; lvl3 final cutscene
-		MUS		_musD	; -unused-, see NOTE
-
-_mus0:
-		INCLUDE	"../mus/mus0_ntsc.inc"
-_mus1:
-		INCLUDE	"../mus/mus1_ntsc.inc"
-_mus2:
-		INCLUDE	"../mus/mus2_ntsc.inc"
-_mus3:
-		INCLUDE	"../mus/mus3_ntsc.inc"
-
-; NOTE: this data is an exact copy of full library of _sampleXX codes.
-; it has no pointer table associated, but all offsets are fixed to
-; this particular location, so somehow they have his copy linked to
-; the sources as well. definitely this is not just rtash from uninitialized
-; RAM...
-;
-;		INCLUDE	"../mus/unused_jp.inc"
-
-_mus4:
-		INCLUDE	"../mus/mus4_ntsc.inc"
-_mus5:
-		INCLUDE	"../mus/mus5_ntsc.inc"
-_mus6:
-		INCLUDE	"../mus/mus6_ntsc.inc"
-_mus7:
-		INCLUDE	"../mus/mus7_ntsc.inc"
-_mus8:
-		INCLUDE	"../mus/mus8_ntsc.inc"
-_mus9:
-		INCLUDE	"../mus/mus9_ntsc.inc"
-_musA:
-		INCLUDE	"../mus/musA_ntsc.inc"
-_musB:
-		INCLUDE	"../mus/musB_ntsc.inc"
-_musC:
-		INCLUDE	"../mus/musC_ntsc.inc"
-
-; NOTE: unused data for missing music track from the EU version
-; there are no either header nor music library entry, literally
-; can't be even played in any known nsf records.
-;
-; this is actually completely previously unknown track. main
-; loop of this track is used at the end of Stage 3 in cutscene
-; with ghost nunny (track 0C)... this track is a full version of
-; it without loop. it has intro and outro and not looped at all.
-;
-; i added proper header with table of channels in order to be able
-; to play it. will be possible to play it in the sound test later.
-;
-; need to mention, that although all tracks in PAL version were
-; rewritten to play on 50Hz the same way as on 60Hz for NTSC,
-; this particular unused track uses NTSC scheme. probably it is
-; always been in the games sources but slipped throught only on
-; this later re-release for some reason.
-;
-; on a second thought, there is possible they did it later based on
-; short looped jingle of the Stage 3 ending but never actually used
-;
-_musD:
-		INCLUDE	"../mus/musD_ntsc.inc"
-
-		SECTION_END	"APU MUSIC DATA"
-
-		SECTION_START
-
 _snd_lib:
 		SND		_snd00	; beam
 		SND		_snd01	; catch release
 		SND		_snd02	; ghost catch scream
 		SND		_snd03	; pause
 		SND		_snd04	; beamer hit
-		SND		_snd05	; -unused-
+		SND		_snd05	; bounce -unused-
 		SND		_snd06	; doors close
 		SND		_snd07	; doors open
 		SND		_snd08	; slime laugh
-		SND		_snd09	; -unused-
+		SND		_snd09	; train ride -unused-
 		SND		_snd0A	; door06 close
 		SND		_snd0B	; buster select input
 		SND		_snd0C	; buster select apply
 		SND		_snd0D	; prize taken
 		SND		_snd0E	; vega laugh
 		SND		_snd0F	; key keeper shoot
-		SND		_snd10	; -unused-
-		SND		_snd11	; -unused-
+		SND		_snd10	; key keepr step? jump A? -unused-
+		SND		_snd11	; urraaap! -unused-
 		SND		_snd12	; court chair
 		SND		_snd13	; train whistle
 		SND		_snd14	; sewers dragon appear
 		SND		_snd15	; sewers dragon fire
-		SND		_snd16	; -unused-
-		SND		_snd17	; -unused-
-		SND		_snd18	; -unused-
+		SND		_snd16	; sewers dragon explode? -unused-
+		SND		_snd17	; fall down -unused-
+		SND		_snd18	; jump B? -unused-
 		SND		_snd19	; boss catch scream
 		SND		_snd1A	; vega death scream
-		SND		_snd1B	; -unused-
-		SND		_snd1C	; -unused-
-		SND		_snd1D	; -unused-
+		SND		_snd1B	; wind/pssst -unused-
+		SND		_snd1C	; zanac like fire -unused-
+		SND		_snd1D	; zanac like beam A -unused-
 		SND		_snd1E	; live add
-		SND		_snd1F	; -unused-
-		SND		_snd20	; -unused-
-		SND		_snd21	; -unused-
+		SND		_snd1F	; rolling boulder? helicopter? -unused-
+		SND		_snd20	; zanac like beam B -unused-
+		SND		_snd21	; zanac like beam C -unused-
 		SND		_snd22	; sewers dragon disappear
 		SND		_snd23	; candle light up
 
@@ -3344,5 +3264,85 @@ _snd23_B:
 		ASTOP
 
 		SECTION_END	"APU SOUND EFFECTS DATA"
+
+		SECTION_START
+
+_music_lib:
+		MUS		_mus0	; lvl1 theme
+		MUS		_mus1	; busters select
+		MUS		_mus2	; game over
+		MUS		_mus3	; stage complete
+		MUS		_mus4	; mid-boss theme
+		MUS		_mus5	; title theme
+		MUS		_mus6	; lvl2 theme
+		MUS		_mus7	; lvl3 theme
+		MUS		_mus8	; lvl4 theme
+		MUS		_mus9	; lvl5 theme
+		MUS		_musA	; final boss prellude
+		MUS		_musB	; final boss theme
+		MUS		_musC	; lvl3 final cutscene
+		MUS		_musD	; -unused-, see NOTE
+
+_mus0:
+		INCLUDE	"../mus/mus0_ntsc.inc"
+_mus1:
+		INCLUDE	"../mus/mus1_ntsc.inc"
+_mus2:
+		INCLUDE	"../mus/mus2_ntsc.inc"
+_mus3:
+		INCLUDE	"../mus/mus3_ntsc.inc"
+
+; NOTE: this data is an exact copy of full library of _sampleXX codes.
+; it has no pointer table associated, but all offsets are fixed to
+; this particular location, so somehow they have his copy linked to
+; the sources as well. definitely this is not just rtash from uninitialized
+; RAM...
+;
+;		INCLUDE	"../mus/unused_jp.inc"
+
+_mus4:
+		INCLUDE	"../mus/mus4_ntsc.inc"
+_mus5:
+		INCLUDE	"../mus/mus5_ntsc.inc"
+_mus6:
+		INCLUDE	"../mus/mus6_ntsc.inc"
+_mus7:
+		INCLUDE	"../mus/mus7_ntsc.inc"
+_mus8:
+		INCLUDE	"../mus/mus8_ntsc.inc"
+_mus9:
+		INCLUDE	"../mus/mus9_ntsc.inc"
+_musA:
+		INCLUDE	"../mus/musA_ntsc.inc"
+_musB:
+		INCLUDE	"../mus/musB_ntsc.inc"
+_musC:
+		INCLUDE	"../mus/musC_ntsc.inc"
+
+; NOTE: unused data for missing music track from the EU version
+; there are no either header nor music library entry, literally
+; can't be even played in any known nsf records.
+;
+; this is actually completely previously unknown track. main
+; loop of this track is used at the end of Stage 3 in cutscene
+; with ghost nunny (track 0C)... this track is a full version of
+; it without loop. it has intro and outro and not looped at all.
+;
+; i added proper header with table of channels in order to be able
+; to play it. will be possible to play it in the sound test later.
+;
+; need to mention, that although all tracks in PAL version were
+; rewritten to play on 50Hz the same way as on 60Hz for NTSC,
+; this particular unused track uses NTSC scheme. probably it is
+; always been in the games sources but slipped throught only on
+; this later re-release for some reason.
+;
+; on a second thought, there is possible they did it later based on
+; short looped jingle of the Stage 3 ending but never actually used
+;
+_musD:
+		INCLUDE	"../mus/musD_ntsc.inc"
+
+		SECTION_END	"APU MUSIC DATA"
 
 		BANK_END 6,$C000

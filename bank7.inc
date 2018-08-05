@@ -246,35 +246,6 @@ _lvl_scripts_list:
 		.BYTE	_scr06_lvl6_handler_idx
 		.BYTE	_scr07_ending_idx
 
-; =============== S U B R O U T I N E ======n================================
-; very specific case to handle here. sometimes, they catch the object
-; while beamer moving out of the screen, catcher and such object disappear.
-; but since objects thread is suspended, but catcher only driven not
-; suspendable native routine, catcher stop catching and return back to the
-; beamer, when they both return to the previous location, you'll see
-; the catch animation played alone in air. this routine prevents this
-; kind of cases. its just search for any object in catching process
-; out of the screen and removes them.
-;
-; NOTE: you lose the scores in such cases!.
-;
-_obj_garbage_collector:
-		LDX		#$06
-loc_60168:
-		LDA		_trds_obj_idx,X
-		BMI		loc_60193
-		LDA		_trds_args0,X
-		BPL		loc_60193
-		LDA		_obj_out_of_screen,X
-		BEQ		loc_60193
-		LDA		#$FF
-		STA		_trds_obj_idx,X
-loc_60193:
-		INX
-		CPX		#$0E
-		BCC		loc_60168
-		RTS
-
 _scores_1st_extend_list_lo:
 		.BYTE	<[ 50]	; 00
 		.BYTE	<[100]	; 00
@@ -295,6 +266,35 @@ _scores_2nd_extend_list_hi:
 		.BYTE	>[300]	; 00
 		.BYTE	>[400]	; 00
 		.BYTE	>[500]	; 00
+
+; =============== S U B R O U T I N E ======n================================
+; very specific case handled here. sometimes, beamer may leave catcher with
+; the ghost in the catch process out of the screen. all objects are deactivated
+; out of the screen and it's scripts are set on hold. catcher is an exception
+; for this rule, so not suspended at all and keep going. when he done his catch
+; animation out of the screen, he will return back to beamer. but if you
+; keep going the previously disabled object in the catch phase will be enabled
+; again, and you can see an actual catch animation in the air!
+; so devs decided to just kill all objects in catch state which appears out of
+; the screen instantly. this solves a problem. however, when such event occurs
+; you don't get the scores for killed object at all.
+;
+_obj_garbage_collector:
+		LDX		#$06
+loc_60168:
+		LDA		_trds_obj_idx,X
+		BMI		loc_60193
+		LDA		_trds_args0,X
+		BPL		loc_60193
+		LDA		_obj_out_of_screen,X
+		BEQ		loc_60193
+		LDA		#$FF
+		STA		_trds_obj_idx,X
+loc_60193:
+		INX
+		CPX		#$0E
+		BCC		loc_60168
+		RTS
 
 ; =============== S U B R O U T I N E ======n================================
 _obj_exit_arrow_position_adjust:
@@ -682,7 +682,7 @@ _beamer_control_move_test:
 
 ; =============== S U B R O U T I N E ======n================================
 ; NOTE: it seems this routine kinda redundant, i can't see any level where
-; you may go out of the screen. even the tonnels level and vega boss levels
+; you may go out of the screen. even the tunnels level and vega boss levels
 ; are used additional macro-obstacles to not to let the players to get near
 ; the screen edges. also this test only used for beamer which can't go out
 ; of the screen because of exits...
@@ -3262,7 +3262,7 @@ loc_61CD4:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-; the main object gandler routine for levels
+; the main objects handler routine for levels
 ; get the data pointer, then fetch room data and wait if player get to
 ; corresponding room, then deploy enemies max 4 at once on the same screen
 ; when objects are removed from level, adds the rest one until reach
@@ -3688,9 +3688,15 @@ loc_61ED4:
 		BCC		loc_61EB0
 		RTS
 byte_61EDD:
-		.BYTE	$10,$E8,$64,$0A
+		.BYTE	<[10000]
+		.BYTE	<[1000]
+		.BYTE	<[100]
+		.BYTE	<[10]
 byte_61EE1:
-		.BYTE	$27,$03,$00,$00
+		.BYTE	>[10000]
+		.BYTE	>[1000]
+		.BYTE	>[100]
+		.BYTE	>[10]
 
 ; =============== S U B R O U T I N E ======n================================
 _print_num99999:
@@ -4262,7 +4268,7 @@ loc_62314:
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
-; fast mul8 routine however uses as much as 512k of div tables
+; fast mul8 routine however uses as much as 512k of tables
 ;
 _mul8:
 		STA		_tmp0
@@ -4437,19 +4443,9 @@ _printf_scores:
 		PHA									; to draw status/complete screen
 		TYA
 		PHA
-
-; !FALLTHROUGH!
-
-; =============== S U B R O U T I N E ======n================================
-_printf_scores_ex:
 		LDA		_scores						; common scores printf routine
 		LDX		_scores+1
-		JSR		_bin2dec					; convert to decimal first
-		PLA									; retrieve the screen position
-		TAY									; and draw with leftmost zeroes
-		PLA									; trimmed
-		TAX
-		JMP		_print_num99999
+		JMP		_printf_pos
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_hi_scores_display:
@@ -4466,10 +4462,17 @@ _printf_hi_scores:
 		TYA
 		PHA
 
+; !FALLTHROUGH!
+
 ; =============== S U B R O U T I N E ======n================================
 _printf_hi_scores_ex:
 		LDA		_hi_scores					; common sub different only in var used
 		LDX		_hi_scores+1
+
+; !FALLTHROUGH!
+
+; =============== S U B R O U T I N E ======n================================
+_printf_pos:
 		JSR		_bin2dec
 		PLA
 		TAY

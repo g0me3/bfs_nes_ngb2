@@ -4,9 +4,9 @@
 		ECHO "PROGRAM BEGIN"
 		ECHO "-------------"
 
-		INCBIN "../copyrights.txt"
-
 		BANK_START $00
+
+		INCBIN "../copyrights.txt"
 
 		SECTION_START
 
@@ -6605,6 +6605,8 @@ _sloc_3BA49:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_floaters_move_U:
+		NJSR			_nsub_apu_snd_load				; NEW, let's make some fun with unused sounds
+			NARGB		_snd10_idx
 		SPR_IDX_SET		0,$70
 		POS_Y_DELTA_SET 4,$00,$FA
 		POS_Y_DELTA_SET 4,$00,$02
@@ -6612,6 +6614,8 @@ _ssub_floaters_move_U:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_floaters_move_R:
+		NJSR			_nsub_apu_snd_load				; NEW, let's make some fun with unused sounds
+			NARGB		_snd10_idx
 		SPR_IDX_SET		0,$71
 		POS_X_DELTA_SET 0,$00,$02
 		POS_Y_DELTA_SET 4,$00,$FE
@@ -6620,6 +6624,8 @@ _ssub_floaters_move_R:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_floaters_move_D:
+		NJSR			_nsub_apu_snd_load				; NEW, let's make some fun with unused sounds
+			NARGB		_snd10_idx
 		SPR_IDX_SET		0,$72
 		POS_Y_DELTA_SET 4,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$06
@@ -6627,6 +6633,8 @@ _ssub_floaters_move_D:
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
 _ssub_floaters_move_L:
+		NJSR			_nsub_apu_snd_load				; NEW, let's make some fun with unused sounds
+			NARGB		_snd10_idx
 		SPR_IDX_SET		0,$73
 		POS_X_DELTA_SET 0,$00,$FE
 		POS_Y_DELTA_SET 4,$00,$FE

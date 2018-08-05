@@ -2977,18 +2977,12 @@ _nsub_scores_and_players_lives_draw:
 		LDA		#$05
 		STA		_chr_bank1
 		JSR		_ppu_spr_fill_F1
-		LDA		_hi_scores
-		LDX		_hi_scores+1
-		JSR		_bin2dec					; convert scores now
 		LDX		#$10
 		LDY		#$08
-		JSR		_print_num99999				; print using special subroutine now
-		LDA		_scores						; same as using "%5d" in format(...)
-		LDX		_scores+1
-		JSR		_bin2dec
+		JSR		_printf_hi_scores			; print actual scores
 		LDX		#$10
 		LDY		#$0A
-		JSR		_print_num99999
+		JSR		_printf_scores
 #if TWO_PLAYER_MODE==1
 		LDA		#$0D
 		LDX		#$01
@@ -3089,18 +3083,12 @@ _pal_game_over:
 _nsub_game_over_draw:
 		LDA		_lvl_cur_checkpoint_idx		; in case of continue, reload last accessed checkpoint
 		STA		_lvl_last_checkpoint_idx
-		LDA		_hi_scores					; convert scores to decimal string
-		LDX		_hi_scores+1
-		JSR		_bin2dec
 		LDX		#$10
 		LDY		#$04
-		JSR		_print_num99999				; and draw
-		LDA		_scores
-		LDX		_scores+1
-		JSR		_bin2dec
+		JSR		_printf_hi_scores			; print actual scores
 		LDX		#$10
 		LDY		#$06
-		JSR		_print_num99999
+		JSR		_printf_scores
 		DEC		_continues					; also continues
 		BEQ		loc_161E3					; but convert to string manually
 		LDA		_continues					; since the common routine
