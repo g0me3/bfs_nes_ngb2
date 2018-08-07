@@ -19,7 +19,7 @@
 ; after case table instead of any actual code...
 		NJSR			_nsub_obj_sarg_add_imm_test
 			NARGB		SARG0,$FF
-		SJMP_SW			$0C
+		SJMP_SW			$0D
 		SCASE			_sub01_intro_slime				; 01
 		SCASE			_sub02_intro_busterA			; 02
 		SCASE			_sub03_intro_busterB			; 03
@@ -32,6 +32,7 @@
 		SCASE			_sub0A_select_louis				; 0A
 		SCASE			_intro_sub0B_title_ghost		; 0B
 		SCASE			_intro_sub0C_title_new			; 0C
+		SCASE			_ssub_select_2p					; 0D, NEW
 
 ; !FALLTHROUGH!
 
@@ -472,8 +473,10 @@ _scr_select_busters:
 		STORE8			_chr_bank1,$06
 		STORE8			_beamer_spr_base_tmp,$FF		; no players selected yet, reset
 		STORE8			_catcher_spr_base_tmp,$FF
-		STORE8			_cur_room_x_pageA,$00			; these vars used here as a temp veriables
-		STORE8			_cur_room_x_pageB,$00			; not by its ingame meanings
+		STORE8			_two_player_selections,$FF		; NEW, reset player's selections
+		STORE8			_two_player_selections+1,$FF
+		STORE8			_buster_select_anim_busyA,$00	; these vars used here as a temp veriables
+		STORE8			_buster_select_anim_busyB,$00	; not by its ingame meanings
 		POS_X_SET		0,$00,$01						; main offset for screen objects here
 ; NOTE: here script loads the selection screen objects, each object loaded from library
 ; and derived the current library index 00, so all following scripts will load with
@@ -493,34 +496,61 @@ _scr_select_busters:
 		SJSR			_ssub_pal_fade_in				; finally preparations is done,
 		NJSR			_nsub_apu_mus_load				; show the screen and play the music
 			NARGB		_mus1_idx
+		NJSR			_nsub_mcmp						; NEW, test for players number flag
+			NARGW		_two_player_mode_flag			; if clear, then jump to regular buster select
+			NARGB		$01								; script
+		SBCCS			_ssub_select_1p
+		NJSR			_nsub_2p_thread_load			; start 2p input thread here
+
+; !FALLTHROUG!
+
+; =============== S C R I P T ==========================s====================
+_ssub_select_2p:
 		SARG_SET		SARG0,$00						; init tmp index
-_sloc_8B3D:
-		SDELAY			$01
-		NJSR			_nsub_mtest_bit0				; animated objects are working now,
-			NARGW		_cur_room_x_pageA				; will wait for it's over and flag raized
-		SBCCS			_sloc_8B3D						; if set, we'll start input handling
-		NJSR			_nsub_select_buster_input		; loop until selection is complete
-		SBCCS			_sloc_8B3D
-_sloc_8B4D:
-		SDELAY			$01								; now the same for second player
-		NJSR			_nsub_mtest_bit0				; wait for animations in over again
-			NARGW		_cur_room_x_pageA				; and run input handler
-		SBCCS			_sloc_8B4D
-		NJSR			_nsub_select_buster_input
-		SBCCS			_sloc_8B4D
-_sloc_8B5D:
-		SDELAY			$01								; when both players selected, wait
-		NJSR			_nsub_mtest_bit0				; for animation is over again, this
-			NARGW		_cur_room_x_pageB				; and pole slide animation is started
-		SBCCS			_sloc_8B5D						;(_cur_room_x_pageB = 1 is set then)
-		SDELAY			$5A								; main script just has to wait
-		SLOOP_BEGIN		$04								; and then fade out the screen
-		NJSR			_nsub_pal_fade_req_dec_by_mask	; asyncronously.
+		SARG_SET		SARG2,_sprA00_401_idx			; NEW, base sprite idx for 2p mode player 1
+		SJMPS			_ssub_select_common				; just one loop here for 2p
+
+; =============== S C R I P T ==========================s====================
+_ssub_select_1p:
+		SARG_SET		SARG0,$00						; init tmp index
+		SARG_SET		SARG2,_sprA00_40_idx			; NEW, default name sprite idx for 1p mode
+		SJSRS			_ssub_input_wait_loop			; animated objects are working now
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_ssub_select_common:
+		SJSRS			_ssub_input_wait_loop			; now the same for second player
+
+; !FALLTHROUGH!
+
+; =============== S C R I P T ==========================s====================
+_scr_finish_selection:
+		NJSR			_nsub_is_catcher_selected		; test if we get here after last selection
+		SBCCS			_just_stop						; otherwize just stop
+		SDELAY			$01								; wait when both players finishes its
+		NJSR			_nsub_mtest_bit0				; selection and the final animation is
+			NARGW		_buster_select_anim_busyB		; ready (_buster_select_anim_busyB = 1)
+		SBCCS			_scr_finish_selection			;
+		SDELAY			$5A								; when animation started, setup delay
+		SLOOP_BEGIN		$04								; then fade palette out and close the scripts
+		NJSR			_nsub_pal_fade_req_dec_by_mask	;
 			NARGB		$FF
 		SDELAY			$08
 		SLOOP_END
 		NJSR			_nsub_players_idx_init			; final initializations of game vars
+_just_stop:
 		SSTOP
+
+; =============== S C R I P T  S U B R O U T I N E =====s====================
+_ssub_input_wait_loop:
+		SDELAY			$01
+		NJSR			_nsub_mtest_bit0
+			NARGW		_buster_select_anim_busyA		; wait for anim is over and flag raized
+		SBCCS			_ssub_input_wait_loop			; if set, we'll start input handling
+		NJSR			_nsub_select_buster_input		; loop until selection is complete
+		SBCCS			_ssub_input_wait_loop
+		SRET
 
 _select_buster_chain_scripts:
 		.BYTE	_sub06_select_peter_idx+1,	$00,$F8,$00
@@ -531,6 +561,19 @@ _select_buster_chain_scripts:
 _pal_select_busters:
 		.BYTE	$0F,$00,$16,$07,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$30,$0F,$0F
 		.BYTE	$0F,$36,$1C,$0F,$0F,$0F,$0F,$0F,$0F,$30,$0F,$0F,$0F,$0F,$0F,$0F
+
+_nsub_test
+
+; =============== S U B R O U T I N E ======n================================
+_nsub_2p_thread_load:
+		LDA		#_ssub_select_2p_idx+1		; load additional script case
+		STA		_var0
+		LDA		#$01						; load into slot 01
+		STA		_var4
+		LDA		#$02
+		STA		_var5
+		LDA		#_scr00_intro_title_select_idx	; base object is the main object here also
+		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_players_idx_init:
@@ -549,7 +592,7 @@ byte_8BC3:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_select_buster_input:
 		LDX		_cur_trd_slot
-		LDA		_pad0_pressed				; test for L/R buttons press
+		LDA		_pad0_pressed,X				; test for L/R buttons press
 		AND		#PAD_R
 		BEQ		loc_8BE6
 		LDA		#_snd0B_idx
@@ -565,7 +608,7 @@ loc_8BE1:
 		CMP		_beamer_spr_base_tmp		; skip if first player already selected
 		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
-		LDA		_pad0_pressed
+		LDA		_pad0_pressed,X
 		AND		#PAD_L
 		BEQ		loc_8C00
 		LDA		#_snd0B_idx
@@ -580,7 +623,7 @@ loc_8BF9:
 		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8BF1
 loc_8C00:
-		LDA		_pad0_pressed				; select with A
+		LDA		_pad0_pressed,X				; select with A
 		AND		#PAD_START|PAD_A			; NEW, also here
 		BEQ		loc_8C36
 		LDA		#_snd0C_idx
@@ -589,30 +632,42 @@ loc_8C00:
 		LDY		_beamer_spr_base_tmp
 		BPL		loc_8C17
 		STA		_beamer_spr_base_tmp
-		BMI		loc_8C1A
+		LDA		#$00						; now init which pad will control
+		BEQ		loc_8C1A					; which player
 loc_8C17:
-		STA		_catcher_spr_base_tmp
+		STA		_catcher_spr_base_tmp		; if 00, then player controls beamer
+		LDA		#$01
 loc_8C1A:
+		STA		_two_player_selections,X	; if 01, then player controls catcher
 		LDA		#$FF
-		STA		_obj_spr_idx,X				; disable obj name sprite, jump to
-		LDA		#$00						; next object
-		STA		_cur_room_x_pageA
-loc_8C23:
-		INC		_trds_args0,X
-		LDA		_trds_args0,X
-		CMP		#$05
-		BCC		loc_8C2F
-		LDA		#$00
-		STA		_trds_args0,X
-loc_8C2F:
-		CMP		_beamer_spr_base_tmp
-		BEQ		loc_8C23
+		STA		_obj_spr_idx				; disable obj name sprites
+		STA		_obj_spr_idx+1				;
+		LDA		#$00						; disable selection input for now
+		STA		_buster_select_anim_busyA
 		SEC									; when selection is done, set carry to
 		RTS									; signal the main code to do next part
 loc_8C36:
-		LDY		_trds_args0,X				; display the name sprite for currently
+		LDA		_trds_args0,X				; check for already selected items first
+		CMP		_beamer_spr_base_tmp
+		BEQ		loc_8C2F
+		CMP		_catcher_spr_base_tmp		; also check for 2p mode
+		BNE		loc_8C30
+loc_8C2F:
+		INC		_trds_args0,X				; skip already selected
+		LDA		_trds_args0,X
+		CMP		#$05
+		BCC		loc_8C36
+		LDA		#$00
+		STA		_trds_args0,X
+		BEQ		loc_8C36
+loc_8C30:
+		TAY									; display the name sprite for currently
 		LDA		byte_8C51,Y					; highlighted player
 		STA		_obj_x_pos_lo,X
+		TYA									; adjust the 2p position if needed
+		CLC
+		ADC		byte_8C57,X
+		TAY
 		LDA		byte_8C56,Y
 		STA		_obj_y_pos_lo,X
 		LDA		#$00
@@ -620,14 +675,17 @@ loc_8C36:
 		STA		_obj_y_pos_hi,X
 		TYA
 		CLC
-		ADC		#$40
-		STA		_obj_spr_idx,X
+		ADC		_trds_args2,X				; WARNING, Y here is already +5 for 2p!
+		STA		_obj_spr_idx,X				; no need to init sprite base for it separately!
 		RTS
 
 byte_8C51:
 		.BYTE	$68,$80,$98,$B0,$E0
 byte_8C56:
 		.BYTE	$70,$70,$70,$70,$B0
+		.BYTE	$60,$60,$60,$60,$A0
+byte_8C57:
+		.BYTE	$00,$05
 
 ; =============== S C R I P T ==========================s====================
 ; PETER
@@ -666,7 +724,7 @@ _ssub_select_busters:
 		SPR_IDX_INC		4
 		SPR_IDX_DEC		0
 		SLOOP_END
-		STORE8			_cur_room_x_pageA,$01			; now enable selection input
+		STORE8			_buster_select_anim_busyA,$01	; now enable selection input
 _sloc_8D0C:
 		SDELAY			$01								; common portion for any object
 		NJSR			_nsub_is_beamer_selected
@@ -700,11 +758,11 @@ _sloc_8D35:
 		NJSR			_nsub_obj_spr_idx_set_from_sarg
 			NARGB		SARG1							; get sprite index for stand anim loaded
 		POS_MOVE_STOP	0								; at the thread start in SARG1
-		STORE8			_cur_room_x_pageA,$01			; raise anim busy flag
+		STORE8			_buster_select_anim_busyA,$01	; raise anim busy flag
 _sloc_8D49:
 		SDELAY			$01								; first selected player must wait until
 		NJSR			_nsub_mtest_bit0				; second player is step aside
-			NARGW		_cur_room_x_pageB				; when this occurs, the flag riased
+			NARGW		_buster_select_anim_busyB		; when this occurs, the flag riased
 		SBCCS			_sloc_8D49
 		POS_X_DELTA_SET 0,$00,$FE						; finally start the pole jump up animation
 		POS_Y_DELTA_SET 0,$00,$FE						; move up left
@@ -758,7 +816,7 @@ _sloc_8D94:
 			NARGB		$68								; REDUNDANT: same loop as for beamer
 		SBCCS			_sloc_8D94
 _sloc_8DA0:
-		STORE8			_cur_room_x_pageB,$01			; ok, second player is ready, start to slide down
+		STORE8			_buster_select_anim_busyB,$01	; ok, second player is ready, start to slide down
 _sloc_8DA4:
 		SDELAY			$01
 		NJSR			_nsub_cur_pos_x_lo_icmp			; while first player is jumping up, he need

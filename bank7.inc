@@ -148,12 +148,25 @@ _MAIN_ENTRY:
 		STA		_out_of_screen_test_flag	; threads manager
 loc_600AF:
 		JSR		_wait_for_nmi				; wait for nmi
-		JSR		_spr_shuffle_update			; prepare sprites shuffle
+;		JSR		_spr_shuffle_update			; prepare sprites shuffle
+		LDA		#$00
+		STA		_spr_buf_pos
+		STA		_spr_buf_shuffle
 		JSR		_threads_manager			; execute threads
 		JSR		_spr_finish					; all sprites should be done now, finalize
 		LDA		_trds_obj_idx				; repeat until main thread is stopped
-		BPL		loc_600AF
-_GAME_ENTRY:
+		AND		_trds_obj_idx+1				; NEW, for 2p mode additional test
+		BEQ		loc_600AF
+		LDA		_two_player_mode_flag
+		BEQ		.no_2p_mode
+		LDA		#PAD_A|PAD_B
+		STA		_control_beam_button_code	; 2p mode controls set here
+		STA		_control_catch_button_code
+		BNE		.game_init
+.no_2p_mode:
+		LDA		#$00
+		STA		_two_player_selections		; force controls selection in 1p mode
+.game_init:
 		LDX		_difficulty					; this means we ready to setup game
 		LDA		_scores_1st_extend_list_lo,X; load corresponding difficulty settings
 		STA		_scores_1st_extend
@@ -233,8 +246,8 @@ loc_60123:
 ;		BEQ		loc_60112
 		JMP		loc_60112
 loc_6015A:
-		BNE		_MAIN_GAME_LOOP				; this is the case to return after ending
-		JMP		_MAIN_ENTRY
+		BNE		_MAIN_GAME_LOOP
+		JMP		_MAIN_ENTRY					; this is the case to return after ending
 
 _lvl_scripts_list:
 		.BYTE	_scr01_lvl1_handler_idx
@@ -1072,7 +1085,7 @@ _players_spr_idx_calc:
 ; =============== S U B R O U T I N E ======n================================
 _beamer_control_beam_test:
 		LDA		_pad0_pressed
-		AND		_control_beam_button_code	; reploy beam object if beam button
+		AND		_control_beam_button_code	; deploy beam object if beam button
 		BEQ		locret_60622				; pressed, also if there is no
 		LDA		_trds_obj_idx+3				; beam object already deployed
 		BPL		locret_60622
@@ -6002,7 +6015,6 @@ _spr_lib_fetch:
 
 ; !FALLTHROUGH!
 
-#if NEW_SPRITES==1
 ; =============== S U B R O U T I N E ======n================================
 _spr_lib_fetch_ex:
 		LDA		#$FF
@@ -6079,8 +6091,12 @@ _spr_clip_insert:
 		LDX		_spr_buf_pos
 		LDY		#$00
 .spr_ins_loop:
+; FIX: for some reason, same workaround for glitched sprites here were used once
+; before the sprite insertion loop, and affects only first sprite, but not the
+; rest ones.
 		LDA		#$00
 		STA		_ppu_spr_buf+3,X
+; -
 		CLC
 		LDA		(_ptr08),Y
 		BPL		loc_6375D
@@ -6119,6 +6135,12 @@ loc_6376A:
 		BCC		loc_637A2
 loc_6378B:
 		ADC		_tmp1
+; NEW: fixed when this sprite may be clipped out, but will write
+; the out of screen position for X anyway, if NMI occurs here,
+; glitch may happen
+; NEW: also get rid of unused _spr_x_clip_flags here, since even if
+; mode for these flags will be implemented, there are a lot of
+; sprites changes will need, also may be too slow.
 		BCS		loc_637A2
 loc_63798:
 		STA		_ppu_spr_buf+3,X
@@ -6140,30 +6162,7 @@ loc_637A2:
 		BNE		.spr_ins_loop
 		STX		_spr_buf_pos
 		RTS
-#else
-; =============== S U B R O U T I N E ======n================================
-_spr_lib_fetch_ex:
-		LDY		#$00
-		LDA		(_ptr1E),Y
-		BMI		.spr_typeB_insert
-		LDA		_ptr1E						; sprite mode A, simple sprite
-		STA		_ptr08
-		LDA		_ptr1E+1
-		STA		_ptr08+1
-		JMP		_spr_clip_insert
-.spr_typeB_insert:
-		AND		#$7F
-		STA		_tmp_loop_cnt
-		INY
-.spr_typeB_loop:
-		LDA		(_ptr1E),Y
-		STA		_ptr08
-		INY
-		LDA		(_ptr1E),Y
-		STA		_ptr08+1
-		INY
-		TYA
-		PHA
+
 ; NOTE! there was an original game "bug" for typeB sprites
 ; the draw routine decrement the Y position every time it is
 ; called, in the original code, every single chunk of typeB
@@ -6177,82 +6176,6 @@ _spr_lib_fetch_ex:
 ; chunk to avoid repositioning...
 ; NEW, took the y position adjust out of the loop at all
 ; so this is not a case anymore. vega y pos also adjusted.
-		JSR		_spr_clip_insert
-		PLA
-		TAY
-		DEC		_tmp_loop_cnt
-		BNE		.spr_typeB_loop
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_spr_clip_insert:
-		LDX		_spr_buf_pos
-		LDY		#$00
-		LDA		(_ptr08),Y
-		STA		_var0
-		INY
-.spr_ins_loop:
-; FIX: for some reason, same workaround for glitched sprites here were used once
-; before the sprite insertion loop, and affects only first sprite, but not the
-; rest ones.
-		LDA		#$00
-		STA		_ppu_spr_buf+3,X
-; -
-		CLC
-		LDA		(_ptr08),Y
-		BPL		loc_6375D
-		ADC		_tmp2
-		STA		_ppu_spr_buf,X
-		LDA		_spr_y_clip_flag
-		SBC		#$00
-		AND		#$01
-		BEQ		loc_6376A
-		BNE		loc_6379F
-loc_6375D:
-		ADC		_tmp2
-		STA		_ppu_spr_buf,X
-		BCS		loc_6379F
-loc_6376A:
-		INY
-		LDA		(_ptr08),Y
-		STA		_ppu_spr_buf+1,X
-		INY
-		LDA		(_ptr08),Y
-		STA		_ppu_spr_buf+2,X
-		INY
-		CLC
-		LDA		(_ptr08),Y
-		BPL		loc_6378B
-		ADC		_tmp1
-; NEW: fixed when this sprite may be clipped out, but will write
-; the out of screen position for X anyway, if NMI occurs here,
-; glitch may happen
-; NEW: also get rid of unused _spr_x_clip_flags here, since even if
-; mode for these flags will be implemented, there are a lot of
-; sprites changes will need, also may be too slow.
-		BCS		loc_63798
-		BCC		loc_637A2
-loc_6378B:
-		ADC		_tmp1
-		BCS		loc_637A2
-loc_63798:
-		STA		_ppu_spr_buf+3,X
-		INX
-		INX
-		INX
-		INX
-		JMP		loc_637A2
-loc_6379F:
-		INY
-		INY
-		INY
-loc_637A2:
-		INY
-		DEC		_var0
-		BNE		.spr_ins_loop
-		STX		_spr_buf_pos
-		RTS
-#endif
 
 ; =============== S U B R O U T I N E ======n================================
 ; main thread execution routine
@@ -8671,13 +8594,7 @@ _spr_libB_ofs_tbl_hi:
 
 		SPR_LIB_SIZE	_spr_libA04
 
-#if SPR_SIZE_TEST==0
-#if NEW_SPRITES==1
-		INCLUDE		"../spr/spr_data4_new.inc"
-#else
 		INCLUDE		"../spr/spr_data4.inc"
-#endif
-#endif
 
 		SECTION_END	"PRG7 SPRITES"
 

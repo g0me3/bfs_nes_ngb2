@@ -3,10 +3,8 @@
 
 DEBUG			EQU		0
 OPTIMIZATION	EQU		1
-TWO_PLAYER_MODE	EQU		0
+TWO_PLAYER_MODE	EQU		1
 OOS_ACTIVE		EQU		0
-NEW_SPRITES		EQU		1
-SPR_SIZE_TEST	EQU		0
 
 REGION_JP		EQU		0
 REGION_EU		EQU		1
@@ -32,7 +30,7 @@ DEBUG_MAX_ENEMY	EQU		$0A
 ; 4 - 1 2 3 4 5
 ; 5 - 1
 DEBUG_LEVEL		EQU		$00
-DEBUG_CHKPOINT	EQU		$01-
+DEBUG_CHKPOINT	EQU		$01
 ; CHR0 - 00-1F
 ; LIBA - 00-08
 ; LIBB - 00-01 (for 02, 06-08 LIBA only!)
@@ -739,10 +737,6 @@ _total_free	SET [_total_free+_bank{1}_free]
 		ECHO "zero RAM free =",ZERO_RAM_FREE
 		ECHO "stack RAM free =",STACK_RAM_FREE
 		ECHO "general RAM free =",GENERAL_RAM_FREE
-#if SPR_SIZE_TEST==1
-SPR_LIB_SIZES SET _spr_libA00_size+_spr_libA01_size+_spr_libA02_size+_spr_libA03_size+_spr_libA04_size+_spr_libA05_size+_spr_libA06_size+_spr_libA07_size+_spr_libA08_size+_spr_libB02_size+_spr_libB06_size+_spr_libB07_size+_spr_libB08_size
-		ECHO "sprite data size =",SPR_DATA_SIZE,"sprite libs size =",SPR_LIB_SIZES,"total =",SPR_DATA_SIZE+SPR_LIB_SIZES
-#endif
 		ECHO ""
 	#if .<{2}-LAST_STUB_SIZE
 		ORG		{2}-LAST_STUB_SIZE-1

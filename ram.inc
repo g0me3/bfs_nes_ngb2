@@ -184,10 +184,12 @@ _pause_mode_flag:
 		.BYTE	0
 _out_of_screen_test_flag:
 		.BYTE	0
+_buster_select_anim_busyA:
 _cur_room_x_pageA:
 		.BYTE	0
 _cur_room_y_pageA:
 		.BYTE	0
+_buster_select_anim_busyB:
 _cur_room_x_pageB:
 		.BYTE	0
 _cur_room_y_pageB:
@@ -527,6 +529,8 @@ _nmi_flag:
 		.BYTE	0
 _two_player_mode_flag:
 		.BYTE	0
+_two_player_selections:
+		.BYTE	0,0
 _debug_vars_list:
 _debug_chr0:
 		.BYTE	0
@@ -618,21 +622,3 @@ _PAD0_REG:
 		.BYTE 0
 _PAD1_REG:
 		.BYTE 0
-
-#if SPR_SIZE_TEST==1
-SPR_DATA_START	SET	.
-#if NEW_SPRITES==1
-		INCLUDE		"../spr/spr_data0_new.inc"
-		INCLUDE		"../spr/spr_data1_new.inc"
-		INCLUDE		"../spr/spr_data2_new.inc"
-		INCLUDE		"../spr/spr_data3_new.inc"
-		INCLUDE		"../spr/spr_data4_new.inc"
-#else
-		INCLUDE		"../spr/spr_data0.inc"
-		INCLUDE		"../spr/spr_data1.inc"
-		INCLUDE		"../spr/spr_data2.inc"
-		INCLUDE		"../spr/spr_data3.inc"
-		INCLUDE		"../spr/spr_data4.inc"
-#endif
-SPR_DATA_SIZE	SET	[.-SPR_DATA_START]
-#endif

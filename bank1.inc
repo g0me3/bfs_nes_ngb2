@@ -3291,7 +3291,7 @@ _nsub_room_init:
 		STA		_var4
 		LDA		#$02
 		STA		_var5
-		LDA		#$0C
+		LDA		#_scr0C_room_doors_handler_idx
 		JMP		_thread_lib_load
 
 ; =============== S U B R O U T I N E ======n================================

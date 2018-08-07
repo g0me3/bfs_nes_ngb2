@@ -91,6 +91,16 @@
 		SPR_IDX	_sprA00_4A
 		SPR_IDX	_sprA00_4B
 		SPR_IDX	_sprA00_4C
+		SPR_IDX	_sprA00_401	; select buster name 2p overlays for 1p
+		SPR_IDX	_sprA00_411
+		SPR_IDX	_sprA00_421
+		SPR_IDX	_sprA00_431
+		SPR_IDX	_sprA00_441
+		SPR_IDX	_sprA00_402	; select buster name 2p overlays for 2p
+		SPR_IDX	_sprA00_412
+		SPR_IDX	_sprA00_422
+		SPR_IDX	_sprA00_432
+		SPR_IDX	_sprA00_442
 
 		SPR_LIB_SIZE	_spr_libA00
 
@@ -321,13 +331,7 @@
 
 		SPR_LIB_SIZE	_spr_libB02
 
-#if SPR_SIZE_TEST==0
-#if NEW_SPRITES==1
-		INCLUDE		"../spr/spr_data0_new.inc"
-#else
 		INCLUDE		"../spr/spr_data0.inc"
-#endif
-#endif
 
 		SECTION_END	"SPRITE LIBS A0 A2 B2"
 
@@ -375,13 +379,7 @@
 
 		SPR_LIB_SIZE	_spr_libA01
 
-#if SPR_SIZE_TEST==0
-#if NEW_SPRITES==1
-		INCLUDE		"../spr/spr_data1_new.inc"
-#else
 		INCLUDE		"../spr/spr_data1.inc"
-#endif
-#endif
 
 		SECTION_END	"SPRITE LIB A1"
 
@@ -561,13 +559,7 @@
 
 		SPR_LIB_SIZE	_spr_libB08
 
-#if SPR_SIZE_TEST==0
-#if NEW_SPRITES==1
-		INCLUDE		"../spr/spr_data2_new.inc"
-#else
 		INCLUDE		"../spr/spr_data2.inc"
-#endif
-#endif
 
 		SECTION_END	"SPRITE LIBS A8 B8"
 
@@ -1098,13 +1090,7 @@
 
 		SPR_LIB_SIZE	_spr_libB07
 
-#if SPR_SIZE_TEST==0
-#if NEW_SPRITES==1
-		INCLUDE		"../spr/spr_data3_new.inc"
-#else
 		INCLUDE		"../spr/spr_data3.inc"
-#endif
-#endif
 
 		SECTION_END	"SPRITE LIBS A5 A6 B6 A7 B7"
 
