@@ -224,7 +224,7 @@ _pal3:
 ; NEW, helper skip input test for intro
 ;
 _nsub_intro_skip:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_START|PAD_A
 		BEQ		locret_853A
 		SEC
@@ -235,10 +235,10 @@ locret_853A:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_title_input:
-		LDA		_pad0_pressed				; this is native background routine for
+		LDA		_pads_press+2				; this is native background routine for
 		AND		#PAD_START					; NEW, now both buttons are available
 		BEQ		locret_8539					; additionally for A+B held
-		LDA		_pad0_held
+		LDA		_pads_held+2
 		AND		#PAD_A|PAD_B
 		CMP		#PAD_A|PAD_B
 		BNE		loc_8534					; if true, restart current thread with
@@ -246,7 +246,7 @@ _nbgsub_title_input:
 		.WORD	_scr_secret_menu
 		RTS
 loc_8534:
-		LDA		_pad0_held
+		LDA		_pads_held+2
 		AND		#PAD_B|PAD_SEL
 		CMP		#PAD_B|PAD_SEL
 		BNE		loc_8535					; if true, restart current thread with
@@ -592,7 +592,7 @@ byte_8BC3:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_select_buster_input:
 		LDX		_cur_trd_slot
-		LDA		_pad0_pressed,X				; test for L/R buttons press
+		LDA		_pads_press,X				; test for L/R buttons press
 		AND		#PAD_R
 		BEQ		loc_8BE6
 		LDA		#_snd0B_idx
@@ -608,7 +608,7 @@ loc_8BE1:
 		CMP		_beamer_spr_base_tmp		; skip if first player already selected
 		BEQ		loc_8BD5					; jump to increment one more time
 loc_8BE6:
-		LDA		_pad0_pressed,X
+		LDA		_pads_press,X
 		AND		#PAD_L
 		BEQ		loc_8C00
 		LDA		#_snd0B_idx
@@ -623,7 +623,7 @@ loc_8BF9:
 		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8BF1
 loc_8C00:
-		LDA		_pad0_pressed,X				; select with A
+		LDA		_pads_press,X				; select with A
 		AND		#PAD_START|PAD_A			; NEW, also here
 		BEQ		loc_8C36
 		LDA		#_snd0C_idx
@@ -1003,7 +1003,7 @@ _nbgsub_sprite_debug_exit_wait:
 		STA		_tmp2
 		JSR		_spr_y_pos_adjust
 		JSR		_debug_spr_insert
-		LDA		_pad0_pressed				; background native sub to wait
+		LDA		_pads_press+2				; background native sub to wait
 		AND		#PAD_START					; if START is pressed
 		BEQ		locret_8FAB
 		JSR		_cur_thread_reload_param	; load intro script again starting
@@ -1032,7 +1032,7 @@ _nsub_debug_menu_init:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_debug_input:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_L
 		BEQ		.1
 		LDA		_debug_pos_idx
@@ -1040,7 +1040,7 @@ _nsub_debug_input:
 		DEC		_debug_pos_idx
 		JSR		_debug_cursor_draw
 .1:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_R
 		BEQ		.2
 		LDA		_debug_pos_idx
@@ -1050,7 +1050,7 @@ _nsub_debug_input:
 		JSR		_debug_cursor_draw
 .2:
 		LDY		_debug_pos_idx
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_U
 		BEQ		.3
 		LDA		_debug_vars_list,Y
@@ -1061,7 +1061,7 @@ _nsub_debug_input:
 		STA		_debug_vars_list,Y
 		JMP		.update
 .3:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_D
 		BEQ		.skip
 		LDA		_debug_vars_list,Y
@@ -1221,7 +1221,7 @@ _pal_bg_secret_menuB:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_secret_menu_exit_waitB:
-		LDA		_pad0_pressed				; background native sub to wait
+		LDA		_pads_press+2				; background native sub to wait
 		AND		#PAD_START					; if START is pressed
 		BEQ		locret_8FAA
 		LDX		_menu_controls_idx			; apply changes to the game vars
@@ -1258,7 +1258,7 @@ _nsub_secret_menu_init:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_UD_input:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_U
 		BEQ		loc_8FD4
 		LDA		_cur_room_doors_cnt
@@ -1268,7 +1268,7 @@ _nsub_secret_menu_UD_input:
 		LDA		#$03
 		BNE		loc_8FE6
 loc_8FD4:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_D
 		BEQ		locret_8FEC
 		LDA		_cur_room_doors_cnt
@@ -1325,7 +1325,7 @@ _res_attr_option3:
 ; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_LR_input:
 		LDX		_cur_room_doors_cnt
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_L
 		BEQ		loc_903B
 		LDA		_menu_controls_idx,X
@@ -1335,7 +1335,7 @@ _nsub_secret_menu_LR_input:
 		LDA		_menu_controls_max_val_list,X
 		BNE		loc_9050
 loc_903B:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#PAD_R
 		BEQ		locret_9056
 		LDA		_menu_controls_idx,X
@@ -1485,7 +1485,7 @@ off_90CD:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_secret_menu_AB_input:
-		LDA		_pad0_pressed				; buttons used if sound test options
+		LDA		_pads_press+2				; buttons used if sound test options
 		AND		#PAD_A						; are selected
 		BEQ		loc_91D1
 		LDA		_cur_room_doors_cnt			; A starts the sounds
@@ -1501,7 +1501,7 @@ loc_91C2:
 		LDA		_sound_test_snd_idx
 		JMP		_far_prg6_apu_snd_load
 loc_91D1:
-		LDA		_pad0_pressed				; B stops them
+		LDA		_pads_press+2				; B stops them
 		AND		#PAD_B
 		BEQ		locret_91EC
 		LDA		_cur_room_doors_cnt
@@ -1721,7 +1721,7 @@ _ending_scenario_data:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_ending_scores_exit:
-		LDA		_pad0_pressed				; wait if START is pressed
+		LDA		_pads_press+2				; wait if START is pressed
 		AND		#PAD_START
 		BEQ		locret_941E
 		JSR		_cur_thread_reload_param	; load another script to restart game

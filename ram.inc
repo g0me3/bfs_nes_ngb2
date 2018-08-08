@@ -5,14 +5,10 @@
 
 		ORG $0000
 
-_pad0_held:
-		.BYTE	0
-_pad1_held:
-		.BYTE	0
-_pad0_pressed:
-		.BYTE	0
-_pad1_pressed:
-		.BYTE	0
+_pads_held:
+		.BYTE	0,0,0
+_pads_press:
+		.BYTE	0,0,0
 _ptr06:
 		.BYTE	0,0
 _ptr08:
@@ -546,6 +542,8 @@ _debug_pos_idx:
 		.BYTE	0
 _debug_cnt:
 		.BYTE	0,0
+_input_tmp:
+		.BYTE	0
 
 GENERAL_RAM_FREE	SET	[$800-.]
 

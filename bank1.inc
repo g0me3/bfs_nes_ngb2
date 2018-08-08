@@ -2666,7 +2666,7 @@ _nsub_ingame_start_input_test:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_wait_for_start_press:
-		LDA		_pad0_pressed				; check if START was pressed ot nor
+		LDA		_pads_press+2				; check if START was pressed ot nor
 		AND		#$10
 		BEQ		loc_15E56
 		SEC
@@ -2686,7 +2686,7 @@ loc_15E56:
 ; NEW, reused this routine for debugging purposes
 ;
 _nsub_ingame_select_input_test:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#$20
 		BEQ		loc_15E65
 		LDA		#$80
@@ -2987,7 +2987,12 @@ _stage_complete_patch_pal_list:
 _nsub_scores_and_players_lives_draw:
 		LDA		#$05
 		STA		_chr_bank1
-		JSR		_ppu_spr_fill_F1
+		LDX		#$00						; clear the spr buf
+		LDA		#$F1
+loc_63A77:
+		STA		_ppu_spr_buf,X
+		INX
+		BNE		loc_63A77
 		LDX		#$10
 		LDY		#$08
 		JSR		_printf_hi_scores			; print actual scores
@@ -3130,7 +3135,7 @@ word_161EE:
 
 ; =============== S U B R O U T I N E ======n================================
 _nsub_game_over_menu_item_input:
-		LDA		_pad0_pressed
+		LDA		_pads_press+2
 		AND		#$2C
 		BEQ		loc_16201
 		LDA		_game_flags
@@ -5902,8 +5907,8 @@ loc_2D23F:
 		BEQ		loc_2D24C
 		DEY
 		BPL		loc_2D23F
-loc_2D249:
-		JMP		loc_2D249					; original DEBUG assert here
+;loc_2D249:
+;		JMP		loc_2D249					; original DEBUG assert here
 loc_2D24C:
 		LDA		#$FF
 		STA		_boss_tmp_list,Y
@@ -5920,8 +5925,8 @@ loc_2D259:
 		INX
 		CPX		#$03
 		BCC		loc_2D259
-loc_2D263:
-		JMP		loc_2D263					; original DEBUG assert here also
+;loc_2D263:
+;		JMP		loc_2D263					; original DEBUG assert here also
 loc_2D266:
 		LDA		_nsub_return_value
 		STA		_boss_tmp_list,X
@@ -5965,8 +5970,8 @@ loc_2D2A9:
 		BMI		loc_2D2B4
 		DEY
 		BPL		loc_2D2A9
-loc_2D2B1:
-		JMP		loc_2D2B1					; original DEBUG assert here also
+;loc_2D2B1:
+;		JMP		loc_2D2B1					; original DEBUG assert here also
 loc_2D2B4:
 		LDA		byte_2D2B8,Y
 		RTS

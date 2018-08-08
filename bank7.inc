@@ -166,6 +166,7 @@ loc_600AF:
 .no_2p_mode:
 		LDA		#$00
 		STA		_two_player_selections		; force controls selection in 1p mode
+		STA		_two_player_selections+1
 .game_init:
 		LDX		_difficulty					; this means we ready to setup game
 		LDA		_scores_1st_extend_list_lo,X; load corresponding difficulty settings
@@ -417,7 +418,10 @@ _scr_beamer_hit_anim:
 _ssub_common_hit_anim:
 		NJSR			_nsub_apu_snd_load
 			NARGB		_snd04_idx
-		SLOOP_BEGIN		$1E
+; FIX: originally here is 30 frames of animation. so this cause the player
+; being rotated 180 of its otiginal position, to fix it add 2 more frames
+;		SLOOP_BEGIN		$1E
+		SLOOP_BEGIN		$20
 		NJSR			_nsub_players_hit_spr_select
 		SDELAY			$03
 		SARG_ALU		SARG1,_ADC,$40
@@ -614,10 +618,11 @@ _beamer_control_move_test:
 		ORA		_obj_y_pos_lo+2				; pixels at once, when start to
 		AND		#$07						; move, you couldn't control it unless
 		BNE		.beamer_speed_calc			; it reaches another gap
-		LDA		_pad0_held
+		LDX		_two_player_selections
+		LDA		_pads_held,X
 		AND		#$0F
 		BEQ		.beamer_speed_reset
-		JSR		_beamer_direction_calc		; get pressed button and calc new movement
+		JSR		_players_direction_calc		; get pressed button and calc new movement
 		LDA		_beamer_direction_idx		; direction
 		JSR		_players_move_obstacles_test; then test if any obstacles there
 		BCS		.beamer_speed_reset
@@ -634,10 +639,11 @@ _beamer_control_move_test:
 		ORA		_obj_y_pos_lo+2				; controls only at 8x8 pixels grid
 		AND		#$07
 		BNE		.beamer_step
-		LDA		_pad0_held
+		LDX		_two_player_selections
+		LDA		_pads_held,X
 		AND		#$0F
 		BEQ		.beamer_speed_reset
-		JSR		_beamer_direction_calc
+		JSR		_players_direction_calc
 		LDA		_beamer_direction_idx
 		JSR		_players_move_obstacles_test
 		BCC		.beamer_step
@@ -997,13 +1003,14 @@ loc_60595:
 ;
 ; the main problem here is to deterine what button is held last
 ;
-_beamer_direction_calc:
-_catcher_direction_calc:
+_players_direction_calc:
 		TYA
 		PHA
 		LDX		_cur_trd_slot
 		LDY		_trds_args2,X
-		LDA		_pad0_held,Y
+		LDA		_two_player_selections,Y
+		TAY
+		LDA		_pads_held,Y
 		LSR
 		BCC		loc_605AC
 		LDA		#$40
@@ -1027,6 +1034,7 @@ loc_605BE:
 		ASL
 		ROL
 		ROL
+		LDY		_trds_args2,X
 		STA		_beamer_direction_idx,Y
 locret_605C6:
 		PLA
@@ -1042,7 +1050,8 @@ _beamer_spr_selector:
 		JSR		_obj_to_obj_dir_calc
 		STA		_trds_args1+2
 loc_605D5:
-		LDA		_pad0_held
+		LDX		_two_player_selections
+		LDA		_pads_held,X
 		AND		#$0F
 		BEQ		loc_605DD
 		INC		_trds_args0+2
@@ -1084,7 +1093,8 @@ _players_spr_idx_calc:
 
 ; =============== S U B R O U T I N E ======n================================
 _beamer_control_beam_test:
-		LDA		_pad0_pressed
+		LDX		_two_player_selections
+		LDA		_pads_press,X
 		AND		_control_beam_button_code	; deploy beam object if beam button
 		BEQ		locret_60622				; pressed, also if there is no
 		LDA		_trds_obj_idx+3				; beam object already deployed
@@ -1142,7 +1152,8 @@ _sloc_60C9F:
 
 ; =============== S U B R O U T I N E ======n================================
 _nbgsub_beam_input_control:
-		LDA		_pad0_held					; test if beamer still held the button
+		LDX		_two_player_selections
+		LDA		_pads_held,X
 		AND		_control_beam_button_code
 		BEQ		loc_60CD0
 		LDA		_players_hit_flag			; also test if beamer not hit
@@ -1522,10 +1533,11 @@ _catcher_control_move_test:
 		ORA		_obj_y_pos_lo+4
 		AND		#$07
 		BNE		.catcher_speed_calcA
-		LDA		_pad1_held
+		LDX		_two_player_selections+1
+		LDA		_pads_held,X
 		AND		#$0F
 		BEQ		.catcher_speed_resetA
-		JSR		_catcher_direction_calc
+		JSR		_players_direction_calc
 		LDA		_catcher_direction_idx
 		JSR		_players_move_obstacles_test
 		BCS		.catcher_speed_resetA
@@ -1542,10 +1554,11 @@ _catcher_control_move_test:
 		ORA		_obj_y_pos_lo+4
 		AND		#$07
 		BNE		.catcher_stepA
-		LDA		_pad1_held
+		LDX		_two_player_selections+1
+		LDA		_pads_held,X
 		AND		#$0F
 		BEQ		.catcher_speed_resetA
-		JSR		_catcher_direction_calc
+		JSR		_players_direction_calc
 		LDA		_catcher_direction_idx
 		JSR		_players_move_obstacles_test
 		BCC		.catcher_stepA
@@ -1602,12 +1615,8 @@ _catcher_control_move_test:
 
 ; =============== S U B R O U T I N E ======n================================
 _catcher_control_catch_test:
-		LDA		_two_player_mode_flag
-		BEQ		.catcher_control_test
-		LDA		_pad1_pressed
-		.BYTE	$2C							; skip hack
-.catcher_control_test:
-		LDA		_pad0_pressed				; only controllable by the player action here
+		LDX		_two_player_selections+1
+		LDA		_pads_press,X
 		AND		_control_catch_button_code
 		BEQ		locret_610A9
 		LDX		_cur_trd_slot
@@ -1656,7 +1665,8 @@ byte_610AE:
 _catcher_spr_selector:
 		LDA		_two_player_mode_flag
 		BEQ		.skip_catcher_spr_select
-		LDA		_pad1_held
+		LDX		_two_player_selections+1
+		LDA		_pads_held,X
 		AND		#$0F
 		BEQ		loc_605DE
 		INC		_trds_args0+4
@@ -7881,18 +7891,28 @@ _get_input:
 		LDY		#$00
 		JSR		_calc_pad
 		INY
+		JSR		_calc_pad
+		LDA		_pads_press
+		ORA		_pads_press+1
+		STA		_pads_press+2
+		LDA		_pads_held
+		ORA		_pads_held+1
+		STA		_pads_held+2
+		RTS
+
+; =============== S U B R O U T I N E ======n================================
 _calc_pad:
 		JSR		_read_pads
 		STA		_tmp1A
 		JSR		_read_pads
 		AND		_tmp1A
 		STA		_tmp1A
-		LDA		_pad0_held,Y
+		LDA		_pads_held,Y
 		EOR		#$FF
 		AND		_tmp1A
-		STA		_pad0_pressed,Y
+		STA		_pads_press,Y
 		LDA		_tmp1A
-		STA		_pad0_held,Y
+		STA		_pads_held,Y
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
@@ -7913,16 +7933,6 @@ loc_63A63:
 		ROL
 		DEX
 		BNE		loc_63A63
-		RTS
-
-; =============== S U B R O U T I N E ======n================================
-_ppu_spr_fill_F1:
-		LDX		#$00
-		LDA		#$F1
-loc_63A77:
-		STA		_ppu_spr_buf,X
-		INX
-		BNE		loc_63A77
 		RTS
 
 ; =============== S U B R O U T I N E ======n================================
