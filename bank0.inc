@@ -241,10 +241,10 @@ _nsum_player_select_update:
 
 _res_attr_1p:
 		.WORD	$23E1
-		.BYTE	$06,$01,$F5,$F5,$F5,$00,$00,$00
+		.BYTE	$06,$01,$F5,$F5,$F5,$FF,$FF,$FF
 _res_attr_2p:
 		.WORD	$23E1
-		.BYTE	$06,$01,$00,$00,$00,$F5,$F5,$F5
+		.BYTE	$06,$01,$FF,$FF,$FF,$F5,$F5,$F5
 
 ; =============== S U B R O U T I N E ======n================================
 _nsum_player_select_input:
@@ -357,8 +357,8 @@ _attr_title1:
 		.BYTE	$20,$02
 		.BYTE	$AA,$0A,$0A,$0A,$0A,$0A,$0A,$AA
 		.BYTE	$AA,$00,$00,$00,$00,$00,$0F,$AA
-		.BYTE	$AA,$00,$C0,$F0,$F0,$30,$00,$AA
-		.BYTE	$AA,$00,$00,$00,$00,$00,$00,$AA
+		.BYTE	$AA,$00,$FF,$FF,$FF,$FF,$00,$AA
+		.BYTE	$AA,$00,$FF,$FF,$FF,$FF,$00,$AA
 		.BYTE	$AA,$F5,$F5,$F5,$F5,$F5,$F5,$AA
 		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
 		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
