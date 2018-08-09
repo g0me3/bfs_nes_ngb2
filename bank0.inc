@@ -31,7 +31,7 @@
 		SCASE			_sub09_select_winston			; 09
 		SCASE			_sub0A_select_louis				; 0A
 		SCASE			_intro_sub0B_title_ghost		; 0B
-		SCASE			_intro_sub0C_title_new			; 0C
+		SCASE			_intro_sub0C_new_blink			; 0C
 		SCASE			_ssub_select_2p					; 0D, NEW
 
 ; !FALLTHROUGH!
@@ -85,14 +85,13 @@ _sloc_title_start:
 ; here for different switch cases we need to add +1 sometimes, so this may now
 ; work here or need assign another one macro.. too much macroses bad too, so let's
 ; just use the _idx postfix by now.
-		NJSR			_nsub_new_thread_start			; load additional title script
-			NARGB		_scr00_intro_title_select_idx	; technically the same
-			NARGB		$00,$00							; _scr00_intro_title_select but with
-			NARGB		_intro_sub0C_title_new_idx+1	; different switch case index: 0C
-			NARGB		$00								; also indexes here are +1 by default
-		POS_X_SET		0,$80,$00						; initialize title picture patch sprite
+		NJSR			_nsub_new_thread_start			; load additional title script technically the same
+			NARGB		_scr00_intro_title_select_idx	; _scr00_intro_title_select but with
+			NARGB		$00,$00							; different switch case index: 0C
+			NARGB		_intro_sub0C_new_blink_idx+1	; also indexes here are +1 by default
+			NARGB		$00								;
+		POS_X_SET		0,$80,$00						; initialize title picture patch sprite position
 		POS_Y_SET		0,$88,$00						; with ghost's foot with no hole
-		SPR_IDX_SET		1,$00							; the original tilemap for title has this hole
 		SJSR			_ssub_pal_fade_in				; show the picture
 		NBG_HNDL_SET	_nbgsub_title_input				; set the background handler for input tests
 _sloc_title_loop:
@@ -133,24 +132,24 @@ _sloc_title_loop:
 			NARGB		$00
 		SJSRS			_ssub_title_maskDB_fade_out		; and then fade it out
 		SJSRS			_ssub_title_logo_init			; NEW, merged to common code routine
-		SPR_IDX_SET		1,$00							; restore "new" sprite
 		SJSRS			_ssub_title_maskDB_fade_in		; fade in and do loop
 		SJMPS			_sloc_title_loop
 
 ; =============== S C R I P T  S U B R O U T I N E =====s====================
+; NOTE: the lib tilemap seems can't draw smaller rects than the screen itself
+; so they did such workaround for displaying the title graphics on the fly
+;
 _ssub_title_logo_init:
 		STORE8			_chr_bank1,$00
 		NJSR			_nsub_full_pal_load				; load title palette
 			NARGW		_pal2
 		SARG_SET		SARG2,$00						; init one of internal tmp vars
 		SLOOP_BEGIN		$12								; in this case this is a line counter
-; NOTE: the lib tilemap seems can't draw smaller rects than the screen itself
-; so they did such workaround for displaying the title graphics on the fly
-;
 		NJSR			_nsub_tlm_raw_arg2_idx_line_draw; draw tilemap of the title logo in
 			NARGW		_tlm_title_logo					; the middle line by line...
 		SDELAY			$01
 		SLOOP_END
+		SPR_IDX_SET		1,$00							; set ghost hole patch sprite here
 		NJSR			_nsub_title_attr_select0		; load one of two attributes data
 		SRET											; for title screen, select with arg
 
@@ -201,6 +200,74 @@ _ssub_title_maskDB_fade_in:
 		SLOOP_END
 		SRET
 
+; =============== S C R I P T ==========================s====================
+_scr_title_player_select:
+		SJSRS			_ssub_title_maskDB_fade_out
+		NJSR			_nsub_all_threads_off_except_cur
+		NJSR			_nsub_new_thread_start
+			NARGB		_scr00_intro_title_select_idx
+			NARGB		$00,$00
+			NARGB		_intro_sub0C_new_blink_idx+1
+			NARGB		$00
+		SARG_SET		SARG2,$00
+		SLOOP_BEGIN		$12
+		NJSR			_nsub_tlm_raw_arg2_idx_line_draw
+			NARGW		_tlm_title_player
+		SDELAY			$01
+		SLOOP_END
+		NJSR			_nsub_title_attr_select1
+		NJSR			_nsub_hi_scores_display
+			NARGB		$0F,$0A
+		NJSR			_nsub_full_pal_load
+			NARGW		_pal3
+		STORE8			_chr_bank1,$09
+		SJSRS			_ssub_title_maskDB_fade_in
+		SSCRIPT1_SET	_scr_title_push_start_anim
+		NJSR			_nsum_player_select_update
+		NBG_HNDL_SET	_nsum_player_select_input
+		SUSPEND
+
+; =============== S U B R O U T I N E ======n================================
+_nsum_player_select_update:
+		LDA		_two_player_mode_flag
+		BNE		.2p_sel
+		JSR		_ppu_res_send_param
+		.WORD	_res_attr_1p
+		JMP		_wait_for_nmi
+.2p_sel:
+		JSR		_ppu_res_send_param
+		.WORD	_res_attr_2p
+		JMP		_wait_for_nmi
+
+_res_attr_1p:
+		.WORD	$23E1
+		.BYTE	$06,$01,$F5,$F5,$F5,$00,$00,$00
+_res_attr_2p:
+		.WORD	$23E1
+		.BYTE	$06,$01,$00,$00,$00,$F5,$F5,$F5
+
+; =============== S U B R O U T I N E ======n================================
+_nsum_player_select_input:
+		LDA		_pads_press+2
+		AND		#PAD_START|PAD_A|PAD_B
+		BEQ		loc_853B
+		JSR		_cur_thread_reload_param
+		.WORD	_scr_select_busters
+		LDA		#_snd0C_idx
+		JMP		_far_prg6_apu_snd_load
+loc_853B:
+		LDA		_pads_press+2
+		AND		#PAD_SEL|PAD_L|PAD_R
+		BEQ		loc_853C
+		LDA		#_snd0B_idx
+		JSR		_far_prg6_apu_snd_load
+		LDA		_two_player_mode_flag
+		EOR		#$01
+		STA		_two_player_mode_flag
+		JMP		_nsum_player_select_update
+loc_853C:
+		RTS
+
 _chain_title_anim_scripts_data:
 		.BYTE	_sub01_intro_slime_idx+1,	$00,$08,$60
 		.BYTE	_sub02_intro_busterA_idx+1,	$00,$10,$20
@@ -225,7 +292,6 @@ _pal3:
 ;
 _nsub_intro_skip:
 		LDA		_pads_press+2
-		AND		#PAD_START|PAD_A
 		BEQ		locret_853A
 		SEC
 		RTS
@@ -255,7 +321,7 @@ loc_8534:
 		RTS
 loc_8535:
 		JSR		_cur_thread_reload_param	; if false, restart this thread with
-		.WORD	_scr_select_busters			; busters select script
+		.WORD	_scr_title_player_select
 locret_8539:
 		RTS
 
@@ -292,8 +358,8 @@ _attr_title1:
 		.BYTE	$AA,$0A,$0A,$0A,$0A,$0A,$0A,$AA
 		.BYTE	$AA,$00,$00,$00,$00,$00,$0F,$AA
 		.BYTE	$AA,$00,$C0,$F0,$F0,$30,$00,$AA
-		.BYTE	$AA,$00,$00,$00,$10,$51,$00,$AA
-		.BYTE	$AA,$C0,$F5,$F5,$F5,$F5,$31,$AA
+		.BYTE	$AA,$00,$00,$00,$00,$00,$00,$AA
+		.BYTE	$AA,$F5,$F5,$F5,$F5,$F5,$F5,$AA
 		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
 		.BYTE	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
 		.BYTE	$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
@@ -388,7 +454,7 @@ _intro_sub0B_title_ghost:
 		SSTOP
 
 ; =============== S C R I P T ==========================s====================
-_intro_sub0C_title_new:
+_intro_sub0C_new_blink:
 		POS_X_SET		0,$30,$00						; set "NEW" sprite position
 		POS_Y_SET		0,$20,$00
 		SPR_IDX_SET		0,$4C							; select sprite index from lib00
@@ -409,7 +475,7 @@ _sloc_8A65:
 ; but since it goes to infinite loop as well, they planned to run it separately
 ; in some unknown cases.
 ;
-;_intro_sub0C_title_new_unref:
+;_intro_sub0C_new_blink_unref:
 ;		SARG_SET		SARG1,$00
 ;		SLOOP_BEGIN		$06
 ;		NJSR			_nsub_patch_pal_blink
@@ -418,7 +484,7 @@ _sloc_8A65:
 ;		SARG_ALU		SARG1,_ADC,$01
 ;		SDELAY			$01
 ;		SLOOP_END
-;		SJMPS			_intro_sub0C_title_new_unref
+;		SJMPS			_intro_sub0C_new_blink_unref
 ;
 ;_pal_new_blink_unused:
 ;		.BYTE	$0F,$10,$20,$30,$20,$10,$01
@@ -560,7 +626,7 @@ _select_buster_chain_scripts:
 		.BYTE	_sub0A_select_louis_idx+1,	$E0,$40,$00
 _pal_select_busters:
 		.BYTE	$0F,$00,$16,$07,$0F,$10,$00,$07,$0F,$27,$17,$07,$0F,$30,$0F,$0F
-		.BYTE	$0F,$36,$1C,$0F,$0F,$0F,$0F,$0F,$0F,$30,$0F,$0F,$0F,$0F,$0F,$0F
+		.BYTE	$0F,$36,$1C,$0F,$0F,$0F,$0F,$0F,$0F,$30,$15,$0F,$0F,$0F,$0F,$0F
 
 _nsub_test
 
@@ -623,8 +689,8 @@ loc_8BF9:
 		CMP		_beamer_spr_base_tmp
 		BEQ		loc_8BF1
 loc_8C00:
-		LDA		_pads_press,X				; select with A
-		AND		#PAD_START|PAD_A			; NEW, also here
+		LDA		_pads_press,X				; select with any control button
+		AND		#PAD_START|PAD_A|PAD_B|PAD_SEL	; NEW, also here
 		BEQ		loc_8C36
 		LDA		#_snd0C_idx
 		JSR		_far_prg6_apu_snd_load		; init one of two players indexes
@@ -640,8 +706,11 @@ loc_8C17:
 loc_8C1A:
 		STA		_two_player_selections,X	; if 01, then player controls catcher
 		LDA		#$FF
-		STA		_obj_spr_idx				; disable obj name sprites
-		STA		_obj_spr_idx+1				;
+		STA		_obj_spr_idx,X				; disable obj name sprite
+		TXA
+		EOR		#$01
+		TAX
+		JSR		loc_8C36					; hacky way to update the other's players sprite
 		LDA		#$00						; disable selection input for now
 		STA		_buster_select_anim_busyA
 		SEC									; when selection is done, set carry to
@@ -1132,7 +1201,7 @@ OUTPUT_POS_Y	EQU $02
 _debug_mode_limits:
 		.BYTE	$20,$20,$09,$02,$00
 _debug_typeA_limits:
-		.BYTE	$4D,$1F,$BD,$B0,$30,$98,$6E,$8E,$95
+		.BYTE	$57,$1F,$BD,$B0,$30,$98,$6E,$8E,$95
 _debug_typeB_limits:
 		.BYTE	$00,$00,$13,$00,$00,$00,$2C,$0B,$08
 _hex_pos:
@@ -7046,6 +7115,26 @@ _tlm_title_text:
 		.WORD	_tlm_dummy_FF
 		.WORD	_tlm_title_text11
 
+_tlm_title_player:
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text03
+		.WORD	_tlm_title_text04
+		.WORD	_tlm_title_text05
+		.WORD	_tlm_title_text06
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text08
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text0Ea
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text0Eb
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_dummy_FF
+		.WORD	_tlm_title_text11
+
 _tlm_title_logo01:
 		.BYTE	$FE,$FE,$FE,$FE,$2C,$3C,$20,$30,$40,$50,$60,$70,$80,$90,$A0,$B0,$C0,$D0,$E0,$F0,$F5,$23,$33,$43
 _tlm_title_logo02:
@@ -7109,6 +7198,10 @@ _tlm_title_text11:
 ;		.BYTE	$FF,$FF,$FF,"B","Y",$FF,"H","A","L",$FF,"A","M","E","R","I","C","A",",","I","N","C",".",$FF,$FF
 		.BYTE	$FF,$FF,$FF,$FF,"B","Y",$FF,"H","A","L",$FF,"L","A","B","O","R","A","T","O","R","Y",$FF,$FF,$FF	; NEW, spaces fixed to optimize
 ; -
+_tlm_title_text0Ea:
+		.BYTE	$FF,$FF,$FF,$FF,"H","O","W",$FF,"M","A","N","Y",$FF,"P","L","A","Y","E","R","S",$FF,$FF,$FF,$FF
+_tlm_title_text0Eb:
+		.BYTE	$FF,$FF,"1","-","P","L","A","Y","E","R",$FF,$FF,$FF,"2","-","P","L","A","Y","E","R","S",$FF,$FF
 
 ; =============== S U B R O U T I N E ======n================================
 		FAR_OFS	_tlm_lib_unpack

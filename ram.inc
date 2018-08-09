@@ -544,6 +544,8 @@ _debug_cnt:
 		.BYTE	0,0
 _input_tmp:
 		.BYTE	0
+_oos_active:
+		.BYTE	0
 
 GENERAL_RAM_FREE	SET	[$800-.]
 

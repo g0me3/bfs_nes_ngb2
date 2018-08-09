@@ -241,77 +241,55 @@ _sprA00_44_A:
 		.BYTE	$F4,$EF,$02,$0C
 		.BYTE	$F4,$F3,$02,$FC
 _sprA00_401:
-;		.BYTE	$02
 		.BYTE	$01
 _sprA00_401_A:
-;		.BYTE	$EC,$B9,$00,$F8
-;		.BYTE	$EC,$E9,$00,$00
-		.BYTE	$F4,$AF,$00,$14
+		.BYTE	$F4,$AF,$02,$14
 		.BYTE	$A5
 		.WORD	_sprA00_40_A
 _sprA00_411:
 		.BYTE	$01
-		.BYTE	$F4,$AF,$00,$0C
-;		.BYTE	$82
-;		.WORD	_sprA00_401_A
+		.BYTE	$F4,$AF,$02,$0C
 		.BYTE	$A3
 		.WORD	_sprA00_41_A
 _sprA00_421:
 		.BYTE	$01
-		.BYTE	$F4,$AF,$00,$10
-;		.BYTE	$82
-;		.WORD	_sprA00_401_A
+		.BYTE	$F4,$AF,$02,$10
 		.BYTE	$A4
 		.WORD	_sprA00_42_A
 _sprA00_431:
 		.BYTE	$01
-		.BYTE	$F4,$AF,$00,$1C
-;		.BYTE	$82
-;		.WORD	_sprA00_401_A
+		.BYTE	$F4,$AF,$02,$1C
 		.BYTE	$A7
 		.WORD	_sprA00_43_A
 _sprA00_441:
 		.BYTE	$01
-		.BYTE	$F4,$AF,$00,$14
-;		.BYTE	$82
-;		.WORD	_sprA00_401_A
+		.BYTE	$F4,$AF,$02,$14
 		.BYTE	$A5
 		.WORD	_sprA00_44_A
 _sprA00_402:
-;		.BYTE	$02
 		.BYTE	$01
 _sprA00_402_A:
-		.BYTE	$F4,$B1,$00,$14
-;		.BYTE	$EC,$BB,$00,$F8
-;		.BYTE	$EC,$E9,$00,$00
+		.BYTE	$F4,$B1,$02,$14
 		.BYTE	$A5
 		.WORD	_sprA00_40_A
 _sprA00_412:
 		.BYTE	$01
-		.BYTE	$F4,$B1,$00,$0C
-;		.BYTE	$82
-;		.WORD	_sprA00_402_A
+		.BYTE	$F4,$B1,$02,$0C
 		.BYTE	$A3
 		.WORD	_sprA00_41_A
 _sprA00_422:
-;		.BYTE	$82
-;		.WORD	_sprA00_402_A
 		.BYTE	$01
-		.BYTE	$F4,$B1,$00,$10
+		.BYTE	$F4,$B1,$02,$10
 		.BYTE	$A4
 		.WORD	_sprA00_42_A
 _sprA00_432:
-;		.BYTE	$82
-;		.WORD	_sprA00_402_A
 		.BYTE	$01
-		.BYTE	$F4,$B1,$00,$1C
+		.BYTE	$F4,$B1,$02,$1C
 		.BYTE	$A7
 		.WORD	_sprA00_43_A
 _sprA00_442:
-;		.BYTE	$82
-;		.WORD	_sprA00_402_A
 		.BYTE	$01
-		.BYTE	$F4,$B1,$00,$14
+		.BYTE	$F4,$B1,$02,$14
 		.BYTE	$A5
 		.WORD	_sprA00_44_A
 _sprA00_45:

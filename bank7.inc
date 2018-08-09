@@ -115,8 +115,6 @@ loc_60020:
 		STA		_control_beam_button_code	; default controls
 		LDA		#PAD_B
 		STA		_control_catch_button_code
-		LDA		#TWO_PLAYER_MODE
-		STA		_two_player_mode_flag
 		LDA		_ram_signature				; ram signature to keep scores
 		CMP		#"H"						; "HS" - HUDSON SOFT?
 		BNE		loc_6007C
@@ -144,14 +142,19 @@ _MAIN_ENTRY:
 		LDA		#$00
 		JSR		_event_thread_start			; load main title script
 		LDA		#$00
+		STA		_two_player_mode_flag
+		LDA		#$00
 		STA		_pause_mode_flag			; now starting the simple version of
 		STA		_out_of_screen_test_flag	; threads manager
 loc_600AF:
 		JSR		_wait_for_nmi				; wait for nmi
-;		JSR		_spr_shuffle_update			; prepare sprites shuffle
-		LDA		#$00
-		STA		_spr_buf_pos
-		STA		_spr_buf_shuffle
+; NOTE, here at the title screens there is no need in shuffle except one thing
+; the STOP sign on the ghost at the second phase of the title is blinking because
+; of this!
+		JSR		_spr_shuffle_update			; prepare sprites shuffle
+;		LDA		#$00
+;		STA		_spr_buf_pos
+;		STA		_spr_buf_shuffle
 		JSR		_threads_manager			; execute threads
 		JSR		_spr_finish					; all sprites should be done now, finalize
 		LDA		_trds_obj_idx				; repeat until main thread is stopped
@@ -681,7 +684,7 @@ _players_move_obstacles_test:
 		TYA
 		PHA
 		LDX		_cur_trd_slot
-		LDA		_obj_x_screen_pos,X			; read the beamer screen position
+		LDA		_obj_x_screen_pos,X			; read the players screen position
 		STA		_tmp1						; preventing walking it out of the
 		LDA		_obj_y_screen_pos,X			; screen
 		STA		_tmp2
@@ -692,27 +695,27 @@ _players_move_obstacles_test:
 		TAX
 		BNE		loc_60437
 		LDA		_tmp2
-		CMP		#$10						; FIX, players from infiltrating the
-		BCS		loc_60455					; edges of the screen sometimes
+		CMP		#$08
+		BCS		loc_60455
 		BCC		loc_60453
 loc_60437:
 		DEX
 		BNE		loc_60442
 		LDA		_tmp1
-		CMP		#$F0						; FIX, the same
+		CMP		#$F8
 		BCC		loc_60455
 		BCS		loc_60453
 loc_60442:
 		DEX
 		BNE		loc_6044D
 		LDA		_tmp2
-		CMP		#$E0						; FIX, the same
+		CMP		#$E8
 		BCC		loc_60455
 		BCS		loc_60453
 loc_6044D:
 		LDA		_tmp1
-		CMP		#$10						; FIX, the same
-		BCS		loc_60455					; walkable area hardwritten as $09-$F8, $09-$E8
+		CMP		#$08
+		BCS		loc_60455
 loc_60453:
 		SEC
 		RTS
