@@ -2786,9 +2786,11 @@ _pause_screen_anim:
 		LDX		#$90						; and put it to fixed location
 		LDY		#$B8
 		LDA		_beamer_spr_base_tmp		; using the beamer spr idx
-		LDA		_two_player_mode_flag
-		BEQ		_player_spr_insert
 		JSR		_player_spr_insert
+		LDA		_two_player_mode_flag
+		BNE		_2player_spr_insert
+		RTS
+_2player_spr_insert:
 		LDX		#$50
 		LDY		#$B8
 		LDA		_catcher_spr_base_tmp
